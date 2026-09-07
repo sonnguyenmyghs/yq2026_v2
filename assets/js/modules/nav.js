@@ -7,7 +7,7 @@
      #ghHeader.is-compact    đang cuộn xuống    -> desktop thu gọn, mobile ẩn header
      #ghHeader.has-panel     có panel đang mở   -> nền đặc + lớp phủ
      #ghHeader.is-searching  ô tìm kiếm đang mở
-     .gh-panel.is-open       panel (#ghMega / #ghSeasonal) đang mở
+     .gh-navpanel.is-open    panel (#ghMega / #ghSeasonal) đang mở
      .gh-nav__item.is-open   mục nav đang giữ panel
      .gh-search.is-open      panel tìm kiếm đang mở
    ========================================================================== */
@@ -62,7 +62,7 @@
   function closePanels(immediate) {
     clearTimeout(closeTimer);
     var done = function () {
-      $('.gh-panel').removeClass('is-open');
+      $('.gh-navpanel').removeClass('is-open');
       $('.gh-nav__item').removeClass('is-open')
         .find('[aria-expanded]').attr('aria-expanded', 'false');
       $header().removeClass('has-panel');
@@ -76,7 +76,7 @@
     var $panel = $(panelIdOf(kind));
     if (!$panel.length) return;
 
-    $('.gh-panel').not($panel).removeClass('is-open');
+    $('.gh-navpanel').not($panel).removeClass('is-open');
     $('.gh-nav__item').not($item).removeClass('is-open')
       .find('[aria-expanded]').attr('aria-expanded', 'false');
 
@@ -92,11 +92,11 @@
       if (!isDesktop()) return;
       openPanel($(this).attr('data-panel'), $(this));
     })
-    .on('mouseleave', '.gh-nav__item--panel, .gh-panel', function () {
+    .on('mouseleave', '.gh-nav__item--panel, .gh-navpanel', function () {
       if (!isDesktop()) return;
       closePanels();
     })
-    .on('mouseenter', '.gh-panel', function () { clearTimeout(closeTimer); });
+    .on('mouseenter', '.gh-navpanel', function () { clearTimeout(closeTimer); });
 
   // Bấm: mở/đóng (cần cho thiết bị cảm ứng và cho mục Seasonal vốn là <button>)
   $(document).on('click', '.gh-nav__item--panel > .gh-nav__link', function (e) {

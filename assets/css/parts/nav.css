@@ -182,7 +182,10 @@
 /* ==========================================================================
    6. Panel thả xuống (mega + seasonal)
    ========================================================================== */
-.gh-panel{
+/* Base cho 2 dropdown #ghMega / #ghSeasonal.
+   ĐỪNG đặt tên .gh-panel — style.css đã dùng tên đó cho khung thẻ nội dung
+   (giỏ hàng, checkout, personalise); trùng tên sẽ ẩn sạch các khối đó. */
+.gh-navpanel{
   position: absolute; left: 0; right: 0; top: 100%; z-index: 1029;
   background: var(--gh-paper);
   border-top: 1px solid var(--gh-line-soft);
@@ -190,7 +193,7 @@
   opacity: 0; visibility: hidden; transform: translateY(-10px);
   transition: opacity .28s var(--gh-ease), transform .32s var(--gh-ease), visibility .32s;
 }
-.gh-panel.is-open{ opacity: 1; visibility: visible; transform: translateY(0); }
+.gh-navpanel.is-open{ opacity: 1; visibility: visible; transform: translateY(0); }
 
 /* --- 6a. Mega "Shop by Category" --- */
 .gh-mega__inner{ padding: 38px 0 42px; }

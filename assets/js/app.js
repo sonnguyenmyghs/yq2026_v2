@@ -205,7 +205,7 @@
     });
 
     var mega =
-      '<div class="gh-panel gh-mega" id="ghMega" role="region" aria-label="Shop by Category">' +
+      '<div class="gh-navpanel gh-mega" id="ghMega" role="region" aria-label="Shop by Category">' +
         '<div class="gh-container"><div class="gh-mega__inner"><div class="row g-4">' + cols +
           '<div class="col-lg-3 d-none d-lg-block">' +
             '<a class="gh-mega__promo" href="personalise.html">' +
@@ -236,7 +236,7 @@
     });
 
     var seasonal =
-      '<div class="gh-panel gh-season" id="ghSeasonal" role="region" aria-label="Seasonal collections">' +
+      '<div class="gh-navpanel gh-season" id="ghSeasonal" role="region" aria-label="Seasonal collections">' +
         '<div class="gh-container"><div class="gh-season__inner">' +
           '<div class="gh-season__head">' +
             '<div>' +
