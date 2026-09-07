@@ -2,4 +2,383 @@
    Module CSS: cart-anim
    File riêng của module này — dùng chung design token trong assets/css/style.css
    (--gh-ink, --gh-gold, --gh-cream, --gh-line, --gh-serif, --gh-sans, --gh-ease…)
+
+   Nội dung:
+     1. Phần tử bay (fly-to-cart)
+     2. Phản hồi tại icon giỏ (nảy + vòng sáng + badge)
+     3. Phản hồi tại nút bấm (trạng thái "Added")
+     4. Cart drawer (panel trượt từ phải)
+     5. Responsive
+     6. prefers-reduced-motion
    ========================================================================== */
+
+/* ---------- Token cục bộ của module ---------- */
+:root{
+  --ghfly-z:      2600;   /* > header (1030) và > toast (2000) */
+  --ghdrawer-z:   2500;
+  --ghdrawer-w:   408px;
+}
+
+/* ==========================================================================
+   1. Phần tử bay — ảnh sản phẩm bay theo đường bezier tới giỏ
+   ========================================================================== */
+.gh-fly{
+  position: fixed;
+  left: 0; top: 0;
+  z-index: var(--ghfly-z);
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  contain: layout paint;
+}
+.gh-fly__box{
+  width: 100%; height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--gh-radius-sm);
+  background: var(--gh-cream-2);
+  box-shadow: 0 10px 24px rgba(23,22,19,.18), 0 26px 56px rgba(23,22,19,.14);
+  /* viền vàng mảnh — gợi cảm giác "món quà được nâng niu" */
+  outline: 1px solid rgba(196,164,106,.55);
+  outline-offset: -1px;
+}
+.gh-fly__media{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border-radius: inherit;
+}
+.gh-fly__media img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+/* watermark "GH" của placeholder phải nhỏ lại cho vừa khung bay */
+.gh-fly .gh-media__ph::after{ font-size: 20px; letter-spacing: .08em; }
+/* ánh vàng phủ nhẹ, làm khối bay tách khỏi nền trang */
+.gh-fly__box::after{
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(150deg, rgba(255,255,255,.20), transparent 46%, rgba(196,164,106,.22));
+}
+
+/* ==========================================================================
+   2. Phản hồi tại icon giỏ hàng
+   ========================================================================== */
+
+/* Vòng sáng loang ra ngay khi ảnh chạm giỏ */
+.gh-fly-ring{
+  position: fixed;
+  z-index: calc(var(--ghfly-z) - 10);
+  pointer-events: none;
+  border-radius: 50%;
+  border: 1.5px solid var(--gh-gold);
+  box-shadow: 0 0 0 1px rgba(196,164,106,.18) inset;
+  transform: translate(-50%, -50%) scale(.3);
+  opacity: 0;
+  animation: ghFlyRing .66s var(--gh-ease) forwards;
+}
+@keyframes ghFlyRing{
+  0%   { transform: translate(-50%,-50%) scale(.30); opacity: 0; }
+  18%  { opacity: .85; }
+  100% { transform: translate(-50%,-50%) scale(2.05); opacity: 0; }
+}
+
+/* Nút giỏ nảy nhẹ — biên độ tiết chế, không giật */
+.gh-iconbtn.is-ghcart-hit,
+.is-ghcart-hit{
+  animation: ghCartHit .62s var(--gh-ease);
+}
+@keyframes ghCartHit{
+  0%   { transform: translateY(0)    scale(1); }
+  20%  { transform: translateY(-5px) scale(1.10); }
+  44%  { transform: translateY(2px)  scale(.95); }
+  68%  { transform: translateY(-1px) scale(1.03); }
+  100% { transform: translateY(0)    scale(1); }
+}
+/* ánh vàng thoáng qua trên nền nút */
+.gh-iconbtn.is-ghcart-hit::before{
+  content: "";
+  position: absolute; inset: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,164,106,.34), transparent 70%);
+  animation: ghCartGlow .62s var(--gh-ease) forwards;
+  pointer-events: none;
+}
+@keyframes ghCartGlow{ 0%{opacity:0} 25%{opacity:1} 100%{opacity:0} }
+
+/* Badge số: lắc nhẹ + ánh vàng mỗi lần con số nhảy */
+.gh-cart-count.is-ghcount{
+  animation: ghCountPop .34s var(--gh-ease);
+}
+@keyframes ghCountPop{
+  0%   { transform: scale(1)    translateY(0); }
+  35%  { transform: scale(1.42) translateY(-2px); }
+  100% { transform: scale(1)    translateY(0); }
+}
+
+/* ==========================================================================
+   3. Phản hồi tại nút bấm — trạng thái "Added" ~1.2s
+   ========================================================================== */
+.gh-btn.is-ghadded{
+  position: relative;
+  pointer-events: none;          /* chặn spam click trong lúc hiển thị */
+  color: transparent !important; /* ẩn cả text node lẫn <span> nhãn gốc */
+  transform: none !important;
+}
+.gh-btn.is-ghadded > svg{ opacity: 0; }
+
+/* vòng vàng lan ra từ viền nút */
+.gh-btn.is-ghadded::after{
+  content: "";
+  position: absolute; inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: ghAddedRing .8s var(--gh-ease) forwards;
+}
+@keyframes ghAddedRing{
+  0%   { box-shadow: 0 0 0 0 rgba(196,164,106,.50); }
+  100% { box-shadow: 0 0 0 14px rgba(196,164,106,0); }
+}
+
+.gh-added-layer{
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  font-family: var(--gh-sans);
+  font-size: inherit; font-weight: 500; letter-spacing: .01em;
+  white-space: nowrap;
+  opacity: 0; transform: translateY(5px);
+  animation: ghAddedIn .3s var(--gh-ease) forwards;
+}
+@keyframes ghAddedIn{ to{ opacity: 1; transform: none; } }
+
+.gh-added-layer__tick{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 19px; height: 19px; flex: none;
+  border-radius: 50%;
+  background: var(--gh-gold);
+  color: var(--gh-ink);
+  transform: scale(.4);
+  animation: ghTickIn .34s var(--gh-ease) .04s forwards;
+}
+@keyframes ghTickIn{ to{ transform: scale(1); } }
+.gh-added-layer__tick svg{ width: 11px; height: 11px; stroke-width: 3; }
+/* nét tích được "vẽ" ra thay vì hiện đột ngột */
+.gh-added-layer__tick svg polyline,
+.gh-added-layer__tick svg path{
+  stroke-dasharray: 32; stroke-dashoffset: 32;
+  animation: ghTickDraw .38s var(--gh-ease) .12s forwards;
+}
+@keyframes ghTickDraw{ to{ stroke-dashoffset: 0; } }
+
+/* ==========================================================================
+   4. Cart drawer — panel trượt từ phải
+   ========================================================================== */
+body.gh-drawer-open{ overflow: hidden; }
+/* mở drawer thì nhường sân khấu, ẩn tạm toast góc phải */
+body.gh-drawer-open .gh-toast-wrap{
+  opacity: 0; transform: translateY(12px); pointer-events: none;
+  transition: opacity .3s var(--gh-ease), transform .3s var(--gh-ease);
+}
+
+.gh-cdrawer-back{
+  position: fixed; inset: 0;
+  z-index: var(--ghdrawer-z);
+  background: rgba(23,22,19,.44);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity .4s var(--gh-ease);
+}
+.gh-cdrawer-back.is-on{ opacity: 1; }
+
+.gh-cdrawer{
+  position: fixed; top: 0; right: 0;
+  height: 100%; height: 100dvh;
+  width: min(var(--ghdrawer-w), 100vw);
+  z-index: calc(var(--ghdrawer-z) + 10);
+  display: flex; flex-direction: column;
+  background: var(--gh-paper);
+  border-left: 1px solid var(--gh-line);
+  box-shadow: var(--gh-shadow-lg);
+  transform: translateX(101%);
+  transition: transform .46s var(--gh-ease);
+  will-change: transform;
+}
+.gh-cdrawer.is-on{ transform: none; }
+.gh-cdrawer:focus{ outline: none; }
+
+/* --- head --- */
+.gh-cdrawer__head{
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--gh-line-soft);
+  background: var(--gh-cream);
+}
+.gh-cdrawer__eyebrow{
+  display: block;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gh-gold-dark); margin-bottom: 7px;
+}
+.gh-cdrawer__title{
+  font-family: var(--gh-serif); font-size: 1.32rem; line-height: 1.2;
+  color: var(--gh-ink); margin: 0;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.gh-cdrawer__title small{
+  font-family: var(--gh-sans); font-size: 12px; font-weight: 500;
+  color: var(--gh-muted); letter-spacing: .02em;
+}
+.gh-cdrawer__close{
+  flex: none;
+  width: 38px; height: 38px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--gh-line); background: var(--gh-paper); color: var(--gh-ink);
+  cursor: pointer;
+  transition: background .22s var(--gh-ease), color .22s var(--gh-ease), border-color .22s var(--gh-ease);
+}
+.gh-cdrawer__close:hover{ background: var(--gh-ink); border-color: var(--gh-ink); color: #fff; }
+
+/* --- body --- */
+.gh-cdrawer__body{
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 24px 18px;
+}
+
+.gh-cdrawer__row{
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--gh-line-soft);
+  opacity: 0; transform: translateY(10px);
+  animation: ghRowIn .44s var(--gh-ease) var(--ghd, 0ms) forwards;
+}
+@keyframes ghRowIn{ to{ opacity: 1; transform: none; } }
+.gh-cdrawer__row:last-child{ border-bottom: 0; }
+/* vẽ lại do đổi số lượng / xoá dòng — không diễn lại hiệu ứng vào */
+#ghCdBody.is-static .gh-cdrawer__row{ animation: none !important; opacity: 1; transform: none; }
+
+.gh-cdrawer__media{
+  width: 74px; height: 74px; flex: none;
+  border-radius: var(--gh-radius-sm);
+  overflow: hidden;
+}
+.gh-cdrawer__media img{ width: 100%; height: 100%; object-fit: cover; }
+.gh-cdrawer__media .gh-media__ph::after{ font-size: 17px; }
+
+.gh-cdrawer__info{ flex: 1 1 auto; min-width: 0; }
+.gh-cdrawer__name{
+  font-size: 14px; font-weight: 500; color: var(--gh-ink); line-height: 1.35;
+  overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.gh-cdrawer__opt{ font-size: 12px; color: var(--gh-muted); margin-top: 3px; }
+.gh-cdrawer__qty{ margin-top: 10px; }
+.gh-cdrawer__qty .gh-qty__val{ min-width: 32px; font-size: 14px; }
+.gh-cdrawer__qty .gh-qty__btn{ width: 28px; height: 28px; }
+
+.gh-cdrawer__right{
+  flex: none; display: flex; flex-direction: column; align-items: flex-end;
+  gap: 10px; min-height: 74px;
+}
+.gh-cdrawer__price{
+  font-size: 14px; color: var(--gh-ink); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.gh-cdrawer__rm{
+  margin-top: auto;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: transparent; color: var(--gh-muted); cursor: pointer;
+  transition: background .2s var(--gh-ease), color .2s var(--gh-ease);
+}
+.gh-cdrawer__rm:hover{ background: var(--gh-cream-2); color: var(--gh-ink); }
+
+/* dòng vừa được thêm — quét vàng nhẹ để mắt bắt được ngay */
+.gh-cdrawer__row.is-new{
+  animation: ghRowIn .44s var(--gh-ease) var(--ghd, 0ms) forwards,
+             ghRowNew 1.5s var(--gh-ease) calc(var(--ghd, 0ms) + 240ms);
+}
+@keyframes ghRowNew{
+  0%   { background: rgba(196,164,106,0); box-shadow: inset 3px 0 0 rgba(196,164,106,0); }
+  22%  { background: rgba(196,164,106,.15); box-shadow: inset 3px 0 0 var(--gh-gold); }
+  100% { background: rgba(196,164,106,0); box-shadow: inset 3px 0 0 rgba(196,164,106,0); }
+}
+
+.gh-cdrawer__empty{ text-align: center; padding: 56px 10px; }
+.gh-cdrawer__empty h3{ font-family: var(--gh-serif); font-size: 1.2rem; margin: 14px 0 6px; }
+.gh-cdrawer__empty p{ font-size: 13.5px; color: var(--gh-muted); margin-bottom: 20px; }
+.gh-cdrawer__empty-icon{
+  width: 58px; height: 58px; margin: 0 auto; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gh-cream); color: var(--gh-gold-dark);
+}
+
+/* --- foot --- */
+.gh-cdrawer__foot{
+  flex: none;
+  padding: 18px 24px 22px;
+  border-top: 1px solid var(--gh-line-soft);
+  background: var(--gh-cream);
+}
+.gh-cdrawer__sum{
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  font-size: 13.5px; color: var(--gh-body);
+}
+.gh-cdrawer__sum strong{
+  font-family: var(--gh-serif); font-size: 1.18rem; color: var(--gh-ink);
+  font-variant-numeric: tabular-nums; font-weight: 500;
+}
+.gh-cdrawer__note{
+  display: flex; gap: 9px; align-items: flex-start;
+  font-size: 12px; color: var(--gh-body);
+  margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--gh-line);
+}
+.gh-cdrawer__note svg{ flex: none; color: var(--gh-gold-dark); margin-top: 1px; }
+.gh-cdrawer__bar{
+  height: 3px; border-radius: 999px; background: var(--gh-line); margin-top: 7px; overflow: hidden;
+}
+.gh-cdrawer__bar i{
+  display: block; height: 100%; border-radius: inherit;
+  background: linear-gradient(90deg, var(--gh-gold), var(--gh-gold-dark));
+  transition: width .5s var(--gh-ease);
+}
+.gh-cdrawer__actions{ display: grid; gap: 10px; margin-top: 16px; }
+.gh-cdrawer__actions .gh-btn{ padding: 13px 22px; }
+.gh-cdrawer__cont{
+  border: 0; background: transparent; cursor: pointer;
+  font-family: var(--gh-sans); font-size: 12.5px; font-weight: 500; letter-spacing: .02em;
+  color: var(--gh-muted); padding: 4px;
+  transition: color .2s var(--gh-ease);
+}
+.gh-cdrawer__cont:hover{ color: var(--gh-ink); }
+
+/* ==========================================================================
+   5. Responsive
+   ========================================================================== */
+@media (max-width: 575.98px){
+  :root{ --ghdrawer-w: 100vw; }
+  .gh-cdrawer__head{ padding: 18px 18px 15px; }
+  .gh-cdrawer__body{ padding: 4px 18px 14px; }
+  .gh-cdrawer__foot{ padding: 15px 18px 18px; }
+  .gh-cdrawer__media{ width: 62px; height: 62px; }
+}
+
+/* ==========================================================================
+   6. prefers-reduced-motion — tắt chuyển động, giữ phản hồi tức thì
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce){
+  .gh-fly, .gh-fly-ring{ display: none !important; }
+  .gh-iconbtn.is-ghcart-hit,
+  .is-ghcart-hit{ animation: none !important; }
+  .gh-iconbtn.is-ghcart-hit::before{ display: none !important; }
+  .gh-cart-count.is-ghcount{ animation: none !important; }
+
+  .gh-btn.is-ghadded::after{ animation: none !important; box-shadow: none !important; }
+  .gh-added-layer{ animation: none !important; opacity: 1 !important; transform: none !important; }
+  .gh-added-layer__tick{ animation: none !important; transform: none !important; }
+  .gh-added-layer__tick svg polyline,
+  .gh-added-layer__tick svg path{ animation: none !important; stroke-dashoffset: 0 !important; }
+
+  .gh-cdrawer, .gh-cdrawer-back{ transition: none !important; }
+  .gh-cdrawer__row{ animation: none !important; opacity: 1 !important; transform: none !important; }
+  .gh-cdrawer__bar i{ transition: none !important; }
+}

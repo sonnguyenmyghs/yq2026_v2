@@ -21,42 +21,119 @@
 
 <div id="gh-header"></div>
 
-<!-- ============================ HERO ============================ -->
-<section class="gh-hero">
-  <div class="gh-hero__bg">
-    <div class="gh-media">
-      <img src="assets/img/hero-lounge.jpg" alt="Grand Hyatt Singapore lounge" fetchpriority="high" decoding="async">
-    </div>
-  </div>
-  <span class="gh-hero__scrim"></span>
+<!-- ============================ HERO SLIDER ============================ -->
+<!-- Slider 3 slide: ảnh nền + tiêu đề + mô tả + CTA riêng cho từng slide.
+     JS ở assets/js/modules/banner.js sẽ tự dựng nút prev/next, dot và bộ đếm. -->
+<section class="gh-heroslider" id="ghHeroSlider"
+         aria-roledescription="carousel" aria-label="Featured collections">
 
-  <div class="gh-hero__inner">
-    <div class="gh-container">
-      <div class="gh-hero__content">
-        <div class="gh-eyebrow">Grand Hyatt Singapore</div>
-        <h1>Gifts of<br>Distinction</h1>
-        <p>Curated cakes, artisan hampers, and premium wines — crafted in our kitchens and delivered with care.</p>
-        <div class="gh-hero__actions">
-          <a class="gh-btn gh-btn--gold gh-btn--lg" href="shop.html">Shop Now
-            <svg class="gh-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
-          </a>
-          <a class="gh-btn gh-btn--light gh-btn--lg" href="shop.html?cat=celebration">View Hampers</a>
+  <div class="gh-heroslider__track">
+
+    <!-- Slide 1 — Gifts of Distinction -->
+    <article class="gh-heroslide" data-pos="center" data-title="Gifts of Distinction"
+             aria-roledescription="slide" aria-label="1 of 3">
+      <div class="gh-heroslide__bg">
+        <img src="assets/img/hero-lounge.jpg"
+             alt="The warm, softly lit lounge at Grand Hyatt Singapore"
+             fetchpriority="high" decoding="async" width="2000" height="1250">
+      </div>
+      <span class="gh-heroslide__scrim"></span>
+      <div class="gh-heroslide__inner">
+        <div class="gh-container">
+          <div class="gh-heroslide__content">
+            <div class="gh-eyebrow">Grand Hyatt Singapore</div>
+            <h1>Gifts of<br>Distinction</h1>
+            <p>Curated cakes, artisan hampers, and premium wines — crafted in our kitchens and delivered with care.</p>
+            <div class="gh-heroslide__actions">
+              <a class="gh-btn gh-btn--gold gh-btn--lg" href="shop.html">Shop Now
+                <svg class="gh-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+              </a>
+              <a class="gh-btn gh-btn--light gh-btn--lg" href="shop.html?cat=celebration">View Hampers</a>
+            </div>
+          </div>
         </div>
+      </div>
+    </article>
+
+    <!-- Slide 2 — The Festive Season -->
+    <article class="gh-heroslide" data-pos="center" data-title="The Festive Season"
+             aria-roledescription="slide" aria-label="2 of 3">
+      <div class="gh-heroslide__bg">
+        <img src="assets/img/hero-festive.jpg"
+             alt="Presents wrapped in kraft paper beneath warm golden Christmas lights"
+             loading="lazy" decoding="async" width="2000" height="1250">
+      </div>
+      <span class="gh-heroslide__scrim"></span>
+      <div class="gh-heroslide__inner">
+        <div class="gh-container">
+          <div class="gh-heroslide__content">
+            <div class="gh-eyebrow">Now open for pre-order</div>
+            <h1>The Festive<br>Season</h1>
+            <p>Yule logs, stollen, and our signature Grand Hamper — hand-finished each morning by our pastry team.</p>
+            <div class="gh-heroslide__actions">
+              <a class="gh-btn gh-btn--gold gh-btn--lg" href="shop.html?season=festive">Shop Festive
+                <svg class="gh-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+              </a>
+              <a class="gh-btn gh-btn--light gh-btn--lg" href="shop.html?cat=cakes">Cakes &amp; Pastries</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Slide 3 — Unforgettable Experiences -->
+    <article class="gh-heroslide" data-pos="center" data-title="Unforgettable Experiences"
+             aria-roledescription="slide" aria-label="3 of 3">
+      <div class="gh-heroslide__bg">
+        <img src="assets/img/hero-experiences.jpg"
+             alt="Warmly lit hotel restaurant with amber pendant lights and set tables"
+             loading="lazy" decoding="async" width="2000" height="1250">
+      </div>
+      <span class="gh-heroslide__scrim"></span>
+      <div class="gh-heroslide__inner">
+        <div class="gh-container">
+          <div class="gh-heroslide__content">
+            <div class="gh-eyebrow">Beyond the box</div>
+            <h1>Unforgettable<br>Experiences</h1>
+            <p>Chef&rsquo;s table dinners, afternoon tea, spa rituals and staycations — memories to gift, not just products.</p>
+            <div class="gh-heroslide__actions">
+              <a class="gh-btn gh-btn--gold gh-btn--lg" href="experiences.html">Explore Experiences
+                <svg class="gh-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+              </a>
+              <a class="gh-btn gh-btn--light gh-btn--lg" href="shop.html?cat=dining">Dining Vouchers</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- Thanh điều khiển (mũi tên + dot + bộ đếm) — JS đổ nội dung vào -->
+  <div class="gh-heroslider__foot">
+    <div class="gh-container">
+      <div class="gh-heroslider__ctrl">
+        <div class="gh-heroslider__arrows"></div>
+        <div class="gh-heroslider__dots" role="tablist" aria-label="Choose slide"></div>
+        <div class="gh-heroslider__count" aria-hidden="true"></div>
       </div>
     </div>
   </div>
 
+  <!-- Thanh tiến trình auto-play -->
+  <div class="gh-heroslider__prog" aria-hidden="true"><i></i></div>
+
+  <!-- Card sản phẩm nổi bật (dùng lại style .gh-hero__card của style.css) -->
   <a class="gh-hero__card" href="product.html?id=the-grand-hamper">
     <div class="gh-hero__card-media gh-media">
       <img src="assets/img/p-grand-hamper.jpg" alt="The Grand Hamper" loading="lazy" decoding="async">
     </div>
     <div class="lbl">Featured</div>
     <h4 class="gh-serif">The Grand Hamper</h4>
-    <div class="sub">Seasonal selection · 12 items</div>
+    <div class="sub">Seasonal selection &middot; 12 items</div>
     <div class="price">From $218</div>
   </a>
 
-  <div class="gh-hero__scroll"><span>Scroll</span><span class="bar"></span></div>
 </section>
 
 <!-- ============================ USP STRIP ============================ -->
@@ -117,6 +194,57 @@
       <h2 class="gh-h2">Made for every celebration</h2>
     </div>
     <div class="row g-4" id="homeOccasions"></div>
+  </div>
+</section>
+
+<!-- ============================ PROMO STRIP (banner phụ 2 cột) ============================ -->
+<section class="gh-promostrip">
+  <div class="gh-container">
+    <div class="row g-4">
+
+      <div class="col-lg-6">
+        <a class="gh-promo gh-reveal" href="celebrations.html#corporate">
+          <div class="gh-promo__bg">
+            <img src="assets/img/banner-corporate.jpg"
+                 alt="Gift wrapped in kraft paper with a silk ribbon and dried blooms"
+                 loading="lazy" decoding="async" width="1400" height="1000">
+          </div>
+          <span class="gh-promo__scrim"></span>
+          <span class="gh-promo__flag">Bulk orders</span>
+          <div class="gh-promo__body">
+            <div class="gh-eyebrow">For your clients &amp; teams</div>
+            <h3 class="gh-promo__title gh-serif">Corporate Gifting</h3>
+            <p class="gh-promo__text">
+              From ten hampers to a thousand. Custom ribbons, your logo on the eCard, one invoice
+              and a dedicated coordinator from brief to doorstep.
+            </p>
+            <span class="gh-promo__cta">Request a quote</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-lg-6">
+        <a class="gh-promo gh-reveal" data-delay="120" href="shop.html?season=cny">
+          <div class="gh-promo__bg">
+            <img src="assets/img/banner-cny.jpg"
+                 alt="Red and gold Chinese lantern against a lacquered red wall"
+                 loading="lazy" decoding="async" width="1400" height="1000">
+          </div>
+          <span class="gh-promo__scrim"></span>
+          <span class="gh-promo__flag">Limited season</span>
+          <div class="gh-promo__body">
+            <div class="gh-eyebrow">Year of prosperity</div>
+            <h3 class="gh-promo__title gh-serif">Chinese New Year</h3>
+            <p class="gh-promo__text">
+              Prosperity yusheng, golden pineapple tarts and reunion hampers — reserve early,
+              collection and delivery slots fill fast.
+            </p>
+            <span class="gh-promo__cta">Shop the collection</span>
+          </div>
+        </a>
+      </div>
+
+    </div>
   </div>
 </section>
 

@@ -144,80 +144,199 @@
   /* ======================================================================
      4. Header / Footer render
      ====================================================================== */
+  /* ---------- Helper dùng chung cho header ---------- */
+
+  /** Mục nav (hoặc con của nó) có đang là trang hiện tại không? */
+  function navIsActive(item, active) {
+    if (!active) return false;
+    if (item.key === active) return true;
+    return (item.children || []).filter(function (c) { return c.key === active; }).length > 0;
+  }
+
+  /** id của panel thả xuống ứng với loại panel. */
+  function panelId(kind) { return kind === 'seasonal' ? 'ghSeasonal' : 'ghMega'; }
+
+  /** Danh sách con của một mục nav: children thủ công, hoặc lấy từ 1 cột mega. */
+  function navChildren(item) {
+    if (item.children) return item.children;
+    var col = (item.megaIndex != null) ? GH.megaMenu[item.megaIndex] : null;
+    if (!col) return [];
+    return col.links.map(function (l) { return { label: l[0], href: l[1] }; });
+  }
+
+  /* ---------- Hàng nav chính (desktop) ----------
+     Chỉ 5 mục: 4 mục chính + "Seasonal" gom nhóm mùa vụ vào panel thả xuống.
+     Mục có panel: dùng <a> nếu có trang thật, dùng <button> nếu chỉ là nhóm. */
   function navHtml(active) {
     var out = '';
     $.each(GH.nav, function (_, item) {
-      if (item.sep) { out += '<li class="gh-nav__sep" aria-hidden="true"></li>'; return; }
-      var isActive = item.key === active ? ' is-active' : '';
-      var mega = item.mega ? ' data-mega="1"' : '';
-      out += '<li class="gh-nav__item' + isActive + '"' + mega + '>' +
-               '<a class="gh-nav__link" href="' + item.href + '">' + item.label +
-                 (item.mega ? '<span class="gh-caret">' + GH.icon('chevdown', 13) + '</span>' : '') +
-               '</a>' +
-             '</li>';
+      if (item.sep) return;                       // separator của bản cũ: bỏ
+
+      var on    = navIsActive(item, active);
+      var pid   = item.panel ? panelId(item.panel) : '';
+      var cls   = 'gh-nav__item' + (on ? ' is-active' : '') + (item.panel ? ' gh-nav__item--panel' : '');
+      var caret = item.panel ? '<span class="gh-nav__caret" aria-hidden="true">' + GH.icon('chevdown', 12) + '</span>' : '';
+      var inner = '<span class="gh-nav__label">' + item.label + '</span>' + caret;
+      var pop   = item.panel ? ' aria-haspopup="true" aria-expanded="false" aria-controls="' + pid + '"' : '';
+      var link  = item.href
+        ? '<a class="gh-nav__link" href="' + item.href + '"' + (on ? ' aria-current="page"' : '') + pop + '>' + inner + '</a>'
+        : '<button class="gh-nav__link" type="button"' + pop + '>' + inner + '</button>';
+
+      out += '<li class="' + cls + '"' + (item.panel ? ' data-panel="' + item.panel + '"' : '') + '>' + link + '</li>';
     });
     return out;
   }
 
+  /* ---------- Hai panel thả xuống: #ghMega (Shop by Category) + #ghSeasonal ---------- */
   function megaHtml() {
+    /* --- Panel 1: mega 3 cột danh mục + 1 thẻ khuyến mãi --- */
     var cols = '';
     $.each(GH.megaMenu, function (_, col) {
       var links = '';
       $.each(col.links, function (_, l) {
-        links += '<a class="gh-mega__link" href="' + l[1] + '">' + l[0] + '</a>';
+        links += '<a class="gh-mega__link" href="' + l[1] + '">' +
+                   '<span>' + l[0] + '</span>' + GH.icon('chevright', 13) +
+                 '</a>';
       });
-      cols += '<div class="col-lg-3 col-md-4 mb-4 mb-lg-0">' +
-                '<div class="gh-mega__col-title">' + col.title + '</div>' + links +
-              '</div>';
+      var title = col.href
+        ? '<a class="gh-mega__col-title" href="' + col.href + '">' + col.title + '</a>'
+        : '<div class="gh-mega__col-title">' + col.title + '</div>';
+      cols += '<div class="col-lg-3 col-md-4"><div class="gh-mega__col">' + title + links + '</div></div>';
     });
-    return '<div class="gh-mega" id="ghMega">' +
-             '<div class="gh-container"><div class="gh-mega__inner"><div class="row">' + cols +
-               '<div class="col-lg-3 d-none d-lg-block">' +
-                 '<a class="gh-mega__promo" href="personalise.html">' +
-                   '<div>' +
-                     '<div class="gh-tiny" style="color:var(--gh-gold)">New</div>' +
-                     '<h4>Personalise your gift</h4>' +
-                     '<span class="gh-link-arrow" style="color:#fff">Add an eCard ' + GH.icon('arrow', 15) + '</span>' +
-                   '</div>' +
-                 '</a>' +
-               '</div>' +
-             '</div></div></div>' +
-           '</div>';
+
+    var mega =
+      '<div class="gh-panel gh-mega" id="ghMega" role="region" aria-label="Shop by Category">' +
+        '<div class="gh-container"><div class="gh-mega__inner"><div class="row g-4">' + cols +
+          '<div class="col-lg-3 d-none d-lg-block">' +
+            '<a class="gh-mega__promo" href="personalise.html">' +
+              '<span class="gh-mega__promo-media"><img src="assets/img/p-grand-hamper.jpg" alt="" loading="lazy" decoding="async"></span>' +
+              '<span class="gh-mega__promo-body">' +
+                '<span class="gh-mega__promo-eyebrow">New</span>' +
+                '<span class="gh-mega__promo-title">Personalise your gift</span>' +
+                '<span class="gh-mega__promo-cta">Add an eCard ' + GH.icon('arrow', 15) + '</span>' +
+              '</span>' +
+            '</a>' +
+          '</div>' +
+        '</div></div></div>' +
+      '</div>';
+
+    /* --- Panel 2: Seasonal — 5 chiến dịch mùa vụ dạng thẻ dọc --- */
+    var item = GH.nav.filter(function (n) { return n.panel === 'seasonal'; })[0] || {};
+    var cards = '';
+    $.each(item.children || [], function (_, c) {
+      cards +=
+        '<a class="gh-season__card" href="' + c.href + '">' +
+          '<span class="gh-season__ico" aria-hidden="true">' + GH.icon(c.icon || 'sparkle', 19) + '</span>' +
+          '<span class="gh-season__name">' + c.label +
+            (c.tag ? '<em class="gh-season__tag">' + c.tag + '</em>' : '') +
+          '</span>' +
+          (c.desc ? '<span class="gh-season__desc">' + c.desc + '</span>' : '') +
+          '<span class="gh-season__go" aria-hidden="true">' + GH.icon('arrow', 15) + '</span>' +
+        '</a>';
+    });
+
+    var seasonal =
+      '<div class="gh-panel gh-season" id="ghSeasonal" role="region" aria-label="Seasonal collections">' +
+        '<div class="gh-container"><div class="gh-season__inner">' +
+          '<div class="gh-season__head">' +
+            '<div>' +
+              '<div class="gh-season__eyebrow">Seasonal &amp; Occasions</div>' +
+              (item.intro ? '<p class="gh-season__intro">' + item.intro + '</p>' : '') +
+            '</div>' +
+            '<a class="gh-season__all" href="shop.html">Browse all offers ' + GH.icon('arrow', 15) + '</a>' +
+          '</div>' +
+          '<div class="gh-season__grid">' + cards + '</div>' +
+        '</div></div>' +
+      '</div>';
+
+    return mega + seasonal;
   }
 
+  /* ---------- Panel tìm kiếm ---------- */
   function searchHtml() {
     var chips = ['Hampers', 'Chocolate cake', 'Champagne', 'Spa gift', 'Corporate gifting']
       .map(function (t) { return '<button class="gh-chip" type="button" data-suggest="' + t + '">' + t + '</button>'; })
       .join('');
-    return '<div class="gh-search" id="ghSearch">' +
+    return '<div class="gh-search" id="ghSearch" aria-hidden="true">' +
              '<div class="gh-container">' +
                '<form class="gh-search__field" id="ghSearchForm" role="search">' +
-                 '<input type="search" class="gh-search__input" id="ghSearchInput" placeholder="Search cakes, hampers, experiences…" aria-label="Search">' +
+                 '<span class="gh-search__ico" aria-hidden="true">' + GH.icon('search', 21) + '</span>' +
+                 '<input type="search" class="gh-search__input" id="ghSearchInput" autocomplete="off" ' +
+                   'placeholder="Search cakes, hampers, experiences\u2026" aria-label="Search">' +
+                 '<button class="gh-search__clear" type="button" data-search-clear aria-label="Clear search">' + GH.icon('close', 15) + '</button>' +
+                 '<button class="gh-search__go" type="submit">Search' + GH.icon('arrow', 15) + '</button>' +
                '</form>' +
-               '<div class="gh-search__suggest">' + chips + '</div>' +
+               '<div class="gh-search__meta">' +
+                 '<span class="gh-search__label">Popular searches</span>' +
+                 '<div class="gh-search__suggest">' + chips + '</div>' +
+               '</div>' +
              '</div>' +
            '</div>';
   }
 
-  function offcanvasHtml() {
-    var links = '';
-    $.each(GH.nav, function (_, item) {
+  /* ---------- Offcanvas (mobile) ----------
+     Mỗi mục có submenu -> 1 nhóm accordion (Bootstrap collapse):
+     bấm nhãn để sang trang, bấm mũi tên để mở/đóng danh sách con. */
+  function offcanvasHtml(active) {
+    var groups = '';
+    $.each(GH.nav, function (i, item) {
       if (item.sep) return;
-      links += '<a class="gh-oc__link" href="' + item.href + '">' + item.label + '</a>';
+
+      var kids = navChildren(item);
+      var on   = navIsActive(item, active);
+
+      if (!kids.length) {
+        groups += '<a class="gh-oc__link' + (on ? ' is-active' : '') + '" href="' + item.href + '">' + item.label + '</a>';
+        return;
+      }
+
+      var id = 'ghOcGrp' + i;
+      var subs = '';
+      $.each(kids, function (_, k) {
+        subs += '<a class="gh-oc__sublink' + (k.key && k.key === active ? ' is-active' : '') + '" href="' + k.href + '">' +
+                  '<span>' + k.label + '</span>' + GH.icon('chevright', 13) +
+                '</a>';
+      });
+
+      var toggleAttrs = ' type="button" data-bs-toggle="collapse" data-bs-target="#' + id + '"' +
+                        ' aria-expanded="' + (on ? 'true' : 'false') + '" aria-controls="' + id + '"';
+      var chev = '<span class="gh-oc__chev" aria-hidden="true">' + GH.icon('chevdown', 16) + '</span>';
+
+      var head = item.href
+        ? '<div class="gh-oc__row">' +
+            '<a class="gh-oc__link' + (on ? ' is-active' : '') + '" href="' + item.href + '">' + item.label + '</a>' +
+            '<button class="gh-oc__toggle' + (on ? '' : ' collapsed') + '"' + toggleAttrs +
+              ' aria-label="Show ' + item.label + ' submenu">' + chev + '</button>' +
+          '</div>'
+        : '<button class="gh-oc__link gh-oc__link--full' + (on ? ' is-active' : '') + ' gh-oc__toggle' + (on ? '' : ' collapsed') + '"' +
+            toggleAttrs + '>' + item.label + chev + '</button>';
+
+      groups += '<div class="gh-oc__group">' + head +
+                  '<div class="collapse' + (on ? ' show' : '') + '" id="' + id + '">' +
+                    '<div class="gh-oc__sub">' + subs + '</div>' +
+                  '</div>' +
+                '</div>';
     });
-    var subs = '';
-    $.each(GH.megaMenu[0].links, function (_, l) {
-      subs += '<a class="gh-oc__link" href="' + l[1] + '">' + l[0] + '</a>';
-    });
+
     return '<div class="offcanvas offcanvas-start gh-oc" tabindex="-1" id="ghOffcanvas" aria-label="Menu">' +
-             '<div class="offcanvas-header border-bottom">' +
+             '<div class="offcanvas-header gh-oc__head">' +
                GH.logo({ tag: 'div', className: 'gh-logo--sm' }) +
-               '<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>' +
+               '<button type="button" class="gh-oc__close" data-bs-dismiss="offcanvas" aria-label="Close menu">' + GH.icon('close', 18) + '</button>' +
              '</div>' +
-             '<div class="offcanvas-body">' + links +
-               '<div class="gh-mega__col-title mt-4">Shop by Category</div>' +
-               '<div class="gh-oc__sub">' + subs + '</div>' +
-               '<a class="gh-btn gh-btn--gold gh-btn--block mt-4" href="cart.html">View cart</a>' +
+             '<div class="offcanvas-body gh-oc__body">' +
+               '<div class="gh-oc__quick">' +
+                 '<a class="gh-oc__quicklink" href="cart.html">' + GH.icon('bag', 18) +
+                   '<span>Cart</span><em class="gh-oc__badge" data-oc-count>0</em></a>' +
+                 '<a class="gh-oc__quicklink" href="#" aria-label="Account">' + GH.icon('user', 18) + '<span>Account</span></a>' +
+                 '<button class="gh-oc__quicklink" type="button" data-search-toggle data-bs-dismiss="offcanvas">' +
+                   GH.icon('search', 18) + '<span>Search</span></button>' +
+               '</div>' +
+               '<nav class="gh-oc__nav" aria-label="Mobile">' + groups + '</nav>' +
+               '<div class="gh-oc__foot">' +
+                 '<a class="gh-btn gh-btn--gold gh-btn--block" href="cart.html">View cart</a>' +
+                 '<div class="gh-oc__note">' + GH.icon('truck', 16) +
+                   '<span>Complimentary delivery above ' + GH.money0(C.freeShippingThreshold) + '</span></div>' +
+               '</div>' +
              '</div>' +
            '</div>';
   }
@@ -225,31 +344,37 @@
   GH.renderHeader = function (active) {
     var html =
       '<header class="gh-header" id="ghHeader">' +
-        '<div class="gh-container">' +
-          '<div class="gh-header__top">' +
-            '<div class="gh-header__tools">' +
-              '<button class="gh-iconbtn gh-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#ghOffcanvas" aria-label="Open menu">' + GH.icon('menu', 20) + '</button>' +
-              '<button class="gh-iconbtn" type="button" id="ghSearchToggle" aria-label="Search">' + GH.icon('search', 19) + '</button>' +
-              '<a class="gh-iconbtn d-none d-lg-inline-flex" href="cart.html" aria-label="Cart">' +
-                GH.icon('bag', 19) + '<span class="gh-cart-count" id="ghCartCount">0</span>' +
-              '</a>' +
-            '</div>' +
-            GH.logo() +
-            '<div class="gh-header__tools gh-header__tools--end">' +
-              '<a class="gh-iconbtn d-none d-lg-inline-flex" href="#" aria-label="Account">' + GH.icon('user', 19) + '</a>' +
-              '<a class="gh-iconbtn d-lg-none" href="cart.html" aria-label="Cart">' +
-                GH.icon('bag', 19) + '<span class="gh-cart-count" id="ghCartCountM">0</span>' +
-              '</a>' +
+        '<div class="gh-header__shell">' +
+          '<div class="gh-container">' +
+            '<div class="gh-header__top">' +
+              '<div class="gh-header__tools">' +
+                '<button class="gh-iconbtn gh-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#ghOffcanvas" aria-controls="ghOffcanvas" aria-label="Open menu">' + GH.icon('menu', 20) + '</button>' +
+                '<button class="gh-searchbtn" type="button" id="ghSearchToggle" data-search-toggle aria-expanded="false" aria-controls="ghSearch">' +
+                  GH.icon('search', 17) + '<span class="gh-searchbtn__txt">Search</span>' +
+                  '<kbd class="gh-searchbtn__kbd" aria-hidden="true">/</kbd>' +
+                '</button>' +
+                '<button class="gh-iconbtn gh-searchbtn--icon" type="button" data-search-toggle aria-controls="ghSearch" aria-label="Search">' + GH.icon('search', 19) + '</button>' +
+              '</div>' +
+              '<div class="gh-header__brand">' + GH.logo() + '</div>' +
+              '<div class="gh-header__tools gh-header__tools--end">' +
+                '<a class="gh-iconbtn d-none d-lg-inline-flex" href="#" aria-label="Account">' + GH.icon('user', 19) + '</a>' +
+                '<a class="gh-iconbtn d-none d-lg-inline-flex" href="cart.html" aria-label="Cart">' +
+                  GH.icon('bag', 19) + '<span class="gh-cart-count" id="ghCartCount">0</span>' +
+                '</a>' +
+                '<a class="gh-iconbtn d-lg-none" href="cart.html" aria-label="Cart">' +
+                  GH.icon('bag', 19) + '<span class="gh-cart-count" id="ghCartCountM">0</span>' +
+                '</a>' +
+              '</div>' +
             '</div>' +
           '</div>' +
+          '<nav class="gh-nav" aria-label="Primary">' +
+            '<div class="gh-container"><ul class="gh-nav__list">' + navHtml(active) + '</ul></div>' +
+          '</nav>' +
+          megaHtml() +
+          searchHtml() +
         '</div>' +
-        '<nav class="gh-nav" aria-label="Primary">' +
-          '<div class="gh-container"><ul class="gh-nav__list">' + navHtml(active) + '</ul></div>' +
-        '</nav>' +
-        megaHtml() +
-        searchHtml() +
       '</header>' +
-      offcanvasHtml();
+      offcanvasHtml(active);
 
     $('#gh-header').replaceWith(html);
     GH.syncCartBadge();
@@ -379,46 +504,9 @@
      ====================================================================== */
   $(function () {
 
-    /* Sticky header shadow (query lazily: header được render sau ready) */
-    $(window).on('scroll.ghHeader', function () {
-      $('#ghHeader').toggleClass('is-stuck', window.scrollY > 8);
-    });
-
-    /* Mega menu (hover trên desktop, click trên touch) */
-    var megaTimer;
-    $(document)
-      .on('mouseenter', '.gh-nav__item[data-mega]', function () {
-        clearTimeout(megaTimer);
-        $(this).addClass('is-open');
-        $('#ghMega').addClass('is-open');
-      })
-      .on('mouseleave', '.gh-nav__item[data-mega], #ghMega', function () {
-        megaTimer = setTimeout(function () {
-          $('.gh-nav__item').removeClass('is-open');
-          $('#ghMega').removeClass('is-open');
-        }, 180);
-      })
-      .on('mouseenter', '#ghMega', function () { clearTimeout(megaTimer); });
-
-    /* Search panel */
-    $(document).on('click', '#ghSearchToggle', function (e) {
-      e.preventDefault();
-      var $s = $('#ghSearch');
-      $s.slideToggle(220, function () {
-        if ($s.is(':visible')) $('#ghSearchInput').trigger('focus');
-      });
-    });
-    $(document).on('click', '[data-suggest]', function () {
-      $('#ghSearchInput').val($(this).data('suggest')).trigger('focus');
-    });
-    $(document).on('submit', '#ghSearchForm', function (e) {
-      e.preventDefault();
-      var q = $.trim($('#ghSearchInput').val());
-      window.location.href = 'shop.html' + (q ? '?q=' + encodeURIComponent(q) : '');
-    });
-    $(document).on('keydown', function (e) {
-      if (e.key === 'Escape') { $('#ghSearch').slideUp(180); $('#ghMega').removeClass('is-open'); }
-    });
+    /* Header (sticky/thu gọn khi cuộn, mega menu, panel Seasonal, ô search,
+       offcanvas mobile): xem assets/js/modules/nav.js — handler `scroll.ghHeader`
+       cũng được đăng ký ở đó nên $(window).trigger('scroll.ghHeader') vẫn chạy. */
 
     /* Newsletter */
     $(document).on('submit', '#ghNewsletter', function (e) {

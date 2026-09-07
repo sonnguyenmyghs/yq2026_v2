@@ -2,4 +2,344 @@
    Module CSS: banner
    File riêng của module này — dùng chung design token trong assets/css/style.css
    (--gh-ink, --gh-gold, --gh-cream, --gh-line, --gh-serif, --gh-sans, --gh-ease…)
+
+   Nội dung:
+     1. Hero slider  (.gh-heroslider / .gh-heroslide)
+     2. Điều khiển slider (mũi tên, dot, thanh tiến trình)
+     3. Promo strip 2 cột (.gh-promo)
+     4. Responsive + prefers-reduced-motion
    ========================================================================== */
+
+
+/* ==========================================================================
+   1. HERO SLIDER — khung & slide
+   ========================================================================== */
+
+/* Khung ngoài: nền tối để lúc ảnh chưa tải vẫn ra "chất" khách sạn */
+.gh-heroslider{
+  position: relative;
+  overflow: hidden;
+  background: var(--gh-ink);
+  isolation: isolate;
+}
+
+/* Track dùng CSS grid xếp chồng: mọi slide nằm chung 1 ô -> chiều cao tự
+   bằng slide cao nhất, không cần position:absolute nên không vỡ layout. */
+.gh-heroslider__track{
+  display: grid;
+  grid-template-areas: "stack";
+}
+
+.gh-heroslide{
+  grid-area: stack;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(560px, 82vh, 780px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity .85s var(--gh-ease), visibility 0s linear .85s;
+}
+.gh-heroslide.is-active{
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 2;
+  transition: opacity .85s var(--gh-ease);
+}
+
+/* --- Ảnh nền + hiệu ứng Ken Burns (zoom chậm khi slide đang hiển thị) --- */
+.gh-heroslide__bg{ position: absolute; inset: 0; overflow: hidden; }
+.gh-heroslide__bg img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.09);
+  transition: transform 9s linear;
+  will-change: transform;
+}
+.gh-heroslide.is-active .gh-heroslide__bg img{ transform: scale(1); }
+
+/* Cho phép mỗi slide tự chọn điểm neo ảnh (đẩy chủ thể sang phải, chừa chỗ chữ) */
+.gh-heroslide[data-pos="right"]  .gh-heroslide__bg img{ object-position: 72% center; }
+.gh-heroslide[data-pos="center"] .gh-heroslide__bg img{ object-position: 50% center; }
+.gh-heroslide[data-pos="left"]   .gh-heroslide__bg img{ object-position: 28% center; }
+
+/* --- Scrim: bảo đảm chữ trắng luôn đọc được ở nửa trái --- */
+.gh-heroslide__scrim{
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(16,13,10,.90) 0%, rgba(16,13,10,.74) 38%, rgba(16,13,10,.30) 72%, rgba(16,13,10,.48) 100%),
+    linear-gradient(180deg, rgba(16,13,10,.34) 0%, rgba(16,13,10,0) 30%, rgba(16,13,10,.55) 100%);
+}
+
+/* --- Nội dung chữ --- */
+.gh-heroslide__inner{ position: relative; width: 100%; padding: 92px 0 120px; }
+.gh-heroslide__content{ max-width: 640px; color: #fff; }
+.gh-heroslide__content .gh-eyebrow{ color: var(--gh-gold); margin-bottom: 16px; }
+.gh-heroslide__content h1{
+  color: #fff;
+  font-size: clamp(2.5rem, 5.8vw, 4.4rem);
+  line-height: 1.03;
+  margin: 0 0 20px;
+  text-shadow: 0 2px 26px rgba(0,0,0,.32);
+}
+.gh-heroslide__content p{
+  color: rgba(255,255,255,.88);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 0 32px;
+  text-shadow: 0 1px 14px rgba(0,0,0,.34);
+}
+.gh-heroslide__actions{ display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Vạch vàng nhỏ dưới eyebrow, tạo nhịp giống .gh-rule của trang */
+.gh-heroslide__rule{
+  width: 46px; height: 1px; border: 0; opacity: 1;
+  background: var(--gh-gold);
+  margin: 0 0 22px;
+}
+
+/* --- Hiệu ứng chữ chạy vào theo thứ tự --- */
+@keyframes ghHeroIn{
+  from{ opacity: 0; transform: translateY(20px); }
+  to  { opacity: 1; transform: none; }
+}
+.gh-heroslide__content > *{ opacity: 0; }
+.gh-heroslide.is-active .gh-heroslide__content > *{
+  animation: ghHeroIn .8s var(--gh-ease) forwards;
+}
+.gh-heroslide.is-active .gh-heroslide__content > *:nth-child(1){ animation-delay: .10s; }
+.gh-heroslide.is-active .gh-heroslide__content > *:nth-child(2){ animation-delay: .18s; }
+.gh-heroslide.is-active .gh-heroslide__content > *:nth-child(3){ animation-delay: .26s; }
+.gh-heroslide.is-active .gh-heroslide__content > *:nth-child(4){ animation-delay: .34s; }
+.gh-heroslide.is-active .gh-heroslide__content > *:nth-child(5){ animation-delay: .42s; }
+
+
+/* ==========================================================================
+   2. ĐIỀU KHIỂN SLIDER
+   ========================================================================== */
+
+/* Thanh điều khiển đặt dưới đáy, canh theo .gh-container cho thẳng hàng chữ */
+.gh-heroslider__foot{
+  position: absolute;
+  left: 0; right: 0; bottom: 30px;
+  z-index: 6;
+  pointer-events: none;           /* chỉ các nút bên trong mới nhận chuột */
+}
+.gh-heroslider__ctrl{
+  display: flex; align-items: center; gap: 20px;
+  pointer-events: auto;
+  width: max-content;
+}
+
+.gh-heroslider__arrows{ display: flex; gap: 8px; }
+.gh-heroslider__btn{
+  width: 46px; height: 46px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.36);
+  background: rgba(255,255,255,.10);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  cursor: pointer;
+  transition: background .25s var(--gh-ease), color .25s var(--gh-ease),
+              border-color .25s var(--gh-ease), transform .25s var(--gh-ease);
+}
+.gh-heroslider__btn:hover{
+  background: var(--gh-gold);
+  border-color: var(--gh-gold);
+  color: var(--gh-ink);
+  transform: translateY(-2px);
+}
+.gh-heroslider__btn:active{ transform: translateY(0); }
+
+/* Dot indicator: chấm tròn, chấm đang bật kéo dài thành gạch vàng */
+.gh-heroslider__dots{ display: flex; align-items: center; gap: 9px; }
+.gh-heroslider__dot{
+  width: 9px; height: 9px; padding: 0;
+  border: 0; border-radius: 999px;
+  background: rgba(255,255,255,.38);
+  cursor: pointer;
+  transition: width .35s var(--gh-ease), background .3s var(--gh-ease);
+}
+.gh-heroslider__dot:hover{ background: rgba(255,255,255,.72); }
+.gh-heroslider__dot.is-on{ width: 30px; background: var(--gh-gold); }
+
+/* Bộ đếm 01 / 03 */
+.gh-heroslider__count{
+  font-family: var(--gh-serif);
+  font-size: 14px;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.72);
+  white-space: nowrap;
+}
+.gh-heroslider__count b{ color: #fff; font-weight: 500; }
+
+/* Thanh tiến trình auto-play (JS điều khiển width) */
+.gh-heroslider__prog{
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: rgba(255,255,255,.14);
+  z-index: 6;
+}
+.gh-heroslider__prog i{
+  display: block; height: 100%; width: 0;
+  background: var(--gh-gold);
+}
+/* Khi dừng (hover / reduced-motion) thì thanh tiến trình mờ đi */
+.gh-heroslider.is-paused .gh-heroslider__prog i{ opacity: .45; }
+
+/* Kéo card "Featured" (dùng lại .gh-hero__card của style.css) lên trên slide */
+.gh-heroslider .gh-hero__card{ z-index: 5; bottom: 15%; }
+
+
+/* ==========================================================================
+   3. PROMO STRIP — banner phụ 2 cột
+   ========================================================================== */
+
+.gh-promostrip{ padding: clamp(16px, 3vw, 34px) 0 clamp(46px, 6vw, 78px); }
+
+.gh-promo{
+  position: relative;
+  display: block;
+  height: 100%;
+  min-height: 360px;
+  overflow: hidden;
+  border-radius: var(--gh-radius);
+  color: #fff;
+  box-shadow: var(--gh-shadow-md);
+  isolation: isolate;
+}
+.gh-promo:hover{ color: #fff; }
+
+.gh-promo__bg{ position: absolute; inset: 0; overflow: hidden; }
+.gh-promo__bg img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform .9s var(--gh-ease);
+}
+.gh-promo:hover .gh-promo__bg img{ transform: scale(1.09); }
+
+.gh-promo__scrim{
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(16,13,10,.22) 0%, rgba(16,13,10,.46) 46%, rgba(16,13,10,.86) 100%),
+    linear-gradient(90deg, rgba(16,13,10,.42) 0%, rgba(16,13,10,0) 62%);
+  transition: opacity .5s var(--gh-ease);
+}
+.gh-promo:hover .gh-promo__scrim{ opacity: .92; }
+
+/* Viền vàng mảnh xuất hiện khi hover */
+.gh-promo::after{
+  content: "";
+  position: absolute; inset: 0;
+  border: 1px solid rgba(196,164,106,0);
+  border-radius: inherit;
+  pointer-events: none;
+  transition: border-color .35s var(--gh-ease);
+  z-index: 3;
+}
+.gh-promo:hover::after{ border-color: rgba(196,164,106,.85); }
+
+.gh-promo__body{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  min-height: 360px;
+  padding: clamp(26px, 3.4vw, 40px);
+}
+.gh-promo__body .gh-eyebrow{ color: var(--gh-gold); margin-bottom: 10px; }
+.gh-promo__title{
+  color: #fff;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.16;
+  margin: 0 0 10px;
+}
+.gh-promo__text{
+  color: rgba(255,255,255,.86);
+  font-size: 14.5px;
+  line-height: 1.65;
+  max-width: 360px;
+  margin: 0 0 20px;
+}
+.gh-promo__cta{
+  display: inline-flex; align-items: center; gap: 9px;
+  align-self: flex-start;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gh-gold);
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(196,164,106,.5);
+  transition: color .25s var(--gh-ease), border-color .25s var(--gh-ease), gap .25s var(--gh-ease);
+}
+.gh-promo:hover .gh-promo__cta{ color: #fff; border-color: #fff; gap: 14px; }
+.gh-promo__cta svg{ transition: transform .25s var(--gh-ease); }
+.gh-promo:hover .gh-promo__cta svg{ transform: translateX(3px); }
+
+/* Nhãn góc trên (ví dụ "Limited season") */
+.gh-promo__flag{
+  position: absolute; top: 20px; left: 20px;
+  z-index: 3;
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gh-ink);
+  background: var(--gh-gold);
+  padding: 7px 13px;
+  border-radius: var(--gh-radius-pill);
+}
+
+
+/* ==========================================================================
+   4. RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 991.98px){
+  .gh-heroslide{ min-height: 72vh; }
+  .gh-heroslide__inner{ padding: 76px 0 116px; }
+  .gh-promo, .gh-promo__body{ min-height: 320px; }
+}
+
+@media (max-width: 767.98px){
+  .gh-heroslide{ min-height: 78vh; }
+  .gh-heroslide__inner{ padding: 64px 0 124px; }
+  .gh-heroslide__content p{ font-size: 15px; margin-bottom: 26px; }
+  .gh-heroslide__actions .gh-btn{ flex: 1 1 auto; }
+
+  /* Scrim đậm đều hơn vì chữ trải rộng gần hết khung */
+  .gh-heroslide__scrim{
+    background:
+      linear-gradient(180deg, rgba(16,13,10,.52) 0%, rgba(16,13,10,.42) 34%, rgba(16,13,10,.86) 100%);
+  }
+
+  .gh-heroslider__foot{ bottom: 24px; }
+  .gh-heroslider__ctrl{ gap: 14px; width: 100%; }
+  .gh-heroslider__btn{ width: 42px; height: 42px; }
+  .gh-heroslider__count{ margin-left: auto; }
+
+  .gh-promo, .gh-promo__body{ min-height: 280px; }
+  .gh-promo__text{ margin-bottom: 16px; }
+}
+
+/* Màn hình rất hẹp: giấu bộ đếm cho gọn thanh điều khiển */
+@media (max-width: 400px){
+  .gh-heroslider__count{ display: none; }
+}
+
+/* Người dùng bật "giảm chuyển động": tắt Ken Burns + hiệu ứng chữ,
+   JS cũng tự dừng auto-play (xem assets/js/modules/banner.js). */
+@media (prefers-reduced-motion: reduce){
+  .gh-heroslide__bg img,
+  .gh-heroslide.is-active .gh-heroslide__bg img{ transform: none; transition: none; }
+  .gh-heroslide__content > *{ opacity: 1; }
+  .gh-heroslide.is-active .gh-heroslide__content > *{ animation: none; }
+  .gh-heroslider__prog{ display: none; }
+}

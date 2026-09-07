@@ -1,5 +1,517 @@
 /* ==========================================================================
-   Module CSS: nav
+   Module CSS: nav — Header, nav 2 tầng, mega/seasonal panel, search, offcanvas
    File riêng của module này — dùng chung design token trong assets/css/style.css
    (--gh-ink, --gh-gold, --gh-cream, --gh-line, --gh-serif, --gh-sans, --gh-ease…)
+
+   Nạp SAU style.css nên các quy tắc ở đây đè lên mục 5 + 19 của style.css.
+   Bố cục:
+     .gh-header          -> chỉ giữ chỗ trong luồng (chiều cao KHÔNG đổi) + sticky
+     .gh-header__shell   -> lớp nhìn thấy, absolute, co lại khi cuộn -> không giật layout
    ========================================================================== */
+
+/* ==========================================================================
+   1. Biến riêng của header
+   ========================================================================== */
+:root{
+  /* Chiều cao header khi mở rộng — JS (modules/nav.js) đo lại và ghi đè cho khớp */
+  --gh-head-full: 129px;
+  /* Chiều cao hàng nav chính */
+  --gh-nav-h: 50px;
+  /* Chiều cao header khi đã thu gọn — dùng cho mọi phần tử sticky khác trong site */
+  --gh-header-h: 68px;
+
+  --gh-head-bg:       rgba(246,244,239,.84);
+  --gh-head-bg-solid: rgba(249,247,243,.95);
+}
+
+/* ==========================================================================
+   2. Khung header
+   ========================================================================== */
+.gh-header{
+  position: sticky; top: 0; z-index: 1030;
+  height: var(--gh-head-full);
+  background: none;
+  border-bottom: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  pointer-events: none;            /* phần trong suốt cho click xuyên qua */
+}
+.gh-header.is-stuck{ box-shadow: none; }
+
+/* Màn mờ phía sau khi mở mega / search — tạo chiều sâu, không chặn thao tác */
+.gh-header::after{
+  content: ""; position: fixed; inset: 0; z-index: -1;
+  background: rgba(23,22,19,.30);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .32s var(--gh-ease), visibility .32s var(--gh-ease);
+}
+.gh-header.has-panel::after,
+.gh-header.is-searching::after{ opacity: 1; visibility: visible; }
+
+.gh-header__shell{
+  position: absolute; inset: 0 0 auto 0;
+  pointer-events: auto;
+  background: var(--gh-head-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid var(--gh-line-soft);
+  transition: background .3s var(--gh-ease),
+              box-shadow .35s var(--gh-ease),
+              transform .42s var(--gh-ease);
+}
+.gh-header.is-stuck .gh-header__shell{
+  background: var(--gh-head-bg-solid);
+  box-shadow: 0 1px 2px rgba(23,22,19,.04), 0 10px 30px rgba(23,22,19,.06);
+}
+.gh-header.has-panel .gh-header__shell,
+.gh-header.is-searching .gh-header__shell{ background: var(--gh-head-bg-solid); }
+
+/* ==========================================================================
+   3. Hàng trên: công cụ | logo | tài khoản & giỏ
+   ========================================================================== */
+.gh-header__top{
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 16px;
+  padding: 17px 0 15px;
+  transition: padding .42s var(--gh-ease);
+}
+.gh-header__tools{ display: flex; align-items: center; gap: 6px; min-width: 0; }
+.gh-header__tools--end{ justify-content: flex-end; }
+.gh-header__brand{ display: flex; justify-content: center; min-width: 0; }
+.gh-header__brand .gh-logo{
+  transform-origin: center center;
+  transition: transform .42s var(--gh-ease), opacity .22s var(--gh-ease);
+}
+
+/* Nút icon: nền tròn nở ra khi hover thay vì đổi màu nền đột ngột */
+.gh-iconbtn{
+  width: 42px; height: 42px; border-radius: 50%;
+  color: var(--gh-ink); background: transparent;
+  transition: color .22s var(--gh-ease);
+}
+.gh-iconbtn::before{
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: var(--gh-cream-2);
+  transform: scale(.55); opacity: 0;
+  transition: transform .3s var(--gh-ease), opacity .3s var(--gh-ease);
+}
+.gh-iconbtn > *{ position: relative; z-index: 1; }
+.gh-iconbtn:hover{ background: transparent; color: var(--gh-ink); }
+.gh-iconbtn:hover::before{ transform: scale(1); opacity: 1; }
+.gh-cart-count{ box-shadow: 0 0 0 2px var(--gh-cream); }
+
+/* Ô kích hoạt tìm kiếm dạng pill (desktop) */
+.gh-searchbtn{
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 42px; min-width: 210px; padding: 0 8px 0 15px;
+  border: 1px solid var(--gh-line); border-radius: var(--gh-radius-pill);
+  background: rgba(255,255,255,.55);
+  font-family: var(--gh-sans); font-size: 13px; color: var(--gh-muted);
+  cursor: pointer;
+  transition: border-color .25s var(--gh-ease), background .25s var(--gh-ease),
+              color .25s var(--gh-ease), box-shadow .25s var(--gh-ease);
+}
+.gh-searchbtn .gh-i{ flex: none; color: var(--gh-ink-soft); }
+.gh-searchbtn__txt{ flex: 1 1 auto; text-align: left; }
+.gh-searchbtn__kbd{
+  flex: none; font-family: var(--gh-sans); font-size: 11px; line-height: 1;
+  color: var(--gh-muted); background: #fff;
+  border: 1px solid var(--gh-line); border-radius: 7px; padding: 5px 8px;
+}
+.gh-searchbtn:hover{
+  border-color: var(--gh-ink); background: #fff; color: var(--gh-ink-soft);
+  box-shadow: var(--gh-shadow-sm);
+}
+.gh-header.is-searching .gh-searchbtn{ border-color: var(--gh-gold); background: #fff; }
+.gh-searchbtn--icon{ display: none; }
+
+/* ==========================================================================
+   4. Hàng nav chính — 5 mục, thoáng, có phân cấp
+   ========================================================================== */
+.gh-nav{
+  border-top: 1px solid var(--gh-line-soft);
+  height: var(--gh-nav-h); overflow: hidden;
+  transition: height .42s var(--gh-ease), opacity .3s var(--gh-ease),
+              border-color .3s var(--gh-ease);
+}
+.gh-nav__list{
+  list-style: none; margin: 0; padding: 0; height: var(--gh-nav-h);
+  display: flex; align-items: stretch; justify-content: center;
+  flex-wrap: nowrap; gap: 2px;
+}
+.gh-nav__item{ display: flex; }
+.gh-nav__link{
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 100%; max-width: none; padding: 0 20px;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--gh-sans); font-size: 12px; font-weight: 600;
+  letter-spacing: .13em; text-transform: uppercase;
+  color: var(--gh-ink-soft); white-space: nowrap; text-align: center;
+  position: relative; transition: color .25s var(--gh-ease);
+}
+.gh-nav__link::after{
+  content: ""; position: absolute; left: 20px; right: 20px; bottom: 11px; height: 1.5px;
+  background: var(--gh-gold); border-radius: 2px;
+  transform: scaleX(0); transform-origin: center;
+  transition: transform .32s var(--gh-ease);
+}
+.gh-nav__link:hover{ color: var(--gh-ink); }
+.gh-nav__link:hover::after,
+.gh-nav__item.is-open > .gh-nav__link::after,
+.gh-nav__item.is-active > .gh-nav__link::after{ transform: scaleX(1); }
+.gh-nav__item.is-active > .gh-nav__link{ color: var(--gh-gold-dark); }
+.gh-nav__item.is-open > .gh-nav__link{ color: var(--gh-ink); }
+
+.gh-nav__caret{
+  display: inline-flex; margin-left: -2px; opacity: .45;
+  transition: transform .3s var(--gh-ease), opacity .25s var(--gh-ease);
+}
+.gh-nav__item.is-open .gh-nav__caret{ transform: rotate(180deg); opacity: 1; }
+
+/* ==========================================================================
+   5. Trạng thái thu gọn khi cuộn xuống
+      Chiều cao trong luồng (.gh-header) giữ nguyên -> nội dung không nhảy.
+   ========================================================================== */
+.gh-header.is-compact .gh-header__top{ padding-top: 10px; padding-bottom: 10px; }
+.gh-header.is-compact .gh-header__brand .gh-logo{ transform: scale(.88); }
+.gh-header.is-compact .gh-nav{
+  height: 0; opacity: 0; border-top-color: transparent; pointer-events: none;
+}
+
+/* ==========================================================================
+   6. Panel thả xuống (mega + seasonal)
+   ========================================================================== */
+.gh-panel{
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 1029;
+  background: var(--gh-paper);
+  border-top: 1px solid var(--gh-line-soft);
+  box-shadow: 0 20px 44px rgba(23,22,19,.11);
+  opacity: 0; visibility: hidden; transform: translateY(-10px);
+  transition: opacity .28s var(--gh-ease), transform .32s var(--gh-ease), visibility .32s;
+}
+.gh-panel.is-open{ opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* --- 6a. Mega "Shop by Category" --- */
+.gh-mega__inner{ padding: 38px 0 42px; }
+.gh-mega__col{ display: flex; flex-direction: column; }
+.gh-mega__col-title{
+  display: block; width: 100%;
+  font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gh-gold-dark);
+  padding-bottom: 11px; margin-bottom: 10px;
+  border-bottom: 1px solid var(--gh-line);
+  transition: color .22s var(--gh-ease), border-color .22s var(--gh-ease);
+}
+a.gh-mega__col-title:hover{ color: var(--gh-ink); border-bottom-color: var(--gh-gold); }
+.gh-mega__link{
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 8px 0; font-size: 14px; color: var(--gh-body);
+  border-bottom: 0;
+  transition: color .22s var(--gh-ease), transform .3s var(--gh-ease);
+}
+.gh-mega__link .gh-i{
+  flex: none; color: var(--gh-gold); opacity: 0; transform: translateX(-6px);
+  transition: opacity .25s var(--gh-ease), transform .25s var(--gh-ease);
+}
+.gh-mega__link:hover{ color: var(--gh-ink); padding-left: 0; transform: translateX(4px); }
+.gh-mega__link:hover .gh-i{ opacity: 1; transform: none; }
+
+.gh-mega__promo{
+  position: relative; display: flex; align-items: flex-end;
+  height: 100%; min-height: 226px; padding: 22px;
+  border-radius: var(--gh-radius); overflow: hidden;
+  background: #2E2721; color: #fff;
+}
+.gh-mega__promo-media{ position: absolute; inset: 0; z-index: 0; }
+.gh-mega__promo-media img{
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .9s var(--gh-ease);
+}
+.gh-mega__promo::before{
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(24,20,15,.12) 0%, rgba(24,20,15,.55) 52%, rgba(24,20,15,.88) 100%);
+}
+.gh-mega__promo:hover .gh-mega__promo-media img{ transform: scale(1.06); }
+.gh-mega__promo-body{ position: relative; z-index: 2; display: block; }
+.gh-mega__promo-eyebrow{
+  display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gh-gold); margin-bottom: 9px;
+}
+.gh-mega__promo-title{
+  display: block; font-family: var(--gh-serif); font-size: 1.32rem;
+  color: #fff; line-height: 1.2; margin-bottom: 11px;
+}
+.gh-mega__promo-cta{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #fff;
+}
+.gh-mega__promo-cta .gh-i{ transition: transform .3s var(--gh-ease); }
+.gh-mega__promo:hover .gh-mega__promo-cta .gh-i{ transform: translateX(5px); }
+
+/* --- 6b. Panel "Seasonal" — 5 chiến dịch mùa vụ --- */
+.gh-season__inner{ padding: 32px 0 38px; }
+.gh-season__head{
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 28px;
+  padding-bottom: 18px; margin-bottom: 22px;
+  border-bottom: 1px solid var(--gh-line);
+}
+.gh-season__eyebrow{
+  font-size: 11px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gh-gold-dark);
+}
+.gh-season__intro{
+  margin: 9px 0 0; font-size: 14px; line-height: 1.55;
+  color: var(--gh-muted); max-width: 640px;
+}
+.gh-season__all{
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+  font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gh-ink); padding-bottom: 2px;
+}
+.gh-season__all .gh-i{ transition: transform .3s var(--gh-ease); }
+.gh-season__all:hover{ color: var(--gh-gold-dark); }
+.gh-season__all:hover .gh-i{ transform: translateX(5px); }
+
+.gh-season__grid{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.gh-season__card{
+  position: relative; display: flex; flex-direction: column; gap: 10px;
+  min-height: 176px; padding: 20px 18px 46px;
+  border: 1px solid var(--gh-line); border-radius: var(--gh-radius);
+  background: var(--gh-cream);
+  transition: background .28s var(--gh-ease), border-color .28s var(--gh-ease),
+              transform .3s var(--gh-ease), box-shadow .3s var(--gh-ease);
+}
+.gh-season__card:hover{
+  background: #fff; border-color: var(--gh-gold);
+  transform: translateY(-3px); box-shadow: var(--gh-shadow-md);
+}
+.gh-season__ico{
+  width: 38px; height: 38px; flex: none; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; border: 1px solid var(--gh-line); color: var(--gh-gold-dark);
+  transition: background .28s var(--gh-ease), border-color .28s var(--gh-ease), color .28s var(--gh-ease);
+}
+.gh-season__card:hover .gh-season__ico{
+  background: var(--gh-gold); border-color: var(--gh-gold); color: #fff;
+}
+.gh-season__name{
+  display: block; font-family: var(--gh-serif); font-size: 1.02rem;
+  line-height: 1.25; color: var(--gh-ink);
+}
+.gh-season__tag{
+  display: inline-block; margin-left: 7px; vertical-align: 2px;
+  font-family: var(--gh-sans); font-style: normal; font-size: 9px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--gh-ink);
+  background: var(--gh-gold-soft); border-radius: var(--gh-radius-pill); padding: 3px 8px;
+}
+.gh-season__desc{ font-size: 12.5px; line-height: 1.5; color: var(--gh-muted); }
+.gh-season__go{
+  position: absolute; left: 18px; bottom: 16px; color: var(--gh-gold-dark);
+  opacity: 0; transform: translateX(-6px);
+  transition: opacity .28s var(--gh-ease), transform .28s var(--gh-ease);
+}
+.gh-season__card:hover .gh-season__go{ opacity: 1; transform: none; }
+
+/* ==========================================================================
+   7. Panel tìm kiếm
+   ========================================================================== */
+.gh-search{
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 1031;
+  display: block; padding: 0; overflow: hidden;
+  background: var(--gh-paper);
+  border-top: 1px solid var(--gh-line-soft);
+  box-shadow: 0 20px 44px rgba(23,22,19,.11);
+  max-height: 0; opacity: 0; visibility: hidden;
+  transition: max-height .42s var(--gh-ease), opacity .26s var(--gh-ease), visibility .42s;
+}
+.gh-search.is-open{ max-height: 340px; opacity: 1; visibility: visible; }
+.gh-search > .gh-container{ padding-top: 26px; padding-bottom: 30px; }
+
+.gh-search__field{
+  position: relative; display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--gh-line);
+  transition: border-color .25s var(--gh-ease);
+}
+.gh-search__field:focus-within{ border-bottom-color: var(--gh-gold); }
+.gh-search__ico{ flex: none; display: inline-flex; color: var(--gh-muted); }
+.gh-search__input{
+  flex: 1 1 auto; min-width: 0; width: auto;
+  border: 0; background: transparent; padding: 12px 0 15px;
+  font-family: var(--gh-serif); font-size: clamp(1.25rem, 2.6vw, 1.85rem);
+  line-height: 1.25; color: var(--gh-ink);
+}
+.gh-search__input:focus{ outline: none; border-bottom-color: transparent; }
+.gh-search__input::-webkit-search-cancel-button,
+.gh-search__input::-webkit-search-decoration{ -webkit-appearance: none; appearance: none; }
+.gh-search__clear{
+  flex: none; width: 30px; height: 30px; border: 0; border-radius: 50%;
+  background: var(--gh-cream-2); color: var(--gh-ink-soft); cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  transition: background .22s var(--gh-ease);
+}
+.gh-search__clear:hover{ background: var(--gh-line); }
+.gh-search__field.has-value .gh-search__clear{ display: inline-flex; }
+.gh-search__go{
+  flex: none; display: inline-flex; align-items: center; gap: 8px;
+  height: 42px; padding: 0 22px; border: 0; border-radius: var(--gh-radius-pill);
+  background: var(--gh-ink); color: #fff; cursor: pointer;
+  font-family: var(--gh-sans); font-size: 11.5px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  transition: background .25s var(--gh-ease), color .25s var(--gh-ease);
+}
+.gh-search__go:hover{ background: var(--gh-gold); color: var(--gh-ink); }
+
+.gh-search__meta{
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin-top: 20px;
+}
+.gh-search__label{
+  font-size: 10.5px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gh-muted);
+}
+.gh-search__suggest{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0; }
+.gh-search__suggest .gh-chip{ padding: 8px 15px; font-size: 12.5px; }
+
+/* ==========================================================================
+   8. Trạng thái focus rõ ràng cho bàn phím
+   ========================================================================== */
+.gh-header :focus-visible,
+.gh-oc :focus-visible{
+  outline: 2px solid var(--gh-gold-dark); outline-offset: 2px;
+}
+.gh-nav__link:focus-visible{ outline-offset: -6px; }
+.gh-season__card:focus-visible,
+.gh-mega__promo:focus-visible{ outline-offset: 3px; }
+
+/* ==========================================================================
+   9. Offcanvas (mobile)
+   ========================================================================== */
+.offcanvas.gh-oc{ background: var(--gh-cream); width: min(90vw, 400px); border: 0; }
+.gh-oc__head{
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; border-bottom: 1px solid var(--gh-line);
+}
+.gh-oc__close{
+  width: 42px; height: 42px; flex: none; border: 1px solid var(--gh-line);
+  border-radius: 50%; background: #fff; color: var(--gh-ink); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: border-color .22s var(--gh-ease), color .22s var(--gh-ease);
+}
+.gh-oc__close:hover{ border-color: var(--gh-ink); }
+.gh-oc__body{ padding: 20px 22px 34px; }
+
+/* Liên kết nhanh: giỏ hàng / tài khoản / tìm kiếm */
+.gh-oc__quick{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 22px; }
+.gh-oc__quicklink{
+  position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 7px;
+  padding: 14px 6px; border: 1px solid var(--gh-line);
+  border-radius: var(--gh-radius-sm); background: #fff;
+  color: var(--gh-ink-soft); cursor: pointer;
+  font-family: var(--gh-sans); font-size: 10.5px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  transition: border-color .22s var(--gh-ease), color .22s var(--gh-ease);
+}
+.gh-oc__quicklink:hover{ border-color: var(--gh-ink); color: var(--gh-ink); }
+.gh-oc__quicklink .gh-i{ color: var(--gh-gold-dark); }
+.gh-oc__badge{
+  position: absolute; top: 7px; right: 9px;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  display: none; align-items: center; justify-content: center;
+  background: var(--gh-gold); color: var(--gh-ink);
+  font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: 0;
+  border-radius: var(--gh-radius-pill);
+}
+.gh-oc__badge.is-on{ display: inline-flex; }
+
+/* Danh sách + accordion */
+.gh-oc__nav{ display: block; }
+.gh-oc__group{ border-bottom: 1px solid var(--gh-line-soft); }
+.gh-oc__row{ display: flex; align-items: center; gap: 4px; }
+.gh-oc__link{
+  display: block; flex: 1 1 auto; padding: 14px 0; border-bottom: 0;
+  border: 0; background: none; text-align: left; cursor: pointer;
+  font-family: var(--gh-serif); font-size: 17px; font-weight: 500;
+  color: var(--gh-ink); line-height: 1.3;
+}
+.gh-oc__nav > .gh-oc__link{ border-bottom: 1px solid var(--gh-line-soft); }
+.gh-oc__link--full{ display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.gh-oc__link:hover{ color: var(--gh-gold-dark); }
+.gh-oc__link.is-active{ color: var(--gh-gold-dark); }
+.gh-oc__toggle{
+  flex: none; width: 42px; height: 42px; border: 0; background: none;
+  color: var(--gh-muted); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.gh-oc__chev{ display: inline-flex; transition: transform .3s var(--gh-ease); }
+.gh-oc__toggle[aria-expanded="true"] .gh-oc__chev{ transform: rotate(180deg); color: var(--gh-gold-dark); }
+
+.gh-oc__sub{ display: flex; flex-direction: column; padding: 0 0 12px; }
+.gh-oc__sublink{
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; font-size: 14px; color: var(--gh-body);
+  border-radius: var(--gh-radius-sm);
+  transition: background .22s var(--gh-ease), color .22s var(--gh-ease);
+}
+.gh-oc__sublink .gh-i{ flex: none; opacity: .3; }
+.gh-oc__sublink:hover,
+.gh-oc__sublink.is-active{ background: #fff; color: var(--gh-ink); }
+.gh-oc__sublink.is-active{ font-weight: 500; }
+
+.gh-oc__foot{ margin-top: 26px; }
+.gh-oc__note{
+  display: flex; align-items: center; gap: 9px; margin-top: 14px;
+  font-size: 12.5px; color: var(--gh-muted);
+}
+.gh-oc__note .gh-i{ flex: none; color: var(--gh-gold-dark); }
+
+/* ==========================================================================
+   10. Responsive
+   ========================================================================== */
+@media (max-width: 1399.98px){
+  .gh-nav__link{ padding: 0 17px; }
+  .gh-nav__link::after{ left: 17px; right: 17px; }
+}
+@media (max-width: 1199.98px){
+  .gh-nav__link{ padding: 0 13px; font-size: 11.5px; letter-spacing: .11em; }
+  .gh-nav__link::after{ left: 13px; right: 13px; }
+  .gh-searchbtn{ min-width: 172px; }
+  .gh-searchbtn__kbd{ display: none; }
+  .gh-season__card{ padding: 17px 15px 42px; min-height: 168px; }
+  .gh-season__name{ font-size: .95rem; }
+  .gh-season__desc{ font-size: 12px; }
+  .gh-mega__inner{ padding: 32px 0 36px; }
+}
+
+/* < 992px: chuyển sang offcanvas, header còn 1 hàng */
+@media (max-width: 991.98px){
+  :root{ --gh-head-full: 68px; --gh-header-h: 68px; }
+  .gh-header__top{ padding: 13px 0; }
+  .gh-header.is-compact .gh-header__top{ padding: 13px 0; }
+  .gh-header.is-compact .gh-header__brand .gh-logo{ transform: none; }
+  /* Trên mobile: cuộn xuống ẩn hẳn thanh header, cuộn lên hiện lại */
+  .gh-header.is-compact .gh-header__shell{ transform: translateY(-100%); }
+  .gh-searchbtn{ display: none; }
+  .gh-searchbtn--icon{ display: inline-flex; }
+  .gh-search > .gh-container{ padding-top: 20px; padding-bottom: 24px; }
+  .gh-search.is-open{ max-height: 300px; }
+}
+
+@media (max-width: 575.98px){
+  :root{ --gh-head-full: 66px; --gh-header-h: 66px; }
+  .gh-header__top{ gap: 8px; }
+  .gh-header__tools{ gap: 2px; }
+  .gh-iconbtn{ width: 38px; height: 38px; }
+  .gh-oc__body{ padding: 18px 18px 30px; }
+  .gh-oc__head{ padding: 14px 18px; }
+  .gh-search__go{ padding: 0 16px; }
+  .gh-search__go .gh-i{ display: none; }
+}
+
+/* Tôn trọng prefers-reduced-motion: bỏ luôn hiệu ứng thu gọn */
+@media (prefers-reduced-motion: reduce){
+  .gh-header__shell,
+  .gh-header__top,
+  .gh-nav,
+  .gh-header__brand .gh-logo{ transition: none; }
+}

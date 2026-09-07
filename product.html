@@ -62,10 +62,17 @@
           </div>
         </div>
 
-        <button class="gh-btn gh-btn--block gh-btn--lg" type="button" id="pdpAdd">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-          <span id="pdpAddLabel">Add to cart</span>
-        </button>
+        <!-- Hàng nút mua: Add to cart (phụ) + Buy Now (chính, mua nhanh) -->
+        <div class="gh-buyrow" id="pdpBuyActions">
+          <button class="gh-btn gh-btn--block gh-btn--lg" type="button" id="pdpAdd">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+            <span id="pdpAddLabel">Add to cart</span>
+          </button>
+          <button class="gh-btn gh-btn--gold gh-btn--block gh-btn--lg gh-buynow" type="button" id="pdpBuyNow">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg>
+            <span id="pdpBuyLabel">Buy Now</span>
+          </button>
+        </div>
 
         <div class="gh-trust">
           <span data-trust="check">In stock</span>
@@ -117,6 +124,21 @@
 </section>
 
 <div id="gh-footer"></div>
+
+<!-- Sticky buy bar (chỉ hiện ở mobile <992px khi đã cuộn qua nút mua chính) -->
+<div class="gh-buybar" id="pdpBuyBar" aria-hidden="true">
+  <div class="gh-buybar__info">
+    <span class="gh-buybar__name" id="pdpBarName"></span>
+    <span class="gh-buybar__meta">
+      <span class="gh-buybar__price" id="pdpBarPrice"></span>
+      <span class="gh-buybar__opt" id="pdpBarOpt"></span>
+    </span>
+  </div>
+  <button class="gh-btn gh-btn--gold" type="button" id="pdpBarBuy">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg>
+    <span>Buy Now</span>
+  </button>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
