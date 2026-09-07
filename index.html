@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gifts from Grand Hyatt Singapore — The Online Shop</title>
+<meta name="description" content="Curated cakes, artisan hampers, and premium wines — crafted in our kitchens and delivered with care. Shop gifts and experiences from Grand Hyatt Singapore.">
+
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="gh-header"></div>
+
+<!-- ============================ HERO ============================ -->
+<section class="gh-hero">
+  <div class="gh-hero__bg">
+    <div class="gh-media">
+      <img src="assets/img/hero-lounge.jpg" alt="Grand Hyatt Singapore lounge" fetchpriority="high" decoding="async">
+    </div>
+  </div>
+  <span class="gh-hero__scrim"></span>
+
+  <div class="gh-hero__inner">
+    <div class="gh-container">
+      <div class="gh-hero__content">
+        <div class="gh-eyebrow">Grand Hyatt Singapore</div>
+        <h1>Gifts of<br>Distinction</h1>
+        <p>Curated cakes, artisan hampers, and premium wines — crafted in our kitchens and delivered with care.</p>
+        <div class="gh-hero__actions">
+          <a class="gh-btn gh-btn--gold gh-btn--lg" href="shop.html">Shop Now
+            <svg class="gh-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+          </a>
+          <a class="gh-btn gh-btn--light gh-btn--lg" href="shop.html?cat=celebration">View Hampers</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a class="gh-hero__card" href="product.html?id=the-grand-hamper">
+    <div class="gh-hero__card-media gh-media">
+      <img src="assets/img/p-grand-hamper.jpg" alt="The Grand Hamper" loading="lazy" decoding="async">
+    </div>
+    <div class="lbl">Featured</div>
+    <h4 class="gh-serif">The Grand Hamper</h4>
+    <div class="sub">Seasonal selection · 12 items</div>
+    <div class="price">From $218</div>
+  </a>
+
+  <div class="gh-hero__scroll"><span>Scroll</span><span class="bar"></span></div>
+</section>
+
+<!-- ============================ USP STRIP ============================ -->
+<section class="gh-section--tight" style="background:var(--gh-paper);border-bottom:1px solid var(--gh-line-soft)">
+  <div class="gh-container">
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="gh-usp gh-reveal">
+          <span class="gh-usp__icon" data-icon="truck"></span>
+          <div><h4>Same-day delivery</h4><p>Order before 2pm, islandwide.</p></div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="gh-usp gh-reveal" data-delay="80">
+          <span class="gh-usp__icon" data-icon="leaf"></span>
+          <div><h4>Crafted in-house</h4><p>By our pastry team, daily.</p></div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="gh-usp gh-reveal" data-delay="160">
+          <span class="gh-usp__icon" data-icon="gift"></span>
+          <div><h4>Personalised gifting</h4><p>Add an eCard and message.</p></div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="gh-usp gh-reveal" data-delay="240">
+          <span class="gh-usp__icon" data-icon="lock"></span>
+          <div><h4>Secure checkout</h4><p>VISA, Mastercard, AMEX, PayNow.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FEATURED ============================ -->
+<section class="gh-section">
+  <div class="gh-container">
+    <div class="gh-section-head d-flex align-items-end justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="gh-eyebrow gh-eyebrow--gold">Guest favourites</div>
+        <hr class="gh-rule">
+        <h2 class="gh-h2">The season’s most gifted</h2>
+      </div>
+      <a class="gh-link-arrow" href="shop.html">View all products
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+      </a>
+    </div>
+    <div class="row g-4" id="homeFeatured"></div>
+  </div>
+</section>
+
+<!-- ============================ OCCASIONS ============================ -->
+<section class="gh-section" style="background:var(--gh-paper)">
+  <div class="gh-container">
+    <div class="gh-section-head text-center">
+      <div class="gh-eyebrow gh-eyebrow--gold">Shop by occasion</div>
+      <hr class="gh-rule gh-rule--center">
+      <h2 class="gh-h2">Made for every celebration</h2>
+    </div>
+    <div class="row g-4" id="homeOccasions"></div>
+  </div>
+</section>
+
+<!-- ============================ EDITORIAL ============================ -->
+<section class="gh-section">
+  <div class="gh-container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <div class="gh-media gh-zoom gh-reveal" style="aspect-ratio:4/3;border-radius:var(--gh-radius)">
+          <img src="assets/img/editorial-cake.jpg" alt="Chocolate cake crafted in our kitchens" loading="lazy" decoding="async">
+        </div>
+      </div>
+      <div class="col-lg-6 ps-lg-5">
+        <div class="gh-reveal" data-delay="120">
+          <div class="gh-eyebrow gh-eyebrow--gold">Our kitchens</div>
+          <hr class="gh-rule">
+          <h2 class="gh-h2 mb-3">Crafted by hand,<br>delivered with care</h2>
+          <p class="gh-lead mb-4">
+            Every cake, praline, and hamper begins in the kitchens of Grand Hyatt Singapore.
+            Our pastry team bakes to order each morning, and our sommelier selects every bottle
+            that leaves our cellar — so what arrives at the door carries the same standard as
+            what is served at our tables.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a class="gh-btn" href="shop.html?cat=cakes">Shop Cakes &amp; Pastries</a>
+            <a class="gh-btn gh-btn--ghost" href="experiences.html">Explore Experiences</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ EXPERIENCES ============================ -->
+<section class="gh-section" style="background:var(--gh-cream-2)">
+  <div class="gh-container">
+    <div class="gh-section-head d-flex align-items-end justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="gh-eyebrow gh-eyebrow--gold">Unforgettable experiences</div>
+        <hr class="gh-rule">
+        <h2 class="gh-h2">Selling memories, not just products</h2>
+      </div>
+      <a class="gh-link-arrow" href="experiences.html">All experiences
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+      </a>
+    </div>
+    <div class="row g-4" id="homeExperiences"></div>
+  </div>
+</section>
+
+<!-- ============================ HAMPERS ============================ -->
+<section class="gh-section">
+  <div class="gh-container">
+    <div class="gh-section-head d-flex align-items-end justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="gh-eyebrow gh-eyebrow--gold">Featured hampers</div>
+        <hr class="gh-rule">
+        <h2 class="gh-h2">Guest favorites</h2>
+      </div>
+      <a class="gh-link-arrow" href="shop.html?cat=celebration">View all hampers
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+      </a>
+    </div>
+    <div class="row g-4" id="homeHampers"></div>
+  </div>
+</section>
+
+<!-- ============================ PERSONALISE CTA ============================ -->
+<section class="gh-section--tight">
+  <div class="gh-container">
+    <div class="gh-feature gh-reveal">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="lbl">New feature</span>
+          <h3 class="gh-h3">Personalise your gift before checkout</h3>
+          <p class="mb-0">
+            Choose an eCard design, write a personal message, and preview it live — turning a
+            transaction into a moment the recipient remembers. Prefer something tangible?
+            Add a physical card for $5.
+          </p>
+        </div>
+        <div class="col-lg-5 text-lg-end">
+          <a class="gh-btn gh-btn--gold gh-btn--lg" href="personalise.html">Try personalisation
+            <svg class="gh-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TESTIMONIALS ============================ -->
+<section class="gh-section">
+  <div class="gh-container">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="gh-quote gh-reveal">
+          <div class="gh-stars" data-stars="5"></div>
+          <p>“The hamper arrived beautifully wrapped, and the eCard message made my mother cry. Worth every dollar.”</p>
+          <cite>Rachel T. — Corporate client</cite>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="gh-quote gh-reveal" data-delay="90">
+          <div class="gh-stars" data-stars="5"></div>
+          <p>“We ordered forty gift sets for our year-end clients. Delivery was flawless and the team handled everything.”</p>
+          <cite>Marcus L. — Head of Partnerships</cite>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="gh-quote gh-reveal" data-delay="180">
+          <div class="gh-stars" data-stars="5"></div>
+          <p>“The chocolate cake is the same one we had at the hotel. Same-day delivery, still perfect on arrival.”</p>
+          <cite>Priya S. — Repeat guest</cite>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="gh-footer"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pages.js"></script>
+<script>
+  jQuery(function ($) {
+    GH.renderHeader('home');
+    GH.renderFooter();
+    $('[data-icon]').each(function () { $(this).html(GH.icon($(this).data('icon'), 19)); });
+    $('[data-stars]').each(function () {
+      var n = $(this).data('stars'), h = '';
+      for (var i = 0; i < n; i++) h += GH.icon('star', 14);
+      $(this).html(h);
+    });
+    GH.initHome();
+  });
+</script>
+</body>
+</html>

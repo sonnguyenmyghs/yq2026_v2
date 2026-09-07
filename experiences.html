@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unforgettable Experiences — Grand Hyatt Singapore</title>
+<meta name="description" content="From world-class dining to rejuvenating spa treatments — gift memories, not just products.">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="gh-header"></div>
+
+<section class="gh-pagehead">
+  <div class="gh-container">
+    <div class="row align-items-end g-4">
+      <div class="col-lg-7">
+        <div class="gh-eyebrow gh-eyebrow--gold">Experiences</div>
+        <h1 class="gh-serif">Unforgettable Experiences</h1>
+        <p class="gh-lead mb-0">
+          From world-class dining to rejuvenating spa treatments — selling memories, not just products.
+          Clear pricing makes gifting a luxury service as simple as sending a card.
+        </p>
+      </div>
+      <div class="col-lg-5 text-lg-end">
+        <a class="gh-btn gh-btn--ghost" href="personalise.html">Personalise an experience gift</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-bottom:clamp(56px,8vw,104px)">
+  <div class="gh-container">
+    <div class="row g-4" id="expGrid"></div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="gh-section" style="background:var(--gh-paper)">
+  <div class="gh-container gh-container--narrow">
+    <div class="gh-section-head text-center">
+      <div class="gh-eyebrow gh-eyebrow--gold">How it works</div>
+      <hr class="gh-rule gh-rule--center">
+      <h2 class="gh-h2">Three steps to a memorable gift</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="gh-panel h-100 gh-reveal">
+          <div class="gh-usp__icon mb-3" data-icon="sparkle"></div>
+          <h4 class="gh-h3 mb-2" style="font-size:1.15rem">1. Select</h4>
+          <p class="gh-small gh-muted mb-0">Choose from dining, spa, afternoon tea, wine tasting, or a full staycation.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="gh-panel h-100 gh-reveal" data-delay="100">
+          <div class="gh-usp__icon mb-3" data-icon="gift"></div>
+          <h4 class="gh-h3 mb-2" style="font-size:1.15rem">2. Personalise</h4>
+          <p class="gh-small gh-muted mb-0">Pick an eCard design, write your message, and preview it live before paying.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="gh-panel h-100 gh-reveal" data-delay="200">
+          <div class="gh-usp__icon mb-3" data-icon="mail"></div>
+          <h4 class="gh-h3 mb-2" style="font-size:1.15rem">3. Deliver</h4>
+          <p class="gh-small gh-muted mb-0">Send instantly by email, or post a physical card for $5 in 2–3 days.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="gh-footer"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pages.js"></script>
+<script>
+  jQuery(function ($) {
+    GH.renderHeader('experiences');
+    GH.renderFooter();
+    $('[data-icon]').each(function () { $(this).html(GH.icon($(this).data('icon'), 19)); });
+    GH.initExperiences();
+  });
+</script>
+</body>
+</html>

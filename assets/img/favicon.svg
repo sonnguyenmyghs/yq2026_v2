@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="13" fill="#171613"/>
+  <rect x="5.5" y="5.5" width="53" height="53" rx="9" fill="none" stroke="#C4A46A" stroke-width="1.2" opacity=".55"/>
+  <text x="32" y="42.5" text-anchor="middle" font-family="Playfair Display, Georgia, serif"
+        font-size="26" font-weight="500" fill="#C4A46A" letter-spacing="1">GH</text>
+</svg>
