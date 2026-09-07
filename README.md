@@ -111,7 +111,7 @@ GH.logoImage      = 'assets/img/logo-grand-hyatt.png';       // nền sáng (hea
 GH.logoImageLight = 'assets/img/logo-grand-hyatt-white.png'; // nền tối (footer)
 ```
 
-**Ảnh** — 28 ảnh trong `assets/img/`, đặt tên theo nhóm: `hero-*`, `banner-*`, `p-*` (product),
+**Ảnh** — 29 ảnh trong `assets/img/`, đặt tên theo nhóm: `hero-*`, `banner-*`, `p-*` (product),
 `e-*` (experience), `o-*` (occasion). Đổi ảnh = thay file cùng tên, hoặc sửa field `img`:
 
 ```js
