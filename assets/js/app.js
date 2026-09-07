@@ -254,6 +254,7 @@
     $('#gh-header').replaceWith(html);
     GH.syncCartBadge();
     $(window).trigger('scroll.ghHeader');
+    $(document).trigger('gh:header-ready');
   };
 
   GH.renderFooter = function () {
@@ -324,6 +325,7 @@
       '</div></footer>';
 
     $('#gh-footer').replaceWith(html);
+    $(document).trigger('gh:layout-ready');
   };
 
   /* ======================================================================
