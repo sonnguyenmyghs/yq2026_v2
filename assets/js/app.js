@@ -1,45 +1,45 @@
 /* ==========================================================================
-   GH eStore — Core app (helpers, cart, layout, UI behaviours)
+   YQ eStore — Core app (helpers, cart, layout, UI behaviours)
    Requires: jQuery 3, Bootstrap 5, data.js
    ========================================================================== */
 (function ($) {
   'use strict';
 
-  var C = GH.config;
+  var C = YQ.config;
 
   /* ======================================================================
      1. Helpers
      ====================================================================== */
-  GH.money = function (n) {
+  YQ.money = function (n) {
     return C.currencySymbol + Number(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
-  GH.money0 = function (n) {
+  YQ.money0 = function (n) {
     return C.currencySymbol + Math.round(Number(n || 0)).toLocaleString('en-US');
   };
-  GH.param = function (key) {
+  YQ.param = function (key) {
     var m = new RegExp('[?&]' + key + '=([^&#]*)').exec(window.location.search);
     return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : null;
   };
   /* ---------- Đường dẫn khi trang nằm trong thư mục con ----------
      Quy ước: MỌI href/src trong data.js và các hàm render đều viết theo GỐC SITE
      ('shop.html', 'assets/img/x.jpg'). Trang trong thư mục con khai báo
-     <html data-root="../">, và GH.localise() dịch lại đúng lúc chèn vào DOM.
-     Trang ở gốc thì GH.root = '' nên cả hai hàm là no-op.
+     <html data-root="../">, và YQ.localise() dịch lại đúng lúc chèn vào DOM.
+     Trang ở gốc thì YQ.root = '' nên cả hai hàm là no-op.
 
-     Chèn HTML có link/ảnh -> bọc GH.localise(); một giá trị lẻ -> GH.url().
+     Chèn HTML có link/ảnh -> bọc YQ.localise(); một giá trị lẻ -> YQ.url().
   */
-  GH.root = document.documentElement.getAttribute('data-root') || '';
+  YQ.root = document.documentElement.getAttribute('data-root') || '';
 
-  GH.url = function (h) {
-    if (!GH.root || !h) return h;
-    return /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/|#)/i.test(h) ? h : GH.root + h;
+  YQ.url = function (h) {
+    if (!YQ.root || !h) return h;
+    return /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/|#)/i.test(h) ? h : YQ.root + h;
   };
 
-  GH.localise = function (html) {
-    if (!GH.root || !html) return html;
+  YQ.localise = function (html) {
+    if (!YQ.root || !html) return html;
     return String(html).replace(
       /\s(href|src)="(?![a-z][a-z0-9+.-]*:|\/\/|\/|#)([^"]*)"/gi,
-      function (m, attr, path) { return ' ' + attr + '="' + GH.root + path + '"'; }
+      function (m, attr, path) { return ' ' + attr + '="' + YQ.root + path + '"'; }
     );
   };
 
@@ -47,43 +47,43 @@
                 'July','August','September','October','November','December'];
 
   /** ISO 'YYYY-MM-DD' -> '02-February-1994'. Chuỗi khác thì trả nguyên. */
-  GH.dateLabel = function (iso) {
+  YQ.dateLabel = function (iso) {
     var p = String(iso || '').split('-');
     if (p.length !== 3 || !p[0] || !p[1] || !p[2]) return iso || '';
     return p[2] + '-' + (MONTHS[+p[1] - 1] || p[1]) + '-' + p[0];
   };
 
-  GH.escape = function (s) {
+  YQ.escape = function (s) {
     return $('<div/>').text(s == null ? '' : s).html();
   };
-  GH.product = function (id) {
-    return GH.products.filter(function (p) { return p.id === id; })[0] || null;
+  YQ.product = function (id) {
+    return YQ.products.filter(function (p) { return p.id === id; })[0] || null;
   };
-  GH.experience = function (id) {
-    return GH.experiences.filter(function (e) { return e.id === id; })[0] || null;
+  YQ.experience = function (id) {
+    return YQ.experiences.filter(function (e) { return e.id === id; })[0] || null;
   };
 
   /** Ruột của khối media: ảnh thật nếu có `img`, không thì placeholder gradient. */
-  GH.mediaInner = function (item, opts) {
+  YQ.mediaInner = function (item, opts) {
     opts = opts || {};
     if (item && item.img) {
-      return '<img src="' + item.img + '" alt="' + GH.escape(item.name || '') + '"' +
+      return '<img src="' + item.img + '" alt="' + YQ.escape(item.name || '') + '"' +
              (opts.eager ? '' : ' loading="lazy"') + ' decoding="async">';
     }
-    return '<span class="gh-media__ph ph-' + ((item && item.tone) || 3) + '"></span>';
+    return '<span class="yq-media__ph ph-' + ((item && item.tone) || 3) + '"></span>';
   };
 
   /** Khối media hoàn chỉnh. */
-  GH.media = function (item, extraClass, opts) {
-    return '<div class="gh-media ' + (extraClass || '') + '">' + GH.mediaInner(item, opts) + '</div>';
+  YQ.media = function (item, extraClass, opts) {
+    return '<div class="yq-media ' + (extraClass || '') + '">' + YQ.mediaInner(item, opts) + '</div>';
   };
 
   /* ======================================================================
      2. Cart store (localStorage)
      ====================================================================== */
-  var KEY = 'gh_cart_v4';
+  var KEY = 'yq_cart_v4';
 
-  GH.cart = {
+  YQ.cart = {
     items: [],
 
     load: function () {
@@ -96,7 +96,7 @@
     },
     save: function () {
       try { localStorage.setItem(KEY, JSON.stringify(this.items)); } catch (e) {}
-      if (!this.quiet) $(document).trigger('gh:cart-changed');
+      if (!this.quiet) $(document).trigger('yq:cart-changed');
     },
     key: function (id, optId) { return id + '::' + (optId || 'default'); },
 
@@ -138,11 +138,11 @@
     },
     clear: function () { this.items = []; this.save(); },
 
-    /* Nạp giỏ hàng mẫu từ GH.demoCart (xem chú thích trong data.js).
+    /* Nạp giỏ hàng mẫu từ YQ.demoCart (xem chú thích trong data.js).
        Mặc định chỉ chạy khi localStorage chưa có key nào; seed(true) để ép nạp lại. */
     seed: function (force) {
       var self = this;
-      var list = GH.demoCart || [];
+      var list = YQ.demoCart || [];
       if (!list.length) return this;
 
       if (!force) {
@@ -159,7 +159,7 @@
         if (row.addonFee)   extras.addonFee   = row.addonFee;
 
         if (row.exp) {
-          var e = GH.experience(row.exp);
+          var e = YQ.experience(row.exp);
           if (!e) return;
           self.add(
             { id: e.id, name: e.name, tone: e.tone, price: e.price, img: e.img, catLabel: 'Experience' },
@@ -169,7 +169,7 @@
           return;
         }
 
-        var p = GH.product(row.id);
+        var p = YQ.product(row.id);
         if (!p) return;
         var opt = (p.options || []).filter(function (o) { return o.id === row.optionId; })[0];
         self.add(p, opt, row.qty || 1, extras);
@@ -194,27 +194,27 @@
     total: function () { return this.subtotal() + this.shipping() + this.tax(); },
     toFree: function () { return Math.max(0, C.freeShippingThreshold - this.subtotal()); }
   };
-  GH.cart.load();
-  if (GH.param('demo')) GH.cart.seed(true);   // ?demo=1 → nạp lại giỏ hàng mẫu
+  YQ.cart.load();
+  if (YQ.param('demo')) YQ.cart.seed(true);   // ?demo=1 → nạp lại giỏ hàng mẫu
 
   /* ======================================================================
      2b. Profile store (localStorage) — hồ sơ thành viên
      ====================================================================== */
-  var PKEY = 'gh_profile_v1';
+  var PKEY = 'yq_profile_v1';
 
-  GH.profile = {
+  YQ.profile = {
     data: {},
 
     load: function () {
       var raw = null;
       try { raw = localStorage.getItem(PKEY); } catch (e) {}
       try { this.data = JSON.parse(raw) || null; } catch (e) { this.data = null; }
-      if (!this.data) this.data = $.extend({}, GH.demoProfile || {});   // lần đầu: hồ sơ mẫu
+      if (!this.data) this.data = $.extend({}, YQ.demoProfile || {});   // lần đầu: hồ sơ mẫu
       return this.data;
     },
     save: function () {
       try { localStorage.setItem(PKEY, JSON.stringify(this.data)); } catch (e) {}
-      $(document).trigger('gh:profile-changed', [this.data]);
+      $(document).trigger('yq:profile-changed', [this.data]);
     },
     get: function (key) {
       var v = this.data[key];
@@ -229,7 +229,7 @@
     /** Bao nhiêu % số trường đã điền — dùng cho thanh "profile complete". */
     completeness: function () {
       var all = [];
-      $.each(GH.profileGroups || [], function (_, g) {
+      $.each(YQ.profileGroups || [], function (_, g) {
         $.each(g.fields, function (_, f) { all.push(f.key); });
       });
       if (!all.length) return 100;
@@ -239,7 +239,7 @@
     },
     missing: function () {
       var self = this, out = [];
-      $.each(GH.profileGroups || [], function (_, g) {
+      $.each(YQ.profileGroups || [], function (_, g) {
         $.each(g.fields, function (_, f) {
           if (!f.ro && $.trim(self.get(f.key)) === '') out.push(f.label);
         });
@@ -247,20 +247,20 @@
       return out;
     }
   };
-  GH.profile.load();
+  YQ.profile.load();
 
   /* ======================================================================
      3. Toast
      ====================================================================== */
-  GH.toast = function (msg, linkText, linkHref) {
-    var $wrap = $('.gh-toast-wrap');
-    if (!$wrap.length) $wrap = $('<div class="gh-toast-wrap"></div>').appendTo('body');
+  YQ.toast = function (msg, linkText, linkHref) {
+    var $wrap = $('.yq-toast-wrap');
+    if (!$wrap.length) $wrap = $('<div class="yq-toast-wrap"></div>').appendTo('body');
 
     var $t = $(
-      '<div class="gh-toast">' +
-        '<span class="gh-toast__icon">' + GH.icon('check', 18) + '</span>' +
-        '<span>' + GH.escape(msg) + '</span>' +
-        (linkText ? '<a href="' + GH.url(linkHref) + '">' + GH.escape(linkText) + '</a>' : '') +
+      '<div class="yq-toast">' +
+        '<span class="yq-toast__icon">' + YQ.icon('check', 18) + '</span>' +
+        '<span>' + YQ.escape(msg) + '</span>' +
+        (linkText ? '<a href="' + YQ.url(linkHref) + '">' + YQ.escape(linkText) + '</a>' : '') +
       '</div>'
     ).appendTo($wrap);
 
@@ -284,12 +284,12 @@
   }
 
   /** id của panel thả xuống ứng với loại panel. */
-  function panelId(kind) { return kind === 'seasonal' ? 'ghSeasonal' : 'ghMega'; }
+  function panelId(kind) { return kind === 'seasonal' ? 'yqSeasonal' : 'yqMega'; }
 
   /** Danh sách con của một mục nav: children thủ công, hoặc lấy từ 1 cột mega. */
   function navChildren(item) {
     if (item.children) return item.children;
-    var col = (item.megaIndex != null) ? GH.megaMenu[item.megaIndex] : null;
+    var col = (item.megaIndex != null) ? YQ.megaMenu[item.megaIndex] : null;
     if (!col) return [];
     return col.links.map(function (l) { return { label: l[0], href: l[1] }; });
   }
@@ -299,51 +299,51 @@
      Mục có panel: dùng <a> nếu có trang thật, dùng <button> nếu chỉ là nhóm. */
   function navHtml(active) {
     var out = '';
-    $.each(GH.nav, function (_, item) {
+    $.each(YQ.nav, function (_, item) {
       if (item.sep) return;                       // separator của bản cũ: bỏ
 
       var on    = navIsActive(item, active);
       var pid   = item.panel ? panelId(item.panel) : '';
-      var cls   = 'gh-nav__item' + (on ? ' is-active' : '') + (item.panel ? ' gh-nav__item--panel' : '');
-      var caret = item.panel ? '<span class="gh-nav__caret" aria-hidden="true">' + GH.icon('chevdown', 12) + '</span>' : '';
-      var inner = '<span class="gh-nav__label">' + item.label + '</span>' + caret;
+      var cls   = 'yq-nav__item' + (on ? ' is-active' : '') + (item.panel ? ' yq-nav__item--panel' : '');
+      var caret = item.panel ? '<span class="yq-nav__caret" aria-hidden="true">' + YQ.icon('chevdown', 12) + '</span>' : '';
+      var inner = '<span class="yq-nav__label">' + item.label + '</span>' + caret;
       var pop   = item.panel ? ' aria-haspopup="true" aria-expanded="false" aria-controls="' + pid + '"' : '';
       var link  = item.href
-        ? '<a class="gh-nav__link" href="' + item.href + '"' + (on ? ' aria-current="page"' : '') + pop + '>' + inner + '</a>'
-        : '<button class="gh-nav__link" type="button"' + pop + '>' + inner + '</button>';
+        ? '<a class="yq-nav__link" href="' + item.href + '"' + (on ? ' aria-current="page"' : '') + pop + '>' + inner + '</a>'
+        : '<button class="yq-nav__link" type="button"' + pop + '>' + inner + '</button>';
 
       out += '<li class="' + cls + '"' + (item.panel ? ' data-panel="' + item.panel + '"' : '') + '>' + link + '</li>';
     });
     return out;
   }
 
-  /* ---------- Hai panel thả xuống: #ghMega (Shop by Category) + #ghSeasonal ---------- */
+  /* ---------- Hai panel thả xuống: #yqMega (Shop by Category) + #yqSeasonal ---------- */
   function megaHtml() {
     /* --- Panel 1: mega 3 cột danh mục + 1 thẻ khuyến mãi --- */
     var cols = '';
-    $.each(GH.megaMenu, function (_, col) {
+    $.each(YQ.megaMenu, function (_, col) {
       var links = '';
       $.each(col.links, function (_, l) {
-        links += '<a class="gh-mega__link" href="' + l[1] + '">' +
-                   '<span>' + l[0] + '</span>' + GH.icon('chevright', 13) +
+        links += '<a class="yq-mega__link" href="' + l[1] + '">' +
+                   '<span>' + l[0] + '</span>' + YQ.icon('chevright', 13) +
                  '</a>';
       });
       var title = col.href
-        ? '<a class="gh-mega__col-title" href="' + col.href + '">' + col.title + '</a>'
-        : '<div class="gh-mega__col-title">' + col.title + '</div>';
-      cols += '<div class="col-lg-3 col-md-4"><div class="gh-mega__col">' + title + links + '</div></div>';
+        ? '<a class="yq-mega__col-title" href="' + col.href + '">' + col.title + '</a>'
+        : '<div class="yq-mega__col-title">' + col.title + '</div>';
+      cols += '<div class="col-lg-3 col-md-4"><div class="yq-mega__col">' + title + links + '</div></div>';
     });
 
     var mega =
-      '<div class="gh-navpanel gh-mega" id="ghMega" role="region" aria-label="Shop by Category">' +
-        '<div class="gh-container"><div class="gh-mega__inner"><div class="row g-4">' + cols +
+      '<div class="yq-navpanel yq-mega" id="yqMega" role="region" aria-label="Shop by Category">' +
+        '<div class="yq-container"><div class="yq-mega__inner"><div class="row g-4">' + cols +
           '<div class="col-lg-3 d-none d-lg-block">' +
-            '<a class="gh-mega__promo" href="personalise.html">' +
-              '<span class="gh-mega__promo-media"><img src="assets/img/p-grand-hamper.jpg" alt="" loading="lazy" decoding="async"></span>' +
-              '<span class="gh-mega__promo-body">' +
-                '<span class="gh-mega__promo-eyebrow">New</span>' +
-                '<span class="gh-mega__promo-title">Personalise your gift</span>' +
-                '<span class="gh-mega__promo-cta">Add an eCard ' + GH.icon('arrow', 15) + '</span>' +
+            '<a class="yq-mega__promo" href="personalise.html">' +
+              '<span class="yq-mega__promo-media"><img src="assets/img/p-grand-hamper.jpg" alt="" loading="lazy" decoding="async"></span>' +
+              '<span class="yq-mega__promo-body">' +
+                '<span class="yq-mega__promo-eyebrow">New</span>' +
+                '<span class="yq-mega__promo-title">Personalise your gift</span>' +
+                '<span class="yq-mega__promo-cta">Add an eCard ' + YQ.icon('arrow', 15) + '</span>' +
               '</span>' +
             '</a>' +
           '</div>' +
@@ -351,31 +351,31 @@
       '</div>';
 
     /* --- Panel 2: Seasonal — 5 chiến dịch mùa vụ dạng thẻ dọc --- */
-    var item = GH.nav.filter(function (n) { return n.panel === 'seasonal'; })[0] || {};
+    var item = YQ.nav.filter(function (n) { return n.panel === 'seasonal'; })[0] || {};
     var cards = '';
     $.each(item.children || [], function (_, c) {
       cards +=
-        '<a class="gh-season__card" href="' + c.href + '">' +
-          '<span class="gh-season__ico" aria-hidden="true">' + GH.icon(c.icon || 'sparkle', 19) + '</span>' +
-          '<span class="gh-season__name">' + c.label +
-            (c.tag ? '<em class="gh-season__tag">' + c.tag + '</em>' : '') +
+        '<a class="yq-season__card" href="' + c.href + '">' +
+          '<span class="yq-season__ico" aria-hidden="true">' + YQ.icon(c.icon || 'sparkle', 19) + '</span>' +
+          '<span class="yq-season__name">' + c.label +
+            (c.tag ? '<em class="yq-season__tag">' + c.tag + '</em>' : '') +
           '</span>' +
-          (c.desc ? '<span class="gh-season__desc">' + c.desc + '</span>' : '') +
-          '<span class="gh-season__go" aria-hidden="true">' + GH.icon('arrow', 15) + '</span>' +
+          (c.desc ? '<span class="yq-season__desc">' + c.desc + '</span>' : '') +
+          '<span class="yq-season__go" aria-hidden="true">' + YQ.icon('arrow', 15) + '</span>' +
         '</a>';
     });
 
     var seasonal =
-      '<div class="gh-navpanel gh-season" id="ghSeasonal" role="region" aria-label="Seasonal collections">' +
-        '<div class="gh-container"><div class="gh-season__inner">' +
-          '<div class="gh-season__head">' +
+      '<div class="yq-navpanel yq-season" id="yqSeasonal" role="region" aria-label="Seasonal collections">' +
+        '<div class="yq-container"><div class="yq-season__inner">' +
+          '<div class="yq-season__head">' +
             '<div>' +
-              '<div class="gh-season__eyebrow">Seasonal &amp; Occasions</div>' +
-              (item.intro ? '<p class="gh-season__intro">' + item.intro + '</p>' : '') +
+              '<div class="yq-season__eyebrow">Seasonal &amp; Occasions</div>' +
+              (item.intro ? '<p class="yq-season__intro">' + item.intro + '</p>' : '') +
             '</div>' +
-            '<a class="gh-season__all" href="shop.html">Browse all offers ' + GH.icon('arrow', 15) + '</a>' +
+            '<a class="yq-season__all" href="shop.html">Browse all offers ' + YQ.icon('arrow', 15) + '</a>' +
           '</div>' +
-          '<div class="gh-season__grid">' + cards + '</div>' +
+          '<div class="yq-season__grid">' + cards + '</div>' +
         '</div></div>' +
       '</div>';
 
@@ -385,20 +385,20 @@
   /* ---------- Panel tìm kiếm ---------- */
   function searchHtml() {
     var chips = ['Hampers', 'Chocolate cake', 'Champagne', 'Spa gift', 'Corporate gifting']
-      .map(function (t) { return '<button class="gh-chip" type="button" data-suggest="' + t + '">' + t + '</button>'; })
+      .map(function (t) { return '<button class="yq-chip" type="button" data-suggest="' + t + '">' + t + '</button>'; })
       .join('');
-    return '<div class="gh-search" id="ghSearch" aria-hidden="true">' +
-             '<div class="gh-container">' +
-               '<form class="gh-search__field" id="ghSearchForm" role="search">' +
-                 '<span class="gh-search__ico" aria-hidden="true">' + GH.icon('search', 21) + '</span>' +
-                 '<input type="search" class="gh-search__input" id="ghSearchInput" autocomplete="off" ' +
+    return '<div class="yq-search" id="yqSearch" aria-hidden="true">' +
+             '<div class="yq-container">' +
+               '<form class="yq-search__field" id="yqSearchForm" role="search">' +
+                 '<span class="yq-search__ico" aria-hidden="true">' + YQ.icon('search', 21) + '</span>' +
+                 '<input type="search" class="yq-search__input" id="yqSearchInput" autocomplete="off" ' +
                    'placeholder="Search cakes, hampers, experiences\u2026" aria-label="Search">' +
-                 '<button class="gh-search__clear" type="button" data-search-clear aria-label="Clear search">' + GH.icon('close', 15) + '</button>' +
-                 '<button class="gh-search__go" type="submit">Search' + GH.icon('arrow', 15) + '</button>' +
+                 '<button class="yq-search__clear" type="button" data-search-clear aria-label="Clear search">' + YQ.icon('close', 15) + '</button>' +
+                 '<button class="yq-search__go" type="submit">Search' + YQ.icon('arrow', 15) + '</button>' +
                '</form>' +
-               '<div class="gh-search__meta">' +
-                 '<span class="gh-search__label">Popular searches</span>' +
-                 '<div class="gh-search__suggest">' + chips + '</div>' +
+               '<div class="yq-search__meta">' +
+                 '<span class="yq-search__label">Popular searches</span>' +
+                 '<div class="yq-search__suggest">' + chips + '</div>' +
                '</div>' +
              '</div>' +
            '</div>';
@@ -409,97 +409,97 @@
      bấm nhãn để sang trang, bấm mũi tên để mở/đóng danh sách con. */
   function offcanvasHtml(active) {
     var groups = '';
-    $.each(GH.nav, function (i, item) {
+    $.each(YQ.nav, function (i, item) {
       if (item.sep) return;
 
       var kids = navChildren(item);
       var on   = navIsActive(item, active);
 
       if (!kids.length) {
-        groups += '<a class="gh-oc__link' + (on ? ' is-active' : '') + '" href="' + item.href + '">' + item.label + '</a>';
+        groups += '<a class="yq-oc__link' + (on ? ' is-active' : '') + '" href="' + item.href + '">' + item.label + '</a>';
         return;
       }
 
-      var id = 'ghOcGrp' + i;
+      var id = 'yqOcGrp' + i;
       var subs = '';
       $.each(kids, function (_, k) {
-        subs += '<a class="gh-oc__sublink' + (k.key && k.key === active ? ' is-active' : '') + '" href="' + k.href + '">' +
-                  '<span>' + k.label + '</span>' + GH.icon('chevright', 13) +
+        subs += '<a class="yq-oc__sublink' + (k.key && k.key === active ? ' is-active' : '') + '" href="' + k.href + '">' +
+                  '<span>' + k.label + '</span>' + YQ.icon('chevright', 13) +
                 '</a>';
       });
 
       var toggleAttrs = ' type="button" data-bs-toggle="collapse" data-bs-target="#' + id + '"' +
                         ' aria-expanded="' + (on ? 'true' : 'false') + '" aria-controls="' + id + '"';
-      var chev = '<span class="gh-oc__chev" aria-hidden="true">' + GH.icon('chevdown', 16) + '</span>';
+      var chev = '<span class="yq-oc__chev" aria-hidden="true">' + YQ.icon('chevdown', 16) + '</span>';
 
       var head = item.href
-        ? '<div class="gh-oc__row">' +
-            '<a class="gh-oc__link' + (on ? ' is-active' : '') + '" href="' + item.href + '">' + item.label + '</a>' +
-            '<button class="gh-oc__toggle' + (on ? '' : ' collapsed') + '"' + toggleAttrs +
+        ? '<div class="yq-oc__row">' +
+            '<a class="yq-oc__link' + (on ? ' is-active' : '') + '" href="' + item.href + '">' + item.label + '</a>' +
+            '<button class="yq-oc__toggle' + (on ? '' : ' collapsed') + '"' + toggleAttrs +
               ' aria-label="Show ' + item.label + ' submenu">' + chev + '</button>' +
           '</div>'
-        : '<button class="gh-oc__link gh-oc__link--full' + (on ? ' is-active' : '') + ' gh-oc__toggle' + (on ? '' : ' collapsed') + '"' +
+        : '<button class="yq-oc__link yq-oc__link--full' + (on ? ' is-active' : '') + ' yq-oc__toggle' + (on ? '' : ' collapsed') + '"' +
             toggleAttrs + '>' + item.label + chev + '</button>';
 
-      groups += '<div class="gh-oc__group">' + head +
+      groups += '<div class="yq-oc__group">' + head +
                   '<div class="collapse' + (on ? ' show' : '') + '" id="' + id + '">' +
-                    '<div class="gh-oc__sub">' + subs + '</div>' +
+                    '<div class="yq-oc__sub">' + subs + '</div>' +
                   '</div>' +
                 '</div>';
     });
 
-    return '<div class="offcanvas offcanvas-start gh-oc" tabindex="-1" id="ghOffcanvas" aria-label="Menu">' +
-             '<div class="offcanvas-header gh-oc__head">' +
-               GH.logo({ tag: 'div', className: 'gh-logo--sm' }) +
-               '<button type="button" class="gh-oc__close" data-bs-dismiss="offcanvas" aria-label="Close menu">' + GH.icon('close', 18) + '</button>' +
+    return '<div class="offcanvas offcanvas-start yq-oc" tabindex="-1" id="yqOffcanvas" aria-label="Menu">' +
+             '<div class="offcanvas-header yq-oc__head">' +
+               YQ.logo({ tag: 'div', className: 'yq-logo--sm' }) +
+               '<button type="button" class="yq-oc__close" data-bs-dismiss="offcanvas" aria-label="Close menu">' + YQ.icon('close', 18) + '</button>' +
              '</div>' +
-             '<div class="offcanvas-body gh-oc__body">' +
-               '<div class="gh-oc__quick">' +
-                 '<a class="gh-oc__quicklink" href="cart.html">' + GH.icon('bag', 18) +
-                   '<span>Cart</span><em class="gh-oc__badge" data-oc-count>0</em></a>' +
-                 '<a class="gh-oc__quicklink" href="#" data-gh-account aria-label="Account">' +
-                   GH.icon('user', 18) + '<span data-gh-account-label>Account</span></a>' +
-                 '<button class="gh-oc__quicklink" type="button" data-search-toggle data-bs-dismiss="offcanvas">' +
-                   GH.icon('search', 18) + '<span>Search</span></button>' +
+             '<div class="offcanvas-body yq-oc__body">' +
+               '<div class="yq-oc__quick">' +
+                 '<a class="yq-oc__quicklink" href="cart.html">' + YQ.icon('bag', 18) +
+                   '<span>Cart</span><em class="yq-oc__badge" data-oc-count>0</em></a>' +
+                 '<a class="yq-oc__quicklink" href="#" data-yq-account aria-label="Account">' +
+                   YQ.icon('user', 18) + '<span data-yq-account-label>Account</span></a>' +
+                 '<button class="yq-oc__quicklink" type="button" data-search-toggle data-bs-dismiss="offcanvas">' +
+                   YQ.icon('search', 18) + '<span>Search</span></button>' +
                '</div>' +
-               '<nav class="gh-oc__nav" aria-label="Mobile">' + groups + '</nav>' +
-               '<div class="gh-oc__foot">' +
-                 '<a class="gh-btn gh-btn--gold gh-btn--block" href="cart.html">View cart</a>' +
-                 '<div class="gh-oc__note">' + GH.icon('truck', 16) +
-                   '<span>Complimentary delivery above ' + GH.money0(C.freeShippingThreshold) + '</span></div>' +
+               '<nav class="yq-oc__nav" aria-label="Mobile">' + groups + '</nav>' +
+               '<div class="yq-oc__foot">' +
+                 '<a class="yq-btn yq-btn--gold yq-btn--block" href="cart.html">View cart</a>' +
+                 '<div class="yq-oc__note">' + YQ.icon('truck', 16) +
+                   '<span>Complimentary delivery above ' + YQ.money0(C.freeShippingThreshold) + '</span></div>' +
                '</div>' +
              '</div>' +
            '</div>';
   }
 
-  GH.renderHeader = function (active) {
+  YQ.renderHeader = function (active) {
     var html =
-      '<header class="gh-header" id="ghHeader">' +
-        '<div class="gh-header__shell">' +
-          '<div class="gh-container">' +
-            '<div class="gh-header__top">' +
-              '<div class="gh-header__tools">' +
-                '<button class="gh-iconbtn gh-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#ghOffcanvas" aria-controls="ghOffcanvas" aria-label="Open menu">' + GH.icon('menu', 20) + '</button>' +
-                '<button class="gh-searchbtn" type="button" id="ghSearchToggle" data-search-toggle aria-expanded="false" aria-controls="ghSearch">' +
-                  GH.icon('search', 17) + '<span class="gh-searchbtn__txt">Search</span>' +
-                  '<kbd class="gh-searchbtn__kbd" aria-hidden="true">/</kbd>' +
+      '<header class="yq-header" id="yqHeader">' +
+        '<div class="yq-header__shell">' +
+          '<div class="yq-container">' +
+            '<div class="yq-header__top">' +
+              '<div class="yq-header__tools">' +
+                '<button class="yq-iconbtn yq-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#yqOffcanvas" aria-controls="yqOffcanvas" aria-label="Open menu">' + YQ.icon('menu', 20) + '</button>' +
+                '<button class="yq-searchbtn" type="button" id="yqSearchToggle" data-search-toggle aria-expanded="false" aria-controls="yqSearch">' +
+                  YQ.icon('search', 17) + '<span class="yq-searchbtn__txt">Search</span>' +
+                  '<kbd class="yq-searchbtn__kbd" aria-hidden="true">/</kbd>' +
                 '</button>' +
-                '<button class="gh-iconbtn gh-searchbtn--icon" type="button" data-search-toggle aria-controls="ghSearch" aria-label="Search">' + GH.icon('search', 19) + '</button>' +
+                '<button class="yq-iconbtn yq-searchbtn--icon" type="button" data-search-toggle aria-controls="yqSearch" aria-label="Search">' + YQ.icon('search', 19) + '</button>' +
               '</div>' +
-              '<div class="gh-header__brand">' + GH.logo() + '</div>' +
-              '<div class="gh-header__tools gh-header__tools--end">' +
-                '<a class="gh-iconbtn d-none d-lg-inline-flex" href="#" id="ghAccountBtn" data-gh-account aria-label="Account">' + GH.icon('user', 19) + '</a>' +
-                '<a class="gh-iconbtn d-none d-lg-inline-flex" href="cart.html" aria-label="Cart">' +
-                  GH.icon('bag', 19) + '<span class="gh-cart-count" id="ghCartCount">0</span>' +
+              '<div class="yq-header__brand">' + YQ.logo() + '</div>' +
+              '<div class="yq-header__tools yq-header__tools--end">' +
+                '<a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account">' + YQ.icon('user', 19) + '</a>' +
+                '<a class="yq-iconbtn d-none d-lg-inline-flex" href="cart.html" aria-label="Cart">' +
+                  YQ.icon('bag', 19) + '<span class="yq-cart-count" id="yqCartCount">0</span>' +
                 '</a>' +
-                '<a class="gh-iconbtn d-lg-none" href="cart.html" aria-label="Cart">' +
-                  GH.icon('bag', 19) + '<span class="gh-cart-count" id="ghCartCountM">0</span>' +
+                '<a class="yq-iconbtn d-lg-none" href="cart.html" aria-label="Cart">' +
+                  YQ.icon('bag', 19) + '<span class="yq-cart-count" id="yqCartCountM">0</span>' +
                 '</a>' +
               '</div>' +
             '</div>' +
           '</div>' +
-          '<nav class="gh-nav" aria-label="Primary">' +
-            '<div class="gh-container"><ul class="gh-nav__list">' + navHtml(active) + '</ul></div>' +
+          '<nav class="yq-nav" aria-label="Primary">' +
+            '<div class="yq-container"><ul class="yq-nav__list">' + navHtml(active) + '</ul></div>' +
           '</nav>' +
           megaHtml() +
           searchHtml() +
@@ -507,13 +507,13 @@
       '</header>' +
       offcanvasHtml(active);
 
-    $('#gh-header').replaceWith(GH.localise(html));
-    GH.syncCartBadge();
-    $(window).trigger('scroll.ghHeader');
-    $(document).trigger('gh:header-ready');
+    $('#yq-header').replaceWith(YQ.localise(html));
+    YQ.syncCartBadge();
+    $(window).trigger('scroll.yqHeader');
+    $(document).trigger('yq:header-ready');
   };
 
-  GH.renderFooter = function () {
+  YQ.renderFooter = function () {
     var cols = [
       { title: 'Shop', links: [
         ['Cakes & Pastries','shop.html?cat=cakes'], ['Hampers & Gift Sets','shop.html?cat=celebration'],
@@ -544,54 +544,54 @@
     });
 
     var html =
-      '<section class="gh-newsletter">' +
-        '<div class="gh-container"><div class="row align-items-center g-3">' +
+      '<section class="yq-newsletter">' +
+        '<div class="yq-container"><div class="row align-items-center g-3">' +
           '<div class="col-lg-6">' +
-            '<h3 class="gh-serif">Stay in the Know</h3>' +
+            '<h3 class="yq-serif">Stay in the Know</h3>' +
             '<p>New collections, seasonal offers, and exclusive promotions — delivered to your inbox.</p>' +
           '</div>' +
           '<div class="col-lg-6">' +
-            '<form class="gh-newsletter__form" id="ghNewsletter" novalidate>' +
-              '<input type="email" class="form-control gh-input" placeholder="Your email address" aria-label="Email" required>' +
-              '<button class="gh-btn" type="submit">Subscribe</button>' +
+            '<form class="yq-newsletter__form" id="yqNewsletter" novalidate>' +
+              '<input type="email" class="form-control yq-input" placeholder="Your email address" aria-label="Email" required>' +
+              '<button class="yq-btn" type="submit">Subscribe</button>' +
             '</form>' +
-            '<div class="gh-error" id="ghNewsletterErr">Please enter a valid email address.</div>' +
+            '<div class="yq-error" id="yqNewsletterErr">Please enter a valid email address.</div>' +
           '</div>' +
         '</div></div>' +
       '</section>' +
 
-      '<footer class="gh-footer">' +
-        '<div class="gh-container"><div class="row">' +
+      '<footer class="yq-footer">' +
+        '<div class="yq-container"><div class="row">' +
           '<div class="col-lg-4 mb-5 mb-lg-0 pe-lg-5">' +
-            GH.logo({ light: true, className: 'gh-logo--footer' }) +
+            YQ.logo({ light: true, className: 'yq-logo--footer' }) +
             '<p>Curated cakes, artisan hampers, and premium wines — crafted in our kitchens and delivered with care.</p>' +
-            '<div class="gh-social">' +
+            '<div class="yq-social">' +
               '<a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">ig</a>' +
             '</div>' +
             '<h4>Contact</h4>' +
-            '<div class="gh-footer__contact">' +
+            '<div class="yq-footer__contact">' +
               '<a href="mailto:singapore@hyatt.com">singapore@hyatt.com</a>' +
               '<a href="tel:+6567321234">+65 6732 1234</a>' +
             '</div>' +
           '</div>' +
           colHtml +
         '</div>' +
-        '<div class="gh-footer__bottom">' +
+        '<div class="yq-footer__bottom">' +
           '<small>&copy; ' + new Date().getFullYear() + ' Grand Hyatt Singapore. All rights reserved.</small>' +
-          '<div class="gh-pay"><span>VISA</span><span>MC</span><span>AMEX</span><span>PayNow</span></div>' +
+          '<div class="yq-pay"><span>VISA</span><span>MC</span><span>AMEX</span><span>PayNow</span></div>' +
         '</div>' +
       '</div></footer>';
 
-    $('#gh-footer').replaceWith(GH.localise(html));
-    $(document).trigger('gh:layout-ready');
+    $('#yq-footer').replaceWith(YQ.localise(html));
+    $(document).trigger('yq:layout-ready');
   };
 
   /* ======================================================================
      5. Cart badge
      ====================================================================== */
-  GH.syncCartBadge = function (bump) {
-    var n = GH.cart.count();
-    $('#ghCartCount, #ghCartCountM').each(function () {
+  YQ.syncCartBadge = function (bump) {
+    var n = YQ.cart.count();
+    $('#yqCartCount, #yqCartCountM').each(function () {
       var $b = $(this);
       $b.text(n).toggleClass('is-on', n > 0);
       if (bump && n > 0) {
@@ -601,13 +601,13 @@
       }
     });
   };
-  $(document).on('gh:cart-changed', function () { GH.syncCartBadge(true); });
+  $(document).on('yq:cart-changed', function () { YQ.syncCartBadge(true); });
 
   /* ======================================================================
      6. Reveal on scroll
      ====================================================================== */
-  GH.initReveal = function () {
-    var $els = $('.gh-reveal');
+  YQ.initReveal = function () {
+    var $els = $('.yq-reveal');
     if (!$els.length) return;
 
     if (!('IntersectionObserver' in window)) { $els.addClass('is-in'); return; }
@@ -627,7 +627,7 @@
   };
 
   /** Gán delay so le cho các item trong 1 grid */
-  GH.stagger = function (selector, step) {
+  YQ.stagger = function (selector, step) {
     step = step || 70;
     $(selector).each(function (i) { $(this).attr('data-delay', Math.min(i, 7) * step); });
   };
@@ -638,27 +638,27 @@
   $(function () {
 
     /* Header (sticky/thu gọn khi cuộn, mega menu, panel Seasonal, ô search,
-       offcanvas mobile): xem assets/js/modules/nav.js — handler `scroll.ghHeader`
-       cũng được đăng ký ở đó nên $(window).trigger('scroll.ghHeader') vẫn chạy. */
+       offcanvas mobile): xem assets/js/modules/nav.js — handler `scroll.yqHeader`
+       cũng được đăng ký ở đó nên $(window).trigger('scroll.yqHeader') vẫn chạy. */
 
     /* Newsletter */
-    $(document).on('submit', '#ghNewsletter', function (e) {
+    $(document).on('submit', '#yqNewsletter', function (e) {
       e.preventDefault();
       var $inp = $(this).find('input');
       var ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test($.trim($inp.val()));
       $inp.toggleClass('is-invalid', !ok);
-      $('#ghNewsletterErr').toggleClass('is-on', !ok);
-      if (ok) { $inp.val(''); GH.toast('Thank you — you are on the list.'); }
+      $('#yqNewsletterErr').toggleClass('is-on', !ok);
+      if (ok) { $inp.val(''); YQ.toast('Thank you — you are on the list.'); }
     });
 
     /* Quick add từ card sản phẩm */
     $(document).on('click', '[data-quickadd]', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      var p = GH.product($(this).data('quickadd'));
+      var p = YQ.product($(this).data('quickadd'));
       if (!p) return;
-      GH.cart.add(p, p.options && p.options[0], 1);
-      GH.toast(p.name + ' added to cart', 'View cart', 'cart.html');
+      YQ.cart.add(p, p.options && p.options[0], 1);
+      YQ.toast(p.name + ' added to cart', 'View cart', 'cart.html');
     });
 
     /* Smooth anchor scroll */
@@ -678,7 +678,7 @@
       var min = parseInt($wrap.data('min') || 1, 10);
       var n = Math.max(min, (parseInt($val.text(), 10) || min) + parseInt($(this).data('step'), 10));
       $val.text(n);
-      $wrap.trigger('gh:qty', [n]);
+      $wrap.trigger('yq:qty', [n]);
     });
   });
 

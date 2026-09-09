@@ -1,11 +1,11 @@
 /* ==========================================================================
-   GH eStore — Data layer (nav, icons, products, experiences)
+   YQ eStore — Data layer (nav, icons, products, experiences)
    Thay bằng API/CMS thật khi tích hợp backend.
    ========================================================================== */
-window.GH = window.GH || {};
+window.YQ = window.YQ || {};
 
 /* ---------- Inline SVG icons ---------- */
-GH.icon = function (name, size) {
+YQ.icon = function (name, size) {
   var s = size || 18;
   var p = {
     search:   '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/>',
@@ -44,17 +44,17 @@ GH.icon = function (name, size) {
     eye:      '<path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/>',
     eyeoff:   '<path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/>'
   }[name] || '';
-  return '<svg class="gh-i" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" ' +
+  return '<svg class="yq-i" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" ' +
          'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
          p + '</svg>';
 };
 
 /* ---------- Brand glyph (nút social login) ----------
-   Logo hãng có viewBox riêng nên tách khỏi GH.icon (bộ icon nét 24x24).
+   Logo hãng có viewBox riêng nên tách khỏi YQ.icon (bộ icon nét 24x24).
    Đường path lấy từ bộ Font Awesome Free brands (CC BY 4.0); tên và biểu tượng
    là nhãn hiệu của chủ sở hữu — chỉ dùng để chỉ nhà cung cấp đăng nhập.
 */
-GH.brandIcon = function (name, size) {
+YQ.brandIcon = function (name, size) {
   var g = {
     facebook:  ['0 0 320 512', 'M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z'],
     twitter:   ['0 0 512 512', 'M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558A296.63 296.63 0 0 1 0 416.827a217.17 217.17 0 0 0 25.34 1.3c49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772a132.6 132.6 0 0 0 19.818 1.624 105 105 0 0 0 27.614-3.573C58.855 288.828 22.792 246.596 22.792 195.59v-1.299a105.5 105.5 0 0 0 47.432 13.319c-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807a121 121 0 0 1-2.599-24.04c0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827a209 209 0 0 0 60.426-16.243 225 225 0 0 1-52.628 54.253z'],
@@ -64,35 +64,35 @@ GH.brandIcon = function (name, size) {
     line:      ['0 0 448 512', 'M272.1 204.2v71.1c0 1.8-1.4 3.2-3.2 3.2h-11.4c-1.1 0-2.1-.6-2.6-1.3l-32.6-44v42.2c0 1.8-1.4 3.2-3.2 3.2h-11.4c-1.8 0-3.2-1.4-3.2-3.2v-71.1c0-1.8 1.4-3.2 3.2-3.2H219c1 0 2.1.5 2.6 1.4l32.6 44v-42.2c0-1.8 1.4-3.2 3.2-3.2h11.4c1.8-.1 3.3 1.4 3.3 3.1zm-82-3.2h-11.4c-1.8 0-3.2 1.4-3.2 3.2v71.1c0 1.8 1.4 3.2 3.2 3.2h11.4c1.8 0 3.2-1.4 3.2-3.2v-71.1c0-1.7-1.4-3.2-3.2-3.2zm-27.5 59.6h-31.1v-56.4c0-1.8-1.4-3.2-3.2-3.2h-11.4c-1.8 0-3.2 1.4-3.2 3.2v71.1c0 .9.3 1.6.9 2.2.6.5 1.3.9 2.2.9h45.7c1.8 0 3.2-1.4 3.2-3.2v-11.4c0-1.7-1.4-3.2-3.1-3.2zM332.1 201h-45.7c-1.7 0-3.2 1.4-3.2 3.2v71.1c0 1.7 1.4 3.2 3.2 3.2h45.7c1.8 0 3.2-1.4 3.2-3.2v-11.4c0-1.8-1.4-3.2-3.2-3.2H301v-12h31.1c1.8 0 3.2-1.4 3.2-3.2V234c0-1.8-1.4-3.2-3.2-3.2H301v-12h31.1c1.8 0 3.2-1.4 3.2-3.2v-11.4c-.1-1.7-1.5-3.2-3.2-3.2zM448 113.7V399c-.1 63.6-51.9 115.1-115.6 115H63c-63.6-.1-115.1-52-115-115.6V113c.1-63.6 52-115.1 115.6-115H385c63.6.1 115.1 51.9 115 115.7zm-107.4 99.9c0-70.5-70.7-127.8-157.5-127.8S25.6 143.1 25.6 213.6c0 63.2 56.1 116.1 131.8 126.1 18.5 4 16.4 10.8 12.2 35.8-.7 4-3.2 15.7 13.8 8.6s91.6-54 125-92.4c23-25.3 33.2-51 33.2-78.1z']
   }[name];
   if (!g) return '';
-  return '<svg class="gh-brandi" width="' + (size || 18) + '" height="' + (size || 18) + '" ' +
+  return '<svg class="yq-brandi" width="' + (size || 18) + '" height="' + (size || 18) + '" ' +
          'viewBox="' + g[0] + '" fill="currentColor" aria-hidden="true"><path d="' + g[1] + '"/></svg>';
 };
 
 /* ---------- Logo ----------
    Mặc định: lockup dựng bằng HTML/CSS (nét mảnh, giãn chữ) — luôn sắc nét, đổi màu 1 dòng CSS.
-   Có logo chính thức? Gán đường dẫn vào GH.logoImage (và GH.logoImageLight cho nền tối)
+   Có logo chính thức? Gán đường dẫn vào YQ.logoImage (và YQ.logoImageLight cho nền tối)
    là toàn site tự chuyển sang dùng ảnh, không phải sửa gì thêm.
-   VD: GH.logoImage = 'assets/img/logo-grand-hyatt.png';
+   VD: YQ.logoImage = 'assets/img/logo-grand-hyatt.png';
 */
-GH.logoImage = null;        // logo cho nền sáng (header)
-GH.logoImageLight = null;   // logo đảo màu cho nền tối (footer)
+YQ.logoImage = null;        // logo cho nền sáng (header)
+YQ.logoImageLight = null;   // logo đảo màu cho nền tối (footer)
 
-GH.logo = function (opts) {
+YQ.logo = function (opts) {
   opts = opts || {};
   var light = !!opts.light;
-  var cls = 'gh-logo' + (light ? ' gh-logo--light' : '') + (opts.className ? ' ' + opts.className : '');
+  var cls = 'yq-logo' + (light ? ' yq-logo--light' : '') + (opts.className ? ' ' + opts.className : '');
   var label = 'Grand Hyatt Singapore';
-  var img = light ? (GH.logoImageLight || GH.logoImage) : GH.logoImage;
+  var img = light ? (YQ.logoImageLight || YQ.logoImage) : YQ.logoImage;
 
   var inner = img
-    ? '<img class="gh-logo__img" src="' + img + '" alt="' + label + '">'
-    : '<span class="gh-logo__mark">' +
-        '<span class="gh-logo__word">Grand</span>' +
-        '<span class="gh-logo__bar" aria-hidden="true"></span>' +
-        '<span class="gh-logo__word">Hyatt</span>' +
-        '<span class="gh-logo__tm" aria-hidden="true">\u2122</span>' +
+    ? '<img class="yq-logo__img" src="' + img + '" alt="' + label + '">'
+    : '<span class="yq-logo__mark">' +
+        '<span class="yq-logo__word">Grand</span>' +
+        '<span class="yq-logo__bar" aria-hidden="true"></span>' +
+        '<span class="yq-logo__word">Hyatt</span>' +
+        '<span class="yq-logo__tm" aria-hidden="true">\u2122</span>' +
       '</span>' +
-      '<span class="gh-logo__sub">Singapore</span>';
+      '<span class="yq-logo__sub">Singapore</span>';
 
   if (opts.tag === 'div') return '<div class="' + cls + '" role="img" aria-label="' + label + '">' + inner + '</div>';
   return '<a class="' + cls + '" href="' + (opts.href || 'index.html') + '" aria-label="' + label + '">' + inner + '</a>';
@@ -105,10 +105,10 @@ GH.logo = function (opts) {
        mở panel dropdown -> nav chỉ còn 5 mục, thoáng và có phân cấp rõ.
    Thuộc tính:
      panel     : 'mega' | 'seasonal'  -> mục này mở panel thả xuống
-     megaIndex : chỉ số cột trong GH.megaMenu dùng làm submenu (accordion trên mobile)
+     megaIndex : chỉ số cột trong YQ.megaMenu dùng làm submenu (accordion trên mobile)
      children  : danh sách con (dùng cho panel 'seasonal' + accordion mobile)
 */
-GH.nav = [
+YQ.nav = [
   { label: 'The Online Shop',  href: 'index.html',        key: 'home' },
   { label: 'Shop by Category', href: 'shop.html',         key: 'shop',         panel: 'mega', megaIndex: 0 },
   { label: 'Experiences',      href: 'experiences.html',  key: 'experiences',  megaIndex: 1 },
@@ -131,7 +131,7 @@ GH.nav = [
   }
 ];
 
-GH.megaMenu = [
+YQ.megaMenu = [
   { title: 'Shop', href: 'shop.html', links: [
     ['Cakes & Pastries',   'shop.html?cat=cakes'],
     ['Hampers & Gift Sets','shop.html?cat=celebration'],
@@ -160,7 +160,7 @@ GH.megaMenu = [
 ];
 
 /* ---------- Category filters ---------- */
-GH.categories = [
+YQ.categories = [
   { id: 'all',         label: 'All Products' },
   { id: 'cakes',       label: 'Cakes, Cookies & Pralines' },
   { id: 'dining',      label: 'Dining' },
@@ -170,7 +170,7 @@ GH.categories = [
   { id: 'celebration', label: 'Celebration' }
 ];
 
-GH.seasons = [
+YQ.seasons = [
   { id: 'festive',  label: 'The Festive Season' },
   { id: 'retreats', label: 'Retreats' },
   { id: 'cny',      label: 'Chinese New Year' },
@@ -179,7 +179,7 @@ GH.seasons = [
 ];
 
 /* ---------- Products ---------- */
-GH.products = [
+YQ.products = [
   {
     id: 'signature-chocolate-cake', img:'assets/img/p-chocolate-cake.jpg', name: 'Signature Chocolate Cake',
     cat: 'cakes', catLabel: 'Cakes & Pastries', tone: 1, badge: 'Bestseller',
@@ -218,7 +218,7 @@ GH.products = [
     ]
   },
   {
-    id: 'gh-champagne-brut', img:'assets/img/p-champagne.jpg', name: 'Grand Hyatt Champagne Brut',
+    id: 'yq-champagne-brut', img:'assets/img/p-champagne.jpg', name: 'Grand Hyatt Champagne Brut',
     cat: 'beverages', catLabel: 'Wine & Champagne', tone: 4, badge: 'Bestseller',
     price: 128, seasons: ['festive','nye'], featured: true, rank: 4,
     desc: 'Our house champagne—crisp, elegant, with fine bubbles and notes of white peach, brioche, and citrus zest.',
@@ -335,7 +335,7 @@ GH.products = [
 ];
 
 /* ---------- Experiences ---------- */
-GH.experiences = [
+YQ.experiences = [
   { id:'grand-dining', img:'assets/img/e-dining.jpg', name:'Grand Dining Experience', tone:2, price:200, rating:4.8, reviews:128,
     duration:'Flexible', place:'All Restaurants',
     desc:'A $200 dining voucher valid at all Grand Hyatt Singapore restaurants. Perfect for food lovers.' },
@@ -357,7 +357,7 @@ GH.experiences = [
 ];
 
 /* ---------- Occasions (Celebrations page) ---------- */
-GH.occasions = [
+YQ.occasions = [
   { name:'Birthdays', img:'assets/img/o-birthdays.jpg',     tone:3, sub:'Cakes, candles & keepsakes', href:'shop.html?cat=cakes' },
   { name:'Anniversaries', img:'assets/img/o-anniversaries.jpg', tone:4, sub:'Champagne & fine dining',    href:'shop.html?cat=beverages' },
   { name:'Festive Season', img:'assets/img/o-festive.jpg',tone:8, sub:'Hampers & seasonal treats',  href:'shop.html?season=festive' },
@@ -369,9 +369,9 @@ GH.occasions = [
      kind 'share' -> mở cửa sổ chia sẻ ({u} = link mời, {t} = lời nhắn)
      kind 'mail'  -> mở ứng dụng email
    Thêm WhatsApp/X chỉ cần thêm một dòng, không phải sửa controller.
-   id phải có trong GH.brandIcon thì mới có logo (email/copy dùng GH.icon).
+   id phải có trong YQ.brandIcon thì mới có logo (email/copy dùng YQ.icon).
 */
-GH.referral = {
+YQ.referral = {
   reward: 20,                 // ưu đãi cho cả người mời lẫn người được mời
   landing: 'index.html',      // trang link mời trỏ tới
   codePrefix: 'GH-',
@@ -386,15 +386,15 @@ GH.referral = {
 };
 
 /* ---------- Hồ sơ thành viên (trang member/profile.html) ----------
-   GH.profileGroups = SƠ ĐỒ trường (nhóm nào, nhãn gì, sửa được không).
-   GH.demoProfile   = GIÁ TRỊ mẫu, nạp cho lần truy cập đầu (như GH.demoCart).
-   Tách đôi để khi nối backend chỉ cần đổ dữ liệu vào GH.profile, giữ nguyên sơ đồ.
+   YQ.profileGroups = SƠ ĐỒ trường (nhóm nào, nhãn gì, sửa được không).
+   YQ.demoProfile   = GIÁ TRỊ mẫu, nạp cho lần truy cập đầu (như YQ.demoCart).
+   Tách đôi để khi nối backend chỉ cần đổ dữ liệu vào YQ.profile, giữ nguyên sơ đồ.
 
    Mỗi trường: { key, label, type, ro, options }
      type : 'text' | 'email' | 'tel' | 'date' | 'select'   (mặc định 'text')
      ro   : true  -> chỉ đọc, không hiện ô nhập khi bấm "Edit my information"
 */
-GH.profileGroups = [
+YQ.profileGroups = [
   { title: 'Membership', icon: 'star', fields: [
     { key: 'memberNo',   label: 'Membership No.', ro: true },
     { key: 'memberType', label: 'Member Type',    ro: true },
@@ -432,7 +432,7 @@ GH.profileGroups = [
   ]}
 ];
 
-GH.demoProfile = {
+YQ.demoProfile = {
   memberNo: '000001991', memberType: 'Member', idCard: '', cardName: 'son nguyen',
   referral: '', joinDate: '2020-12-24', expiryDate: '2026-12-31',
   firstName: 'son', lastName: 'nguyen', title: '', gender: '', marital: '',
@@ -444,18 +444,18 @@ GH.demoProfile = {
 };
 
 /* ---------- Lịch sử đơn hàng (trang member/orders.html) ----------
-   Chỉ tham chiếu theo id sản phẩm + optionId; tên/giá/ảnh lấy từ GH.products
+   Chỉ tham chiếu theo id sản phẩm + optionId; tên/giá/ảnh lấy từ YQ.products
    nên sửa giá một chỗ là cả lịch sử đơn cập nhật theo.
      status : 'completed' (đã thanh toán) | 'pending' (chờ thanh toán)
      date   : ISO 'YYYY-MM-DD', hiển thị thành '06-February-2026'
    Thay mảng này bằng dữ liệu từ API khi có backend.
 */
-GH.orders = [
+YQ.orders = [
   { id: '354646799', date: '2026-08-21', status: 'completed', items: [
     { id: 'signature-chocolate-cake', optionId: 'medium',  qty: 1 },
     { id: 'the-grand-hamper',         optionId: 'classic', qty: 1 },
     { id: 'grand-pralines',           optionId: '12',      qty: 2 },
-    { id: 'gh-champagne-brut',        optionId: 'bottle',  qty: 1 }
+    { id: 'yq-champagne-brut',        optionId: 'bottle',  qty: 1 }
   ]},
   { id: '868514922', date: '2026-06-14', status: 'completed', items: [
     { id: 'cellar-selection-trio', optionId: 'trio', qty: 1 }
@@ -480,7 +480,7 @@ GH.orders = [
    hoặc `action` ('logout'). Có `href` thì `view` bị bỏ qua -> khi backend có trang
    /my-orders chỉ cần điền href, không phải sửa module.
 */
-GH.socialLogins = [
+YQ.socialLogins = [
   { id: 'facebook',  label: 'Facebook'  },
   { id: 'twitter',   label: 'Twitter'   },
   { id: 'linkedin',  label: 'LinkedIn'  },
@@ -488,7 +488,7 @@ GH.socialLogins = [
   { id: 'microsoft', label: 'Microsoft' }
 ];
 
-GH.memberMenu = [
+YQ.memberMenu = [
   { key: 'profile',  label: 'My profile',      icon: 'user',     href: 'member/profile.html' },
   { key: 'orders',   label: 'My Order',        icon: 'bag',      href: 'member/orders.html' },
   { key: 'wallet',   label: 'My Wallet',       icon: 'wallet',   view: 'wallet'   },
@@ -498,15 +498,15 @@ GH.memberMenu = [
 ];
 
 /* ---------- eCard designs ---------- */
-GH.cardDesigns = [
+YQ.cardDesigns = [
   { id:'gold',   name:'Classic Gold',  art:'art-gold',   glyph:'✦', theme:'' },
-  { id:'floral', name:'Floral Bloom',  art:'art-floral', glyph:'❀', theme:'gh-ecard--floral' },
-  { id:'red',    name:'Festive Red',   art:'art-red',    glyph:'✦', theme:'gh-ecard--red' },
-  { id:'min',    name:'Minimalist',    art:'art-min',    glyph:'◇', theme:'gh-ecard--min' }
+  { id:'floral', name:'Floral Bloom',  art:'art-floral', glyph:'❀', theme:'yq-ecard--floral' },
+  { id:'red',    name:'Festive Red',   art:'art-red',    glyph:'✦', theme:'yq-ecard--red' },
+  { id:'min',    name:'Minimalist',    art:'art-min',    glyph:'◇', theme:'yq-ecard--min' }
 ];
 
 /* ---------- Store config ---------- */
-GH.config = {
+YQ.config = {
   currency: 'S$',
   currencySymbol: '$',
   currencyCode: 'SGD',
@@ -519,14 +519,14 @@ GH.config = {
 /* ---------- Demo cart ----------
    Giỏ hàng lưu ở localStorage nên lần đầu mở cart.html/checkout.html sẽ trống trơn.
    Danh sách dưới đây được nạp sẵn cho lần truy cập đầu tiên để có dữ liệu xem thử.
-     - Chỉ tham chiếu theo id (không chép tên/giá) -> đổi giá trong GH.products là đủ.
+     - Chỉ tham chiếu theo id (không chép tên/giá) -> đổi giá trong YQ.products là đủ.
      - Người dùng tự xoá hết giỏ thì KHÔNG nạp lại (localStorage đã có key).
-     - Nạp lại thủ công: mở `cart.html?demo=1` hoặc gọi GH.cart.seed(true) trong console.
-     - Tắt hẳn khi lên production: đặt GH.demoCart = [].
+     - Nạp lại thủ công: mở `cart.html?demo=1` hoặc gọi YQ.cart.seed(true) trong console.
+     - Tắt hẳn khi lên production: đặt YQ.demoCart = [].
    Mỗi dòng: { id | exp, optionId, qty, addonLabel, addonFee }
-     id  = id trong GH.products    | exp = id trong GH.experiences
+     id  = id trong YQ.products    | exp = id trong YQ.experiences
 */
-GH.demoCart = [
+YQ.demoCart = [
   { id: 'signature-chocolate-cake', optionId: 'medium',  qty: 1 },
   { id: 'grand-pralines',           optionId: '24',      qty: 2 },
   { id: 'the-grand-hamper',         optionId: 'classic', qty: 1 },

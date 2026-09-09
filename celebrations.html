@@ -19,33 +19,33 @@
 </head>
 <body>
 
-<div id="gh-header"></div>
+<div id="yq-header"></div>
 
-<section class="gh-pagehead">
-  <div class="gh-container">
-    <div class="gh-eyebrow gh-eyebrow--gold">Celebrations</div>
-    <h1 class="gh-serif">Seasonal Highlights</h1>
-    <p class="gh-lead mb-0">
+<section class="yq-pagehead">
+  <div class="yq-container">
+    <div class="yq-eyebrow yq-eyebrow--gold">Celebrations</div>
+    <h1 class="yq-serif">Seasonal Highlights</h1>
+    <p class="yq-lead mb-0">
       Dedicated collections for Chinese New Year and the Festive Season keep the store relevant year-round.
     </p>
   </div>
 </section>
 
 <section style="padding-bottom:clamp(40px,5vw,64px)">
-  <div class="gh-container">
+  <div class="yq-container">
     <div class="row g-4" id="celOccasions"></div>
   </div>
 </section>
 
-<section class="gh-section" style="background:var(--gh-paper)">
-  <div class="gh-container">
-    <div class="gh-section-head d-flex align-items-end justify-content-between flex-wrap gap-3">
+<section class="yq-section" style="background:var(--yq-paper)">
+  <div class="yq-container">
+    <div class="yq-section-head d-flex align-items-end justify-content-between flex-wrap gap-3">
       <div>
-        <div class="gh-eyebrow gh-eyebrow--gold">Featured hampers</div>
-        <hr class="gh-rule">
-        <h2 class="gh-h2">Guest favorites</h2>
+        <div class="yq-eyebrow yq-eyebrow--gold">Featured hampers</div>
+        <hr class="yq-rule">
+        <h2 class="yq-h2">Guest favorites</h2>
       </div>
-      <a class="gh-link-arrow" href="shop.html?cat=celebration">View all hampers
+      <a class="yq-link-arrow" href="shop.html?cat=celebration">View all hampers
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
       </a>
     </div>
@@ -53,18 +53,18 @@
   </div>
 </section>
 
-<section class="gh-section">
-  <div class="gh-container">
-    <div class="gh-section-head d-flex align-items-end justify-content-between flex-wrap gap-3">
+<section class="yq-section">
+  <div class="yq-container">
+    <div class="yq-section-head d-flex align-items-end justify-content-between flex-wrap gap-3">
       <div>
-        <div class="gh-eyebrow gh-eyebrow--gold">Peak gifting periods</div>
-        <hr class="gh-rule">
-        <h2 class="gh-h2">Seasonal collections</h2>
+        <div class="yq-eyebrow yq-eyebrow--gold">Peak gifting periods</div>
+        <hr class="yq-rule">
+        <h2 class="yq-h2">Seasonal collections</h2>
       </div>
       <div class="d-flex flex-wrap gap-2">
-        <a class="gh-chip" href="shop.html?season=festive">The Festive Season</a>
-        <a class="gh-chip" href="shop.html?season=cny">Chinese New Year</a>
-        <a class="gh-chip" href="shop.html?season=nye">New Year's Eve</a>
+        <a class="yq-chip" href="shop.html?season=festive">The Festive Season</a>
+        <a class="yq-chip" href="shop.html?season=cny">Chinese New Year</a>
+        <a class="yq-chip" href="shop.html?season=nye">New Year's Eve</a>
       </div>
     </div>
     <div class="row g-4" id="celSeasonal"></div>
@@ -72,21 +72,21 @@
 </section>
 
 <!-- Corporate -->
-<section class="gh-section--tight" id="corporate">
-  <div class="gh-container">
-    <div class="gh-feature gh-reveal">
+<section class="yq-section--tight" id="corporate">
+  <div class="yq-container">
+    <div class="yq-feature yq-reveal">
       <div class="row align-items-center g-4">
         <div class="col-lg-7">
           <span class="lbl">Corporate gifting</span>
-          <h3 class="gh-h3">Bulk orders, branded cards, one invoice</h3>
+          <h3 class="yq-h3">Bulk orders, branded cards, one invoice</h3>
           <p class="mb-0">
             Gifting for a team or a client list? We handle volume orders with custom card
             messaging, staggered delivery dates, and consolidated billing. Minimum 20 units.
           </p>
         </div>
         <div class="col-lg-5 text-lg-end">
-          <a class="gh-btn gh-btn--gold gh-btn--lg" href="mailto:singapore@hyatt.com">Talk to our team
-            <svg class="gh-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+          <a class="yq-btn yq-btn--gold yq-btn--lg" href="mailto:singapore@hyatt.com">Talk to our team
+            <svg class="yq-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
           </a>
         </div>
       </div>
@@ -94,7 +94,7 @@
   </div>
 </section>
 
-<div id="gh-footer"></div>
+<div id="yq-footer"></div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -108,9 +108,9 @@
 <script src="assets/js/modules/account.js"></script>
 <script>
   jQuery(function () {
-    GH.renderHeader('celebrations');
-    GH.renderFooter();
-    GH.initCelebrations();
+    YQ.renderHeader('celebrations');
+    YQ.renderFooter();
+    YQ.initCelebrations();
   });
 </script>
 </body>

@@ -1,11 +1,11 @@
 /* ==========================================================================
    Module JS: banner
-   Nạp sau data.js / app.js / pages.js nên dùng được GH.*, jQuery, Bootstrap 5.
+   Nạp sau data.js / app.js / pages.js nên dùng được YQ.*, jQuery, Bootstrap 5.
 
    Thời điểm chạy:
-     $(document).on('gh:header-ready', fn)  -> sau khi header render xong
-     $(document).on('gh:layout-ready', fn)  -> sau khi cả header + footer xong
-     $(document).on('gh:cart-changed', fn)  -> mỗi khi giỏ hàng đổi
+     $(document).on('yq:header-ready', fn)  -> sau khi header render xong
+     $(document).on('yq:layout-ready', fn)  -> sau khi cả header + footer xong
+     $(document).on('yq:cart-changed', fn)  -> mỗi khi giỏ hàng đổi
    Dùng event uỷ quyền ($(document).on('click', sel, fn)) cho DOM render động.
 
    Chức năng: hero carousel ở trang chủ
@@ -38,42 +38,42 @@
      Hero slider
      ====================================================================== */
   function initHeroSlider() {
-    var $root = $('#ghHeroSlider');
-    if (!$root.length || $root.data('ghBannerInit')) return;
-    $root.data('ghBannerInit', true);
+    var $root = $('#yqHeroSlider');
+    if (!$root.length || $root.data('yqBannerInit')) return;
+    $root.data('yqBannerInit', true);
 
-    var $slides = $root.find('.gh-heroslide');
+    var $slides = $root.find('.yq-heroslide');
     var total = $slides.length;
     if (!total) return;
 
     /* Chỉ 1 slide thì không cần bộ điều khiển */
     if (total < 2) {
       $slides.addClass('is-active').attr('aria-hidden', 'false');
-      $root.find('.gh-heroslider__foot, .gh-heroslider__prog').remove();
+      $root.find('.yq-heroslider__foot, .yq-heroslider__prog').remove();
       return;
     }
 
     /* ---------- Dựng bộ điều khiển ---------- */
-    var $ctrl = $root.find('.gh-heroslider__ctrl');
+    var $ctrl = $root.find('.yq-heroslider__ctrl');
     var $prev = $(
-      '<button type="button" class="gh-heroslider__btn" data-hero="prev" aria-label="Previous slide">' +
-      GH.icon('chevleft', 18) + '</button>');
+      '<button type="button" class="yq-heroslider__btn" data-hero="prev" aria-label="Previous slide">' +
+      YQ.icon('chevleft', 18) + '</button>');
     var $next = $(
-      '<button type="button" class="gh-heroslider__btn" data-hero="next" aria-label="Next slide">' +
-      GH.icon('chevright', 18) + '</button>');
-    $ctrl.find('.gh-heroslider__arrows').append($prev, $next);
+      '<button type="button" class="yq-heroslider__btn" data-hero="next" aria-label="Next slide">' +
+      YQ.icon('chevright', 18) + '</button>');
+    $ctrl.find('.yq-heroslider__arrows').append($prev, $next);
 
-    var $dots = $ctrl.find('.gh-heroslider__dots');
+    var $dots = $ctrl.find('.yq-heroslider__dots');
     $slides.each(function (i) {
       var label = $(this).data('title') || ('Slide ' + (i + 1));
       $dots.append(
-        '<button type="button" class="gh-heroslider__dot" data-hero-go="' + i + '" role="tab" ' +
-        'aria-label="' + GH.escape(String(label)) + '" aria-selected="false"></button>'
+        '<button type="button" class="yq-heroslider__dot" data-hero-go="' + i + '" role="tab" ' +
+        'aria-label="' + YQ.escape(String(label)) + '" aria-selected="false"></button>'
       );
     });
 
-    var $count = $ctrl.find('.gh-heroslider__count');
-    var $prog = $root.find('.gh-heroslider__prog i');
+    var $count = $ctrl.find('.yq-heroslider__count');
+    var $prog = $root.find('.yq-heroslider__prog i');
 
     /* ---------- Trạng thái ---------- */
     var cur = 0;
@@ -157,7 +157,7 @@
     $root.on('focusout', function () { focusing = false; sync(); });
 
     /* Dừng khi tab bị ẩn */
-    $(document).on('visibilitychange.ghBanner', sync);
+    $(document).on('visibilitychange.yqBanner', sync);
 
     /* Phím mũi tên khi banner đang được focus */
     $root.on('keydown', function (e) {
@@ -204,7 +204,7 @@
      Promo strip: chèn icon mũi tên vào các CTA
      ====================================================================== */
   function initPromoStrip() {
-    $('.gh-promo__cta').each(function () {
+    $('.yq-promo__cta').each(function () {
       var $el = $(this);
       if ($el.find('svg').length) return;
       $el.append(arrowSvg());
@@ -219,7 +219,7 @@
     initPromoStrip();
   }
 
-  $(document).on('gh:layout-ready', boot);
+  $(document).on('yq:layout-ready', boot);
   /* Dự phòng: nếu vì lý do nào đó layout-ready không bắn, vẫn chạy sau ready */
   $(function () { setTimeout(boot, 0); });
 

@@ -1,6 +1,6 @@
 /* ==========================================================================
    Module CSS: account — popup Log in / Register + panel member "My Functions"
-   Cặp với assets/js/modules/account.js. Prefix riêng (.gh-auth*, .gh-mfn*)
+   Cặp với assets/js/modules/account.js. Prefix riêng (.yq-auth*, .yq-mfn*)
    để không đụng tên class nào đang có trong style.css.
    ========================================================================== */
 
@@ -9,268 +9,268 @@
    ========================================================================== */
 /* Chỉ nới max-width; margin để Bootstrap lo (dưới 576px là .5rem hai bên,
    ghi đè margin-left/right ở đây sẽ làm popup dán sát mép trên điện thoại). */
-.gh-auth .modal-dialog{ max-width: 640px; }
-.gh-auth .modal-content{
-  border: 0; border-radius: var(--gh-radius);
-  background: var(--gh-paper);
-  box-shadow: var(--gh-shadow-lg);
+.yq-auth .modal-dialog{ max-width: 640px; }
+.yq-auth .modal-content{
+  border: 0; border-radius: var(--yq-radius);
+  background: var(--yq-paper);
+  box-shadow: var(--yq-shadow-lg);
   overflow: hidden;
 }
-.gh-auth .modal-body{ padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 46px) clamp(30px, 4vw, 44px); }
-.gh-auth .modal-backdrop.show{ opacity: .5; }
+.yq-auth .modal-body{ padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 46px) clamp(30px, 4vw, 44px); }
+.yq-auth .modal-backdrop.show{ opacity: .5; }
 
-.gh-auth__close{
+.yq-auth__close{
   position: absolute; top: 14px; right: 14px; z-index: 3;
   width: 40px; height: 40px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  border: 1px solid transparent; background: transparent; color: var(--gh-ink);
+  border: 1px solid transparent; background: transparent; color: var(--yq-ink);
   cursor: pointer;
-  transition: background .22s var(--gh-ease), border-color .22s var(--gh-ease), color .22s var(--gh-ease);
+  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease), color .22s var(--yq-ease);
 }
-.gh-auth__close:hover{ background: var(--gh-ink); border-color: var(--gh-ink); color: #fff; }
+.yq-auth__close:hover{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
 
-.gh-auth__title{
-  font-family: var(--gh-serif); font-weight: 500;
+.yq-auth__title{
+  font-family: var(--yq-serif); font-weight: 500;
   font-size: clamp(1.55rem, 3.2vw, 2rem); line-height: 1.15;
-  color: var(--gh-ink); text-align: center; margin: 0 0 20px;
+  color: var(--yq-ink); text-align: center; margin: 0 0 20px;
 }
 
 /* --- hàng nút social --- */
-.gh-auth__social{
+.yq-auth__social{
   display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(10px, 2.4vw, 18px);
   margin-bottom: 22px;
 }
-.gh-auth__soc{
+.yq-auth__soc{
   width: 54px; height: 54px; border-radius: 50%; flex: none;
   display: inline-flex; align-items: center; justify-content: center;
-  border: 1px solid var(--gh-line); background: var(--gh-paper); color: var(--gh-ink);
+  border: 1px solid var(--yq-line); background: var(--yq-paper); color: var(--yq-ink);
   cursor: pointer;
-  transition: transform .25s var(--gh-ease), background .25s var(--gh-ease),
-              border-color .25s var(--gh-ease), color .25s var(--gh-ease),
-              box-shadow .25s var(--gh-ease);
+  transition: transform .25s var(--yq-ease), background .25s var(--yq-ease),
+              border-color .25s var(--yq-ease), color .25s var(--yq-ease),
+              box-shadow .25s var(--yq-ease);
 }
-.gh-auth__soc:hover{
+.yq-auth__soc:hover{
   transform: translateY(-3px);
-  background: var(--gh-ink); border-color: var(--gh-ink); color: #fff;
-  box-shadow: var(--gh-shadow-md);
+  background: var(--yq-ink); border-color: var(--yq-ink); color: #fff;
+  box-shadow: var(--yq-shadow-md);
 }
-.gh-auth__soc .gh-brandi{ width: 21px; height: 21px; }
+.yq-auth__soc .yq-brandi{ width: 21px; height: 21px; }
 
-.gh-auth__or{
-  font-family: var(--gh-serif); font-size: 1.15rem; color: var(--gh-ink);
+.yq-auth__or{
+  font-family: var(--yq-serif); font-size: 1.15rem; color: var(--yq-ink);
   text-align: center; margin: 0 0 18px;
 }
 
 /* --- 2 tab Log in / Register Now --- */
-.gh-auth__tabs{
+.yq-auth__tabs{
   display: grid; grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid var(--gh-line);
+  border-bottom: 1px solid var(--yq-line);
   margin-bottom: 26px;
 }
-.gh-auth__tab{
+.yq-auth__tab{
   border: 0; background: transparent; cursor: pointer;
   padding: 15px 10px;
-  font-family: var(--gh-sans); font-size: 14.5px; font-weight: 600; letter-spacing: .01em;
-  color: var(--gh-body);
-  border-radius: var(--gh-radius-sm) var(--gh-radius-sm) 0 0;
-  transition: background .25s var(--gh-ease), color .25s var(--gh-ease);
+  font-family: var(--yq-sans); font-size: 14.5px; font-weight: 600; letter-spacing: .01em;
+  color: var(--yq-body);
+  border-radius: var(--yq-radius-sm) var(--yq-radius-sm) 0 0;
+  transition: background .25s var(--yq-ease), color .25s var(--yq-ease);
 }
-.gh-auth__tab:hover{ color: var(--gh-ink); background: var(--gh-cream); }
-.gh-auth__tab.is-active{ background: var(--gh-ink); color: #fff; }
-.gh-auth__tabs[hidden]{ display: none; }   /* [hidden] không thắng được display:grid */
+.yq-auth__tab:hover{ color: var(--yq-ink); background: var(--yq-cream); }
+.yq-auth__tab.is-active{ background: var(--yq-ink); color: #fff; }
+.yq-auth__tabs[hidden]{ display: none; }   /* [hidden] không thắng được display:grid */
 
 /* --- pane --- */
-.gh-auth__pane[hidden]{ display: none; }
-.gh-auth__pane{ animation: ghAuthIn .32s var(--gh-ease) both; }
-@keyframes ghAuthIn{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: none; } }
+.yq-auth__pane[hidden]{ display: none; }
+.yq-auth__pane{ animation: yqAuthIn .32s var(--yq-ease) both; }
+@keyframes yqAuthIn{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: none; } }
 
-.gh-auth__row{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-@media (max-width: 575.98px){ .gh-auth__row{ grid-template-columns: 1fr; } }
+.yq-auth__row{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 575.98px){ .yq-auth__row{ grid-template-columns: 1fr; } }
 
-.gh-auth__label{
+.yq-auth__label{
   display: block; font-size: 13px; font-weight: 500;
-  color: var(--gh-ink-soft); margin-bottom: 7px;
+  color: var(--yq-ink-soft); margin-bottom: 7px;
 }
-.gh-auth__meta{
+.yq-auth__meta{
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
   flex-wrap: wrap; margin: 18px 0 20px;
 }
-.gh-auth__forgot{
+.yq-auth__forgot{
   border: 0; background: none; padding: 0; cursor: pointer;
-  font-size: 13.5px; font-weight: 600; color: var(--gh-ink);
+  font-size: 13.5px; font-weight: 600; color: var(--yq-ink);
   border-bottom: 1px solid transparent;
-  transition: color .2s var(--gh-ease), border-color .2s var(--gh-ease);
+  transition: color .2s var(--yq-ease), border-color .2s var(--yq-ease);
 }
-.gh-auth__forgot:hover{ color: var(--gh-gold-dark); border-color: var(--gh-gold); }
+.yq-auth__forgot:hover{ color: var(--yq-gold-dark); border-color: var(--yq-gold); }
 
 /* ô mật khẩu + nút hiện/ẩn */
-.gh-auth__pw{ position: relative; }
-.gh-auth__pw .gh-input{ padding-right: 44px; width: 100%; }
-.gh-auth__peek{
+.yq-auth__pw{ position: relative; }
+.yq-auth__pw .yq-input{ padding-right: 44px; width: 100%; }
+.yq-auth__peek{
   position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
   width: 32px; height: 32px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  border: 0; background: none; color: var(--gh-muted); cursor: pointer;
-  transition: color .2s var(--gh-ease);
+  border: 0; background: none; color: var(--yq-muted); cursor: pointer;
+  transition: color .2s var(--yq-ease);
 }
-.gh-auth__peek:hover{ color: var(--gh-ink); }
+.yq-auth__peek:hover{ color: var(--yq-ink); }
 
 /* checkbox nhỏ dùng chung cho cả 2 pane */
-.gh-auth__check{ display: flex; align-items: center; gap: 9px; cursor: pointer; }
-.gh-auth__check input{
+.yq-auth__check{ display: flex; align-items: center; gap: 9px; cursor: pointer; }
+.yq-auth__check input{
   width: 17px; height: 17px; flex: none; cursor: pointer;
-  accent-color: var(--gh-gold-dark);
+  accent-color: var(--yq-gold-dark);
 }
-.gh-auth__check span{ font-size: 13.5px; color: var(--gh-body); }
+.yq-auth__check span{ font-size: 13.5px; color: var(--yq-body); }
 
 /* --- pane Register: khối xám + nhãn nằm bên trái --- */
-.gh-auth__box{
-  background: var(--gh-cream);
-  border: 1px solid var(--gh-line-soft);
-  border-radius: var(--gh-radius-sm);
+.yq-auth__box{
+  background: var(--yq-cream);
+  border: 1px solid var(--yq-line-soft);
+  border-radius: var(--yq-radius-sm);
   padding: clamp(18px, 3vw, 26px);
   margin-bottom: 18px;
 }
-.gh-auth__hint{
-  font-style: italic; font-size: 13.5px; color: var(--gh-body);
+.yq-auth__hint{
+  font-style: italic; font-size: 13.5px; color: var(--yq-body);
   margin: 0 0 18px;
 }
-.gh-auth__grid{ display: grid; grid-template-columns: 110px 1fr; gap: 14px 16px; align-items: start; }
-.gh-auth__grid > .gh-auth__side{
-  font-size: 13.5px; font-weight: 500; color: var(--gh-ink-soft);
+.yq-auth__grid{ display: grid; grid-template-columns: 110px 1fr; gap: 14px 16px; align-items: start; }
+.yq-auth__grid > .yq-auth__side{
+  font-size: 13.5px; font-weight: 500; color: var(--yq-ink-soft);
   padding-top: 13px; text-align: right;
 }
-.gh-auth__grid .gh-auth__stack{ display: grid; gap: 12px; }
-.gh-auth__grid .gh-auth__duo{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.gh-auth__box .gh-input{ width: 100%; background: var(--gh-paper); }
+.yq-auth__grid .yq-auth__stack{ display: grid; gap: 12px; }
+.yq-auth__grid .yq-auth__duo{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.yq-auth__box .yq-input{ width: 100%; background: var(--yq-paper); }
 @media (max-width: 575.98px){
-  .gh-auth__grid{ grid-template-columns: 1fr; gap: 6px; }
-  .gh-auth__grid > .gh-auth__side{ text-align: left; padding-top: 8px; }
-  .gh-auth__grid .gh-auth__duo{ grid-template-columns: 1fr; }
+  .yq-auth__grid{ grid-template-columns: 1fr; gap: 6px; }
+  .yq-auth__grid > .yq-auth__side{ text-align: left; padding-top: 8px; }
+  .yq-auth__grid .yq-auth__duo{ grid-template-columns: 1fr; }
 }
 
-.gh-auth__submit{ margin-top: 20px; }
-.gh-auth__note{
-  text-align: center; font-size: 12.5px; color: var(--gh-muted);
+.yq-auth__submit{ margin-top: 20px; }
+.yq-auth__note{
+  text-align: center; font-size: 12.5px; color: var(--yq-muted);
   margin: 16px 0 0;
 }
 
 /* --- pane quên mật khẩu --- */
-.gh-auth__back{
+.yq-auth__back{
   border: 0; background: none; padding: 0; cursor: pointer;
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 500; color: var(--gh-body);
+  font-size: 13px; font-weight: 500; color: var(--yq-body);
   margin-bottom: 16px;
-  transition: color .2s var(--gh-ease);
+  transition: color .2s var(--yq-ease);
 }
-.gh-auth__back:hover{ color: var(--gh-ink); }
+.yq-auth__back:hover{ color: var(--yq-ink); }
 
 /* ==========================================================================
    2. Panel member "My Functions"  (Bootstrap offcanvas-end + lớp áo riêng)
    ========================================================================== */
-.gh-mfn{
+.yq-mfn{
   width: min(480px, 100vw);
-  border-left: 1px solid var(--gh-line);
-  background: var(--gh-paper);
+  border-left: 1px solid var(--yq-line);
+  background: var(--yq-paper);
 }
-.gh-mfn__head{
+.yq-mfn__head{
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
   padding: clamp(22px, 3vw, 30px) clamp(20px, 3vw, 32px) 18px;
 }
-.gh-mfn__title{
-  font-family: var(--gh-serif); font-weight: 500;
+.yq-mfn__title{
+  font-family: var(--yq-serif); font-weight: 500;
   font-size: clamp(1.5rem, 3vw, 1.95rem); line-height: 1.1;
-  color: var(--gh-ink); margin: 0;
+  color: var(--yq-ink); margin: 0;
 }
-.gh-mfn__close{
+.yq-mfn__close{
   flex: none; width: 40px; height: 40px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  border: 1px solid var(--gh-line); background: var(--gh-paper); color: var(--gh-ink);
+  border: 1px solid var(--yq-line); background: var(--yq-paper); color: var(--yq-ink);
   cursor: pointer;
-  transition: background .22s var(--gh-ease), border-color .22s var(--gh-ease), color .22s var(--gh-ease);
+  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease), color .22s var(--yq-ease);
 }
-.gh-mfn__close:hover{ background: var(--gh-ink); border-color: var(--gh-ink); color: #fff; }
+.yq-mfn__close:hover{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
 
-.gh-mfn__body{
+.yq-mfn__body{
   flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain;
   padding: 0 clamp(20px, 3vw, 32px) clamp(24px, 3vw, 32px);
 }
 
 /* --- lời chào + nút Edit --- */
-.gh-mfn__hello{
+.yq-mfn__hello{
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding-bottom: 22px;
 }
-.gh-mfn__hi{
-  font-size: 16px; font-weight: 500; color: var(--gh-ink);
+.yq-mfn__hi{
+  font-size: 16px; font-weight: 500; color: var(--yq-ink);
   margin: 0; min-width: 0;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.gh-mfn__hi em{ font-style: normal; font-weight: 600; }
-.gh-mfn__mail{
-  display: block; font-size: 12.5px; font-weight: 400; color: var(--gh-muted);
+.yq-mfn__hi em{ font-style: normal; font-weight: 600; }
+.yq-mfn__mail{
+  display: block; font-size: 12.5px; font-weight: 400; color: var(--yq-muted);
   margin-top: 3px;
   overflow: hidden; text-overflow: ellipsis;
 }
 
 /* --- danh sách chức năng --- */
-.gh-mfn__list{ display: block; }
-.gh-mfn__item{
+.yq-mfn__list{ display: block; }
+.yq-mfn__item{
   width: 100%; text-align: left;
   display: flex; align-items: center; gap: 12px;
   padding: 18px 4px;
-  border: 0; border-bottom: 1px solid var(--gh-line-soft);
-  background: none; cursor: pointer; color: var(--gh-ink);
-  font-size: 15px; font-weight: 600; font-family: var(--gh-sans);
+  border: 0; border-bottom: 1px solid var(--yq-line-soft);
+  background: none; cursor: pointer; color: var(--yq-ink);
+  font-size: 15px; font-weight: 600; font-family: var(--yq-sans);
   text-decoration: none;
-  transition: color .22s var(--gh-ease), padding-left .22s var(--gh-ease);
+  transition: color .22s var(--yq-ease), padding-left .22s var(--yq-ease);
 }
-.gh-mfn__item:hover{ color: var(--gh-gold-dark); padding-left: 10px; }
-.gh-mfn__item:focus-visible{ outline: 2px solid var(--gh-gold); outline-offset: 3px; }
-.gh-mfn__dot{
+.yq-mfn__item:hover{ color: var(--yq-gold-dark); padding-left: 10px; }
+.yq-mfn__item:focus-visible{ outline: 2px solid var(--yq-gold); outline-offset: 3px; }
+.yq-mfn__dot{
   flex: none; width: 11px; height: 11px; border-radius: 50%;
-  border: 1.5px solid var(--gh-ink);
-  transition: background .22s var(--gh-ease), border-color .22s var(--gh-ease);
+  border: 1.5px solid var(--yq-ink);
+  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease);
 }
-.gh-mfn__item:hover .gh-mfn__dot{ background: var(--gh-gold); border-color: var(--gh-gold); }
-.gh-mfn__txt{ flex: 1 1 auto; min-width: 0; }
-.gh-mfn__ico{ flex: none; color: var(--gh-gold); display: inline-flex; }
-.gh-mfn__item:hover .gh-mfn__ico{ color: var(--gh-gold-dark); }
+.yq-mfn__item:hover .yq-mfn__dot{ background: var(--yq-gold); border-color: var(--yq-gold); }
+.yq-mfn__txt{ flex: 1 1 auto; min-width: 0; }
+.yq-mfn__ico{ flex: none; color: var(--yq-gold); display: inline-flex; }
+.yq-mfn__item:hover .yq-mfn__ico{ color: var(--yq-gold-dark); }
 
 /* --- pane con (profile / password / …) --- */
-.gh-mfn__pane[hidden]{ display: none; }
-.gh-mfn__pane{ animation: ghAuthIn .3s var(--gh-ease) both; }
-.gh-mfn__pane .gh-input{ width: 100%; }
-.gh-mfn__sub{
-  font-family: var(--gh-serif); font-size: 1.25rem; color: var(--gh-ink);
+.yq-mfn__pane[hidden]{ display: none; }
+.yq-mfn__pane{ animation: yqAuthIn .3s var(--yq-ease) both; }
+.yq-mfn__pane .yq-input{ width: 100%; }
+.yq-mfn__sub{
+  font-family: var(--yq-serif); font-size: 1.25rem; color: var(--yq-ink);
   margin: 0 0 4px;
 }
-.gh-mfn__lead{ font-size: 13.5px; color: var(--gh-body); margin: 0 0 20px; }
-.gh-mfn__fields{ display: grid; gap: 14px; margin-bottom: 22px; }
-.gh-mfn__duo{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 400px){ .gh-mfn__duo{ grid-template-columns: 1fr; } }
+.yq-mfn__lead{ font-size: 13.5px; color: var(--yq-body); margin: 0 0 20px; }
+.yq-mfn__fields{ display: grid; gap: 14px; margin-bottom: 22px; }
+.yq-mfn__duo{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 400px){ .yq-mfn__duo{ grid-template-columns: 1fr; } }
 
-.gh-mfn__stat{
-  background: var(--gh-cream); border: 1px solid var(--gh-line-soft);
-  border-radius: var(--gh-radius-sm);
+.yq-mfn__stat{
+  background: var(--yq-cream); border: 1px solid var(--yq-line-soft);
+  border-radius: var(--yq-radius-sm);
   padding: 22px; text-align: center; margin-bottom: 20px;
 }
-.gh-mfn__stat b{
-  display: block; font-family: var(--gh-serif); font-size: 2rem;
-  font-weight: 500; color: var(--gh-ink); line-height: 1.1;
+.yq-mfn__stat b{
+  display: block; font-family: var(--yq-serif); font-size: 2rem;
+  font-weight: 500; color: var(--yq-ink); line-height: 1.1;
 }
-.gh-mfn__stat span{ display: block; font-size: 12.5px; color: var(--gh-muted); margin-top: 6px; }
+.yq-mfn__stat span{ display: block; font-size: 12.5px; color: var(--yq-muted); margin-top: 6px; }
 
 /* nút account ở header khi đã đăng nhập -> hiện chữ cái đầu */
-.gh-acct-initial{
-  font-family: var(--gh-sans); font-size: 12.5px; font-weight: 700;
+.yq-acct-initial{
+  font-family: var(--yq-sans); font-size: 12.5px; font-weight: 700;
   letter-spacing: .02em; line-height: 1;
 }
-.gh-iconbtn.is-signed{ background: var(--gh-gold-soft); border-color: var(--gh-gold); color: var(--gh-gold-dark); }
+.yq-iconbtn.is-signed{ background: var(--yq-gold-soft); border-color: var(--yq-gold); color: var(--yq-gold-dark); }
 
 @media (prefers-reduced-motion: reduce){
-  .gh-auth__pane, .gh-mfn__pane{ animation: none; }
-  .gh-auth__soc:hover{ transform: none; }
-  .gh-mfn__item{ transition: none; }
-  .gh-mfn__item:hover{ padding-left: 4px; }
+  .yq-auth__pane, .yq-mfn__pane{ animation: none; }
+  .yq-auth__soc:hover{ transform: none; }
+  .yq-mfn__item{ transition: none; }
+  .yq-mfn__item:hover{ padding-left: 4px; }
 }

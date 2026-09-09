@@ -50,19 +50,43 @@ python3 -m http.server 8000
 ```
 
 Header và footer **không lặp lại trong HTML** — được render bằng jQuery từ `app.js`,
-nên sửa nav/footer chỉ cần sửa một chỗ (`GH.nav`, `GH.megaMenu` trong `data.js`).
+nên sửa nav/footer chỉ cần sửa một chỗ (`YQ.nav`, `YQ.megaMenu` trong `data.js`).
 
 Mỗi file trong `assets/js/modules/` là một tính năng độc lập, chỉ móc vào DOM và event
 có sẵn — xoá file nào thì mất đúng tính năng đó, phần còn lại vẫn chạy. Module chạy đúng
 thời điểm nhờ các event do `app.js` bắn ra:
 
 ```js
-$(document).on('gh:header-ready', fn);   // header render xong
-$(document).on('gh:layout-ready', fn);   // cả header + footer xong
-$(document).on('gh:cart-changed', fn);   // giỏ hàng đổi
-$(document).on('gh:auth-changed', fn);    // đăng nhập / đăng xuất
-$(document).on('gh:profile-changed', fn); // hồ sơ thành viên đổi
+$(document).on('yq:header-ready', fn);   // header render xong
+$(document).on('yq:layout-ready', fn);   // cả header + footer xong
+$(document).on('yq:cart-changed', fn);   // giỏ hàng đổi
+$(document).on('yq:auth-changed', fn);    // đăng nhập / đăng xuất
+$(document).on('yq:profile-changed', fn); // hồ sơ thành viên đổi
 ```
+
+### Quy ước đặt tên
+
+Mọi thứ do project này viết ra đều mang tiền tố **`yq`**, để không đụng tên với
+Bootstrap, jQuery hay thư viện khác. Mỗi loại định danh có một cách viết riêng:
+
+| Loại | Cách viết | Ví dụ |
+|---|---|---|
+| CSS class | `yq-` + kebab-case, `__` cho phần con | `.yq-btn`, `.yq-prof__card` |
+| CSS custom property | `--yq-` | `--yq-gold`, `--yq-ease` |
+| Biến toàn cục JS | `YQ.` | `YQ.cart`, `YQ.initHome()` |
+| `id` trong DOM | `yq` + camelCase | `yqHeader`, `yqCartCount` |
+| `data-` attribute | `data-yq-` | `data-yq-account`, `data-yq-add` |
+| localStorage key | `yq_` + snake_case + version | `yq_cart_v4`, `yq_profile_v1` |
+| Custom event | `yq:` + kebab-case | `yq:cart-changed` |
+| CSS `@keyframes` | `yq` + camelCase | `yqAddedIn`, `yqRowNew` |
+
+Đuôi `_v4`, `_v1` trong localStorage key là **số phiên bản dữ liệu** — đổi cấu trúc
+lưu trữ thì tăng số lên, người dùng cũ tự nhận dữ liệu mới thay vì lỗi parse.
+
+> **Hai chuỗi vẫn giữ tiền tố `GH`** vì đó là nhãn Grand Hyatt hiển thị cho khách,
+> không phải namespace code: mã đơn hàng (`'GH' + Date.now()…` trong `pages.js`) và
+> mã giới thiệu (`YQ.referral.codePrefix = 'GH-'`). Watermark `content: "GH"` trên
+> ảnh placeholder cũng vậy.
 
 ### Trang trong thư mục con
 
@@ -78,17 +102,17 @@ khai báo `data-root`, còn script/CSS của chính nó trỏ bằng `../`:
 <script src="../assets/js/app.js"></script>
 ```
 
-`app.js` đọc thuộc tính đó thành `GH.root` rồi dịch đường dẫn đúng lúc chèn vào DOM:
+`app.js` đọc thuộc tính đó thành `YQ.root` rồi dịch đường dẫn đúng lúc chèn vào DOM:
 
 ```js
-GH.url('shop.html')       // -> '../shop.html'   (trang ở gốc: giữ nguyên)
-GH.localise(htmlString)   // đổi mọi href/src tương đối trong một khối HTML
+YQ.url('shop.html')       // -> '../shop.html'   (trang ở gốc: giữ nguyên)
+YQ.localise(htmlString)   // đổi mọi href/src tương đối trong một khối HTML
 ```
 
-`http(s):`, `mailto:`, `tel:`, `/…` và `#` được bỏ qua. Trang ở gốc có `GH.root = ''`
+`http(s):`, `mailto:`, `tel:`, `/…` và `#` được bỏ qua. Trang ở gốc có `YQ.root = ''`
 nên cả hai hàm là no-op.
 
-> **Thêm chỗ chèn HTML mới có link hoặc ảnh thì nhớ bọc `GH.localise()`** — không bọc
+> **Thêm chỗ chèn HTML mới có link hoặc ảnh thì nhớ bọc `YQ.localise()`** — không bọc
 > thì chỗ đó gãy khi mở từ `member/`. Các điểm chèn hiện có đã bọc sẵn: header, footer,
 > toast, popup/panel account, cart drawer, và cả 4 trang trong `member/`.
 
@@ -115,8 +139,8 @@ nên cả hai hàm là no-op.
 | Mật khẩu | Đổi mật khẩu có thanh sức mạnh 4 mức, checklist điều kiện, nút hiện/ẩn |
 | Mời bạn | Link mời riêng theo số thẻ, chia sẻ Facebook / LINE / email, danh sách đã mời |
 
-Giỏ hàng lưu ở `localStorage` (key `gh_cart_v4`) nên giữ nguyên khi chuyển trang.
-Lần đầu vào site giỏ được nạp sẵn dữ liệu mẫu từ `GH.demoCart` (`data.js`) để `cart.html`/`checkout.html` có nội dung xem thử — xem mục [Giỏ hàng mẫu](#giỏ-hàng-mẫu).
+Giỏ hàng lưu ở `localStorage` (key `yq_cart_v4`) nên giữ nguyên khi chuyển trang.
+Lần đầu vào site giỏ được nạp sẵn dữ liệu mẫu từ `YQ.demoCart` (`data.js`) để `cart.html`/`checkout.html` có nội dung xem thử — xem mục [Giỏ hàng mẫu](#giỏ-hàng-mẫu).
 
 ---
 
@@ -126,24 +150,24 @@ Lần đầu vào site giỏ được nạp sẵn dữ liệu mẫu từ `GH.dem
 
 ```css
 :root{
-  --gh-ink:  #171613;   /* chữ & nút chính */
-  --gh-gold: #C4A46A;   /* accent vàng */
-  --gh-cream:#F6F4EF;   /* nền */
-  --gh-serif: "Playfair Display", Georgia, serif;
-  --gh-sans:  "Inter", -apple-system, sans-serif;
+  --yq-ink:  #171613;   /* chữ & nút chính */
+  --yq-gold: #C4A46A;   /* accent vàng */
+  --yq-cream:#F6F4EF;   /* nền */
+  --yq-serif: "Playfair Display", Georgia, serif;
+  --yq-sans:  "Inter", -apple-system, sans-serif;
 }
 ```
 
-**Sản phẩm** — sửa mảng `GH.products` trong `assets/js/data.js`.
+**Sản phẩm** — sửa mảng `YQ.products` trong `assets/js/data.js`.
 
 ### Giỏ hàng mẫu
 
 `cart.html` và `checkout.html` render từ `localStorage`, nên máy chưa từng thêm sản phẩm
-sẽ thấy trang trống. `GH.demoCart` trong `data.js` nạp sẵn vài dòng hàng cho **lần truy
+sẽ thấy trang trống. `YQ.demoCart` trong `data.js` nạp sẵn vài dòng hàng cho **lần truy
 cập đầu tiên**:
 
 ```js
-GH.demoCart = [
+YQ.demoCart = [
   { id: 'signature-chocolate-cake', optionId: 'medium',  qty: 1 },
   { id: 'grand-pralines',           optionId: '24',      qty: 2 },
   { id: 'the-grand-hamper',         optionId: 'classic', qty: 1 },
@@ -151,11 +175,11 @@ GH.demoCart = [
 ];
 ```
 
-- Chỉ tham chiếu theo `id` (`GH.products`) hoặc `exp` (`GH.experiences`) — không chép
+- Chỉ tham chiếu theo `id` (`YQ.products`) hoặc `exp` (`YQ.experiences`) — không chép
   tên/giá, nên sửa giá một chỗ là đủ.
 - Người dùng tự xoá giỏ thì **không** nạp lại (localStorage đã có key).
-- Nạp lại thủ công: mở `cart.html?demo=1`, hoặc gọi `GH.cart.seed(true)` trong console.
-- Lên production: đặt `GH.demoCart = []` là tắt hẳn.
+- Nạp lại thủ công: mở `cart.html?demo=1`, hoặc gọi `YQ.cart.seed(true)` trong console.
+- Lên production: đặt `YQ.demoCart = []` là tắt hẳn.
 
 ### Tài khoản & menu member
 
@@ -166,9 +190,9 @@ popup, đã đăng nhập thì mở panel member.
 Danh sách nút social và các mục trong panel lấy từ `data.js`:
 
 ```js
-GH.socialLogins = [ { id:'facebook', label:'Facebook' }, … ];   // id phải có trong GH.brandIcon
+YQ.socialLogins = [ { id:'facebook', label:'Facebook' }, … ];   // id phải có trong YQ.brandIcon
 
-GH.memberMenu = [
+YQ.memberMenu = [
   { key:'profile', label:'My profile', icon:'user', view:'profile' },  // mở pane trong panel
   { key:'orders',  label:'My Order',   icon:'bag',  href:'my-orders.html' }, // hoặc sang trang thật
   { key:'logout',  label:'Logout',     icon:'logout', action:'logout' }
@@ -178,14 +202,14 @@ GH.memberMenu = [
 Có `href` thì mục đó điều hướng như link bình thường và `view` bị bỏ qua — khi backend
 có trang thật chỉ cần điền `href`, không phải sửa module.
 
-Mở popup từ chỗ khác: `GH.account.login()`, `GH.account.register()`, `GH.account.member()`.
+Mở popup từ chỗ khác: `YQ.account.login()`, `YQ.account.register()`, `YQ.account.member()`.
 
 ### Lịch sử đơn hàng
 
-`orders.html` (controller `GH.initOrders` trong `pages.js`) đọc `GH.orders` ở `data.js`:
+`orders.html` (controller `YQ.initOrders` trong `pages.js`) đọc `YQ.orders` ở `data.js`:
 
 ```js
-GH.orders = [
+YQ.orders = [
   { id:'354646799', date:'2026-08-21', status:'completed', items:[
     { id:'signature-chocolate-cake', optionId:'medium', qty:1 }
   ]}
@@ -195,20 +219,20 @@ GH.orders = [
 - `status`: `'completed'` → tab **Completed orders**, nút **ReOrder**;
   `'pending'` → tab **Pending payment**, chip "Awaiting payment" + nút **Pay now**.
 - `date` là ISO `YYYY-MM-DD`, hiển thị thành `21-August-2026`.
-- Dòng hàng chỉ giữ `id` + `optionId`, tên/giá/ảnh lấy từ `GH.products` — id không còn
+- Dòng hàng chỉ giữ `id` + `optionId`, tên/giá/ảnh lấy từ `YQ.products` — id không còn
   trong catalogue thì dòng đó tự bỏ qua, không vỡ trang.
 - Mỗi tab tự mở sẵn đơn mới nhất; các đơn còn lại thu gọn thành `1x Tên … giá`.
 - Vào thẳng một tab: `orders.html?tab=pending`.
-- ReOrder gắn `data-gh-add` nên dùng lại nguyên hiệu ứng của `cart-anim.js`
+- ReOrder gắn `data-yq-add` nên dùng lại nguyên hiệu ứng của `cart-anim.js`
   (ảnh bay vào giỏ, nút "Added", cart drawer).
-- Mã tiền tệ ở dòng Total lấy từ `GH.config.currencyCode`.
+- Mã tiền tệ ở dòng Total lấy từ `YQ.config.currencyCode`.
 
 ### Hồ sơ thành viên
 
-`member/profile.html` (controller `GH.initProfile`) tách làm hai phần trong `data.js`:
+`member/profile.html` (controller `YQ.initProfile`) tách làm hai phần trong `data.js`:
 
 ```js
-GH.profileGroups = [                     // SƠ ĐỒ: nhóm nào, nhãn gì, sửa được không
+YQ.profileGroups = [                     // SƠ ĐỒ: nhóm nào, nhãn gì, sửa được không
   { title:'Membership', icon:'star', fields:[
     { key:'memberNo', label:'Membership No.', ro:true },        // ro = chỉ đọc
     { key:'joinDate', label:'Join date', type:'date', ro:true }
@@ -218,34 +242,34 @@ GH.profileGroups = [                     // SƠ ĐỒ: nhóm nào, nhãn gì, s�
   ]}
 ];
 
-GH.demoProfile = { memberNo:'000001991', firstName:'son', … };   // GIÁ TRỊ mẫu
+YQ.demoProfile = { memberNo:'000001991', firstName:'son', … };   // GIÁ TRỊ mẫu
 ```
 
 - `type`: `text` (mặc định) | `email` | `tel` | `date` | `select`.
-- Thêm/bớt/đổi thứ tự trường chỉ cần sửa `GH.profileGroups` — phần xem, phần sửa và
+- Thêm/bớt/đổi thứ tự trường chỉ cần sửa `YQ.profileGroups` — phần xem, phần sửa và
   thanh **% hoàn thiện** đều tự tính lại theo sơ đồ.
-- Giá trị lưu ở `localStorage` (`gh_profile_v1`), lần đầu nạp từ `GH.demoProfile`.
+- Giá trị lưu ở `localStorage` (`yq_profile_v1`), lần đầu nạp từ `YQ.demoProfile`.
 - Trường `ro` không bao giờ thành ô nhập, chỉ hiện nhãn "Locked" khi đang sửa.
 - Vào thẳng chế độ sửa: `member/profile.html?edit=1` — nút **Edit** trong panel member
   dùng đúng link này. Panel member giờ chỉ còn pane **My Wallet**; hồ sơ, đơn hàng,
   mật khẩu và mời bạn đều là trang riêng để không phải sửa cùng một thứ ở hai nơi.
-- Lưu xong, nếu đang đăng nhập thì `GH.auth` được đồng bộ tên + email theo hồ sơ.
+- Lưu xong, nếu đang đăng nhập thì `YQ.auth` được đồng bộ tên + email theo hồ sơ.
 
 ### Đổi mật khẩu
 
-`member/password.html` (controller `GH.initPassword`). Bốn điều kiện nằm ngay đầu
+`member/password.html` (controller `YQ.initPassword`). Bốn điều kiện nằm ngay đầu
 controller trong mảng `RULES` — sửa/thêm một dòng là cả checklist lẫn thanh sức mạnh
 (4 mức: Weak → Fair → Good → Strong) tự đổi theo.
 
 Chặn: thiếu mật khẩu hiện tại, chưa đủ 4 điều kiện, trùng mật khẩu cũ, nhập lại không
-khớp. Lưu xong ghi `passwordChangedAt` vào `GH.profile` để thẻ trái hiện "Last changed".
+khớp. Lưu xong ghi `passwordChangedAt` vào `YQ.profile` để thẻ trái hiện "Last changed".
 
 ### Mời bạn bè
 
-`member/invite.html` (controller `GH.initInvite`) đọc `GH.referral` trong `data.js`:
+`member/invite.html` (controller `YQ.initInvite`) đọc `YQ.referral` trong `data.js`:
 
 ```js
-GH.referral = {
+YQ.referral = {
   reward: 20,                       // ưu đãi cho cả hai bên
   landing: 'index.html',            // link mời trỏ tới đâu
   codePrefix: 'GH-',                // mã = codePrefix + 6 số cuối của memberNo
@@ -263,22 +287,22 @@ GH.referral = {
 - `kind`: `share` (mở popup chia sẻ, `{u}` = link mời, `{t}` = lời nhắn) | `mail`
   (mở app email) | `copy` (chép clipboard).
 - Thêm WhatsApp/X chỉ cần thêm một dòng vào `channels`; có logo khi `id` nằm trong
-  `GH.brandIcon`, không thì rơi về `GH.icon(icon)`.
+  `YQ.brandIcon`, không thì rơi về `YQ.icon(icon)`.
 - Link mời là URL tuyệt đối kèm `?ref=<mã>`, mã bám theo `memberNo` nên mỗi người một mã.
-- Danh sách đã mời lưu ở `localStorage` (`gh_invites_v1`), tự bỏ email trùng.
+- Danh sách đã mời lưu ở `localStorage` (`yq_invites_v1`), tự bỏ email trùng.
 
 > **Chưa nối backend.** Mọi email/mật khẩu đúng định dạng đều đăng nhập được và
-> **mật khẩu không được lưu ở đâu cả** — localStorage (`gh_user_v1`) chỉ giữ email,
+> **mật khẩu không được lưu ở đâu cả** — localStorage (`yq_user_v1`) chỉ giữ email,
 > tên và tuỳ chọn nhận khuyến mãi. Phần `6. Chỗ nối API` trong `account.js` là 3 hàm
 > `apiLogin` / `apiRegister` / `apiSocial`, thay bằng lệnh gọi server thật khi có API.
 
-**Logo** — mặc định logo được dựng bằng HTML/CSS trong `GH.logo()` (`assets/js/data.js`),
+**Logo** — mặc định logo được dựng bằng HTML/CSS trong `YQ.logo()` (`assets/js/data.js`),
 nên luôn sắc nét ở mọi kích thước và đổi màu chỉ bằng 1 dòng CSS:
 
 ```css
 :root{
-  --gh-brand:     #C10B44;   /* crimson GRAND | HYATT */
-  --gh-brand-sub: #58575B;   /* xám chữ SINGAPORE */
+  --yq-brand:     #C10B44;   /* crimson GRAND | HYATT */
+  --yq-brand-sub: #58575B;   /* xám chữ SINGAPORE */
 }
 ```
 
@@ -286,8 +310,8 @@ Khi có file logo chính thức, chỉ cần gán đường dẫn — header, fo
 
 ```js
 // assets/js/data.js
-GH.logoImage      = 'assets/img/logo-grand-hyatt.png';       // nền sáng (header)
-GH.logoImageLight = 'assets/img/logo-grand-hyatt-white.png'; // nền tối (footer)
+YQ.logoImage      = 'assets/img/logo-grand-hyatt.png';       // nền sáng (header)
+YQ.logoImageLight = 'assets/img/logo-grand-hyatt-white.png'; // nền tối (footer)
 ```
 
 **Ảnh** — 29 ảnh trong `assets/img/`, đặt tên theo nhóm: `hero-*`, `banner-*`, `p-*` (product),
@@ -311,13 +335,13 @@ Muốn gallery riêng cho 1 sản phẩm (thay vì lấy ảnh cùng danh mục)
 Hero và ảnh editorial nằm trực tiếp trong `index.html`:
 
 ```html
-<div class="gh-media"><img src="assets/img/hero-lounge.jpg" alt="..."></div>
+<div class="yq-media"><img src="assets/img/hero-lounge.jpg" alt="..."></div>
 ```
 
-**Phí ship / thuế** — `GH.config` cuối `data.js`:
+**Phí ship / thuế** — `YQ.config` cuối `data.js`:
 
 ```js
-GH.config = { shipping: 15, freeShippingThreshold: 150, taxRate: 0.09, physicalCardFee: 5 };
+YQ.config = { shipping: 15, freeShippingThreshold: 150, taxRate: 0.09, physicalCardFee: 5 };
 ```
 
 ---
@@ -334,10 +358,10 @@ GH.config = { shipping: 15, freeShippingThreshold: 150, taxRate: 0.09, physicalC
 - Ảnh trong `assets/img/` lấy từ [Unsplash](https://unsplash.com) (Unsplash License —
   miễn phí, dùng được cho mục đích thương mại, không bắt buộc ghi nguồn). Đây là **ảnh
   minh hoạ tạm** — khi lên production nên thay bằng ảnh chụp thật của khách sạn.
-- Icon social trong popup đăng nhập (`GH.brandIcon` ở `data.js`) dùng path của
+- Icon social trong popup đăng nhập (`YQ.brandIcon` ở `data.js`) dùng path của
   [Font Awesome Free](https://fontawesome.com/license/free) (brands, CC BY 4.0). Tên và
   biểu tượng Facebook / Twitter / LinkedIn / Google / Microsoft là nhãn hiệu của chủ sở hữu,
   ở đây chỉ dùng để chỉ nhà cung cấp đăng nhập.
 - Logo hiện là bản **dựng lại bằng HTML/CSS** cho gần giống bản gốc, không phải file
-  chính thức từ brand kit. Màu `--gh-brand` là ước lượng theo mắt. Hãy thay bằng asset
+  chính thức từ brand kit. Màu `--yq-brand` là ước lượng theo mắt. Hãy thay bằng asset
   chính thức (xem mục Logo ở trên) trước khi bàn giao.

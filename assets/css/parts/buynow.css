@@ -1,7 +1,7 @@
 /* ==========================================================================
    Module CSS: buynow
    File riêng của module này — dùng chung design token trong assets/css/style.css
-   (--gh-ink, --gh-gold, --gh-cream, --gh-line, --gh-serif, --gh-sans, --gh-ease…)
+   (--yq-ink, --yq-gold, --yq-cream, --yq-line, --yq-serif, --yq-sans, --yq-ease…)
 
    Nội dung:
      1. Trạng thái loading dùng chung cho nút mua nhanh
@@ -11,17 +11,17 @@
    ========================================================================== */
 
 /* ---------- 1. Trạng thái loading dùng chung ---------- */
-/* Ẩn nội dung nút và thay bằng spinner tròn — dùng cho mọi nút .gh-btn */
-.gh-btn.is-buying{
+/* Ẩn nội dung nút và thay bằng spinner tròn — dùng cho mọi nút .yq-btn */
+.yq-btn.is-buying{
   position: relative;
   pointer-events: none;      /* chặn click lần 2 */
   cursor: default;
 }
-.gh-btn.is-buying > *{
+.yq-btn.is-buying > *{
   opacity: 0;
-  transition: opacity .15s var(--gh-ease);
+  transition: opacity .15s var(--yq-ease);
 }
-.gh-btn.is-buying::after{
+.yq-btn.is-buying::after{
   content: "";
   position: absolute;
   top: 50%; left: 50%;
@@ -30,48 +30,48 @@
   border: 2px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
-  animation: gh-buy-spin .62s linear infinite;
+  animation: yq-buy-spin .62s linear infinite;
 }
-@keyframes gh-buy-spin{ to{ transform: rotate(360deg); } }
+@keyframes yq-buy-spin{ to{ transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce){
-  .gh-btn.is-buying::after{ animation-duration: 1.6s; }
+  .yq-btn.is-buying::after{ animation-duration: 1.6s; }
 }
 
 /* ---------- 2. PDP: hàng nút Add to cart + Buy Now ---------- */
-.gh-buyrow{
+.yq-buyrow{
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
 }
 /* Từ 576px trở lên xếp 2 nút cạnh nhau; hẹp hơn thì xếp chồng cho dễ bấm */
 @media (min-width: 576px){
-  .gh-buyrow{ grid-template-columns: 1fr 1fr; }
+  .yq-buyrow{ grid-template-columns: 1fr 1fr; }
 }
 /* Thu gọn padding ngang để nhãn kèm giá không bị tràn khi 2 nút chia đôi cột */
-.gh-buyrow .gh-btn{
+.yq-buyrow .yq-btn{
   padding-left: 16px;
   padding-right: 16px;
   font-size: 14.5px;
   min-width: 0;
 }
-.gh-buyrow .gh-btn > span{
+.yq-buyrow .yq-btn > span{
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 /* Buy Now nhấn mạnh hơn Add to cart một chút */
-.gh-buynow{ font-weight: 600; }
-.gh-buynow:hover{ box-shadow: 0 10px 26px rgba(196, 164, 106, .38); }
+.yq-buynow{ font-weight: 600; }
+.yq-buynow:hover{ box-shadow: 0 10px 26px rgba(196, 164, 106, .38); }
 
 /* ---------- 3. Card sản phẩm: nút Buy now trong overlay hover ---------- */
-/* .gh-quickadd gốc chỉ chứa 1 nút block; khi có thêm Buy now thì chia 2 cột */
-.gh-quickadd.gh-quickadd--duo{
+/* .yq-quickadd gốc chỉ chứa 1 nút block; khi có thêm Buy now thì chia 2 cột */
+.yq-quickadd.yq-quickadd--duo{
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
-.gh-quickadd.gh-quickadd--duo .gh-btn{
+.yq-quickadd.yq-quickadd--duo .yq-btn{
   width: 100%;
   padding-left: 10px;
   padding-right: 10px;
@@ -82,25 +82,25 @@
 }
 /* Card hẹp (2 cột trên mobile / tablet) thì xếp chồng cho khỏi vỡ chữ */
 @media (max-width: 991.98px){
-  .gh-quickadd.gh-quickadd--duo{ grid-template-columns: 1fr; gap: 6px; }
+  .yq-quickadd.yq-quickadd--duo{ grid-template-columns: 1fr; gap: 6px; }
 }
-/* Ghi đè nền trắng của `.gh-quickadd .gh-btn` trong style.css (cùng độ ưu tiên,
+/* Ghi đè nền trắng của `.yq-quickadd .yq-btn` trong style.css (cùng độ ưu tiên,
    file này nạp sau nên thắng) — Buy now phải là vàng để phân cấp rõ ràng */
-.gh-quickadd .gh-buynow-mini{
-  background: var(--gh-gold);
-  color: var(--gh-ink);
-  border-color: var(--gh-gold);
+.yq-quickadd .yq-buynow-mini{
+  background: var(--yq-gold);
+  color: var(--yq-ink);
+  border-color: var(--yq-gold);
   backdrop-filter: none;
   font-weight: 600;
 }
-.gh-quickadd .gh-buynow-mini:hover{
-  background: var(--gh-gold-dark);
+.yq-quickadd .yq-buynow-mini:hover{
+  background: var(--yq-gold-dark);
   color: #fff;
-  border-color: var(--gh-gold-dark);
+  border-color: var(--yq-gold-dark);
 }
 
 /* ---------- 4. Sticky buy bar (chỉ mobile <992px) ---------- */
-.gh-buybar{
+.yq-buybar{
   display: none;                       /* desktop: không bao giờ hiện */
   position: fixed;
   left: 0; right: 0; bottom: 0;
@@ -110,67 +110,67 @@
   padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
   background: rgba(255, 255, 255, .96);
   backdrop-filter: blur(10px);
-  border-top: 1px solid var(--gh-line);
+  border-top: 1px solid var(--yq-line);
   box-shadow: 0 -8px 26px rgba(23, 22, 19, .10);
 }
-.gh-buybar__info{
+.yq-buybar__info{
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.gh-buybar__name{
-  font-family: var(--gh-serif);
+.yq-buybar__name{
+  font-family: var(--yq-serif);
   font-size: 14px;
   line-height: 1.25;
-  color: var(--gh-ink);
+  color: var(--yq-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.gh-buybar__meta{
+.yq-buybar__meta{
   display: flex;
   align-items: baseline;
   gap: 8px;
   font-size: 12.5px;
-  color: var(--gh-body, #57534A);
+  color: var(--yq-body, #57534A);
   overflow: hidden;
   white-space: nowrap;
 }
-.gh-buybar__price{
-  font-family: var(--gh-serif);
+.yq-buybar__price{
+  font-family: var(--yq-serif);
   font-size: 16px;
-  color: var(--gh-ink);
+  color: var(--yq-ink);
   font-variant-numeric: tabular-nums;
 }
-.gh-buybar__opt{
+.yq-buybar__opt{
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.gh-buybar .gh-btn{
+.yq-buybar .yq-btn{
   flex: none;
   padding: 12px 22px;
   font-weight: 600;
 }
 
 @media (max-width: 991.98px){
-  .gh-buybar{
+  .yq-buybar{
     display: flex;
     transform: translateY(120%);
     opacity: 0;
     visibility: hidden;
-    transition: transform .32s var(--gh-ease), opacity .32s var(--gh-ease), visibility .32s;
+    transition: transform .32s var(--yq-ease), opacity .32s var(--yq-ease), visibility .32s;
   }
-  .gh-buybar.is-on{
+  .yq-buybar.is-on{
     transform: none;
     opacity: 1;
     visibility: visible;
   }
   /* Đẩy toast lên khỏi thanh sticky khi thanh đang hiện */
-  body.gh-buybar-on .gh-toast-wrap{ bottom: 84px; }
+  body.yq-buybar-on .yq-toast-wrap{ bottom: 84px; }
 }
 
 @media print{
-  .gh-buybar{ display: none !important; }
+  .yq-buybar{ display: none !important; }
 }

@@ -19,67 +19,67 @@
 </head>
 <body>
 
-<div id="gh-header"></div>
+<div id="yq-header"></div>
 
-<section class="gh-pagehead">
-  <div class="gh-container">
+<section class="yq-pagehead">
+  <div class="yq-container">
     <div class="row align-items-end g-4">
       <div class="col-lg-7">
-        <div class="gh-eyebrow gh-eyebrow--gold">Experiences</div>
-        <h1 class="gh-serif">Unforgettable Experiences</h1>
-        <p class="gh-lead mb-0">
+        <div class="yq-eyebrow yq-eyebrow--gold">Experiences</div>
+        <h1 class="yq-serif">Unforgettable Experiences</h1>
+        <p class="yq-lead mb-0">
           From world-class dining to rejuvenating spa treatments — selling memories, not just products.
           Clear pricing makes gifting a luxury service as simple as sending a card.
         </p>
       </div>
       <div class="col-lg-5 text-lg-end">
-        <a class="gh-btn gh-btn--ghost" href="personalise.html">Personalise an experience gift</a>
+        <a class="yq-btn yq-btn--yqost" href="personalise.html">Personalise an experience gift</a>
       </div>
     </div>
   </div>
 </section>
 
 <section style="padding-bottom:clamp(56px,8vw,104px)">
-  <div class="gh-container">
+  <div class="yq-container">
     <div class="row g-4" id="expGrid"></div>
   </div>
 </section>
 
 <!-- How it works -->
-<section class="gh-section" style="background:var(--gh-paper)">
-  <div class="gh-container gh-container--narrow">
-    <div class="gh-section-head text-center">
-      <div class="gh-eyebrow gh-eyebrow--gold">How it works</div>
-      <hr class="gh-rule gh-rule--center">
-      <h2 class="gh-h2">Three steps to a memorable gift</h2>
+<section class="yq-section" style="background:var(--yq-paper)">
+  <div class="yq-container yq-container--narrow">
+    <div class="yq-section-head text-center">
+      <div class="yq-eyebrow yq-eyebrow--gold">How it works</div>
+      <hr class="yq-rule yq-rule--center">
+      <h2 class="yq-h2">Three steps to a memorable gift</h2>
     </div>
     <div class="row g-4">
       <div class="col-md-4">
-        <div class="gh-panel h-100 gh-reveal">
-          <div class="gh-usp__icon mb-3" data-icon="sparkle"></div>
-          <h4 class="gh-h3 mb-2" style="font-size:1.15rem">1. Select</h4>
-          <p class="gh-small gh-muted mb-0">Choose from dining, spa, afternoon tea, wine tasting, or a full staycation.</p>
+        <div class="yq-panel h-100 yq-reveal">
+          <div class="yq-usp__icon mb-3" data-icon="sparkle"></div>
+          <h4 class="yq-h3 mb-2" style="font-size:1.15rem">1. Select</h4>
+          <p class="yq-small yq-muted mb-0">Choose from dining, spa, afternoon tea, wine tasting, or a full staycation.</p>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="gh-panel h-100 gh-reveal" data-delay="100">
-          <div class="gh-usp__icon mb-3" data-icon="gift"></div>
-          <h4 class="gh-h3 mb-2" style="font-size:1.15rem">2. Personalise</h4>
-          <p class="gh-small gh-muted mb-0">Pick an eCard design, write your message, and preview it live before paying.</p>
+        <div class="yq-panel h-100 yq-reveal" data-delay="100">
+          <div class="yq-usp__icon mb-3" data-icon="gift"></div>
+          <h4 class="yq-h3 mb-2" style="font-size:1.15rem">2. Personalise</h4>
+          <p class="yq-small yq-muted mb-0">Pick an eCard design, write your message, and preview it live before paying.</p>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="gh-panel h-100 gh-reveal" data-delay="200">
-          <div class="gh-usp__icon mb-3" data-icon="mail"></div>
-          <h4 class="gh-h3 mb-2" style="font-size:1.15rem">3. Deliver</h4>
-          <p class="gh-small gh-muted mb-0">Send instantly by email, or post a physical card for $5 in 2–3 days.</p>
+        <div class="yq-panel h-100 yq-reveal" data-delay="200">
+          <div class="yq-usp__icon mb-3" data-icon="mail"></div>
+          <h4 class="yq-h3 mb-2" style="font-size:1.15rem">3. Deliver</h4>
+          <p class="yq-small yq-muted mb-0">Send instantly by email, or post a physical card for $5 in 2–3 days.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<div id="gh-footer"></div>
+<div id="yq-footer"></div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -93,10 +93,10 @@
 <script src="assets/js/modules/account.js"></script>
 <script>
   jQuery(function ($) {
-    GH.renderHeader('experiences');
-    GH.renderFooter();
-    $('[data-icon]').each(function () { $(this).html(GH.icon($(this).data('icon'), 19)); });
-    GH.initExperiences();
+    YQ.renderHeader('experiences');
+    YQ.renderFooter();
+    $('[data-icon]').each(function () { $(this).html(YQ.icon($(this).data('icon'), 19)); });
+    YQ.initExperiences();
   });
 </script>
 </body>

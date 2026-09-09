@@ -1,181 +1,181 @@
 /* ==========================================================================
-   GH eStore — Components + page controllers
+   YQ eStore — Components + page controllers
    ========================================================================== */
 (function ($) {
   'use strict';
 
-  var C = GH.config;
+  var C = YQ.config;
 
   /* ======================================================================
      1. Components
      ====================================================================== */
-  GH.productCard = function (p, opts) {
+  YQ.productCard = function (p, opts) {
     opts = opts || {};
     var badge = p.badge
-      ? '<span class="gh-badge ' + (p.badge === 'New' ? 'gh-badge--gold' : (p.badge === 'Seasonal' ? 'gh-badge--light' : '')) + '">' + p.badge + '</span>'
+      ? '<span class="yq-badge ' + (p.badge === 'New' ? 'yq-badge--gold' : (p.badge === 'Seasonal' ? 'yq-badge--light' : '')) + '">' + p.badge + '</span>'
       : '';
-    var meta = p.meta ? '<span class="gh-card__cat">' + GH.icon('gift', 13) + ' ' + p.meta + '</span>' : '';
+    var meta = p.meta ? '<span class="yq-card__cat">' + YQ.icon('gift', 13) + ' ' + p.meta + '</span>' : '';
 
     return '' +
-      '<article class="gh-card gh-reveal">' +
-        '<div class="gh-card__mediawrap">' +
+      '<article class="yq-card yq-reveal">' +
+        '<div class="yq-card__mediawrap">' +
           badge +
-          '<a class="gh-card__media gh-media gh-zoom d-block" href="product.html?id=' + p.id + '" aria-label="' + GH.escape(p.name) + '">' +
-            GH.mediaInner(p) +
+          '<a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=' + p.id + '" aria-label="' + YQ.escape(p.name) + '">' +
+            YQ.mediaInner(p) +
           '</a>' +
           (opts.quickAdd === false ? '' :
-            '<div class="gh-quickadd"><button class="gh-btn gh-btn--sm gh-btn--block" type="button" data-quickadd="' + p.id + '">' +
-              GH.icon('bag', 15) + ' Quick add</button></div>') +
+            '<div class="yq-quickadd"><button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="' + p.id + '">' +
+              YQ.icon('bag', 15) + ' Quick add</button></div>') +
         '</div>' +
-        '<div class="gh-card__body">' +
-          '<div class="gh-card__cat">' + (p.meta ? p.meta + ' · ' : '') + p.catLabel + '</div>' +
-          '<h3 class="gh-card__title"><a href="product.html?id=' + p.id + '">' + GH.escape(p.name) + '</a></h3>' +
-          '<p class="gh-card__desc">' + GH.escape(p.short || p.desc) + '</p>' +
-          '<div class="gh-card__foot">' +
-            '<span class="gh-card__price"><small>From</small>' + GH.money0(p.price) + '</span>' +
-            '<a class="gh-link-arrow" href="product.html?id=' + p.id + '">View ' + GH.icon('arrow', 14) + '</a>' +
+        '<div class="yq-card__body">' +
+          '<div class="yq-card__cat">' + (p.meta ? p.meta + ' · ' : '') + p.catLabel + '</div>' +
+          '<h3 class="yq-card__title"><a href="product.html?id=' + p.id + '">' + YQ.escape(p.name) + '</a></h3>' +
+          '<p class="yq-card__desc">' + YQ.escape(p.short || p.desc) + '</p>' +
+          '<div class="yq-card__foot">' +
+            '<span class="yq-card__price"><small>From</small>' + YQ.money0(p.price) + '</span>' +
+            '<a class="yq-link-arrow" href="product.html?id=' + p.id + '">View ' + YQ.icon('arrow', 14) + '</a>' +
           '</div>' +
         '</div>' +
       '</article>';
   };
 
-  GH.experienceCard = function (e) {
-    var badge = e.badge ? '<span class="gh-badge">' + e.badge + '</span>' : '';
+  YQ.experienceCard = function (e) {
+    var badge = e.badge ? '<span class="yq-badge">' + e.badge + '</span>' : '';
     return '' +
-      '<article class="gh-card gh-reveal">' +
-        '<div class="gh-card__mediawrap">' +
+      '<article class="yq-card yq-reveal">' +
+        '<div class="yq-card__mediawrap">' +
           badge +
-          '<span class="gh-badge gh-badge--rate">' + GH.icon('star', 12) + e.rating.toFixed(1) + '</span>' +
-          '<a class="gh-card__media gh-media gh-zoom d-block" href="personalise.html?exp=' + e.id + '">' +
-            GH.mediaInner(e) +
+          '<span class="yq-badge yq-badge--rate">' + YQ.icon('star', 12) + e.rating.toFixed(1) + '</span>' +
+          '<a class="yq-card__media yq-media yq-zoom d-block" href="personalise.html?exp=' + e.id + '">' +
+            YQ.mediaInner(e) +
           '</a>' +
         '</div>' +
-        '<div class="gh-card__body">' +
-          '<h3 class="gh-card__title"><a href="personalise.html?exp=' + e.id + '">' + GH.escape(e.name) + '</a></h3>' +
-          '<p class="gh-card__desc">' + GH.escape(e.desc) + '</p>' +
-          '<div class="gh-exp__meta">' +
-            '<span>' + GH.icon('clock', 13) + e.duration + '</span>' +
-            '<span>' + GH.icon('pin', 13) + e.place + '</span>' +
-            '<span>' + GH.icon('users', 13) + e.reviews + ' reviews</span>' +
+        '<div class="yq-card__body">' +
+          '<h3 class="yq-card__title"><a href="personalise.html?exp=' + e.id + '">' + YQ.escape(e.name) + '</a></h3>' +
+          '<p class="yq-card__desc">' + YQ.escape(e.desc) + '</p>' +
+          '<div class="yq-exp__meta">' +
+            '<span>' + YQ.icon('clock', 13) + e.duration + '</span>' +
+            '<span>' + YQ.icon('pin', 13) + e.place + '</span>' +
+            '<span>' + YQ.icon('users', 13) + e.reviews + ' reviews</span>' +
           '</div>' +
-          '<div class="gh-card__foot">' +
-            '<span class="gh-card__price">' + GH.money0(e.price) + '</span>' +
-            '<a class="gh-link-arrow" href="personalise.html?exp=' + e.id + '">Book now ' + GH.icon('arrow', 14) + '</a>' +
+          '<div class="yq-card__foot">' +
+            '<span class="yq-card__price">' + YQ.money0(e.price) + '</span>' +
+            '<a class="yq-link-arrow" href="personalise.html?exp=' + e.id + '">Book now ' + YQ.icon('arrow', 14) + '</a>' +
           '</div>' +
         '</div>' +
       '</article>';
   };
 
-  GH.occasionTile = function (o) {
+  YQ.occasionTile = function (o) {
     return '' +
-      '<a class="gh-tile gh-zoom gh-reveal" href="' + o.href + '">' +
-        '<div class="gh-media">' + GH.mediaInner(o) + '</div>' +
-        '<span class="gh-tile__scrim"></span>' +
-        '<span class="gh-tile__label">' +
+      '<a class="yq-tile yq-zoom yq-reveal" href="' + o.href + '">' +
+        '<div class="yq-media">' + YQ.mediaInner(o) + '</div>' +
+        '<span class="yq-tile__scrim"></span>' +
+        '<span class="yq-tile__label">' +
           '<span>' + o.name + '<small>' + o.sub + '</small></span>' +
-          '<span class="gh-tile__go">' + GH.icon('arrow', 18) + '</span>' +
+          '<span class="yq-tile__go">' + YQ.icon('arrow', 18) + '</span>' +
         '</span>' +
       '</a>';
   };
 
   /** Order summary block (dùng ở cart + checkout) */
-  GH.summaryHtml = function (opts) {
+  YQ.summaryHtml = function (opts) {
     opts = opts || {};
-    var cart = GH.cart;
+    var cart = YQ.cart;
     var sub = cart.subtotal(), ship = cart.shipping(), tax = cart.tax(), total = cart.total();
     var toFree = cart.toFree();
     var pct = Math.min(100, (sub / C.freeShippingThreshold) * 100);
 
     var note = '';
     if (sub > 0 && toFree > 0) {
-      note = '<div class="gh-ship-note">' + GH.icon('truck', 16) +
-             '<div class="w-100">Add ' + GH.money(toFree) + ' more for free shipping' +
-               '<div class="gh-ship-bar"><i style="width:' + pct + '%"></i></div>' +
+      note = '<div class="yq-ship-note">' + YQ.icon('truck', 16) +
+             '<div class="w-100">Add ' + YQ.money(toFree) + ' more for free shipping' +
+               '<div class="yq-ship-bar"><i style="width:' + pct + '%"></i></div>' +
              '</div></div>';
     } else if (sub > 0) {
-      note = '<div class="gh-ship-note">' + GH.icon('check', 16) + '<div>You have unlocked free shipping.</div></div>';
+      note = '<div class="yq-ship-note">' + YQ.icon('check', 16) + '<div>You have unlocked free shipping.</div></div>';
     }
 
     var lines = '';
     if (opts.showItems) {
       $.each(cart.items, function (_, i) {
         lines += '<div class="d-flex gap-3 align-items-center mb-3">' +
-                   '<div class="gh-media" style="width:52px;height:52px;border-radius:8px;flex:none">' +
-                     GH.mediaInner(i) + '</div>' +
+                   '<div class="yq-media" style="width:52px;height:52px;border-radius:8px;flex:none">' +
+                     YQ.mediaInner(i) + '</div>' +
                    '<div class="flex-grow-1 min-width-0">' +
-                     '<div class="gh-small text-truncate" style="color:var(--gh-ink)">' + GH.escape(i.name) + '</div>' +
-                     '<div class="gh-tiny gh-muted">Qty: ' + i.qty + '</div>' +
+                     '<div class="yq-small text-truncate" style="color:var(--yq-ink)">' + YQ.escape(i.name) + '</div>' +
+                     '<div class="yq-tiny yq-muted">Qty: ' + i.qty + '</div>' +
                    '</div>' +
-                   '<div class="gh-sum__val gh-small">' + GH.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
+                   '<div class="yq-sum__val yq-small">' + YQ.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
                  '</div>';
       });
-      if (lines) lines += '<hr style="border-color:var(--gh-line-soft);opacity:1">';
+      if (lines) lines += '<hr style="border-color:var(--yq-line-soft);opacity:1">';
     }
 
     return '' +
-      '<h3 class="gh-serif mb-3" style="font-size:1.3rem">Order summary</h3>' +
+      '<h3 class="yq-serif mb-3" style="font-size:1.3rem">Order summary</h3>' +
       lines +
-      '<div class="gh-sum"><span>Subtotal</span><span class="gh-sum__val">' + GH.money(sub) + '</span></div>' +
-      '<div class="gh-sum"><span>Shipping</span><span class="gh-sum__val">' + (ship === 0 ? 'Free' : GH.money(ship)) + '</span></div>' +
-      '<div class="gh-sum"><span>Tax (9%)</span><span class="gh-sum__val">' + GH.money(tax) + '</span></div>' +
-      '<div class="gh-sum gh-sum--total"><span>Total</span><span class="gh-sum__val">' + GH.money(total) + '</span></div>' +
-      (opts.cta ? '<a class="gh-btn gh-btn--block mt-4" href="' + opts.ctaHref + '">' + opts.cta + ' ' + GH.icon('arrow', 16) + '</a>' : '') +
+      '<div class="yq-sum"><span>Subtotal</span><span class="yq-sum__val">' + YQ.money(sub) + '</span></div>' +
+      '<div class="yq-sum"><span>Shipping</span><span class="yq-sum__val">' + (ship === 0 ? 'Free' : YQ.money(ship)) + '</span></div>' +
+      '<div class="yq-sum"><span>Tax (9%)</span><span class="yq-sum__val">' + YQ.money(tax) + '</span></div>' +
+      '<div class="yq-sum yq-sum--total"><span>Total</span><span class="yq-sum__val">' + YQ.money(total) + '</span></div>' +
+      (opts.cta ? '<a class="yq-btn yq-btn--block mt-4" href="' + opts.ctaHref + '">' + opts.cta + ' ' + YQ.icon('arrow', 16) + '</a>' : '') +
       note;
   };
 
   /* ======================================================================
      2. Home
      ====================================================================== */
-  GH.initHome = function () {
-    var featured = GH.products.filter(function (p) { return p.featured; }).slice(0, 4);
-    var hampers  = GH.products.filter(function (p) { return p.cat === 'celebration' || p.cat === 'beverages'; }).slice(0, 4);
+  YQ.initHome = function () {
+    var featured = YQ.products.filter(function (p) { return p.featured; }).slice(0, 4);
+    var hampers  = YQ.products.filter(function (p) { return p.cat === 'celebration' || p.cat === 'beverages'; }).slice(0, 4);
 
     $('#homeFeatured').html(featured.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + GH.productCard(p) + '</div>';
+      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
     }).join(''));
 
     $('#homeHampers').html(hampers.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + GH.productCard(p) + '</div>';
+      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
     }).join(''));
 
-    $('#homeOccasions').html(GH.occasions.map(function (o) {
-      return '<div class="col-6 col-lg-3">' + GH.occasionTile(o) + '</div>';
+    $('#homeOccasions').html(YQ.occasions.map(function (o) {
+      return '<div class="col-6 col-lg-3">' + YQ.occasionTile(o) + '</div>';
     }).join(''));
 
-    $('#homeExperiences').html(GH.experiences.slice(0, 3).map(function (e) {
-      return '<div class="col-md-6 col-lg-4">' + GH.experienceCard(e) + '</div>';
+    $('#homeExperiences').html(YQ.experiences.slice(0, 3).map(function (e) {
+      return '<div class="col-md-6 col-lg-4">' + YQ.experienceCard(e) + '</div>';
     }).join(''));
 
-    GH.stagger('#homeFeatured .gh-reveal');
-    GH.stagger('#homeHampers .gh-reveal');
-    GH.stagger('#homeOccasions .gh-reveal');
-    GH.stagger('#homeExperiences .gh-reveal');
-    GH.initReveal();
+    YQ.stagger('#homeFeatured .yq-reveal');
+    YQ.stagger('#homeHampers .yq-reveal');
+    YQ.stagger('#homeOccasions .yq-reveal');
+    YQ.stagger('#homeExperiences .yq-reveal');
+    YQ.initReveal();
   };
 
   /* ======================================================================
      3. Shop (filters + sort + search)
      ====================================================================== */
-  GH.initShop = function () {
+  YQ.initShop = function () {
     var state = {
-      cat: GH.param('cat') || 'all',
-      season: GH.param('season') || null,
-      q: GH.param('q') || '',
+      cat: YQ.param('cat') || 'all',
+      season: YQ.param('season') || null,
+      q: YQ.param('q') || '',
       sort: 'featured'
     };
 
     /* Chips */
-    $('#shopCats').html(GH.categories.map(function (c) {
-      return '<button class="gh-chip" type="button" data-cat="' + c.id + '">' + c.label + '</button>';
+    $('#shopCats').html(YQ.categories.map(function (c) {
+      return '<button class="yq-chip" type="button" data-cat="' + c.id + '">' + c.label + '</button>';
     }).join(''));
 
-    $('#shopSeasons').html(GH.seasons.map(function (s) {
-      return '<button class="gh-chip gh-chip--gold" type="button" data-season="' + s.id + '">' + s.label + '</button>';
+    $('#shopSeasons').html(YQ.seasons.map(function (s) {
+      return '<button class="yq-chip yq-chip--gold" type="button" data-season="' + s.id + '">' + s.label + '</button>';
     }).join(''));
 
     function filtered() {
       var q = state.q.toLowerCase();
-      var list = GH.products.filter(function (p) {
+      var list = YQ.products.filter(function (p) {
         if (state.cat !== 'all' && p.cat !== state.cat) return false;
         if (state.season && (p.seasons || []).indexOf(state.season) === -1) return false;
         if (q && (p.name + ' ' + p.catLabel + ' ' + p.desc).toLowerCase().indexOf(q) === -1) return false;
@@ -196,10 +196,10 @@
     function render() {
       var list = filtered();
 
-      $('#shopCats .gh-chip').each(function () {
+      $('#shopCats .yq-chip').each(function () {
         $(this).toggleClass('is-active', $(this).attr('data-cat') === state.cat);
       });
-      $('#shopSeasons .gh-chip').each(function () {
+      $('#shopSeasons .yq-chip').each(function () {
         $(this).toggleClass('is-active', $(this).attr('data-season') === state.season);
       });
       $('#shopCount').text(list.length + ' product' + (list.length === 1 ? '' : 's'));
@@ -207,29 +207,29 @@
 
       if (!list.length) {
         $('#shopGrid').html(
-          '<div class="col-12"><div class="gh-empty">' +
-            '<div class="gh-empty__icon">' + GH.icon('search', 26) + '</div>' +
-            '<h3 class="gh-h3 mb-2">No products found</h3>' +
-            '<p class="gh-muted mb-4">Try another category or clear your filters.</p>' +
-            '<button class="gh-btn gh-btn--ghost" type="button" id="shopReset">Clear filters</button>' +
+          '<div class="col-12"><div class="yq-empty">' +
+            '<div class="yq-empty__icon">' + YQ.icon('search', 26) + '</div>' +
+            '<h3 class="yq-h3 mb-2">No products found</h3>' +
+            '<p class="yq-muted mb-4">Try another category or clear your filters.</p>' +
+            '<button class="yq-btn yq-btn--yqost" type="button" id="shopReset">Clear filters</button>' +
           '</div></div>'
         );
         return;
       }
 
       $('#shopGrid').html(list.map(function (p) {
-        return '<div class="col-6 col-lg-3">' + GH.productCard(p) + '</div>';
+        return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
       }).join(''));
 
-      GH.stagger('#shopGrid .gh-reveal', 45);
-      GH.initReveal();
+      YQ.stagger('#shopGrid .yq-reveal', 45);
+      YQ.initReveal();
     }
 
     /* Events */
-    $(document).on('click', '#shopCats .gh-chip', function () {
+    $(document).on('click', '#shopCats .yq-chip', function () {
       state.cat = $(this).attr('data-cat'); render();
     });
-    $(document).on('click', '#shopSeasons .gh-chip', function () {
+    $(document).on('click', '#shopSeasons .yq-chip', function () {
       var s = $(this).attr('data-season');
       state.season = (state.season === s) ? null : s;
       render();
@@ -247,9 +247,9 @@
   /* ======================================================================
      4. Product detail
      ====================================================================== */
-  GH.initProduct = function () {
-    var id = GH.param('id') || GH.products[0].id;
-    var p = GH.product(id) || GH.products[0];
+  YQ.initProduct = function () {
+    var id = YQ.param('id') || YQ.products[0].id;
+    var p = YQ.product(id) || YQ.products[0];
     var sel = p.options[0];
     var qty = 1;
 
@@ -263,17 +263,17 @@
       shots = p.gallery.map(function (src) { return { img: src, name: p.name, tone: p.tone }; });
     } else {
       shots = [p];
-      var pool = GH.products.filter(function (x) { return x.id !== p.id && x.img && x.cat === p.cat; })
-        .concat(GH.products.filter(function (x) { return x.id !== p.id && x.img && x.cat !== p.cat; }));
+      var pool = YQ.products.filter(function (x) { return x.id !== p.id && x.img && x.cat === p.cat; })
+        .concat(YQ.products.filter(function (x) { return x.id !== p.id && x.img && x.cat !== p.cat; }));
       for (var i = 0; i < pool.length && shots.length < 4; i++) {
         shots.push({ img: pool[i].img, name: p.name, tone: pool[i].tone });
       }
       while (shots.length < 4) shots.push({ tone: [3, 6, 8][shots.length % 3], name: p.name });
     }
-    $('#pdpMain').html(GH.mediaInner(p, { eager: true }));
+    $('#pdpMain').html(YQ.mediaInner(p, { eager: true }));
     $('#pdpThumbs').html(shots.map(function (sh, i) {
-      return '<button class="gh-pdp__thumb' + (i === 0 ? ' is-active' : '') + '" type="button" data-shot="' + i + '">' +
-               '<span class="gh-media">' + GH.mediaInner(sh) + '</span></button>';
+      return '<button class="yq-pdp__thumb' + (i === 0 ? ' is-active' : '') + '" type="button" data-shot="' + i + '">' +
+               '<span class="yq-media">' + YQ.mediaInner(sh) + '</span></button>';
     }).join(''));
 
     /* Info */
@@ -282,104 +282,104 @@
     $('#pdpDesc').text(p.desc);
     $('#pdpOptionLabel').text(p.optionLabel || 'Select option');
     $('#pdpOptions').html(p.options.map(function (o, i) {
-      return '<button class="gh-option' + (i === 0 ? ' is-active' : '') + '" type="button" data-opt="' + o.id + '">' + o.label + '</button>';
+      return '<button class="yq-option' + (i === 0 ? ' is-active' : '') + '" type="button" data-opt="' + o.id + '">' + o.label + '</button>';
     }).join(''));
 
     function paint() {
-      $('#pdpPrice').html(GH.money0(sel.price) + '<small>per ' + (sel.label.split(' (')[0]) + '</small>');
-      $('#pdpAddLabel').text('Add to cart — ' + GH.money0(sel.price * qty));
+      $('#pdpPrice').html(YQ.money0(sel.price) + '<small>per ' + (sel.label.split(' (')[0]) + '</small>');
+      $('#pdpAddLabel').text('Add to cart — ' + YQ.money0(sel.price * qty));
     }
     paint();
 
     /* Related */
-    var related = GH.products.filter(function (x) { return x.id !== p.id && x.cat === p.cat; });
+    var related = YQ.products.filter(function (x) { return x.id !== p.id && x.cat === p.cat; });
     if (related.length < 4) {
-      related = related.concat(GH.products.filter(function (x) {
+      related = related.concat(YQ.products.filter(function (x) {
         return x.id !== p.id && related.indexOf(x) === -1;
       }));
     }
     $('#pdpRelated').html(related.slice(0, 4).map(function (r) {
-      return '<div class="col-6 col-lg-3">' + GH.productCard(r) + '</div>';
+      return '<div class="col-6 col-lg-3">' + YQ.productCard(r) + '</div>';
     }).join(''));
 
     /* Events */
-    $(document).on('click', '#pdpThumbs .gh-pdp__thumb', function () {
-      $('#pdpThumbs .gh-pdp__thumb').removeClass('is-active');
+    $(document).on('click', '#pdpThumbs .yq-pdp__thumb', function () {
+      $('#pdpThumbs .yq-pdp__thumb').removeClass('is-active');
       $(this).addClass('is-active');
-      $('#pdpMain').html(GH.mediaInner(shots[parseInt($(this).attr('data-shot'), 10)], { eager: true }));
+      $('#pdpMain').html(YQ.mediaInner(shots[parseInt($(this).attr('data-shot'), 10)], { eager: true }));
     });
 
-    $(document).on('click', '#pdpOptions .gh-option', function () {
-      $('#pdpOptions .gh-option').removeClass('is-active');
+    $(document).on('click', '#pdpOptions .yq-option', function () {
+      $('#pdpOptions .yq-option').removeClass('is-active');
       $(this).addClass('is-active');
       var optId = $(this).attr('data-opt');           // attr(): tránh jQuery ép '12' -> 12
       sel = p.options.filter(function (o) { return String(o.id) === optId; })[0] || sel;
       paint();
     });
 
-    $('#pdpQty').on('gh:qty', function (e, n) { qty = n; paint(); });
+    $('#pdpQty').on('yq:qty', function (e, n) { qty = n; paint(); });
 
     $(document).on('click', '#pdpAdd', function () {
-      GH.cart.add(p, sel, qty);
-      GH.toast(p.name + ' added to cart', 'View cart', 'cart.html');
+      YQ.cart.add(p, sel, qty);
+      YQ.toast(p.name + ' added to cart', 'View cart', 'cart.html');
     });
 
-    GH.stagger('#pdpRelated .gh-reveal');
-    GH.initReveal();
+    YQ.stagger('#pdpRelated .yq-reveal');
+    YQ.initReveal();
   };
 
   /* ======================================================================
      5. Experiences
      ====================================================================== */
-  GH.initExperiences = function () {
-    $('#expGrid').html(GH.experiences.map(function (e) {
-      return '<div class="col-md-6 col-lg-4">' + GH.experienceCard(e) + '</div>';
+  YQ.initExperiences = function () {
+    $('#expGrid').html(YQ.experiences.map(function (e) {
+      return '<div class="col-md-6 col-lg-4">' + YQ.experienceCard(e) + '</div>';
     }).join(''));
-    GH.stagger('#expGrid .gh-reveal');
-    GH.initReveal();
+    YQ.stagger('#expGrid .yq-reveal');
+    YQ.initReveal();
   };
 
   /* ======================================================================
      6. Celebrations
      ====================================================================== */
-  GH.initCelebrations = function () {
-    $('#celOccasions').html(GH.occasions.map(function (o) {
-      return '<div class="col-6 col-lg-3">' + GH.occasionTile(o) + '</div>';
+  YQ.initCelebrations = function () {
+    $('#celOccasions').html(YQ.occasions.map(function (o) {
+      return '<div class="col-6 col-lg-3">' + YQ.occasionTile(o) + '</div>';
     }).join(''));
 
-    var favs = GH.products.filter(function (p) {
+    var favs = YQ.products.filter(function (p) {
       return p.cat === 'celebration' || p.cat === 'beverages' || p.badge === 'Bestseller';
     }).slice(0, 4);
 
     $('#celFavourites').html(favs.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + GH.productCard(p) + '</div>';
+      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
     }).join(''));
 
-    var seasonal = GH.products.filter(function (p) { return (p.seasons || []).length; }).slice(0, 4);
+    var seasonal = YQ.products.filter(function (p) { return (p.seasons || []).length; }).slice(0, 4);
     $('#celSeasonal').html(seasonal.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + GH.productCard(p) + '</div>';
+      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
     }).join(''));
 
-    GH.stagger('#celOccasions .gh-reveal');
-    GH.stagger('#celFavourites .gh-reveal');
-    GH.stagger('#celSeasonal .gh-reveal');
-    GH.initReveal();
+    YQ.stagger('#celOccasions .yq-reveal');
+    YQ.stagger('#celFavourites .yq-reveal');
+    YQ.stagger('#celSeasonal .yq-reveal');
+    YQ.initReveal();
   };
 
   /* ======================================================================
      7. Cart
      ====================================================================== */
-  GH.initCart = function () {
+  YQ.initCart = function () {
     function render() {
-      var items = GH.cart.items;
+      var items = YQ.cart.items;
 
       if (!items.length) {
         $('#cartWrap').html(
-          '<div class="col-12"><div class="gh-panel gh-empty">' +
-            '<div class="gh-empty__icon">' + GH.icon('bag', 26) + '</div>' +
-            '<h3 class="gh-h3 mb-2">Your cart is empty</h3>' +
-            '<p class="gh-muted mb-4">Explore our cakes, hampers, and experiences.</p>' +
-            '<a class="gh-btn" href="shop.html">Continue shopping ' + GH.icon('arrow', 16) + '</a>' +
+          '<div class="col-12"><div class="yq-panel yq-empty">' +
+            '<div class="yq-empty__icon">' + YQ.icon('bag', 26) + '</div>' +
+            '<h3 class="yq-h3 mb-2">Your cart is empty</h3>' +
+            '<p class="yq-muted mb-4">Explore our cakes, hampers, and experiences.</p>' +
+            '<a class="yq-btn" href="shop.html">Continue shopping ' + YQ.icon('arrow', 16) + '</a>' +
           '</div></div>'
         );
         return;
@@ -387,57 +387,57 @@
 
       var lines = items.map(function (i) {
         return '' +
-          '<div class="gh-line" data-key="' + i.key + '">' +
-            '<div class="gh-line__media gh-media">' + GH.mediaInner(i) + '</div>' +
+          '<div class="yq-line" data-key="' + i.key + '">' +
+            '<div class="yq-line__media yq-media">' + YQ.mediaInner(i) + '</div>' +
             '<div class="flex-grow-1">' +
-              '<div class="gh-line__title">' + GH.escape(i.name) + '</div>' +
-              '<div class="gh-line__opt">' + GH.escape(i.optionLabel || '') +
-                (i.addonLabel ? ' · ' + GH.escape(i.addonLabel) : '') + '</div>' +
-              '<div class="gh-qty mt-3" data-qty data-min="1">' +
-                '<button class="gh-qty__btn" type="button" data-step="-1" aria-label="Decrease">' + GH.icon('minus', 15) + '</button>' +
-                '<span class="gh-qty__val" data-qty-val>' + i.qty + '</span>' +
-                '<button class="gh-qty__btn" type="button" data-step="1" aria-label="Increase">' + GH.icon('plus', 15) + '</button>' +
+              '<div class="yq-line__title">' + YQ.escape(i.name) + '</div>' +
+              '<div class="yq-line__opt">' + YQ.escape(i.optionLabel || '') +
+                (i.addonLabel ? ' · ' + YQ.escape(i.addonLabel) : '') + '</div>' +
+              '<div class="yq-qty mt-3" data-qty data-min="1">' +
+                '<button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease">' + YQ.icon('minus', 15) + '</button>' +
+                '<span class="yq-qty__val" data-qty-val>' + i.qty + '</span>' +
+                '<button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase">' + YQ.icon('plus', 15) + '</button>' +
               '</div>' +
             '</div>' +
             '<div class="text-end">' +
-              '<div class="gh-line__price">' + GH.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
+              '<div class="yq-line__price">' + YQ.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
             '</div>' +
-            '<button class="gh-line__remove" type="button" data-remove aria-label="Remove">' + GH.icon('close', 16) + '</button>' +
+            '<button class="yq-line__remove" type="button" data-remove aria-label="Remove">' + YQ.icon('close', 16) + '</button>' +
           '</div>';
       }).join('');
 
       $('#cartWrap').html(
         '<div class="col-lg-7 col-xl-8 mb-4 mb-lg-0">' +
-          '<div class="gh-panel gh-panel--flush">' + lines + '</div>' +
+          '<div class="yq-panel yq-panel--flush">' + lines + '</div>' +
           '<div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">' +
-            '<a class="gh-link-arrow" href="shop.html">' + GH.icon('chevleft', 14) + ' Continue shopping</a>' +
-            '<button class="gh-btn gh-btn--ghost gh-btn--sm" type="button" id="cartClear">Clear cart</button>' +
+            '<a class="yq-link-arrow" href="shop.html">' + YQ.icon('chevleft', 14) + ' Continue shopping</a>' +
+            '<button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" id="cartClear">Clear cart</button>' +
           '</div>' +
         '</div>' +
         '<div class="col-lg-5 col-xl-4">' +
-          '<div class="gh-panel gh-sticky">' +
-            GH.summaryHtml({ cta: 'Proceed to checkout', ctaHref: 'checkout.html' }) +
-            '<div class="gh-trust mt-3 pt-3">' +
-              '<span>' + GH.icon('lock', 15) + 'Secure payment</span>' +
-              '<span>' + GH.icon('truck', 15) + 'Same-day delivery</span>' +
+          '<div class="yq-panel yq-sticky">' +
+            YQ.summaryHtml({ cta: 'Proceed to checkout', ctaHref: 'checkout.html' }) +
+            '<div class="yq-trust mt-3 pt-3">' +
+              '<span>' + YQ.icon('lock', 15) + 'Secure payment</span>' +
+              '<span>' + YQ.icon('truck', 15) + 'Same-day delivery</span>' +
             '</div>' +
           '</div>' +
         '</div>'
       );
     }
 
-    $(document).on('gh:cart-changed', render);
+    $(document).on('yq:cart-changed', render);
 
-    $(document).on('gh:qty', '#cartWrap [data-qty]', function (e, n) {
-      GH.cart.setQty($(this).closest('.gh-line').data('key'), n);
+    $(document).on('yq:qty', '#cartWrap [data-qty]', function (e, n) {
+      YQ.cart.setQty($(this).closest('.yq-line').data('key'), n);
     });
     $(document).on('click', '#cartWrap [data-remove]', function () {
-      GH.cart.remove($(this).closest('.gh-line').data('key'));
-      GH.toast('Item removed');
+      YQ.cart.remove($(this).closest('.yq-line').data('key'));
+      YQ.toast('Item removed');
     });
     $(document).on('click', '#cartClear', function () {
-      GH.cart.clear();
-      GH.toast('Cart cleared');
+      YQ.cart.clear();
+      YQ.toast('Cart cleared');
     });
 
     render();
@@ -446,7 +446,7 @@
   /* ======================================================================
      8. Checkout (4 bước)
      ====================================================================== */
-  GH.initCheckout = function () {
+  YQ.initCheckout = function () {
     var steps = ['Information', 'Shipping', 'Payment', 'Review'];
     var current = 1;
 
@@ -454,16 +454,16 @@
       $('#coSteps').html(steps.map(function (s, i) {
         var n = i + 1;
         var cls = n === current ? 'is-active' : (n < current ? 'is-done' : '');
-        var num = n < current ? GH.icon('check', 12) : n;
-        return (i ? '<span class="gh-step__bar"></span>' : '') +
-          '<span class="gh-step ' + cls + '" data-step-idx="' + n + '">' +
-            '<span class="gh-step__num">' + num + '</span>' + s +
+        var num = n < current ? YQ.icon('check', 12) : n;
+        return (i ? '<span class="yq-step__bar"></span>' : '') +
+          '<span class="yq-step ' + cls + '" data-step-idx="' + n + '">' +
+            '<span class="yq-step__num">' + num + '</span>' + s +
           '</span>';
       }).join(''));
     }
 
     function paintSummary() {
-      $('#coSummary').html(GH.summaryHtml({ showItems: true }));
+      $('#coSummary').html(YQ.summaryHtml({ showItems: true }));
     }
 
     function show(n) {
@@ -481,7 +481,7 @@
         var good = !!v;
         if (good && $f.attr('type') === 'email') good = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
         $f.toggleClass('is-invalid', !good);
-        $f.closest('.mb-3, .col-md-6, .col-12').find('.gh-error').toggleClass('is-on', !good);
+        $f.closest('.mb-3, .col-md-6, .col-12').find('.yq-error').toggleClass('is-on', !good);
         if (!good) ok = false;
       });
       return ok;
@@ -492,20 +492,20 @@
       $('#coReview').html(
         '<div class="row g-4">' +
           '<div class="col-md-6">' +
-            '<div class="gh-tiny gh-muted mb-2">Contact</div>' +
-            '<div>' + GH.escape(g('coFirst') + ' ' + g('coLast')) + '</div>' +
-            '<div class="gh-small gh-muted">' + GH.escape(g('coEmail')) + '</div>' +
-            '<div class="gh-small gh-muted">' + GH.escape(g('coPhone')) + '</div>' +
+            '<div class="yq-tiny yq-muted mb-2">Contact</div>' +
+            '<div>' + YQ.escape(g('coFirst') + ' ' + g('coLast')) + '</div>' +
+            '<div class="yq-small yq-muted">' + YQ.escape(g('coEmail')) + '</div>' +
+            '<div class="yq-small yq-muted">' + YQ.escape(g('coPhone')) + '</div>' +
           '</div>' +
           '<div class="col-md-6">' +
-            '<div class="gh-tiny gh-muted mb-2">Delivery</div>' +
-            '<div>' + GH.escape(g('coAddress')) + '</div>' +
-            '<div class="gh-small gh-muted">Singapore ' + GH.escape(g('coPostal')) + '</div>' +
-            '<div class="gh-small gh-muted">' + GH.escape($('#coDate').val() || 'Next available date') + '</div>' +
+            '<div class="yq-tiny yq-muted mb-2">Delivery</div>' +
+            '<div>' + YQ.escape(g('coAddress')) + '</div>' +
+            '<div class="yq-small yq-muted">Singapore ' + YQ.escape(g('coPostal')) + '</div>' +
+            '<div class="yq-small yq-muted">' + YQ.escape($('#coDate').val() || 'Next available date') + '</div>' +
           '</div>' +
           '<div class="col-12">' +
-            '<div class="gh-tiny gh-muted mb-2">Payment</div>' +
-            '<div>' + GH.icon('card', 15) + ' Card ending ' + GH.escape(($.trim($('#coCard').val()) || '0000').slice(-4)) + '</div>' +
+            '<div class="yq-tiny yq-muted mb-2">Payment</div>' +
+            '<div>' + YQ.icon('card', 15) + ' Card ending ' + YQ.escape(($.trim($('#coCard').val()) || '0000').slice(-4)) + '</div>' +
           '</div>' +
         '</div>'
       );
@@ -513,23 +513,23 @@
 
     $(document).on('click', '[data-co-next]', function () {
       var n = parseInt($(this).data('co-next'), 10);
-      if (!validate(current)) { GH.toast('Please complete the required fields'); return; }
+      if (!validate(current)) { YQ.toast('Please complete the required fields'); return; }
       if (n === 4) paintReview();
       show(n);
     });
     $(document).on('click', '[data-co-back]', function () { show(parseInt($(this).data('co-back'), 10)); });
-    $(document).on('click', '#coSteps .gh-step.is-done', function () { show(parseInt($(this).data('step-idx'), 10)); });
+    $(document).on('click', '#coSteps .yq-step.is-done', function () { show(parseInt($(this).data('step-idx'), 10)); });
 
     $(document).on('click', '#coPlaceOrder', function () {
       var num = 'GH' + Date.now().toString().slice(-8);
-      GH.cart.clear();
+      YQ.cart.clear();
       $('#coMain').html(
-        '<div class="gh-panel text-center py-5">' +
-          '<div class="gh-empty__icon" style="background:var(--gh-gold-soft);color:var(--gh-gold-dark)">' + GH.icon('check', 28) + '</div>' +
-          '<h2 class="gh-h2 mt-3 mb-2">Thank you for your order</h2>' +
-          '<p class="gh-muted mb-1">Order <b style="color:var(--gh-ink)">' + num + '</b> is confirmed.</p>' +
-          '<p class="gh-muted mb-4">A receipt has been sent to your email.</p>' +
-          '<a class="gh-btn" href="index.html">Back to the shop ' + GH.icon('arrow', 16) + '</a>' +
+        '<div class="yq-panel text-center py-5">' +
+          '<div class="yq-empty__icon" style="background:var(--yq-gold-soft);color:var(--yq-gold-dark)">' + YQ.icon('check', 28) + '</div>' +
+          '<h2 class="yq-h2 mt-3 mb-2">Thank you for your order</h2>' +
+          '<p class="yq-muted mb-1">Order <b style="color:var(--yq-ink)">' + num + '</b> is confirmed.</p>' +
+          '<p class="yq-muted mb-4">A receipt has been sent to your email.</p>' +
+          '<a class="yq-btn" href="index.html">Back to the shop ' + YQ.icon('arrow', 16) + '</a>' +
         '</div>'
       );
       $('#coAside').fadeOut(200);
@@ -553,15 +553,15 @@
       $(this).addClass('is-active');
     });
 
-    $(document).on('gh:cart-changed', paintSummary);
+    $(document).on('yq:cart-changed', paintSummary);
 
-    if (!GH.cart.items.length) {
+    if (!YQ.cart.items.length) {
       $('#coMain').html(
-        '<div class="gh-panel gh-empty">' +
-          '<div class="gh-empty__icon">' + GH.icon('bag', 26) + '</div>' +
-          '<h3 class="gh-h3 mb-2">Your cart is empty</h3>' +
-          '<p class="gh-muted mb-4">Add something lovely before checking out.</p>' +
-          '<a class="gh-btn" href="shop.html">Browse the shop ' + GH.icon('arrow', 16) + '</a>' +
+        '<div class="yq-panel yq-empty">' +
+          '<div class="yq-empty__icon">' + YQ.icon('bag', 26) + '</div>' +
+          '<h3 class="yq-h3 mb-2">Your cart is empty</h3>' +
+          '<p class="yq-muted mb-4">Add something lovely before checking out.</p>' +
+          '<a class="yq-btn" href="shop.html">Browse the shop ' + YQ.icon('arrow', 16) + '</a>' +
         '</div>'
       );
       $('#coAside, #coSteps').hide();
@@ -576,31 +576,31 @@
   /* ======================================================================
      9. Personalise (eCard)
      ====================================================================== */
-  GH.initPersonalise = function () {
-    var exp = GH.experience(GH.param('exp')) || GH.experiences[0];
-    var design = GH.cardDesigns[0];
+  YQ.initPersonalise = function () {
+    var exp = YQ.experience(YQ.param('exp')) || YQ.experiences[0];
+    var design = YQ.cardDesigns[0];
     var delivery = 'ecard';
 
     /* Selected experience summary */
     $('#peExp').html(
       '<div class="d-flex gap-3 align-items-center">' +
-        '<div class="gh-media" style="width:66px;height:66px;border-radius:10px;flex:none">' +
-          GH.mediaInner(exp) + '</div>' +
+        '<div class="yq-media" style="width:66px;height:66px;border-radius:10px;flex:none">' +
+          YQ.mediaInner(exp) + '</div>' +
         '<div>' +
-          '<div class="gh-tiny gh-muted">Selected experience</div>' +
-          '<div class="gh-serif" style="font-size:1.1rem;color:var(--gh-ink)">' + GH.escape(exp.name) + '</div>' +
-          '<div class="gh-small gh-muted">' + exp.duration + ' · ' + exp.place + '</div>' +
+          '<div class="yq-tiny yq-muted">Selected experience</div>' +
+          '<div class="yq-serif" style="font-size:1.1rem;color:var(--yq-ink)">' + YQ.escape(exp.name) + '</div>' +
+          '<div class="yq-small yq-muted">' + exp.duration + ' · ' + exp.place + '</div>' +
         '</div>' +
-        '<div class="ms-auto gh-serif" style="font-size:1.1rem;color:var(--gh-ink)">' + GH.money0(exp.price) + '</div>' +
+        '<div class="ms-auto yq-serif" style="font-size:1.1rem;color:var(--yq-ink)">' + YQ.money0(exp.price) + '</div>' +
       '</div>'
     );
 
     /* Card designs */
-    $('#peDesigns').html(GH.cardDesigns.map(function (d, i) {
+    $('#peDesigns').html(YQ.cardDesigns.map(function (d, i) {
       return '<div class="col-6">' +
-               '<button class="gh-cardpick' + (i === 0 ? ' is-active' : '') + '" type="button" data-design="' + d.id + '">' +
-                 '<span class="gh-cardpick__art ' + d.art + '">' + d.glyph + '</span>' +
-                 '<span class="gh-cardpick__name">' + d.name + '</span>' +
+               '<button class="yq-cardpick' + (i === 0 ? ' is-active' : '') + '" type="button" data-design="' + d.id + '">' +
+                 '<span class="yq-cardpick__art ' + d.art + '">' + d.glyph + '</span>' +
+                 '<span class="yq-cardpick__name">' + d.name + '</span>' +
                '</button>' +
              '</div>';
     }).join(''));
@@ -610,24 +610,24 @@
       var msg = $.trim($('#peMsg').val());
       var frm = $.trim($('#peFrom').val());
 
-      $('#peCard').attr('class', 'gh-ecard ' + design.theme);
+      $('#peCard').attr('class', 'yq-ecard ' + design.theme);
       $('#peCardTo').text(to ? 'For ' + to : '').toggle(!!to);
       $('#peCardMsg').text(msg ? '“' + msg + '”' : '“Your message will appear here.”');
       $('#peCardFrom').text(frm ? '— ' + frm : '').toggle(!!frm);
 
       var fee = delivery === 'physical' ? C.physicalCardFee : 0;
-      $('#peTotal').text(GH.money(exp.price + fee));
+      $('#peTotal').text(YQ.money(exp.price + fee));
       $('#peFeeRow').toggle(fee > 0);
       $('#peDeliveryNote').text(delivery === 'physical'
         ? 'Physical card will be posted to the recipient in 2–3 business days.'
         : 'eCard will be sent to recipient’s email upon order confirmation.');
     }
 
-    $(document).on('click', '#peDesigns .gh-cardpick', function () {
-      $('#peDesigns .gh-cardpick').removeClass('is-active');
+    $(document).on('click', '#peDesigns .yq-cardpick', function () {
+      $('#peDesigns .yq-cardpick').removeClass('is-active');
       $(this).addClass('is-active');
       var dId = $(this).attr('data-design');
-      design = GH.cardDesigns.filter(function (d) { return d.id === dId; })[0] || design;
+      design = YQ.cardDesigns.filter(function (d) { return d.id === dId; })[0] || design;
       paintPreview();
     });
 
@@ -647,7 +647,7 @@
 
     function addToCart(personalised) {
       var fee = (personalised && delivery === 'physical') ? C.physicalCardFee : 0;
-      GH.cart.add(
+      YQ.cart.add(
         { id: exp.id, name: exp.name, tone: exp.tone, price: exp.price, catLabel: 'Experience' },
         { id: (personalised ? design.id + '-' + delivery : 'plain'), label: exp.duration + ' · ' + exp.place, price: exp.price },
         1,
@@ -663,7 +663,7 @@
 
     $(document).on('click', '#peContinue', function () {
       addToCart(true);
-      GH.toast('Gift personalised and added to cart', 'Review & pay', 'checkout.html');
+      YQ.toast('Gift personalised and added to cart', 'Review & pay', 'checkout.html');
       setTimeout(function () { window.location.href = 'checkout.html'; }, 700);
     });
     $(document).on('click', '#peSkip', function (e) {
@@ -673,19 +673,19 @@
     });
 
     paintPreview();
-    GH.initReveal();
+    YQ.initReveal();
   };
 
   /* ======================================================================
      10. My Orders (2 tab: Completed orders / Pending payment)
      ====================================================================== */
-  GH.initOrders = function () {
+  YQ.initOrders = function () {
     var TABS = [
       { id: 'completed', label: 'Completed orders' },
       { id: 'pending',   label: 'Pending payment'  }
     ];
 
-    var current = GH.param('tab');
+    var current = YQ.param('tab');
     if (!TABS.filter(function (t) { return t.id === current; }).length) current = 'completed';
 
     var open = {};   // id đơn -> đang mở rộng?
@@ -698,7 +698,7 @@
 
     /** Ghép 1 dòng đơn với sản phẩm thật; trả null nếu id không còn trong catalogue. */
     function line(row) {
-      var p = GH.product(row.id);
+      var p = YQ.product(row.id);
       if (!p) return null;
       var opt = (p.options || []).filter(function (o) { return o.id === row.optionId; })[0];
       var unit = opt && opt.price != null ? opt.price : p.price;
@@ -717,7 +717,7 @@
     }
 
     function ordersOf(tab) {
-      return (GH.orders || []).filter(function (o) { return o.status === tab; })
+      return (YQ.orders || []).filter(function (o) { return o.status === tab; })
         .slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
     }
 
@@ -725,7 +725,7 @@
     function tabsHtml() {
       return TABS.map(function (t) {
         var n = ordersOf(t.id).length;
-        return '<button class="gh-ord__tab' + (t.id === current ? ' is-active' : '') + '" type="button" ' +
+        return '<button class="yq-ord__tab' + (t.id === current ? ' is-active' : '') + '" type="button" ' +
                  'data-ord-tab="' + t.id + '" aria-pressed="' + (t.id === current) + '">' +
                  '<span>' + t.label + '</span><em>' + n + '</em>' +
                '</button>';
@@ -734,23 +734,23 @@
 
     function fullLines(lines) {
       return lines.map(function (l) {
-        return '<div class="gh-ord__line">' +
-                 '<div class="gh-ord__media gh-media">' + GH.mediaInner(l.product) + '</div>' +
-                 '<div class="gh-ord__info">' +
-                   '<div class="gh-ord__name">' + GH.escape(l.name) + '</div>' +
-                   '<div class="gh-ord__qty">Quantity : <em>' + l.qty + '</em></div>' +
+        return '<div class="yq-ord__line">' +
+                 '<div class="yq-ord__media yq-media">' + YQ.mediaInner(l.product) + '</div>' +
+                 '<div class="yq-ord__info">' +
+                   '<div class="yq-ord__name">' + YQ.escape(l.name) + '</div>' +
+                   '<div class="yq-ord__qty">Quantity : <em>' + l.qty + '</em></div>' +
                  '</div>' +
-                 '<div class="gh-ord__price">' + amt(l.sum) + '</div>' +
+                 '<div class="yq-ord__price">' + amt(l.sum) + '</div>' +
                '</div>';
       }).join('');
     }
 
     function briefLines(lines) {
       return lines.map(function (l) {
-        return '<div class="gh-ord__brief">' +
-                 '<span class="gh-ord__x">' + l.qty + 'x</span>' +
-                 '<span class="gh-ord__briefname">' + GH.escape(l.name) + '</span>' +
-                 '<span class="gh-ord__price">' + amt(l.sum) + '</span>' +
+        return '<div class="yq-ord__brief">' +
+                 '<span class="yq-ord__x">' + l.qty + 'x</span>' +
+                 '<span class="yq-ord__briefname">' + YQ.escape(l.name) + '</span>' +
+                 '<span class="yq-ord__price">' + amt(l.sum) + '</span>' +
                '</div>';
       }).join('');
     }
@@ -761,22 +761,22 @@
       var pending = order.status === 'pending';
 
       var foot = pending
-        ? '<a class="gh-btn gh-btn--gold gh-ord__action" href="checkout.html">Pay now ' + GH.icon('arrow', 15) + '</a>'
-        : '<button class="gh-btn gh-btn--gold gh-ord__action" type="button" data-ord-reorder data-gh-add>ReOrder</button>';
+        ? '<a class="yq-btn yq-btn--gold yq-ord__action" href="checkout.html">Pay now ' + YQ.icon('arrow', 15) + '</a>'
+        : '<button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>';
 
-      return '<article class="gh-ord__card' + (isOpen ? ' is-open' : '') + '" data-ord-id="' + order.id + '">' +
-               '<button class="gh-ord__head" type="button" data-ord-toggle ' +
-                 'aria-expanded="' + isOpen + '" aria-controls="ghOrdBody' + order.id + '">' +
-                 '<span class="gh-ord__no">#' + GH.escape(order.id) + '</span>' +
-                 (pending ? '<span class="gh-ord__flag">Awaiting payment</span>' : '') +
-                 '<span class="gh-ord__time">Order Time: ' + GH.dateLabel(order.date) + '</span>' +
-                 '<span class="gh-ord__chev" aria-hidden="true">' + GH.icon('chevright', 18) + '</span>' +
+      return '<article class="yq-ord__card' + (isOpen ? ' is-open' : '') + '" data-ord-id="' + order.id + '">' +
+               '<button class="yq-ord__head" type="button" data-ord-toggle ' +
+                 'aria-expanded="' + isOpen + '" aria-controls="yqOrdBody' + order.id + '">' +
+                 '<span class="yq-ord__no">#' + YQ.escape(order.id) + '</span>' +
+                 (pending ? '<span class="yq-ord__flag">Awaiting payment</span>' : '') +
+                 '<span class="yq-ord__time">Order Time: ' + YQ.dateLabel(order.date) + '</span>' +
+                 '<span class="yq-ord__chev" aria-hidden="true">' + YQ.icon('chevright', 18) + '</span>' +
                '</button>' +
-               '<div class="gh-ord__body" id="ghOrdBody' + order.id + '">' +
+               '<div class="yq-ord__body" id="yqOrdBody' + order.id + '">' +
                  (isOpen
                    ? fullLines(lines) +
-                     '<div class="gh-ord__total">Total: ' + amt(totalOf(lines)) + ' ' + C.currencyCode + '</div>' +
-                     '<div class="gh-ord__foot">' + foot + '</div>'
+                     '<div class="yq-ord__total">Total: ' + amt(totalOf(lines)) + ' ' + C.currencyCode + '</div>' +
+                     '<div class="yq-ord__foot">' + foot + '</div>'
                    : briefLines(lines)) +
                '</div>' +
              '</article>';
@@ -795,21 +795,21 @@
       }
 
       if (!list.length) {
-        $('#ordList').html(GH.localise(
-          '<div class="gh-panel gh-empty">' +
-            '<div class="gh-empty__icon">' + GH.icon('box', 26) + '</div>' +
-            '<h3 class="gh-h3 mb-2">No ' + (current === 'pending' ? 'pending payments' : 'completed orders') + '</h3>' +
-            '<p class="gh-muted mb-4">' +
+        $('#ordList').html(YQ.localise(
+          '<div class="yq-panel yq-empty">' +
+            '<div class="yq-empty__icon">' + YQ.icon('box', 26) + '</div>' +
+            '<h3 class="yq-h3 mb-2">No ' + (current === 'pending' ? 'pending payments' : 'completed orders') + '</h3>' +
+            '<p class="yq-muted mb-4">' +
               (current === 'pending'
                 ? 'Everything is paid for — nothing waiting here.'
                 : 'Your completed orders will be listed here.') + '</p>' +
-            '<a class="gh-btn" href="shop.html">Browse the shop ' + GH.icon('arrow', 16) + '</a>' +
+            '<a class="yq-btn" href="shop.html">Browse the shop ' + YQ.icon('arrow', 16) + '</a>' +
           '</div>'
         ));
         return;
       }
 
-      $('#ordList').html(GH.localise(list.map(cardHtml).join('')));
+      $('#ordList').html(YQ.localise(list.map(cardHtml).join('')));
     }
 
     /* --- sự kiện --- */
@@ -821,21 +821,21 @@
     });
 
     $(document).on('click', '#ordList [data-ord-toggle]', function () {
-      var id = $(this).closest('.gh-ord__card').attr('data-ord-id');
+      var id = $(this).closest('.yq-ord__card').attr('data-ord-id');
       open[id] = !open[id];
       render();
     });
 
     $(document).on('click', '#ordList [data-ord-reorder]', function () {
-      var id = $(this).closest('.gh-ord__card').attr('data-ord-id');
-      var order = (GH.orders || []).filter(function (o) { return o.id === id; })[0];
+      var id = $(this).closest('.yq-ord__card').attr('data-ord-id');
+      var order = (YQ.orders || []).filter(function (o) { return o.id === id; })[0];
       if (!order) return;
 
       var lines = linesOf(order);
-      if (!lines.length) { GH.toast('These items are no longer available'); return; }
+      if (!lines.length) { YQ.toast('These items are no longer available'); return; }
 
-      $.each(lines, function (_, l) { GH.cart.add(l.product, l.option, l.qty); });
-      GH.toast(lines.length + (lines.length === 1 ? ' item' : ' items') + ' added to your cart',
+      $.each(lines, function (_, l) { YQ.cart.add(l.product, l.option, l.qty); });
+      YQ.toast(lines.length + (lines.length === 1 ? ' item' : ' items') + ' added to your cart',
                'View cart', 'cart.html');
     });
 
@@ -845,9 +845,9 @@
   /* ======================================================================
      11. Member profile (member/profile.html)
      ====================================================================== */
-  GH.initProfile = function () {
-    var P = GH.profile;
-    var editing = GH.param('edit') === '1';
+  YQ.initProfile = function () {
+    var P = YQ.profile;
+    var editing = YQ.param('edit') === '1';
     var RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     function fieldId(key) { return 'pf_' + key; }
@@ -856,21 +856,21 @@
     function shown(f) {
       var v = $.trim(P.get(f.key));
       if (!v) return null;
-      return f.type === 'date' ? GH.dateLabel(v) : v;
+      return f.type === 'date' ? YQ.dateLabel(v) : v;
     }
 
     function inputHtml(f) {
-      var v = GH.escape(P.get(f.key));
+      var v = YQ.escape(P.get(f.key));
       var id = fieldId(f.key);
       if (f.type === 'select') {
         var opts = '<option value="">Not provided</option>' +
           (f.options || []).map(function (o) {
-            return '<option value="' + GH.escape(o) + '"' + (o === P.get(f.key) ? ' selected' : '') + '>' +
-                   GH.escape(o) + '</option>';
+            return '<option value="' + YQ.escape(o) + '"' + (o === P.get(f.key) ? ' selected' : '') + '>' +
+                   YQ.escape(o) + '</option>';
           }).join('');
-        return '<select class="gh-input gh-prof__control" id="' + id + '">' + opts + '</select>';
+        return '<select class="yq-input yq-prof__control" id="' + id + '">' + opts + '</select>';
       }
-      return '<input class="gh-input gh-prof__control" id="' + id + '" type="' +
+      return '<input class="yq-input yq-prof__control" id="' + id + '" type="' +
              (f.type || 'text') + '" value="' + v + '">';
     }
 
@@ -879,27 +879,27 @@
       var body;
 
       if (editing && !f.ro) {
-        body = inputHtml(f) + '<div class="gh-error" data-err-for="' + fieldId(f.key) + '"></div>';
+        body = inputHtml(f) + '<div class="yq-error" data-err-for="' + fieldId(f.key) + '"></div>';
       } else {
         body = val
-          ? '<span class="gh-prof__value">' + GH.escape(val) + '</span>'
-          : '<span class="gh-prof__value is-empty">Not provided</span>';
-        if (editing && f.ro) body += '<span class="gh-prof__lock">' + GH.icon('lock', 13) + 'Locked</span>';
+          ? '<span class="yq-prof__value">' + YQ.escape(val) + '</span>'
+          : '<span class="yq-prof__value is-empty">Not provided</span>';
+        if (editing && f.ro) body += '<span class="yq-prof__lock">' + YQ.icon('lock', 13) + 'Locked</span>';
       }
 
-      return '<div class="gh-prof__row' + (editing && !f.ro ? ' is-editing' : '') + '">' +
-               '<dt class="gh-prof__label">' + GH.escape(f.label) + '</dt>' +
-               '<dd class="gh-prof__field">' + body + '</dd>' +
+      return '<div class="yq-prof__row' + (editing && !f.ro ? ' is-editing' : '') + '">' +
+               '<dt class="yq-prof__label">' + YQ.escape(f.label) + '</dt>' +
+               '<dd class="yq-prof__field">' + body + '</dd>' +
              '</div>';
     }
 
     function groupHtml(g) {
-      return '<section class="gh-prof__group">' +
-               '<header class="gh-prof__grouphead">' +
-                 '<span class="gh-prof__groupico">' + GH.icon(g.icon || 'user', 17) + '</span>' +
-                 '<h2 class="gh-prof__grouptitle">' + GH.escape(g.title) + '</h2>' +
+      return '<section class="yq-prof__group">' +
+               '<header class="yq-prof__grouphead">' +
+                 '<span class="yq-prof__groupico">' + YQ.icon(g.icon || 'user', 17) + '</span>' +
+                 '<h2 class="yq-prof__grouptitle">' + YQ.escape(g.title) + '</h2>' +
                '</header>' +
-               '<dl class="gh-prof__rows">' + g.fields.map(rowHtml).join('') + '</dl>' +
+               '<dl class="yq-prof__rows">' + g.fields.map(rowHtml).join('') + '</dl>' +
              '</section>';
     }
 
@@ -913,55 +913,55 @@
       var no = P.get('memberNo');
 
       var actions = editing
-        ? '<button class="gh-btn gh-btn--block" type="button" id="pfSave">Save changes</button>' +
-          '<button class="gh-btn gh-btn--ghost gh-btn--block mt-2" type="button" id="pfCancel">Cancel</button>'
-        : '<button class="gh-btn gh-btn--block" type="button" id="pfEdit">Edit my information</button>';
+        ? '<button class="yq-btn yq-btn--block" type="button" id="pfSave">Save changes</button>' +
+          '<button class="yq-btn yq-btn--yqost yq-btn--block mt-2" type="button" id="pfCancel">Cancel</button>'
+        : '<button class="yq-btn yq-btn--block" type="button" id="pfEdit">Edit my information</button>';
 
-      return '<div class="gh-prof__card">' +
-               '<div class="gh-prof__avatar" aria-hidden="true">' + GH.escape(initials) + '</div>' +
-               '<h1 class="gh-prof__name">' + GH.escape(name) + '</h1>' +
-               '<div class="gh-prof__badges">' +
-                 '<span class="gh-prof__chip">' + GH.escape(type) + '</span>' +
-                 (no ? '<span class="gh-prof__no">No. ' + GH.escape(no) + '</span>' : '') +
+      return '<div class="yq-prof__card">' +
+               '<div class="yq-prof__avatar" aria-hidden="true">' + YQ.escape(initials) + '</div>' +
+               '<h1 class="yq-prof__name">' + YQ.escape(name) + '</h1>' +
+               '<div class="yq-prof__badges">' +
+                 '<span class="yq-prof__chip">' + YQ.escape(type) + '</span>' +
+                 (no ? '<span class="yq-prof__no">No. ' + YQ.escape(no) + '</span>' : '') +
                '</div>' +
 
-               '<div class="gh-prof__meter">' +
-                 '<div class="gh-prof__meterhead"><span>Profile complete</span><b>' + pct + '%</b></div>' +
-                 '<div class="gh-prof__bar"><i style="width:' + pct + '%"></i></div>' +
+               '<div class="yq-prof__meter">' +
+                 '<div class="yq-prof__meterhead"><span>Profile complete</span><b>' + pct + '%</b></div>' +
+                 '<div class="yq-prof__bar"><i style="width:' + pct + '%"></i></div>' +
                  (missing.length
-                   ? '<p class="gh-prof__hint">' + missing.length +
+                   ? '<p class="yq-prof__hint">' + missing.length +
                      (missing.length === 1 ? ' field left: ' : ' fields left: ') +
-                     GH.escape(missing.slice(0, 3).join(', ')) +
+                     YQ.escape(missing.slice(0, 3).join(', ')) +
                      (missing.length > 3 ? '…' : '') + '</p>'
-                   : '<p class="gh-prof__hint">Everything is filled in — thank you.</p>') +
+                   : '<p class="yq-prof__hint">Everything is filled in — thank you.</p>') +
                '</div>' +
 
-               '<dl class="gh-prof__facts">' +
-                 '<div><dt>Member since</dt><dd>' + (GH.dateLabel(P.get('joinDate')) || '—') + '</dd></div>' +
-                 '<div><dt>Valid until</dt><dd>' + (GH.dateLabel(P.get('expiryDate')) || '—') + '</dd></div>' +
+               '<dl class="yq-prof__facts">' +
+                 '<div><dt>Member since</dt><dd>' + (YQ.dateLabel(P.get('joinDate')) || '—') + '</dd></div>' +
+                 '<div><dt>Valid until</dt><dd>' + (YQ.dateLabel(P.get('expiryDate')) || '—') + '</dd></div>' +
                '</dl>' +
 
-               '<div class="gh-prof__actions">' + actions + '</div>' +
+               '<div class="yq-prof__actions">' + actions + '</div>' +
 
-               '<div class="gh-prof__links">' +
-                 '<a class="gh-link-arrow" href="member/orders.html">My orders ' + GH.icon('chevright', 14) + '</a>' +
+               '<div class="yq-prof__links">' +
+                 '<a class="yq-link-arrow" href="member/orders.html">My orders ' + YQ.icon('chevright', 14) + '</a>' +
                '</div>' +
              '</div>';
     }
 
     function render() {
-      $('#profAside').html(GH.localise(asideHtml()));
-      $('#profBody').html(GH.localise((GH.profileGroups || []).map(groupHtml).join('')))
+      $('#profAside').html(YQ.localise(asideHtml()));
+      $('#profBody').html(YQ.localise((YQ.profileGroups || []).map(groupHtml).join('')))
                     .toggleClass('is-editing', editing);
     }
 
     /* --- lưu --- */
     function collect() {
       var out = {}, bad = null;
-      $('#profBody .gh-error').removeClass('is-on').text('');
-      $('#profBody .gh-prof__control').removeClass('is-invalid');
+      $('#profBody .yq-error').removeClass('is-on').text('');
+      $('#profBody .yq-prof__control').removeClass('is-invalid');
 
-      $.each(GH.profileGroups || [], function (_, g) {
+      $.each(YQ.profileGroups || [], function (_, g) {
         $.each(g.fields, function (_, f) {
           if (f.ro) return;
           var $el = $('#' + fieldId(f.key));
@@ -985,18 +985,18 @@
       .on('click', '#pfCancel', function () { editing = false; render(); })
       .on('click', '#pfSave', function () {
         var patch = collect();
-        if (!patch) { GH.toast('Please check the highlighted field'); return; }
+        if (!patch) { YQ.toast('Please check the highlighted field'); return; }
 
         P.set(patch);
         /* Giữ phiên đăng nhập khớp với hồ sơ vừa sửa. */
-        if (GH.auth && GH.auth.isIn()) {
-          GH.auth.update({ first: patch.firstName, last: patch.lastName, email: patch.email });
+        if (YQ.auth && YQ.auth.isIn()) {
+          YQ.auth.update({ first: patch.firstName, last: patch.lastName, email: patch.email });
         }
         editing = false;
         render();
-        GH.toast('Profile updated');
+        YQ.toast('Profile updated');
       })
-      .on('input change', '#profBody .gh-prof__control', function () {
+      .on('input change', '#profBody .yq-prof__control', function () {
         $(this).removeClass('is-invalid');
         $('[data-err-for="' + this.id + '"]').removeClass('is-on').text('');
       });
@@ -1007,7 +1007,7 @@
   /* ======================================================================
      12. Change password (member/password.html)
      ====================================================================== */
-  GH.initPassword = function () {
+  YQ.initPassword = function () {
     /* 4 điều kiện; đạt bao nhiêu thì thanh sức mạnh lên bấy nhiêu. */
     var RULES = [
       { id: 'len',   label: 'At least 8 characters', test: function (v) { return v.length >= 8; } },
@@ -1022,61 +1022,61 @@
     }
 
     function pwField(id, label, ac) {
-      return '<div class="gh-pw__field">' +
-               '<label class="gh-auth__label" for="' + id + '">' + GH.escape(label) + '</label>' +
-               '<div class="gh-auth__pw">' +
-                 '<input class="gh-input form-control" type="password" id="' + id + '" autocomplete="' + ac + '">' +
-                 '<button class="gh-auth__peek" type="button" data-gh-peek aria-label="Show password">' +
-                   GH.icon('eye', 17) + '</button>' +
+      return '<div class="yq-pw__field">' +
+               '<label class="yq-auth__label" for="' + id + '">' + YQ.escape(label) + '</label>' +
+               '<div class="yq-auth__pw">' +
+                 '<input class="yq-input form-control" type="password" id="' + id + '" autocomplete="' + ac + '">' +
+                 '<button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password">' +
+                   YQ.icon('eye', 17) + '</button>' +
                '</div>' +
-               '<div class="gh-error" data-err-for="' + id + '"></div>' +
+               '<div class="yq-error" data-err-for="' + id + '"></div>' +
              '</div>';
     }
 
     function render() {
-      var changed = GH.profile.get('passwordChangedAt');
+      var changed = YQ.profile.get('passwordChangedAt');
 
-      $('#pwAside').html(GH.localise(
-        '<div class="gh-prof__card">' +
-          '<div class="gh-pw__shield" aria-hidden="true">' + GH.icon('lock', 30) + '</div>' +
-          '<h2 class="gh-prof__name">Account security</h2>' +
-          '<p class="gh-pw__lead">Pick something you do not use anywhere else. ' +
+      $('#pwAside').html(YQ.localise(
+        '<div class="yq-prof__card">' +
+          '<div class="yq-pw__shield" aria-hidden="true">' + YQ.icon('lock', 30) + '</div>' +
+          '<h2 class="yq-prof__name">Account security</h2>' +
+          '<p class="yq-pw__lead">Pick something you do not use anywhere else. ' +
             'You stay signed in on this device after changing it.</p>' +
-          '<dl class="gh-prof__facts">' +
-            '<div><dt>Signed in as</dt><dd>' + GH.escape(GH.profile.get('email') || '—') + '</dd></div>' +
-            '<div><dt>Last changed</dt><dd>' + (changed ? GH.dateLabel(changed) : 'Never') + '</dd></div>' +
+          '<dl class="yq-prof__facts">' +
+            '<div><dt>Signed in as</dt><dd>' + YQ.escape(YQ.profile.get('email') || '—') + '</dd></div>' +
+            '<div><dt>Last changed</dt><dd>' + (changed ? YQ.dateLabel(changed) : 'Never') + '</dd></div>' +
           '</dl>' +
-          '<div class="gh-prof__links">' +
-            '<a class="gh-link-arrow" href="member/profile.html">Back to profile ' + GH.icon('chevright', 14) + '</a>' +
+          '<div class="yq-prof__links">' +
+            '<a class="yq-link-arrow" href="member/profile.html">Back to profile ' + YQ.icon('chevright', 14) + '</a>' +
           '</div>' +
         '</div>'
       ));
 
-      $('#pwBody').html(GH.localise(
-        '<section class="gh-prof__group">' +
-          '<header class="gh-prof__grouphead">' +
-            '<span class="gh-prof__groupico">' + GH.icon('lock', 17) + '</span>' +
-            '<h2 class="gh-prof__grouptitle">New password</h2>' +
+      $('#pwBody').html(YQ.localise(
+        '<section class="yq-prof__group">' +
+          '<header class="yq-prof__grouphead">' +
+            '<span class="yq-prof__groupico">' + YQ.icon('lock', 17) + '</span>' +
+            '<h2 class="yq-prof__grouptitle">New password</h2>' +
           '</header>' +
-          '<form class="gh-pw__form" id="pwForm" novalidate>' +
+          '<form class="yq-pw__form" id="pwForm" novalidate>' +
             pwField('pwCurrent', 'Current password', 'current-password') +
             pwField('pwNew', 'New password', 'new-password') +
 
-            '<div class="gh-pw__meter" id="pwMeter" data-score="0">' +
-              '<div class="gh-pw__bar"><i></i><i></i><i></i><i></i></div>' +
-              '<span class="gh-pw__level" id="pwLevel">Too short</span>' +
+            '<div class="yq-pw__meter" id="pwMeter" data-score="0">' +
+              '<div class="yq-pw__bar"><i></i><i></i><i></i><i></i></div>' +
+              '<span class="yq-pw__level" id="pwLevel">Too short</span>' +
             '</div>' +
-            '<ul class="gh-pw__rules" id="pwRules">' +
+            '<ul class="yq-pw__rules" id="pwRules">' +
               RULES.map(function (r) {
                 return '<li data-rule="' + r.id + '">' +
-                         '<span class="gh-pw__tick">' + GH.icon('check', 12) + '</span>' +
-                         GH.escape(r.label) +
+                         '<span class="yq-pw__tick">' + YQ.icon('check', 12) + '</span>' +
+                         YQ.escape(r.label) +
                        '</li>';
               }).join('') +
             '</ul>' +
 
             pwField('pwConfirm', 'Repeat new password', 'new-password') +
-            '<button class="gh-btn gh-btn--block mt-2" type="submit">Update password</button>' +
+            '<button class="yq-btn yq-btn--block mt-2" type="submit">Update password</button>' +
           '</form>' +
         '</section>'
       ));
@@ -1103,14 +1103,14 @@
 
     $(document)
       .on('input', '#pwNew', paintStrength)
-      .on('input', '#pwForm .gh-input', function () {
+      .on('input', '#pwForm .yq-input', function () {
         $(this).removeClass('is-invalid');
         $('[data-err-for="' + this.id + '"]').removeClass('is-on').text('');
       })
       .on('submit', '#pwForm', function (e) {
         e.preventDefault();
-        $('#pwForm .gh-input').removeClass('is-invalid');
-        $('#pwForm .gh-error').removeClass('is-on').text('');
+        $('#pwForm .yq-input').removeClass('is-invalid');
+        $('#pwForm .yq-error').removeClass('is-on').text('');
 
         var cur = $('#pwCurrent').val() || '';
         var nw  = $('#pwNew').val() || '';
@@ -1124,10 +1124,10 @@
         if (cf !== nw) ok = fail('pwConfirm', 'Passwords do not match') && ok;
         if (!ok) return;
 
-        GH.profile.set({ passwordChangedAt: new Date().toISOString().slice(0, 10) });
+        YQ.profile.set({ passwordChangedAt: new Date().toISOString().slice(0, 10) });
         render();
         paintStrength();
-        GH.toast('Password updated');
+        YQ.toast('Password updated');
       });
 
     render();
@@ -1137,9 +1137,9 @@
   /* ======================================================================
      13. Invite friends (member/invite.html)
      ====================================================================== */
-  GH.initInvite = function () {
-    var R = GH.referral || {};
-    var KEY = 'gh_invites_v1';
+  YQ.initInvite = function () {
+    var R = YQ.referral || {};
+    var KEY = 'yq_invites_v1';
     var RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     var sent = [];
@@ -1148,101 +1148,101 @@
 
     /* Mã giới thiệu bám theo số thẻ thành viên -> mỗi người một mã. */
     function code() {
-      var no = GH.profile.get('memberNo') || '000000';
+      var no = YQ.profile.get('memberNo') || '000000';
       return (R.codePrefix || 'GH-') + no.slice(-6);
     }
     /** Link mời dạng tuyệt đối để dán đi đâu cũng chạy. */
     function link() {
-      var rel = GH.url(R.landing || 'index.html');
+      var rel = YQ.url(R.landing || 'index.html');
       return new URL(rel, window.location.href).href + '?ref=' + encodeURIComponent(code());
     }
 
     function channelHtml(c) {
-      var glyph = GH.brandIcon ? GH.brandIcon(c.id, 20) : '';
-      if (!glyph) glyph = GH.icon(c.icon || 'arrow', 19);
-      return '<button class="gh-inv__ch gh-inv__ch--' + c.id + '" type="button" data-inv-ch="' + c.id + '">' +
-               '<span class="gh-inv__chico">' + glyph + '</span>' +
-               '<span>' + GH.escape(c.label) + '</span>' +
+      var glyph = YQ.brandIcon ? YQ.brandIcon(c.id, 20) : '';
+      if (!glyph) glyph = YQ.icon(c.icon || 'arrow', 19);
+      return '<button class="yq-inv__ch yq-inv__ch--' + c.id + '" type="button" data-inv-ch="' + c.id + '">' +
+               '<span class="yq-inv__chico">' + glyph + '</span>' +
+               '<span>' + YQ.escape(c.label) + '</span>' +
              '</button>';
     }
 
     function listHtml() {
       if (!sent.length) {
-        return '<p class="gh-inv__none">No invitations sent yet. Share your link above to get started.</p>';
+        return '<p class="yq-inv__none">No invitations sent yet. Share your link above to get started.</p>';
       }
-      return '<ul class="gh-inv__list">' + sent.map(function (i, idx) {
-        return '<li class="gh-inv__row">' +
-                 '<span class="gh-inv__who">' + GH.escape(i.email) + '</span>' +
-                 '<span class="gh-inv__when">' + GH.dateLabel(i.at) + '</span>' +
-                 '<span class="gh-inv__state">' + GH.escape(i.status || 'Invited') + '</span>' +
-                 '<button class="gh-inv__rm" type="button" data-inv-rm="' + idx + '" ' +
-                   'aria-label="Remove ' + GH.escape(i.email) + '">' + GH.icon('close', 14) + '</button>' +
+      return '<ul class="yq-inv__list">' + sent.map(function (i, idx) {
+        return '<li class="yq-inv__row">' +
+                 '<span class="yq-inv__who">' + YQ.escape(i.email) + '</span>' +
+                 '<span class="yq-inv__when">' + YQ.dateLabel(i.at) + '</span>' +
+                 '<span class="yq-inv__state">' + YQ.escape(i.status || 'Invited') + '</span>' +
+                 '<button class="yq-inv__rm" type="button" data-inv-rm="' + idx + '" ' +
+                   'aria-label="Remove ' + YQ.escape(i.email) + '">' + YQ.icon('close', 14) + '</button>' +
                '</li>';
       }).join('') + '</ul>';
     }
 
     function render() {
-      var reward = GH.money0(R.reward || 0);
+      var reward = YQ.money0(R.reward || 0);
 
-      $('#invAside').html(GH.localise(
-        '<div class="gh-prof__card">' +
-          '<div class="gh-inv__gift" aria-hidden="true">' + GH.icon('gift', 30) + '</div>' +
-          '<h2 class="gh-prof__name">Give ' + reward + ', get ' + reward + '</h2>' +
-          '<p class="gh-pw__lead">Your friend gets ' + reward + ' off their first order. ' +
+      $('#invAside').html(YQ.localise(
+        '<div class="yq-prof__card">' +
+          '<div class="yq-inv__gift" aria-hidden="true">' + YQ.icon('gift', 30) + '</div>' +
+          '<h2 class="yq-prof__name">Give ' + reward + ', get ' + reward + '</h2>' +
+          '<p class="yq-pw__lead">Your friend gets ' + reward + ' off their first order. ' +
             'When they check out, the same lands in your wallet.</p>' +
-          '<dl class="gh-prof__facts">' +
+          '<dl class="yq-prof__facts">' +
             '<div><dt>Invitations sent</dt><dd>' + sent.length + '</dd></div>' +
-            '<div><dt>Your code</dt><dd>' + GH.escape(code()) + '</dd></div>' +
+            '<div><dt>Your code</dt><dd>' + YQ.escape(code()) + '</dd></div>' +
           '</dl>' +
-          '<div class="gh-prof__links">' +
-            '<a class="gh-link-arrow" href="member/profile.html">Back to profile ' + GH.icon('chevright', 14) + '</a>' +
+          '<div class="yq-prof__links">' +
+            '<a class="yq-link-arrow" href="member/profile.html">Back to profile ' + YQ.icon('chevright', 14) + '</a>' +
           '</div>' +
         '</div>'
       ));
 
-      $('#invBody').html(GH.localise(
+      $('#invBody').html(YQ.localise(
         /* --- chia sẻ link --- */
-        '<section class="gh-prof__group">' +
-          '<header class="gh-prof__grouphead">' +
-            '<span class="gh-prof__groupico">' + GH.icon('sparkle', 17) + '</span>' +
-            '<h2 class="gh-prof__grouptitle">Share your invitation</h2>' +
+        '<section class="yq-prof__group">' +
+          '<header class="yq-prof__grouphead">' +
+            '<span class="yq-prof__groupico">' + YQ.icon('sparkle', 17) + '</span>' +
+            '<h2 class="yq-prof__grouptitle">Share your invitation</h2>' +
           '</header>' +
-          '<div class="gh-inv__pad">' +
-            '<div class="gh-inv__linkbox">' +
-              '<input class="gh-input form-control" id="invLink" readonly value="' + GH.escape(link()) + '" ' +
+          '<div class="yq-inv__pad">' +
+            '<div class="yq-inv__linkbox">' +
+              '<input class="yq-input form-control" id="invLink" readonly value="' + YQ.escape(link()) + '" ' +
                 'aria-label="Your invitation link">' +
-              '<button class="gh-btn gh-btn--sm" type="button" data-inv-ch="copy">' +
-                GH.icon('copy', 15) + 'Copy</button>' +
+              '<button class="yq-btn yq-btn--sm" type="button" data-inv-ch="copy">' +
+                YQ.icon('copy', 15) + 'Copy</button>' +
             '</div>' +
-            '<div class="gh-inv__channels">' + (R.channels || []).map(channelHtml).join('') + '</div>' +
+            '<div class="yq-inv__channels">' + (R.channels || []).map(channelHtml).join('') + '</div>' +
           '</div>' +
         '</section>' +
 
         /* --- mời qua email --- */
-        '<section class="gh-prof__group">' +
-          '<header class="gh-prof__grouphead">' +
-            '<span class="gh-prof__groupico">' + GH.icon('mail', 17) + '</span>' +
-            '<h2 class="gh-prof__grouptitle">Invite by email</h2>' +
+        '<section class="yq-prof__group">' +
+          '<header class="yq-prof__grouphead">' +
+            '<span class="yq-prof__groupico">' + YQ.icon('mail', 17) + '</span>' +
+            '<h2 class="yq-prof__grouptitle">Invite by email</h2>' +
           '</header>' +
-          '<div class="gh-inv__pad">' +
+          '<div class="yq-inv__pad">' +
             '<form id="invForm" novalidate>' +
-              '<label class="gh-auth__label" for="invMails">Email addresses</label>' +
-              '<textarea class="gh-input form-control" id="invMails" rows="3" ' +
+              '<label class="yq-auth__label" for="invMails">Email addresses</label>' +
+              '<textarea class="yq-input form-control" id="invMails" rows="3" ' +
                 'placeholder="friend@example.com, another@example.com"></textarea>' +
-              '<div class="gh-error" data-err-for="invMails"></div>' +
-              '<p class="gh-inv__tip">Separate several addresses with a comma, a space or a new line.</p>' +
-              '<button class="gh-btn gh-btn--block mt-1" type="submit">Send invitations</button>' +
+              '<div class="yq-error" data-err-for="invMails"></div>' +
+              '<p class="yq-inv__tip">Separate several addresses with a comma, a space or a new line.</p>' +
+              '<button class="yq-btn yq-btn--block mt-1" type="submit">Send invitations</button>' +
             '</form>' +
           '</div>' +
         '</section>' +
 
         /* --- đã mời --- */
-        '<section class="gh-prof__group">' +
-          '<header class="gh-prof__grouphead">' +
-            '<span class="gh-prof__groupico">' + GH.icon('users', 17) + '</span>' +
-            '<h2 class="gh-prof__grouptitle">Invitations sent</h2>' +
+        '<section class="yq-prof__group">' +
+          '<header class="yq-prof__grouphead">' +
+            '<span class="yq-prof__groupico">' + YQ.icon('users', 17) + '</span>' +
+            '<h2 class="yq-prof__grouptitle">Invitations sent</h2>' +
           '</header>' +
-          '<div class="gh-inv__pad">' + listHtml() + '</div>' +
+          '<div class="yq-inv__pad">' + listHtml() + '</div>' +
         '</section>'
       ));
     }
@@ -1262,14 +1262,14 @@
       if (el) { el.focus(); el.select(); }
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(link()).then(
-          function () { GH.toast('Invitation link copied'); },
-          function () { GH.toast('Press Ctrl/Cmd + C to copy the link'); }
+          function () { YQ.toast('Invitation link copied'); },
+          function () { YQ.toast('Press Ctrl/Cmd + C to copy the link'); }
         );
         return;
       }
       var done = false;
       try { done = document.execCommand('copy'); } catch (e) {}
-      GH.toast(done ? 'Invitation link copied' : 'Press Ctrl/Cmd + C to copy the link');
+      YQ.toast(done ? 'Invitation link copied' : 'Press Ctrl/Cmd + C to copy the link');
     }
 
     $(document)
@@ -1312,12 +1312,12 @@
           fresh.push({ email: m, at: today, status: 'Invited' });
         });
 
-        if (!fresh.length) { GH.toast('Those friends were already invited'); return; }
+        if (!fresh.length) { YQ.toast('Those friends were already invited'); return; }
 
         sent = fresh.concat(sent);
         persist();
         render();
-        GH.toast(fresh.length + (fresh.length === 1 ? ' invitation sent' : ' invitations sent'));
+        YQ.toast(fresh.length + (fresh.length === 1 ? ' invitation sent' : ' invitations sent'));
       })
 
       .on('click', '[data-inv-rm]', function () {

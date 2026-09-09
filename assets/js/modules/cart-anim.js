@@ -1,6 +1,6 @@
 /* ==========================================================================
    Module JS: cart-anim — Hiệu ứng "thêm vào giỏ" cao cấp
-   Nạp sau data.js / app.js / pages.js nên dùng được GH.*, jQuery, Bootstrap 5.
+   Nạp sau data.js / app.js / pages.js nên dùng được YQ.*, jQuery, Bootstrap 5.
 
    Gồm 4 mảng:
      1) Fly-to-cart : ảnh sản phẩm bay theo đường cong bezier tới icon giỏ,
@@ -18,7 +18,7 @@
 (function ($) {
   'use strict';
 
-  if (!window.GH || !GH.cart) return;      // fallback êm nếu core chưa sẵn sàng
+  if (!window.YQ || !YQ.cart) return;      // fallback êm nếu core chưa sẵn sàng
 
   var D = document;
   var W = window;
@@ -29,7 +29,7 @@
   var CFG = {
     /* Mọi điểm bấm "thêm vào giỏ" hiện có (và [data-buynow] của agent khác
        nếu nó tồn tại — không bắt buộc phải có). */
-    triggers: '[data-quickadd], #pdpAdd, [data-buynow], [data-gh-add]',
+    triggers: '[data-quickadd], #pdpAdd, [data-buynow], [data-yq-add]',
     flyMs:     780,   // thời gian bay
     addedMs:  1200,   // thời gian nút giữ trạng thái "Added"
     pendingMs: 1200,  // click quá cũ thì bỏ, tránh ăn nhầm cart-changed khác
@@ -83,15 +83,15 @@
 
   /** Icon giỏ đang hiển thị trên header (desktop hoặc mobile). */
   function cartAnchor() {
-    var ids = ['ghCartCount', 'ghCartCountM'], i, badge, anchor;
+    var ids = ['yqCartCount', 'yqCartCountM'], i, badge, anchor;
     for (i = 0; i < ids.length; i++) {
       badge = D.getElementById(ids[i]);
       if (!badge) continue;
-      anchor = (badge.closest && badge.closest('.gh-iconbtn, a, button')) || badge.parentNode;
+      anchor = (badge.closest && badge.closest('.yq-iconbtn, a, button')) || badge.parentNode;
       if (liveRect(anchor)) return anchor;
     }
     /* Header có thể đã đổi markup — thử bắt bất kỳ link giỏ nào đang hiện. */
-    var alts = D.querySelectorAll('#ghHeader a[href*="cart.html"], header a[href*="cart.html"]');
+    var alts = D.querySelectorAll('#yqHeader a[href*="cart.html"], header a[href*="cart.html"]');
     for (i = 0; i < alts.length; i++) if (liveRect(alts[i])) return alts[i];
     return null;
   }
@@ -108,14 +108,14 @@
     var $btn = $(btn), $m = $();
 
     /* Trang chi tiết sản phẩm */
-    if (btn.id === 'pdpAdd' || $btn.closest('.gh-pdp, .gh-pdp__gallery').length) {
-      $m = $('#pdpMain').find('img, .gh-media__ph').first();
+    if (btn.id === 'pdpAdd' || $btn.closest('.yq-pdp, .yq-pdp__gallery').length) {
+      $m = $('#pdpMain').find('img, .yq-media__ph').first();
     }
     /* Card sản phẩm / dòng giỏ / panel */
     if (!$m.length) {
-      var $scope = $btn.closest('.gh-card, .gh-line, .gh-panel, .gh-feature, article');
+      var $scope = $btn.closest('.yq-card, .yq-line, .yq-panel, .yq-feature, article');
       if ($scope.length) {
-        $m = $scope.find('.gh-card__mediawrap img, .gh-card__mediawrap .gh-media__ph, .gh-media img, .gh-media__ph').first();
+        $m = $scope.find('.yq-card__mediawrap img, .yq-card__mediawrap .yq-media__ph, .yq-media img, .yq-media__ph').first();
       }
     }
 
@@ -128,16 +128,16 @@
     } else {
       /* Không thấy ảnh trong DOM → dựng lại từ dữ liệu sản phẩm. */
       var id = $btn.attr('data-quickadd') || $btn.attr('data-buynow') ||
-               $btn.attr('data-gh-add') || (GH.param ? GH.param('id') : null);
-      var p = (id && GH.product) ? GH.product(id) : null;
-      if (p && GH.mediaInner) html = GH.mediaInner(p, { eager: true });
+               $btn.attr('data-yq-add') || (YQ.param ? YQ.param('id') : null);
+      var p = (id && YQ.product) ? YQ.product(id) : null;
+      if (p && YQ.mediaInner) html = YQ.mediaInner(p, { eager: true });
       r = liveRect(btn);
       if (!r) return null;
       /* Khung vuông đặt giữa nút bấm */
       var side = 76;
       r = { left: r.left + r.width / 2 - side / 2, top: r.top + r.height / 2 - side / 2, width: side, height: side };
     }
-    if (!html) html = '<span class="gh-media__ph ph-2"></span>';
+    if (!html) html = '<span class="yq-media__ph ph-2"></span>';
 
     /* Giới hạn kích thước khối bay cho gọn gàng */
     var w = clamp(r.width, 60, 148);
@@ -182,11 +182,11 @@
     while (flyers.length >= CFG.maxFly) destroyFlyer(flyers[0], true);
 
     var el = D.createElement('div');
-    el.className = 'gh-fly';
+    el.className = 'yq-fly';
     el.setAttribute('aria-hidden', 'true');
     el.style.width = src.w + 'px';
     el.style.height = src.h + 'px';
-    el.innerHTML = '<div class="gh-fly__box"><div class="gh-fly__media gh-media">' + src.html + '</div></div>';
+    el.innerHTML = '<div class="yq-fly__box"><div class="yq-fly__media yq-media">' + src.html + '</div></div>';
 
     /* Ảnh clone không cần lazy-load nữa */
     var img = el.querySelector('img');
@@ -250,7 +250,7 @@
   var badgeGen = 0;      // thế hệ hiệu ứng badge — huỷ hiệu ứng cũ khi giỏ đổi tiếp
   var badgeTimer = null;
 
-  function $badges() { return $('#ghCartCount, #ghCartCountM'); }
+  function $badges() { return $('#yqCartCount, #yqCartCountM'); }
 
   function paintBadge(n, pop) {
     $badges().each(function () {
@@ -258,9 +258,9 @@
       /* gỡ .is-bump của app.js: badge chỉ được nhảy đúng lúc ảnh chạm giỏ */
       $b.text(n).toggleClass('is-on', n > 0).removeClass('is-bump');
       if (pop && n > 0) {
-        $b.removeClass('is-ghcount');
+        $b.removeClass('is-yqcount');
         void this.offsetWidth;          // reflow để chạy lại keyframes
-        $b.addClass('is-ghcount');
+        $b.addClass('is-yqcount');
       }
     });
   }
@@ -288,7 +288,7 @@
   function ring(pt, size) {
     if (reduced()) return;
     var el = D.createElement('span');
-    el.className = 'gh-fly-ring';
+    el.className = 'yq-fly-ring';
     el.setAttribute('aria-hidden', 'true');
     el.style.width = size + 'px';
     el.style.height = size + 'px';
@@ -301,17 +301,17 @@
   function hitCart(anchor) {
     if (!anchor || reduced()) return;
     var $a = $(anchor);
-    $a.removeClass('is-ghcart-hit');
+    $a.removeClass('is-yqcart-hit');
     void anchor.offsetWidth;
-    $a.addClass('is-ghcart-hit');
-    setTimeout(function () { $a.removeClass('is-ghcart-hit'); }, 700);
+    $a.addClass('is-yqcart-hit');
+    setTimeout(function () { $a.removeClass('is-yqcart-hit'); }, 700);
   }
 
   /* ======================================================================
      4. Phản hồi tại nút bấm — trạng thái "Added"
      ====================================================================== */
   function tickIcon() {
-    return GH.icon ? GH.icon('check', 11)
+    return YQ.icon ? YQ.icon('check', 11)
       : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" ' +
         'stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
   }
@@ -319,21 +319,21 @@
   function markAdded(btn) {
     if (!btn || !btn.parentNode) return;
     var $b = $(btn);
-    if ($b.hasClass('is-ghadded')) return;
+    if ($b.hasClass('is-yqadded')) return;
 
     /* Lấy màu chữ THẬT trước khi làm trong suốt — nút quick add và nút PDP
        có nền/màu khác nhau nên không thể hardcode. */
     var fg = W.getComputedStyle(btn).color || 'currentColor';
 
-    var $layer = $('<span class="gh-added-layer" aria-hidden="true">' +
-                     '<span class="gh-added-layer__tick">' + tickIcon() + '</span>' +
+    var $layer = $('<span class="yq-added-layer" aria-hidden="true">' +
+                     '<span class="yq-added-layer__tick">' + tickIcon() + '</span>' +
                      '<span>Added</span>' +
                    '</span>').css('color', fg);
 
-    $b.addClass('is-ghadded').attr('aria-disabled', 'true').append($layer);
+    $b.addClass('is-yqadded').attr('aria-disabled', 'true').append($layer);
 
     setTimeout(function () {
-      $b.removeClass('is-ghadded').removeAttr('aria-disabled');
+      $b.removeClass('is-yqadded').removeAttr('aria-disabled');
       $layer.remove();
     }, CFG.addedMs);
   }
@@ -348,50 +348,50 @@
     return !D.getElementById('cartWrap') && !D.getElementById('coSummary');
   }
 
-  function icon(name, size) { return GH.icon ? GH.icon(name, size) : ''; }
-  function esc(s) { return GH.escape ? GH.escape(s) : String(s == null ? '' : s); }
+  function icon(name, size) { return YQ.icon ? YQ.icon(name, size) : ''; }
+  function esc(s) { return YQ.escape ? YQ.escape(s) : String(s == null ? '' : s); }
 
   function buildDrawer() {
     if (DR.$el) return;
 
-    DR.$back = $('<div class="gh-cdrawer-back" hidden></div>').appendTo('body');
+    DR.$back = $('<div class="yq-cdrawer-back" hidden></div>').appendTo('body');
     DR.$el = $(
-      '<aside class="gh-cdrawer" id="ghCartDrawer" role="dialog" aria-modal="true" ' +
+      '<aside class="yq-cdrawer" id="yqCartDrawer" role="dialog" aria-modal="true" ' +
              'aria-label="Shopping bag" tabindex="-1" hidden>' +
-        '<header class="gh-cdrawer__head">' +
+        '<header class="yq-cdrawer__head">' +
           '<div>' +
-            '<span class="gh-cdrawer__eyebrow" id="ghCdEyebrow">Added to your bag</span>' +
-            '<h2 class="gh-cdrawer__title">Your bag <small id="ghCdN"></small></h2>' +
+            '<span class="yq-cdrawer__eyebrow" id="yqCdEyebrow">Added to your bag</span>' +
+            '<h2 class="yq-cdrawer__title">Your bag <small id="yqCdN"></small></h2>' +
           '</div>' +
-          '<button class="gh-cdrawer__close" type="button" data-gh-cd-close aria-label="Close">' +
+          '<button class="yq-cdrawer__close" type="button" data-yq-cd-close aria-label="Close">' +
             icon('close', 17) + '</button>' +
         '</header>' +
-        '<div class="gh-cdrawer__body" id="ghCdBody"></div>' +
-        '<footer class="gh-cdrawer__foot" id="ghCdFoot"></footer>' +
+        '<div class="yq-cdrawer__body" id="yqCdBody"></div>' +
+        '<footer class="yq-cdrawer__foot" id="yqCdFoot"></footer>' +
       '</aside>'
     ).appendTo('body');
   }
 
   function renderDrawer(animate) {
     if (!DR.$el) return;
-    $('#ghCdBody').toggleClass('is-static', animate === false);
-    var items = GH.cart.items || [];
-    var n = GH.cart.count();
+    $('#yqCdBody').toggleClass('is-static', animate === false);
+    var items = YQ.cart.items || [];
+    var n = YQ.cart.count();
 
-    $('#ghCdN').text(n === 1 ? '1 item' : n + ' items');
+    $('#yqCdN').text(n === 1 ? '1 item' : n + ' items');
 
     if (!items.length) {
-      $('#ghCdBody').html(GH.localise(
-        '<div class="gh-cdrawer__empty">' +
-          '<div class="gh-cdrawer__empty-icon">' + icon('bag', 24) + '</div>' +
+      $('#yqCdBody').html(YQ.localise(
+        '<div class="yq-cdrawer__empty">' +
+          '<div class="yq-cdrawer__empty-icon">' + icon('bag', 24) + '</div>' +
           '<h3>Your bag is empty</h3>' +
           '<p>Explore our cakes, hampers, and experiences.</p>' +
-          '<a class="gh-btn gh-btn--sm" href="shop.html">Continue shopping ' + icon('arrow', 15) + '</a>' +
+          '<a class="yq-btn yq-btn--sm" href="shop.html">Continue shopping ' + icon('arrow', 15) + '</a>' +
         '</div>'
       ));
-      $('#ghCdFoot').html(
-        '<div class="gh-cdrawer__actions">' +
-          '<button class="gh-btn gh-btn--ghost gh-btn--block" type="button" data-gh-cd-close>Close</button>' +
+      $('#yqCdFoot').html(
+        '<div class="yq-cdrawer__actions">' +
+          '<button class="yq-btn yq-btn--yqost yq-btn--block" type="button" data-yq-cd-close>Close</button>' +
         '</div>'
       );
       return;
@@ -400,50 +400,50 @@
     var rows = items.map(function (i, idx) {
       var isNew = DR.newKey && i.key === DR.newKey;
       return '' +
-        '<div class="gh-cdrawer__row' + (isNew ? ' is-new' : '') + '" data-key="' + esc(i.key) + '"' +
-             ' style="--ghd:' + Math.min(idx, 6) * 55 + 'ms">' +
-          '<div class="gh-cdrawer__media gh-media">' + (GH.mediaInner ? GH.mediaInner(i) : '') + '</div>' +
-          '<div class="gh-cdrawer__info">' +
-            '<div class="gh-cdrawer__name">' + esc(i.name) + '</div>' +
+        '<div class="yq-cdrawer__row' + (isNew ? ' is-new' : '') + '" data-key="' + esc(i.key) + '"' +
+             ' style="--yqd:' + Math.min(idx, 6) * 55 + 'ms">' +
+          '<div class="yq-cdrawer__media yq-media">' + (YQ.mediaInner ? YQ.mediaInner(i) : '') + '</div>' +
+          '<div class="yq-cdrawer__info">' +
+            '<div class="yq-cdrawer__name">' + esc(i.name) + '</div>' +
             (i.optionLabel || i.addonLabel
-              ? '<div class="gh-cdrawer__opt">' + esc(i.optionLabel || '') +
+              ? '<div class="yq-cdrawer__opt">' + esc(i.optionLabel || '') +
                   (i.addonLabel ? ' · ' + esc(i.addonLabel) : '') + '</div>'
               : '') +
-            '<div class="gh-qty gh-cdrawer__qty" data-qty data-min="1">' +
-              '<button class="gh-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity">' + icon('minus', 14) + '</button>' +
-              '<span class="gh-qty__val" data-qty-val>' + i.qty + '</span>' +
-              '<button class="gh-qty__btn" type="button" data-step="1" aria-label="Increase quantity">' + icon('plus', 14) + '</button>' +
+            '<div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">' +
+              '<button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity">' + icon('minus', 14) + '</button>' +
+              '<span class="yq-qty__val" data-qty-val>' + i.qty + '</span>' +
+              '<button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity">' + icon('plus', 14) + '</button>' +
             '</div>' +
           '</div>' +
-          '<div class="gh-cdrawer__right">' +
-            '<div class="gh-cdrawer__price">' + GH.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
-            '<button class="gh-cdrawer__rm" type="button" data-gh-cd-remove aria-label="Remove ' + esc(i.name) + '">' +
+          '<div class="yq-cdrawer__right">' +
+            '<div class="yq-cdrawer__price">' + YQ.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
+            '<button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove ' + esc(i.name) + '">' +
               icon('close', 14) + '</button>' +
           '</div>' +
         '</div>';
     }).join('');
 
-    $('#ghCdBody').html(GH.localise(rows));
+    $('#yqCdBody').html(YQ.localise(rows));
 
-    var sub = GH.cart.subtotal();
-    var toFree = GH.cart.toFree ? GH.cart.toFree() : 0;
-    var thr = (GH.config && GH.config.freeShippingThreshold) || 0;
+    var sub = YQ.cart.subtotal();
+    var toFree = YQ.cart.toFree ? YQ.cart.toFree() : 0;
+    var thr = (YQ.config && YQ.config.freeShippingThreshold) || 0;
     var pct = thr ? Math.min(100, (sub / thr) * 100) : 100;
 
     var note = toFree > 0
-      ? '<div class="gh-cdrawer__note">' + icon('truck', 15) +
-          '<div class="w-100">Add ' + GH.money(toFree) + ' more for free shipping' +
-            '<div class="gh-cdrawer__bar"><i style="width:' + pct + '%"></i></div>' +
+      ? '<div class="yq-cdrawer__note">' + icon('truck', 15) +
+          '<div class="w-100">Add ' + YQ.money(toFree) + ' more for free shipping' +
+            '<div class="yq-cdrawer__bar"><i style="width:' + pct + '%"></i></div>' +
           '</div></div>'
-      : '<div class="gh-cdrawer__note">' + icon('check', 15) + '<div>You have unlocked free shipping.</div></div>';
+      : '<div class="yq-cdrawer__note">' + icon('check', 15) + '<div>You have unlocked free shipping.</div></div>';
 
-    $('#ghCdFoot').html(GH.localise(
-      '<div class="gh-cdrawer__sum"><span>Subtotal</span><strong>' + GH.money(sub) + '</strong></div>' +
+    $('#yqCdFoot').html(YQ.localise(
+      '<div class="yq-cdrawer__sum"><span>Subtotal</span><strong>' + YQ.money(sub) + '</strong></div>' +
       note +
-      '<div class="gh-cdrawer__actions">' +
-        '<a class="gh-btn gh-btn--gold gh-btn--block" href="checkout.html">Checkout ' + icon('arrow', 15) + '</a>' +
-        '<a class="gh-btn gh-btn--ghost gh-btn--block" href="cart.html">View bag</a>' +
-        '<button class="gh-cdrawer__cont" type="button" data-gh-cd-close>Continue shopping</button>' +
+      '<div class="yq-cdrawer__actions">' +
+        '<a class="yq-btn yq-btn--gold yq-btn--block" href="checkout.html">Checkout ' + icon('arrow', 15) + '</a>' +
+        '<a class="yq-btn yq-btn--yqost yq-btn--block" href="cart.html">View bag</a>' +
+        '<button class="yq-cdrawer__cont" type="button" data-yq-cd-close>Continue shopping</button>' +
       '</div>'
     ));
   }
@@ -453,9 +453,9 @@
       var sw = W.innerWidth - D.documentElement.clientWidth;
       DR.padPrev = D.body.style.paddingRight;
       if (sw > 0) D.body.style.paddingRight = sw + 'px';
-      D.body.classList.add('gh-drawer-open');
+      D.body.classList.add('yq-drawer-open');
     } else {
-      D.body.classList.remove('gh-drawer-open');
+      D.body.classList.remove('yq-drawer-open');
       D.body.style.paddingRight = DR.padPrev || '';
     }
   }
@@ -480,7 +480,7 @@
 
     setTimeout(function () {
       if (!DR.open) return;
-      var btn = DR.$el.find('[data-gh-cd-close]')[0];
+      var btn = DR.$el.find('[data-yq-cd-close]')[0];
       if (btn) btn.focus();
       else DR.$el[0].focus();
     }, reduced() ? 0 : 260);
@@ -507,19 +507,19 @@
 
   /* --- Sự kiện của drawer --- */
   $(D)
-    .on('click', '.gh-cdrawer-back, [data-gh-cd-close]', function (e) {
+    .on('click', '.yq-cdrawer-back, [data-yq-cd-close]', function (e) {
       e.preventDefault();
       closeDrawer();
     })
-    .on('click', '#ghCartDrawer [data-gh-cd-remove]', function () {
-      var key = $(this).closest('.gh-cdrawer__row').attr('data-key');
-      if (key) GH.cart.remove(key);
+    .on('click', '#yqCartDrawer [data-yq-cd-remove]', function () {
+      var key = $(this).closest('.yq-cdrawer__row').attr('data-key');
+      if (key) YQ.cart.remove(key);
     })
-    .on('gh:qty', '#ghCartDrawer [data-qty]', function (e, n) {
-      var key = $(this).closest('.gh-cdrawer__row').attr('data-key');
-      if (key) GH.cart.setQty(key, n);
+    .on('yq:qty', '#yqCartDrawer [data-qty]', function (e, n) {
+      var key = $(this).closest('.yq-cdrawer__row').attr('data-key');
+      if (key) YQ.cart.setQty(key, n);
     })
-    .on('keydown.ghCartAnim', function (e) {
+    .on('keydown.yqCartAnim', function (e) {
       if (!DR.open) return;
       if (e.key === 'Escape' || e.keyCode === 27) { closeDrawer(); return; }
       if (e.key !== 'Tab' && e.keyCode !== 9) return;
@@ -534,10 +534,10 @@
     });
 
   /* API nhỏ cho module khác dùng lại (không bắt buộc) */
-  GH.cartDrawer = { open: openDrawer, close: closeDrawer, render: renderDrawer };
+  YQ.cartDrawer = { open: openDrawer, close: closeDrawer, render: renderDrawer };
 
   /* ======================================================================
-     6. Nối dây: click → ghi nhận nguồn, gh:cart-changed → chạy hiệu ứng
+     6. Nối dây: click → ghi nhận nguồn, yq:cart-changed → chạy hiệu ứng
      ====================================================================== */
   var pending = null;
 
@@ -545,24 +545,24 @@
      của app.js/pages.js chạy (và không bị stopPropagation ảnh hưởng). */
   D.addEventListener('click', function (e) {
     var t = e.target && e.target.closest ? e.target.closest(CFG.triggers) : null;
-    if (!t || t.disabled || $(t).hasClass('is-ghadded')) return;
+    if (!t || t.disabled || $(t).hasClass('is-yqadded')) return;
     pending = {
       btn: t,
       at: Date.now(),
-      before: GH.cart.count(),
+      before: YQ.cart.count(),
       src: captureSource(t)
     };
   }, true);
 
   /* Giỏ thật sự đổi → mới phát hiệu ứng (đảm bảo không báo nhầm). */
-  $(D).on('gh:cart-changed', function () {
+  $(D).on('yq:cart-changed', function () {
     var p = pending;
     pending = null;
 
     /* Huỷ mọi hiệu ứng badge đang giữ; app.js đã set badge về số mới nhất. */
     cancelBadgeHold();
 
-    var after = GH.cart.count();
+    var after = YQ.cart.count();
     var added = p && (Date.now() - p.at <= CFG.pendingMs) && after > p.before;
 
     if (!added) { if (DR.open) renderDrawer(false); return; }
@@ -571,12 +571,12 @@
     markAdded(p.btn);
 
     var newKey = null;
-    var last = GH.cart.items[GH.cart.items.length - 1];
+    var last = YQ.cart.items[YQ.cart.items.length - 1];
     /* Khoá dòng vừa thêm để highlight trong drawer */
     var pid = $(p.btn).attr('data-quickadd') || $(p.btn).attr('data-buynow') ||
-              $(p.btn).attr('data-gh-add') || (GH.param ? GH.param('id') : null);
+              $(p.btn).attr('data-yq-add') || (YQ.param ? YQ.param('id') : null);
     if (pid) {
-      var match = GH.cart.items.filter(function (i) { return i.id === pid; });
+      var match = YQ.cart.items.filter(function (i) { return i.id === pid; });
       newKey = match.length ? match[match.length - 1].key : null;
     }
     if (!newKey && last) newKey = last.key;
@@ -616,9 +616,9 @@
   $(D).on('visibilitychange', function () { if (D.hidden) flushFlyers(true); });
 
   /* Header có thể được render lại (agent khác) → đồng bộ lại badge cho chắc */
-  $(D).on('gh:header-ready', function () {
+  $(D).on('yq:header-ready', function () {
     cancelBadgeHold();
-    paintBadge(GH.cart.count(), false);
+    paintBadge(YQ.cart.count(), false);
   });
 
 })(jQuery);

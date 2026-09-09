@@ -3,18 +3,18 @@
    Toàn bộ tương tác header nằm ở đây (app.js chỉ còn phần dựng markup).
 
    Phụ thuộc class do assets/css/parts/nav.css định nghĩa:
-     #ghHeader.is-stuck      đã cuộn khỏi đỉnh  -> đổi nền/đổ bóng
-     #ghHeader.is-compact    đang cuộn xuống    -> desktop thu gọn, mobile ẩn header
-     #ghHeader.has-panel     có panel đang mở   -> nền đặc + lớp phủ
-     #ghHeader.is-searching  ô tìm kiếm đang mở
-     .gh-navpanel.is-open    panel (#ghMega / #ghSeasonal) đang mở
-     .gh-nav__item.is-open   mục nav đang giữ panel
-     .gh-search.is-open      panel tìm kiếm đang mở
+     #yqHeader.is-stuck      đã cuộn khỏi đỉnh  -> đổi nền/đổ bóng
+     #yqHeader.is-compact    đang cuộn xuống    -> desktop thu gọn, mobile ẩn header
+     #yqHeader.has-panel     có panel đang mở   -> nền đặc + lớp phủ
+     #yqHeader.is-searching  ô tìm kiếm đang mở
+     .yq-navpanel.is-open    panel (#yqMega / #yqSeasonal) đang mở
+     .yq-nav__item.is-open   mục nav đang giữ panel
+     .yq-search.is-open      panel tìm kiếm đang mở
    ========================================================================== */
 (function ($) {
   'use strict';
 
-  var HEADER = '#ghHeader';
+  var HEADER = '#yqHeader';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function $header() { return $(HEADER); }
@@ -45,25 +45,25 @@
     lastY = y;
   }
 
-  // Đăng ký đúng namespace vì app.js gọi $(window).trigger('scroll.ghHeader')
-  $(window).on('scroll.ghHeader resize.ghHeader', function () {
+  // Đăng ký đúng namespace vì app.js gọi $(window).trigger('scroll.yqHeader')
+  $(window).on('scroll.yqHeader resize.yqHeader', function () {
     if (ticking) return;
     ticking = true;
     window.requestAnimationFrame(function () { ticking = false; onScroll(); });
   });
 
   /* ======================================================================
-     2. Panel thả xuống: #ghMega (Shop by Category) + #ghSeasonal
+     2. Panel thả xuống: #yqMega (Shop by Category) + #yqSeasonal
      ====================================================================== */
   var closeTimer = null;
 
-  function panelIdOf(kind) { return kind === 'seasonal' ? '#ghSeasonal' : '#ghMega'; }
+  function panelIdOf(kind) { return kind === 'seasonal' ? '#yqSeasonal' : '#yqMega'; }
 
   function closePanels(immediate) {
     clearTimeout(closeTimer);
     var done = function () {
-      $('.gh-navpanel').removeClass('is-open');
-      $('.gh-nav__item').removeClass('is-open')
+      $('.yq-navpanel').removeClass('is-open');
+      $('.yq-nav__item').removeClass('is-open')
         .find('[aria-expanded]').attr('aria-expanded', 'false');
       $header().removeClass('has-panel');
     };
@@ -76,8 +76,8 @@
     var $panel = $(panelIdOf(kind));
     if (!$panel.length) return;
 
-    $('.gh-navpanel').not($panel).removeClass('is-open');
-    $('.gh-nav__item').not($item).removeClass('is-open')
+    $('.yq-navpanel').not($panel).removeClass('is-open');
+    $('.yq-nav__item').not($item).removeClass('is-open')
       .find('[aria-expanded]').attr('aria-expanded', 'false');
 
     $panel.addClass('is-open');
@@ -88,19 +88,19 @@
 
   // Desktop: hover mở. Mobile/tablet: dùng offcanvas nên bỏ qua.
   $(document)
-    .on('mouseenter', '.gh-nav__item--panel', function () {
+    .on('mouseenter', '.yq-nav__item--panel', function () {
       if (!isDesktop()) return;
       openPanel($(this).attr('data-panel'), $(this));
     })
-    .on('mouseleave', '.gh-nav__item--panel, .gh-navpanel', function () {
+    .on('mouseleave', '.yq-nav__item--panel, .yq-navpanel', function () {
       if (!isDesktop()) return;
       closePanels();
     })
-    .on('mouseenter', '.gh-navpanel', function () { clearTimeout(closeTimer); });
+    .on('mouseenter', '.yq-navpanel', function () { clearTimeout(closeTimer); });
 
   // Bấm: mở/đóng (cần cho thiết bị cảm ứng và cho mục Seasonal vốn là <button>)
-  $(document).on('click', '.gh-nav__item--panel > .gh-nav__link', function (e) {
-    var $item = $(this).closest('.gh-nav__item');
+  $(document).on('click', '.yq-nav__item--panel > .yq-nav__link', function (e) {
+    var $item = $(this).closest('.yq-nav__item');
     var kind = $item.attr('data-panel');
     var isOpen = $item.hasClass('is-open');
 
@@ -113,29 +113,29 @@
   });
 
   // Bàn phím: mở panel khi focus vào mục có panel
-  $(document).on('focusin', '.gh-nav__item--panel > .gh-nav__link', function () {
-    var $item = $(this).closest('.gh-nav__item');
+  $(document).on('focusin', '.yq-nav__item--panel > .yq-nav__link', function () {
+    var $item = $(this).closest('.yq-nav__item');
     openPanel($item.attr('data-panel'), $item);
   });
 
   /* ======================================================================
      3. Ô tìm kiếm
      ====================================================================== */
-  function searchOpen() { return $('#ghSearch').hasClass('is-open'); }
+  function searchOpen() { return $('#yqSearch').hasClass('is-open'); }
 
   function closeSearch() {
     if (!searchOpen()) return;
-    $('#ghSearch').removeClass('is-open').attr('aria-hidden', 'true');
+    $('#yqSearch').removeClass('is-open').attr('aria-hidden', 'true');
     $header().removeClass('is-searching has-panel');
     $('[data-search-toggle][aria-expanded]').attr('aria-expanded', 'false');
   }
 
   function openSearch() {
     closePanels(true);
-    $('#ghSearch').addClass('is-open').attr('aria-hidden', 'false');
+    $('#yqSearch').addClass('is-open').attr('aria-hidden', 'false');
     $header().addClass('is-searching has-panel').removeClass('is-compact');
     $('[data-search-toggle][aria-expanded]').attr('aria-expanded', 'true');
-    setTimeout(function () { $('#ghSearchInput').trigger('focus'); }, reduceMotion ? 0 : 120);
+    setTimeout(function () { $('#yqSearchInput').trigger('focus'); }, reduceMotion ? 0 : 120);
   }
 
   $(document).on('click', '[data-search-toggle]', function (e) {
@@ -144,16 +144,16 @@
   });
 
   $(document).on('click', '[data-search-clear]', function () {
-    $('#ghSearchInput').val('').trigger('input').trigger('focus');
+    $('#yqSearchInput').val('').trigger('input').trigger('focus');
   });
 
   $(document).on('click', '[data-suggest]', function () {
-    $('#ghSearchInput').val($(this).attr('data-suggest')).trigger('input').trigger('focus');
+    $('#yqSearchInput').val($(this).attr('data-suggest')).trigger('input').trigger('focus');
   });
 
-  $(document).on('submit', '#ghSearchForm', function (e) {
+  $(document).on('submit', '#yqSearchForm', function (e) {
     e.preventDefault();
-    var q = $.trim($('#ghSearchInput').val());
+    var q = $.trim($('#yqSearchInput').val());
     window.location.href = 'shop.html' + (q ? '?q=' + encodeURIComponent(q) : '');
   });
 
@@ -175,7 +175,7 @@
 
   /* Bấm ra ngoài header thì đóng panel + search */
   $(document).on('click', function (e) {
-    if ($(e.target).closest('#ghHeader').length) return;
+    if ($(e.target).closest('#yqHeader').length) return;
     closeSearch();
     closePanels(true);
   });
@@ -184,20 +184,20 @@
      4. Badge giỏ hàng trong offcanvas mobile
      ====================================================================== */
   function syncOcBadge() {
-    if (!GH.cart) return;
-    var n = GH.cart.count();
+    if (!YQ.cart) return;
+    var n = YQ.cart.count();
     $('[data-oc-count]').text(n).toggleClass('is-on', n > 0);
   }
 
-  $(document).on('gh:cart-changed gh:header-ready gh:layout-ready', syncOcBadge);
+  $(document).on('yq:cart-changed yq:header-ready yq:layout-ready', syncOcBadge);
 
   /* Đóng panel khi mở offcanvas, và reset trạng thái cuộn sau khi header render */
-  $(document).on('show.bs.offcanvas', '#ghOffcanvas', function () {
+  $(document).on('show.bs.offcanvas', '#yqOffcanvas', function () {
     closeSearch();
     closePanels(true);
   });
 
-  $(document).on('gh:header-ready', function () {
+  $(document).on('yq:header-ready', function () {
     lastY = Math.max(0, window.scrollY || 0);
     onScroll();
     syncOcBadge();
