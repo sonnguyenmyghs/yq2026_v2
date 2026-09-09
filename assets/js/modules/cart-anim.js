@@ -460,10 +460,12 @@
     }
   }
 
-  function openDrawer(newKey) {
+  function openDrawer(newKey, opts) {
     if (!drawerAllowed()) return;
     buildDrawer();
     DR.newKey = newKey || null;
+    /* Bấm icon giỏ thì đừng nói "Added to your bag" — không có gì vừa được thêm. */
+    $('#yqCdEyebrow').text((opts && opts.browsing) ? 'Your shopping bag' : 'Added to your bag');
     renderDrawer(true);
 
     if (DR.open) return;                 // đã mở rồi thì chỉ vẽ lại nội dung
@@ -532,6 +534,16 @@
       if (e.shiftKey && D.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && D.activeElement === last) { e.preventDefault(); first.focus(); }
     });
+
+  /* --- Bấm icon giỏ ở header -> mở drawer thay vì sang cart.html ---
+     Vẫn để nguyên href="cart.html" làm đường lui: Ctrl/Cmd-click mở tab mới,
+     ở cart.html/checkout.html thì đi tiếp như cũ, và không có JS vẫn sang được trang. */
+  $(D).on('click', '[data-yq-cart]', function (e) {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+    if (!drawerAllowed()) return;
+    e.preventDefault();
+    openDrawer(null, { browsing: true });
+  });
 
   /* API nhỏ cho module khác dùng lại (không bắt buộc) */
   YQ.cartDrawer = { open: openDrawer, close: closeDrawer, render: renderDrawer };

@@ -489,10 +489,10 @@
               '<div class="yq-header__brand">' + YQ.logo() + '</div>' +
               '<div class="yq-header__tools yq-header__tools--end">' +
                 '<a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account">' + YQ.icon('user', 19) + '</a>' +
-                '<a class="yq-iconbtn d-none d-lg-inline-flex" href="cart.html" aria-label="Cart">' +
+                '<a class="yq-iconbtn d-none d-lg-inline-flex" href="cart.html" data-yq-cart aria-label="Cart">' +
                   YQ.icon('bag', 19) + '<span class="yq-cart-count" id="yqCartCount">0</span>' +
                 '</a>' +
-                '<a class="yq-iconbtn d-lg-none" href="cart.html" aria-label="Cart">' +
+                '<a class="yq-iconbtn d-lg-none" href="cart.html" data-yq-cart aria-label="Cart">' +
                   YQ.icon('bag', 19) + '<span class="yq-cart-count" id="yqCartCountM">0</span>' +
                 '</a>' +
               '</div>' +
