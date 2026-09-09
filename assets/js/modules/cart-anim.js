@@ -381,14 +381,14 @@
     $('#ghCdN').text(n === 1 ? '1 item' : n + ' items');
 
     if (!items.length) {
-      $('#ghCdBody').html(
+      $('#ghCdBody').html(GH.localise(
         '<div class="gh-cdrawer__empty">' +
           '<div class="gh-cdrawer__empty-icon">' + icon('bag', 24) + '</div>' +
           '<h3>Your bag is empty</h3>' +
           '<p>Explore our cakes, hampers, and experiences.</p>' +
           '<a class="gh-btn gh-btn--sm" href="shop.html">Continue shopping ' + icon('arrow', 15) + '</a>' +
         '</div>'
-      );
+      ));
       $('#ghCdFoot').html(
         '<div class="gh-cdrawer__actions">' +
           '<button class="gh-btn gh-btn--ghost gh-btn--block" type="button" data-gh-cd-close>Close</button>' +
@@ -423,7 +423,7 @@
         '</div>';
     }).join('');
 
-    $('#ghCdBody').html(rows);
+    $('#ghCdBody').html(GH.localise(rows));
 
     var sub = GH.cart.subtotal();
     var toFree = GH.cart.toFree ? GH.cart.toFree() : 0;
@@ -437,7 +437,7 @@
           '</div></div>'
       : '<div class="gh-cdrawer__note">' + icon('check', 15) + '<div>You have unlocked free shipping.</div></div>';
 
-    $('#ghCdFoot').html(
+    $('#ghCdFoot').html(GH.localise(
       '<div class="gh-cdrawer__sum"><span>Subtotal</span><strong>' + GH.money(sub) + '</strong></div>' +
       note +
       '<div class="gh-cdrawer__actions">' +
@@ -445,7 +445,7 @@
         '<a class="gh-btn gh-btn--ghost gh-btn--block" href="cart.html">View bag</a>' +
         '<button class="gh-cdrawer__cont" type="button" data-gh-cd-close>Continue shopping</button>' +
       '</div>'
-    );
+    ));
   }
 
   function lockScroll(on) {

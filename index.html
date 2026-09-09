@@ -16,6 +16,7 @@
 <link href="assets/css/parts/banner.css" rel="stylesheet">
 <link href="assets/css/parts/buynow.css" rel="stylesheet">
 <link href="assets/css/parts/cart-anim.css" rel="stylesheet">
+<link href="assets/css/parts/account.css" rel="stylesheet">
 </head>
 <body>
 
@@ -336,35 +337,6 @@
   </div>
 </section>
 
-<!-- ============================ TESTIMONIALS ============================ -->
-<section class="gh-section">
-  <div class="gh-container">
-    <div class="row g-4">
-      <div class="col-lg-4">
-        <div class="gh-quote gh-reveal">
-          <div class="gh-stars" data-stars="5"></div>
-          <p>“The hamper arrived beautifully wrapped, and the eCard message made my mother cry. Worth every dollar.”</p>
-          <cite>Rachel T. — Corporate client</cite>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="gh-quote gh-reveal" data-delay="90">
-          <div class="gh-stars" data-stars="5"></div>
-          <p>“We ordered forty gift sets for our year-end clients. Delivery was flawless and the team handled everything.”</p>
-          <cite>Marcus L. — Head of Partnerships</cite>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="gh-quote gh-reveal" data-delay="180">
-          <div class="gh-stars" data-stars="5"></div>
-          <p>“The chocolate cake is the same one we had at the hotel. Same-day delivery, still perfect on arrival.”</p>
-          <cite>Priya S. — Repeat guest</cite>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <div id="gh-footer"></div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -376,16 +348,12 @@
 <script src="assets/js/modules/banner.js"></script>
 <script src="assets/js/modules/buynow.js"></script>
 <script src="assets/js/modules/cart-anim.js"></script>
+<script src="assets/js/modules/account.js"></script>
 <script>
   jQuery(function ($) {
     GH.renderHeader('home');
     GH.renderFooter();
     $('[data-icon]').each(function () { $(this).html(GH.icon($(this).data('icon'), 19)); });
-    $('[data-stars]').each(function () {
-      var n = $(this).data('stars'), h = '';
-      for (var i = 0; i < n; i++) h += GH.icon('star', 14);
-      $(this).html(h);
-    });
     GH.initHome();
   });
 </script>

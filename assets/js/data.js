@@ -35,11 +35,37 @@ GH.icon = function (name, size) {
     heart:    '<path d="M12 20s-7-4.3-7-9.2A4 4 0 0 1 12 8a4 4 0 0 1 7 2.8C19 15.7 12 20 12 20Z"/>',
     refresh:  '<path d="M4 12a8 8 0 0 1 13.7-5.6L20 8"/><polyline points="20 4 20 8.5 15.5 8.5"/><path d="M20 12a8 8 0 0 1-13.7 5.6L4 16"/><polyline points="4 20 4 15.5 8.5 15.5"/>',
     calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.2"/><path d="M3.5 10h17M8 3.5v3.2M16 3.5v3.2"/>',
-    card:     '<rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="M3 10h18"/>'
+    card:     '<rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="M3 10h18"/>',
+    wallet:   '<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a1.5 1.5 0 0 1 0 3H5.5"/><rect x="3" y="7.5" width="18" height="11.5" rx="2.2"/><circle cx="16.5" cy="13.2" r="1.15" fill="currentColor" stroke="none"/>',
+    userplus: '<circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c1.1-3.6 3.6-5.2 6.5-5.2 1 0 1.9.2 2.7.5"/><path d="M17.5 14v6M14.5 17h6"/>',
+    logout:   '<path d="M14 4.5h3.8A2.2 2.2 0 0 1 20 6.7v10.6a2.2 2.2 0 0 1-2.2 2.2H14"/><path d="M10 8.5 6.5 12l3.5 3.5M6.5 12H16"/>',
+    copy:     '<rect x="9" y="9" width="11.5" height="11.5" rx="2.2"/><path d="M15 5.5A2.2 2.2 0 0 0 12.8 3.5H5.7A2.2 2.2 0 0 0 3.5 5.7v7.1A2.2 2.2 0 0 0 5.5 15"/>',
+    link:     '<path d="M10.5 13.5a3.6 3.6 0 0 0 5.1 0l2.6-2.6a3.6 3.6 0 0 0-5.1-5.1l-1 1"/><path d="M13.5 10.5a3.6 3.6 0 0 0-5.1 0l-2.6 2.6a3.6 3.6 0 0 0 5.1 5.1l1-1"/>',
+    eye:      '<path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/>',
+    eyeoff:   '<path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/>'
   }[name] || '';
   return '<svg class="gh-i" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" ' +
          'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
          p + '</svg>';
+};
+
+/* ---------- Brand glyph (nút social login) ----------
+   Logo hãng có viewBox riêng nên tách khỏi GH.icon (bộ icon nét 24x24).
+   Đường path lấy từ bộ Font Awesome Free brands (CC BY 4.0); tên và biểu tượng
+   là nhãn hiệu của chủ sở hữu — chỉ dùng để chỉ nhà cung cấp đăng nhập.
+*/
+GH.brandIcon = function (name, size) {
+  var g = {
+    facebook:  ['0 0 320 512', 'M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z'],
+    twitter:   ['0 0 512 512', 'M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558A296.63 296.63 0 0 1 0 416.827a217.17 217.17 0 0 0 25.34 1.3c49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772a132.6 132.6 0 0 0 19.818 1.624 105 105 0 0 0 27.614-3.573C58.855 288.828 22.792 246.596 22.792 195.59v-1.299a105.5 105.5 0 0 0 47.432 13.319c-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807a121 121 0 0 1-2.599-24.04c0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827a209 209 0 0 0 60.426-16.243 225 225 0 0 1-52.628 54.253z'],
+    linkedin:  ['0 0 448 512', 'M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3z'],
+    google:    ['0 0 488 512', 'M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z'],
+    microsoft: ['0 0 448 512', 'M0 32h214.6v214.6H0zm233.4 0H448v214.6H233.4zM0 265.4h214.6V480H0zm233.4 0H448V480H233.4z'],
+    line:      ['0 0 448 512', 'M272.1 204.2v71.1c0 1.8-1.4 3.2-3.2 3.2h-11.4c-1.1 0-2.1-.6-2.6-1.3l-32.6-44v42.2c0 1.8-1.4 3.2-3.2 3.2h-11.4c-1.8 0-3.2-1.4-3.2-3.2v-71.1c0-1.8 1.4-3.2 3.2-3.2H219c1 0 2.1.5 2.6 1.4l32.6 44v-42.2c0-1.8 1.4-3.2 3.2-3.2h11.4c1.8-.1 3.3 1.4 3.3 3.1zm-82-3.2h-11.4c-1.8 0-3.2 1.4-3.2 3.2v71.1c0 1.8 1.4 3.2 3.2 3.2h11.4c1.8 0 3.2-1.4 3.2-3.2v-71.1c0-1.7-1.4-3.2-3.2-3.2zm-27.5 59.6h-31.1v-56.4c0-1.8-1.4-3.2-3.2-3.2h-11.4c-1.8 0-3.2 1.4-3.2 3.2v71.1c0 .9.3 1.6.9 2.2.6.5 1.3.9 2.2.9h45.7c1.8 0 3.2-1.4 3.2-3.2v-11.4c0-1.7-1.4-3.2-3.1-3.2zM332.1 201h-45.7c-1.7 0-3.2 1.4-3.2 3.2v71.1c0 1.7 1.4 3.2 3.2 3.2h45.7c1.8 0 3.2-1.4 3.2-3.2v-11.4c0-1.8-1.4-3.2-3.2-3.2H301v-12h31.1c1.8 0 3.2-1.4 3.2-3.2V234c0-1.8-1.4-3.2-3.2-3.2H301v-12h31.1c1.8 0 3.2-1.4 3.2-3.2v-11.4c-.1-1.7-1.5-3.2-3.2-3.2zM448 113.7V399c-.1 63.6-51.9 115.1-115.6 115H63c-63.6-.1-115.1-52-115-115.6V113c.1-63.6 52-115.1 115.6-115H385c63.6.1 115.1 51.9 115 115.7zm-107.4 99.9c0-70.5-70.7-127.8-157.5-127.8S25.6 143.1 25.6 213.6c0 63.2 56.1 116.1 131.8 126.1 18.5 4 16.4 10.8 12.2 35.8-.7 4-3.2 15.7 13.8 8.6s91.6-54 125-92.4c23-25.3 33.2-51 33.2-78.1z']
+  }[name];
+  if (!g) return '';
+  return '<svg class="gh-brandi" width="' + (size || 18) + '" height="' + (size || 18) + '" ' +
+         'viewBox="' + g[0] + '" fill="currentColor" aria-hidden="true"><path d="' + g[1] + '"/></svg>';
 };
 
 /* ---------- Logo ----------
@@ -338,6 +364,139 @@ GH.occasions = [
   { name:'Corporate', img:'assets/img/o-corporate.jpg',     tone:6, sub:'Bulk gifting & branding',    href:'celebrations.html#corporate' }
 ];
 
+/* ---------- Giới thiệu bạn bè (trang member/invite.html) ----------
+   `channels` quyết định có những nút chia sẻ nào, theo đúng thứ tự khai báo:
+     kind 'share' -> mở cửa sổ chia sẻ ({u} = link mời, {t} = lời nhắn)
+     kind 'mail'  -> mở ứng dụng email
+   Thêm WhatsApp/X chỉ cần thêm một dòng, không phải sửa controller.
+   id phải có trong GH.brandIcon thì mới có logo (email/copy dùng GH.icon).
+*/
+GH.referral = {
+  reward: 20,                 // ưu đãi cho cả người mời lẫn người được mời
+  landing: 'index.html',      // trang link mời trỏ tới
+  codePrefix: 'GH-',
+  message: 'I shop for gifts at Grand Hyatt Singapore — here is $20 off your first order.',
+  channels: [
+    { id: 'facebook', label: 'Facebook', kind: 'share',
+      url: 'https://www.facebook.com/sharer/sharer.php?u={u}' },
+    { id: 'line', label: 'LINE', kind: 'share',
+      url: 'https://social-plugins.line.me/lineit/share?url={u}&text={t}' },
+    { id: 'email', label: 'Email', kind: 'mail', icon: 'mail' }
+  ]
+};
+
+/* ---------- Hồ sơ thành viên (trang member/profile.html) ----------
+   GH.profileGroups = SƠ ĐỒ trường (nhóm nào, nhãn gì, sửa được không).
+   GH.demoProfile   = GIÁ TRỊ mẫu, nạp cho lần truy cập đầu (như GH.demoCart).
+   Tách đôi để khi nối backend chỉ cần đổ dữ liệu vào GH.profile, giữ nguyên sơ đồ.
+
+   Mỗi trường: { key, label, type, ro, options }
+     type : 'text' | 'email' | 'tel' | 'date' | 'select'   (mặc định 'text')
+     ro   : true  -> chỉ đọc, không hiện ô nhập khi bấm "Edit my information"
+*/
+GH.profileGroups = [
+  { title: 'Membership', icon: 'star', fields: [
+    { key: 'memberNo',   label: 'Membership No.', ro: true },
+    { key: 'memberType', label: 'Member Type',    ro: true },
+    { key: 'idCard',     label: 'ID Card' },
+    { key: 'cardName',   label: 'Card Name' },
+    { key: 'referral',   label: 'Member Referral' },
+    { key: 'joinDate',   label: 'Join date',   type: 'date', ro: true },
+    { key: 'expiryDate', label: 'Expiry date', type: 'date', ro: true }
+  ]},
+  { title: 'Personal details', icon: 'user', fields: [
+    { key: 'firstName',  label: 'First name' },
+    { key: 'lastName',   label: 'Last name' },
+    { key: 'title',      label: 'Title',          type: 'select', options: ['Mr', 'Ms', 'Mrs', 'Dr'] },
+    { key: 'gender',     label: 'Gender',         type: 'select', options: ['Male', 'Female', 'Prefer not to say'] },
+    { key: 'marital',    label: 'Marital Status', type: 'select', options: ['Single', 'Married', 'Prefer not to say'] },
+    { key: 'birthday',   label: 'Birthday',    type: 'date' },
+    { key: 'nationality',label: 'Nationality' },
+    { key: 'passport',   label: 'Passport No.' },
+    { key: 'language',   label: 'Language', type: 'select', options: ['English', 'Bahasa Indonesia', '中文', '日本語'] }
+  ]},
+  { title: 'Contact', icon: 'phone', fields: [
+    { key: 'email',       label: 'Email',        type: 'email' },
+    { key: 'mobile',      label: 'Mobile Phone', type: 'tel' },
+    { key: 'homePhone',   label: 'Home Phone',   type: 'tel' },
+    { key: 'officePhone', label: 'Office Phone', type: 'tel' },
+    { key: 'fax',         label: 'Fax Number',   type: 'tel' },
+    { key: 'company',     label: 'Company' }
+  ]},
+  { title: 'Address', icon: 'pin', fields: [
+    { key: 'address1', label: 'Address 1' },
+    { key: 'city',     label: 'City' },
+    { key: 'state',    label: 'State' },
+    { key: 'postal',   label: 'Postal Code' },
+    { key: 'country',  label: 'Country of residence' }
+  ]}
+];
+
+GH.demoProfile = {
+  memberNo: '000001991', memberType: 'Member', idCard: '', cardName: 'son nguyen',
+  referral: '', joinDate: '2020-12-24', expiryDate: '2026-12-31',
+  firstName: 'son', lastName: 'nguyen', title: '', gender: '', marital: '',
+  birthday: '1994-02-02', nationality: '', passport: '', language: 'English',
+  email: 'sonnguyen@myghs.com', mobile: '6512332432', homePhone: '', officePhone: '',
+  fax: '', company: '',
+  address1: '#123 50 Coronation Rd W, Singapore 269264',
+  city: '', state: '', postal: '', country: 'Singapore'
+};
+
+/* ---------- Lịch sử đơn hàng (trang member/orders.html) ----------
+   Chỉ tham chiếu theo id sản phẩm + optionId; tên/giá/ảnh lấy từ GH.products
+   nên sửa giá một chỗ là cả lịch sử đơn cập nhật theo.
+     status : 'completed' (đã thanh toán) | 'pending' (chờ thanh toán)
+     date   : ISO 'YYYY-MM-DD', hiển thị thành '06-February-2026'
+   Thay mảng này bằng dữ liệu từ API khi có backend.
+*/
+GH.orders = [
+  { id: '354646799', date: '2026-08-21', status: 'completed', items: [
+    { id: 'signature-chocolate-cake', optionId: 'medium',  qty: 1 },
+    { id: 'the-grand-hamper',         optionId: 'classic', qty: 1 },
+    { id: 'grand-pralines',           optionId: '12',      qty: 2 },
+    { id: 'gh-champagne-brut',        optionId: 'bottle',  qty: 1 }
+  ]},
+  { id: '868514922', date: '2026-06-14', status: 'completed', items: [
+    { id: 'cellar-selection-trio', optionId: 'trio', qty: 1 }
+  ]},
+  { id: '423838196', date: '2026-02-06', status: 'completed', items: [
+    { id: 'festive-yule-log',   optionId: 'reg', qty: 1 },
+    { id: 'artisan-cookie-box', optionId: '16',  qty: 2 }
+  ]},
+  { id: '771204558', date: '2026-09-05', status: 'pending', items: [
+    { id: 'prosperity-yusheng', optionId: '10',   qty: 1 },
+    { id: 'brix-tote',          optionId: 'sand', qty: 2 }
+  ]},
+  { id: '690318742', date: '2026-09-01', status: 'pending', items: [
+    { id: 'damai-wellness-set', optionId: 'complete', qty: 1 },
+    { id: 'afternoon-tea-two',  optionId: 'bubbly',   qty: 1 }
+  ]}
+];
+
+/* ---------- Tài khoản: social login + menu member ----------
+   Dùng bởi assets/js/modules/account.js (popup Log in / Register + panel My Functions).
+   Menu member: mỗi mục có `view` (mở pane trong panel), `href` (điều hướng trang thật)
+   hoặc `action` ('logout'). Có `href` thì `view` bị bỏ qua -> khi backend có trang
+   /my-orders chỉ cần điền href, không phải sửa module.
+*/
+GH.socialLogins = [
+  { id: 'facebook',  label: 'Facebook'  },
+  { id: 'twitter',   label: 'Twitter'   },
+  { id: 'linkedin',  label: 'LinkedIn'  },
+  { id: 'google',    label: 'Google'    },
+  { id: 'microsoft', label: 'Microsoft' }
+];
+
+GH.memberMenu = [
+  { key: 'profile',  label: 'My profile',      icon: 'user',     href: 'member/profile.html' },
+  { key: 'orders',   label: 'My Order',        icon: 'bag',      href: 'member/orders.html' },
+  { key: 'wallet',   label: 'My Wallet',       icon: 'wallet',   view: 'wallet'   },
+  { key: 'password', label: 'Change Password', icon: 'lock',     href: 'member/password.html' },
+  { key: 'invite',   label: 'Invite Friends',  icon: 'userplus', href: 'member/invite.html' },
+  { key: 'logout',   label: 'Logout',          icon: 'logout',   action: 'logout' }
+];
+
 /* ---------- eCard designs ---------- */
 GH.cardDesigns = [
   { id:'gold',   name:'Classic Gold',  art:'art-gold',   glyph:'✦', theme:'' },
@@ -350,8 +509,26 @@ GH.cardDesigns = [
 GH.config = {
   currency: 'S$',
   currencySymbol: '$',
+  currencyCode: 'SGD',
   shipping: 15,
   freeShippingThreshold: 150,
   taxRate: 0.09,
   physicalCardFee: 5
 };
+
+/* ---------- Demo cart ----------
+   Giỏ hàng lưu ở localStorage nên lần đầu mở cart.html/checkout.html sẽ trống trơn.
+   Danh sách dưới đây được nạp sẵn cho lần truy cập đầu tiên để có dữ liệu xem thử.
+     - Chỉ tham chiếu theo id (không chép tên/giá) -> đổi giá trong GH.products là đủ.
+     - Người dùng tự xoá hết giỏ thì KHÔNG nạp lại (localStorage đã có key).
+     - Nạp lại thủ công: mở `cart.html?demo=1` hoặc gọi GH.cart.seed(true) trong console.
+     - Tắt hẳn khi lên production: đặt GH.demoCart = [].
+   Mỗi dòng: { id | exp, optionId, qty, addonLabel, addonFee }
+     id  = id trong GH.products    | exp = id trong GH.experiences
+*/
+GH.demoCart = [
+  { id: 'signature-chocolate-cake', optionId: 'medium',  qty: 1 },
+  { id: 'grand-pralines',           optionId: '24',      qty: 2 },
+  { id: 'the-grand-hamper',         optionId: 'classic', qty: 1 },
+  { exp: 'spa-retreat', optionId: 'gold-ecard', qty: 1, addonLabel: 'Classic Gold eCard', addonFee: 0 }
+];

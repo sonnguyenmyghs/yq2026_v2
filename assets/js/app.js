@@ -20,6 +20,39 @@
     var m = new RegExp('[?&]' + key + '=([^&#]*)').exec(window.location.search);
     return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : null;
   };
+  /* ---------- Đường dẫn khi trang nằm trong thư mục con ----------
+     Quy ước: MỌI href/src trong data.js và các hàm render đều viết theo GỐC SITE
+     ('shop.html', 'assets/img/x.jpg'). Trang trong thư mục con khai báo
+     <html data-root="../">, và GH.localise() dịch lại đúng lúc chèn vào DOM.
+     Trang ở gốc thì GH.root = '' nên cả hai hàm là no-op.
+
+     Chèn HTML có link/ảnh -> bọc GH.localise(); một giá trị lẻ -> GH.url().
+  */
+  GH.root = document.documentElement.getAttribute('data-root') || '';
+
+  GH.url = function (h) {
+    if (!GH.root || !h) return h;
+    return /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/|#)/i.test(h) ? h : GH.root + h;
+  };
+
+  GH.localise = function (html) {
+    if (!GH.root || !html) return html;
+    return String(html).replace(
+      /\s(href|src)="(?![a-z][a-z0-9+.-]*:|\/\/|\/|#)([^"]*)"/gi,
+      function (m, attr, path) { return ' ' + attr + '="' + GH.root + path + '"'; }
+    );
+  };
+
+  var MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+  /** ISO 'YYYY-MM-DD' -> '02-February-1994'. Chuỗi khác thì trả nguyên. */
+  GH.dateLabel = function (iso) {
+    var p = String(iso || '').split('-');
+    if (p.length !== 3 || !p[0] || !p[1] || !p[2]) return iso || '';
+    return p[2] + '-' + (MONTHS[+p[1] - 1] || p[1]) + '-' + p[0];
+  };
+
   GH.escape = function (s) {
     return $('<div/>').text(s == null ? '' : s).html();
   };
@@ -54,13 +87,16 @@
     items: [],
 
     load: function () {
-      try { this.items = JSON.parse(localStorage.getItem(KEY)) || []; }
+      var raw = null;
+      try { raw = localStorage.getItem(KEY); } catch (e) {}
+      try { this.items = JSON.parse(raw) || []; }
       catch (e) { this.items = []; }
+      if (raw === null) this.seed();   // lần đầu vào site: nạp giỏ hàng mẫu
       return this.items;
     },
     save: function () {
       try { localStorage.setItem(KEY, JSON.stringify(this.items)); } catch (e) {}
-      $(document).trigger('gh:cart-changed');
+      if (!this.quiet) $(document).trigger('gh:cart-changed');
     },
     key: function (id, optId) { return id + '::' + (optId || 'default'); },
 
@@ -102,6 +138,47 @@
     },
     clear: function () { this.items = []; this.save(); },
 
+    /* Nạp giỏ hàng mẫu từ GH.demoCart (xem chú thích trong data.js).
+       Mặc định chỉ chạy khi localStorage chưa có key nào; seed(true) để ép nạp lại. */
+    seed: function (force) {
+      var self = this;
+      var list = GH.demoCart || [];
+      if (!list.length) return this;
+
+      if (!force) {
+        var raw = null;
+        try { raw = localStorage.getItem(KEY); } catch (e) {}
+        if (raw !== null) return this;
+      }
+
+      self.items = [];
+      self.quiet = true;
+      $.each(list, function (_, row) {
+        var extras = {};
+        if (row.addonLabel) extras.addonLabel = row.addonLabel;
+        if (row.addonFee)   extras.addonFee   = row.addonFee;
+
+        if (row.exp) {
+          var e = GH.experience(row.exp);
+          if (!e) return;
+          self.add(
+            { id: e.id, name: e.name, tone: e.tone, price: e.price, img: e.img, catLabel: 'Experience' },
+            { id: row.optionId || 'default', label: e.duration + ' \u00b7 ' + e.place, price: e.price },
+            row.qty || 1, extras
+          );
+          return;
+        }
+
+        var p = GH.product(row.id);
+        if (!p) return;
+        var opt = (p.options || []).filter(function (o) { return o.id === row.optionId; })[0];
+        self.add(p, opt, row.qty || 1, extras);
+      });
+      self.quiet = false;
+      self.save();
+      return this;
+    },
+
     count: function () {
       return this.items.reduce(function (s, i) { return s + i.qty; }, 0);
     },
@@ -118,6 +195,59 @@
     toFree: function () { return Math.max(0, C.freeShippingThreshold - this.subtotal()); }
   };
   GH.cart.load();
+  if (GH.param('demo')) GH.cart.seed(true);   // ?demo=1 → nạp lại giỏ hàng mẫu
+
+  /* ======================================================================
+     2b. Profile store (localStorage) — hồ sơ thành viên
+     ====================================================================== */
+  var PKEY = 'gh_profile_v1';
+
+  GH.profile = {
+    data: {},
+
+    load: function () {
+      var raw = null;
+      try { raw = localStorage.getItem(PKEY); } catch (e) {}
+      try { this.data = JSON.parse(raw) || null; } catch (e) { this.data = null; }
+      if (!this.data) this.data = $.extend({}, GH.demoProfile || {});   // lần đầu: hồ sơ mẫu
+      return this.data;
+    },
+    save: function () {
+      try { localStorage.setItem(PKEY, JSON.stringify(this.data)); } catch (e) {}
+      $(document).trigger('gh:profile-changed', [this.data]);
+    },
+    get: function (key) {
+      var v = this.data[key];
+      return v == null ? '' : String(v);
+    },
+    set: function (patch) { $.extend(this.data, patch || {}); this.save(); return this.data; },
+
+    fullName: function () {
+      return $.trim(this.get('firstName') + ' ' + this.get('lastName'));
+    },
+
+    /** Bao nhiêu % số trường đã điền — dùng cho thanh "profile complete". */
+    completeness: function () {
+      var all = [];
+      $.each(GH.profileGroups || [], function (_, g) {
+        $.each(g.fields, function (_, f) { all.push(f.key); });
+      });
+      if (!all.length) return 100;
+      var self = this;
+      var done = all.filter(function (k) { return $.trim(self.get(k)) !== ''; }).length;
+      return Math.round(done / all.length * 100);
+    },
+    missing: function () {
+      var self = this, out = [];
+      $.each(GH.profileGroups || [], function (_, g) {
+        $.each(g.fields, function (_, f) {
+          if (!f.ro && $.trim(self.get(f.key)) === '') out.push(f.label);
+        });
+      });
+      return out;
+    }
+  };
+  GH.profile.load();
 
   /* ======================================================================
      3. Toast
@@ -130,7 +260,7 @@
       '<div class="gh-toast">' +
         '<span class="gh-toast__icon">' + GH.icon('check', 18) + '</span>' +
         '<span>' + GH.escape(msg) + '</span>' +
-        (linkText ? '<a href="' + linkHref + '">' + GH.escape(linkText) + '</a>' : '') +
+        (linkText ? '<a href="' + GH.url(linkHref) + '">' + GH.escape(linkText) + '</a>' : '') +
       '</div>'
     ).appendTo($wrap);
 
@@ -327,7 +457,8 @@
                '<div class="gh-oc__quick">' +
                  '<a class="gh-oc__quicklink" href="cart.html">' + GH.icon('bag', 18) +
                    '<span>Cart</span><em class="gh-oc__badge" data-oc-count>0</em></a>' +
-                 '<a class="gh-oc__quicklink" href="#" aria-label="Account">' + GH.icon('user', 18) + '<span>Account</span></a>' +
+                 '<a class="gh-oc__quicklink" href="#" data-gh-account aria-label="Account">' +
+                   GH.icon('user', 18) + '<span data-gh-account-label>Account</span></a>' +
                  '<button class="gh-oc__quicklink" type="button" data-search-toggle data-bs-dismiss="offcanvas">' +
                    GH.icon('search', 18) + '<span>Search</span></button>' +
                '</div>' +
@@ -357,7 +488,7 @@
               '</div>' +
               '<div class="gh-header__brand">' + GH.logo() + '</div>' +
               '<div class="gh-header__tools gh-header__tools--end">' +
-                '<a class="gh-iconbtn d-none d-lg-inline-flex" href="#" aria-label="Account">' + GH.icon('user', 19) + '</a>' +
+                '<a class="gh-iconbtn d-none d-lg-inline-flex" href="#" id="ghAccountBtn" data-gh-account aria-label="Account">' + GH.icon('user', 19) + '</a>' +
                 '<a class="gh-iconbtn d-none d-lg-inline-flex" href="cart.html" aria-label="Cart">' +
                   GH.icon('bag', 19) + '<span class="gh-cart-count" id="ghCartCount">0</span>' +
                 '</a>' +
@@ -376,7 +507,7 @@
       '</header>' +
       offcanvasHtml(active);
 
-    $('#gh-header').replaceWith(html);
+    $('#gh-header').replaceWith(GH.localise(html));
     GH.syncCartBadge();
     $(window).trigger('scroll.ghHeader');
     $(document).trigger('gh:header-ready');
@@ -399,8 +530,10 @@
         ['Best Corporate Gift Ideas 2025','#'], ['Spa Gift Ideas for Her','#'],
         ['Wine Pairing Guide','#'], ['CNY Gifting Etiquette','#'] ] },
       { title: 'Help & Info', links: [
-        ['FAQs','#'], ['Delivery Information','#'], ['Returns Policy','#'],
-        ['Contact Us','#'], ['Terms of Service','#'], ['Privacy Policy','#'] ] }
+        ['My Profile','member/profile.html'], ['My Orders','member/orders.html'],
+        ['FAQs','#'], ['Delivery Information','#'],
+        ['Returns Policy','#'], ['Contact Us','#'], ['Terms of Service','#'],
+        ['Privacy Policy','#'] ] }
     ];
 
     var colHtml = '';
@@ -449,7 +582,7 @@
         '</div>' +
       '</div></footer>';
 
-    $('#gh-footer').replaceWith(html);
+    $('#gh-footer').replaceWith(GH.localise(html));
     $(document).trigger('gh:layout-ready');
   };
 
