@@ -39,45 +39,6 @@
       '</article>';
   };
 
-  YQ.experienceCard = function (e) {
-    var badge = e.badge ? '<span class="yq-badge">' + e.badge + '</span>' : '';
-    return '' +
-      '<article class="yq-card yq-reveal">' +
-        '<div class="yq-card__mediawrap">' +
-          badge +
-          '<span class="yq-badge yq-badge--rate">' + YQ.icon('star', 12) + e.rating.toFixed(1) + '</span>' +
-          '<a class="yq-card__media yq-media yq-zoom d-block" href="personalise.html?exp=' + e.id + '">' +
-            YQ.mediaInner(e) +
-          '</a>' +
-        '</div>' +
-        '<div class="yq-card__body">' +
-          '<h3 class="yq-card__title"><a href="personalise.html?exp=' + e.id + '">' + YQ.escape(e.name) + '</a></h3>' +
-          '<p class="yq-card__desc">' + YQ.escape(e.desc) + '</p>' +
-          '<div class="yq-exp__meta">' +
-            '<span>' + YQ.icon('clock', 13) + e.duration + '</span>' +
-            '<span>' + YQ.icon('pin', 13) + e.place + '</span>' +
-            '<span>' + YQ.icon('users', 13) + e.reviews + ' reviews</span>' +
-          '</div>' +
-          '<div class="yq-card__foot">' +
-            '<span class="yq-card__price">' + YQ.money0(e.price) + '</span>' +
-            '<a class="yq-link-arrow" href="personalise.html?exp=' + e.id + '">Book now ' + YQ.icon('arrow', 14) + '</a>' +
-          '</div>' +
-        '</div>' +
-      '</article>';
-  };
-
-  YQ.occasionTile = function (o) {
-    return '' +
-      '<a class="yq-tile yq-zoom yq-reveal" href="' + o.href + '">' +
-        '<div class="yq-media">' + YQ.mediaInner(o) + '</div>' +
-        '<span class="yq-tile__scrim"></span>' +
-        '<span class="yq-tile__label">' +
-          '<span>' + o.name + '<small>' + o.sub + '</small></span>' +
-          '<span class="yq-tile__go">' + YQ.icon('arrow', 18) + '</span>' +
-        '</span>' +
-      '</a>';
-  };
-
   /** Order summary block (dùng ở cart + checkout) */
   YQ.summaryHtml = function (opts) {
     opts = opts || {};
@@ -121,36 +82,6 @@
       '<div class="yq-sum yq-sum--total"><span>Total</span><span class="yq-sum__val">' + YQ.money(total) + '</span></div>' +
       (opts.cta ? '<a class="yq-btn yq-btn--block mt-4" href="' + opts.ctaHref + '">' + opts.cta + ' ' + YQ.icon('arrow', 16) + '</a>' : '') +
       note;
-  };
-
-  /* ======================================================================
-     2. Home
-     ====================================================================== */
-  YQ.initHome = function () {
-    var featured = YQ.products.filter(function (p) { return p.featured; }).slice(0, 4);
-    var hampers  = YQ.products.filter(function (p) { return p.cat === 'celebration' || p.cat === 'beverages'; }).slice(0, 4);
-
-    $('#homeFeatured').html(featured.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
-    }).join(''));
-
-    $('#homeHampers').html(hampers.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
-    }).join(''));
-
-    $('#homeOccasions').html(YQ.occasions.map(function (o) {
-      return '<div class="col-6 col-lg-3">' + YQ.occasionTile(o) + '</div>';
-    }).join(''));
-
-    $('#homeExperiences').html(YQ.experiences.slice(0, 3).map(function (e) {
-      return '<div class="col-md-6 col-lg-4">' + YQ.experienceCard(e) + '</div>';
-    }).join(''));
-
-    YQ.stagger('#homeFeatured .yq-reveal');
-    YQ.stagger('#homeHampers .yq-reveal');
-    YQ.stagger('#homeOccasions .yq-reveal');
-    YQ.stagger('#homeExperiences .yq-reveal');
-    YQ.initReveal();
   };
 
   /* ======================================================================
@@ -331,41 +262,9 @@
   /* ======================================================================
      5. Experiences
      ====================================================================== */
-  YQ.initExperiences = function () {
-    $('#expGrid').html(YQ.experiences.map(function (e) {
-      return '<div class="col-md-6 col-lg-4">' + YQ.experienceCard(e) + '</div>';
-    }).join(''));
-    YQ.stagger('#expGrid .yq-reveal');
-    YQ.initReveal();
-  };
-
   /* ======================================================================
      6. Celebrations
      ====================================================================== */
-  YQ.initCelebrations = function () {
-    $('#celOccasions').html(YQ.occasions.map(function (o) {
-      return '<div class="col-6 col-lg-3">' + YQ.occasionTile(o) + '</div>';
-    }).join(''));
-
-    var favs = YQ.products.filter(function (p) {
-      return p.cat === 'celebration' || p.cat === 'beverages' || p.badge === 'Bestseller';
-    }).slice(0, 4);
-
-    $('#celFavourites').html(favs.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
-    }).join(''));
-
-    var seasonal = YQ.products.filter(function (p) { return (p.seasons || []).length; }).slice(0, 4);
-    $('#celSeasonal').html(seasonal.map(function (p) {
-      return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
-    }).join(''));
-
-    YQ.stagger('#celOccasions .yq-reveal');
-    YQ.stagger('#celFavourites .yq-reveal');
-    YQ.stagger('#celSeasonal .yq-reveal');
-    YQ.initReveal();
-  };
-
   /* ======================================================================
      7. Cart
      ====================================================================== */
