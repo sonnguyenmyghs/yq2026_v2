@@ -479,7 +479,7 @@
           '<div class="yq-container">' +
             '<div class="yq-header__top">' +
               '<div class="yq-header__tools">' +
-                '<button class="yq-iconbtn yq-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#yqOffcanvas" aria-controls="yqOffcanvas" aria-label="Open menu">' + YQ.icon('menu', 20) + '</button>' +
+                '<button class="yq-iconbtn yq-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#yqOffcanvas" aria-controls="yqOffcanvas" aria-expanded="false" aria-label="Open menu">' + YQ.icon('menu', 20) + '</button>' +
                 '<button class="yq-searchbtn" type="button" id="yqSearchToggle" data-search-toggle aria-expanded="false" aria-controls="yqSearch">' +
                   YQ.icon('search', 17) + '<span class="yq-searchbtn__txt">Search</span>' +
                   '<kbd class="yq-searchbtn__kbd" aria-hidden="true">/</kbd>' +

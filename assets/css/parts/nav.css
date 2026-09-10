@@ -179,6 +179,64 @@
   height: 0; opacity: 0; border-top-color: transparent; pointer-events: none;
 }
 
+/* --- 5a. Desktop: nav ẩn -> thu ô search về nút tròn, mở nút menu thay thế ---
+   Nút menu (.yq-burger) luôn có mặt trong DOM ở desktop nhưng thu về width 0
+   để có thể chuyển động; chỉ khi .is-compact mới bung ra và nhận được click. */
+@media (min-width: 992px){
+  .yq-burger{
+    display: inline-flex;
+    width: 0; margin-right: -6px; padding: 0;
+    opacity: 0; visibility: hidden;
+    /* KHÔNG overflow:hidden — icon nằm giữa một hộp đang nở sẽ bị xén hai bên.
+       Lúc width = 0 icon vẫn tràn ra nhưng opacity = 0 nên không thấy. */
+    transition: width .38s var(--yq-ease), margin-right .38s var(--yq-ease),
+                opacity .18s var(--yq-ease), visibility .38s;
+  }
+  .yq-burger .yq-i{ flex: none; }
+  .yq-header.is-compact .yq-burger{
+    width: 42px; margin-right: 0; opacity: 1; visibility: visible;
+    /* hiện: chờ chỗ trống mở gần xong rồi mới hiện icon; ẩn: mờ đi trước */
+    transition: width .38s var(--yq-ease), margin-right .38s var(--yq-ease),
+                opacity .22s var(--yq-ease) .16s, visibility 0s;
+  }
+
+  /* Ô search pill -> nút tròn.
+     justify-content: center đặt cho CẢ HAI trạng thái. Lúc pill mở rộng nó vô
+     hiệu (.yq-searchbtn__txt có flex-grow nên không còn khoảng trống), lúc thu
+     gọn mới có tác dụng canh giữa icon -> không còn cú nhảy khi đổi class. */
+  .yq-searchbtn{
+    overflow: hidden; justify-content: center;
+    transition: border-color .3s var(--yq-ease), background .3s var(--yq-ease),
+                color .25s var(--yq-ease), box-shadow .25s var(--yq-ease),
+                min-width .38s var(--yq-ease), width .38s var(--yq-ease),
+                padding .38s var(--yq-ease), gap .38s var(--yq-ease);
+  }
+  /* Mở ra: chữ chờ pill giãn xong mới hiện dần */
+  .yq-searchbtn__txt,
+  .yq-searchbtn__kbd{
+    transition: opacity .22s var(--yq-ease) .16s, max-width .38s var(--yq-ease);
+  }
+  .yq-header.is-compact .yq-searchbtn{
+    min-width: 0; width: 42px; padding: 0; gap: 0;   /* radius-pill sẵn có = tròn */
+    /* bỏ viền pill để đồng bộ với các nút icon còn lại của header */
+    border-color: transparent; background: transparent; box-shadow: none;
+  }
+  .yq-header.is-compact .yq-searchbtn:hover{
+    border-color: transparent; background: var(--yq-cream-2); box-shadow: none;
+  }
+  .yq-header.is-compact .yq-searchbtn:hover .yq-i{ color: var(--yq-ink); }
+  /* Thu lại: chữ tắt nhanh (.12s) để không bị nhìn thấy cảnh bị xén dần */
+  .yq-header.is-compact .yq-searchbtn__txt,
+  .yq-header.is-compact .yq-searchbtn__kbd{
+    max-width: 0; padding-inline: 0; border-width: 0; opacity: 0;
+    transition: opacity .12s var(--yq-ease), max-width .38s var(--yq-ease),
+                padding .38s var(--yq-ease), border-width .12s var(--yq-ease);
+  }
+  /* Nút menu đang mở offcanvas -> giữ nền như trạng thái hover */
+  .yq-burger[aria-expanded="true"]{ color: var(--yq-ink); }
+  .yq-burger[aria-expanded="true"]::before{ transform: scale(1); opacity: 1; }
+}
+
 /* ==========================================================================
    6. Panel thả xuống (mega + seasonal)
    ========================================================================== */
@@ -446,6 +504,12 @@ a.yq-mega__col-title:hover{ color: var(--yq-ink); border-bottom-color: var(--yq-
   color: var(--yq-muted); cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center;
 }
+/* Mục không có link (Seasonal) vừa là .yq-oc__link--full vừa là .yq-oc__toggle:
+   phải giữ full width, nếu không sẽ bị bó về 42px và chữ tràn ra ngoài lề. */
+.yq-oc__link--full.yq-oc__toggle{
+  width: 100%; height: auto; padding: 14px 0;
+  justify-content: space-between; color: var(--yq-ink);
+}
 .yq-oc__chev{ display: inline-flex; transition: transform .3s var(--yq-ease); }
 .yq-oc__toggle[aria-expanded="true"] .yq-oc__chev{ transform: rotate(180deg); color: var(--yq-gold-dark); }
 
@@ -516,5 +580,9 @@ a.yq-mega__col-title:hover{ color: var(--yq-ink); border-bottom-color: var(--yq-
   .yq-header__shell,
   .yq-header__top,
   .yq-nav,
+  .yq-burger,
+  .yq-searchbtn,
+  .yq-searchbtn__txt,
+  .yq-searchbtn__kbd,
   .yq-header__brand .yq-logo{ transition: none; }
 }

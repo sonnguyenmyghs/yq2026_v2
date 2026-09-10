@@ -191,6 +191,16 @@
 
   $(document).on('yq:cart-changed yq:header-ready yq:layout-ready', syncOcBadge);
 
+  /* ======================================================================
+     5. Nút menu (.yq-burger)
+     Desktop: CSS chỉ cho nút hiện khi header .is-compact (nav đã cuộn mất),
+     nên đây là lối vào menu duy nhất lúc đó -> giữ header thu gọn khi
+     offcanvas đang mở và đồng bộ aria-expanded cho nút.
+     ====================================================================== */
+  $(document).on('show.bs.offcanvas hidden.bs.offcanvas', '#yqOffcanvas', function (e) {
+    $('.yq-burger').attr('aria-expanded', e.type === 'show' ? 'true' : 'false');
+  });
+
   /* Đóng panel khi mở offcanvas, và reset trạng thái cuộn sau khi header render */
   $(document).on('show.bs.offcanvas', '#yqOffcanvas', function () {
     closeSearch();
