@@ -133,7 +133,7 @@ nên cả hai hàm là no-op.
 | Mua nhanh | Buy Now ở PDP và trên card, sticky buy bar mobile, chặn bấm trùng |
 | Thêm giỏ | Ảnh bay theo đường cong vào icon giỏ, badge đếm tăng dần, cart drawer trượt từ phải |
 | Tài khoản | Popup "Connect Via": 5 nút social, 2 tab Log in / Register Now, pane quên mật khẩu |
-| Member | Panel "My Functions" trượt từ phải: lời chào, Edit hồ sơ, đổi mật khẩu, mời bạn, đăng xuất |
+| Member | Desktop: bấm avatar ở header mở **popup dropdown** (lời chào, email, Edit, My profile / My orders / My wallet / Change password / Invite friends, Logout; tô đậm mục đang xem). Mobile: panel "My Functions" trượt từ phải |
 | Đơn hàng | Trang My Orders 2 tab, thẻ đơn mở/đóng, ReOrder đẩy nguyên đơn vào giỏ |
 | Hồ sơ | Member Profile: thẻ tóm tắt dính, thanh % hoàn thiện, 4 nhóm thông tin, sửa tại chỗ |
 | Mật khẩu | Đổi mật khẩu có thanh sức mạnh 4 mức, checklist điều kiện, nút hiện/ẩn |
@@ -183,26 +183,37 @@ YQ.demoCart = [
 
 ### Tài khoản & menu member
 
-Popup đăng nhập và panel "My Functions" nằm trong `assets/js/modules/account.js`
-(+ `assets/css/parts/account.css`). Bấm icon người ở header: chưa đăng nhập thì mở
-popup, đã đăng nhập thì mở panel member.
+Popup đăng nhập, popup member (dropdown) và panel "My Functions" đều nằm trong
+`assets/js/modules/account.js` (+ `assets/css/parts/account.css`). Bấm icon người ở header:
 
-Danh sách nút social và các mục trong panel lấy từ `data.js`:
+- **Chưa đăng nhập** → popup "Connect Via" (Log in / Register).
+- **Đã đăng nhập, desktop (≥ 992px)** → avatar (chữ cái đầu) thả xuống **popup dropdown**
+  neo ngay dưới avatar: lời chào + email + link Edit, danh sách chức năng, nút Logout.
+  Mục trùng trang đang mở được tô vàng. Đóng khi bấm ra ngoài, Esc, Tab ra khỏi popup,
+  header thu gọn lúc cuộn, hoặc khi rê chuột mở mega menu / tìm kiếm.
+- **Đã đăng nhập, mobile** → nút Account nằm trong menu offcanvas nên không có chỗ neo
+  dropdown; mở panel "My Functions" trượt từ phải, cùng danh sách chức năng.
+
+Danh sách nút social (`SOCIAL`) và menu member (`MENU`) có sẵn mặc định ngay đầu
+`account.js`. Muốn đổi mà không sửa module thì khai báo trong `data.js` — có thì module
+dùng thay cho mặc định:
 
 ```js
 YQ.socialLogins = [ { id:'facebook', label:'Facebook' }, … ];   // id phải có trong YQ.brandIcon
 
 YQ.memberMenu = [
-  { key:'profile', label:'My profile', icon:'user', view:'profile' },  // mở pane trong panel
-  { key:'orders',  label:'My Order',   icon:'bag',  href:'my-orders.html' }, // hoặc sang trang thật
+  { key:'profile', label:'My profile', icon:'user',   href:'member/profile.html' }, // sang trang thật
+  { key:'wallet',  label:'My wallet',  icon:'wallet', view:'wallet' },  // pane con trong panel
   { key:'logout',  label:'Logout',     icon:'logout', action:'logout' }
 ];
 ```
 
-Có `href` thì mục đó điều hướng như link bình thường và `view` bị bỏ qua — khi backend
-có trang thật chỉ cần điền `href`, không phải sửa module.
+Có `href` thì mục đó điều hướng như link bình thường và `view` bị bỏ qua. Mục có `view`
+bấm từ dropdown sẽ đóng dropdown và mở panel đúng pane đó (dropdown quá nhỏ để chứa
+form). Mục `action:'logout'` trong dropdown được tách xuống chân popup thành nút riêng.
 
-Mở popup từ chỗ khác: `YQ.account.login()`, `YQ.account.register()`, `YQ.account.member()`.
+Mở từ chỗ khác: `YQ.account.login()`, `.register()`, `.popup()` (dropdown),
+`.member()` / `.member('wallet')` (panel), `.close()` đóng tất cả.
 
 ### Lịch sử đơn hàng
 

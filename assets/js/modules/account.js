@@ -2,12 +2,20 @@
    Module JS: account — popup Log in / Register + panel member "My Functions"
    Nạp sau data.js / app.js / pages.js nên dùng được YQ.*, jQuery, Bootstrap 5.
 
-   Gồm 3 mảng:
+   Gồm 4 mảng:
      1) YQ.auth      : lưu người dùng ở localStorage (KHÔNG lưu mật khẩu).
      2) Popup auth   : "Connect Via" + 5 nút social, 2 tab Log in / Register Now,
                        kèm pane quên mật khẩu. Dựng trên Bootstrap modal.
-     3) Panel member : "My Functions" trượt từ phải (Bootstrap offcanvas), danh sách
-                       lấy từ YQ.memberMenu, có pane con cho profile / password / …
+     3) Popup member : dropdown thả xuống dưới avatar ở header (desktop, >= 992px):
+                       lời chào + danh sách chức năng + Logout. Đóng khi bấm ra
+                       ngoài / Esc / header thu gọn lúc cuộn.
+     4) Panel member : "My Functions" trượt từ phải (Bootstrap offcanvas) — dùng ở
+                       mobile (nút Account nằm trong menu offcanvas nên không có chỗ
+                       neo dropdown) và cho các mục có `view` (pane con như My Wallet).
+
+   Danh sách chức năng: mảng MENU ở mục 4 (mặc định); khai báo YQ.memberMenu trong
+   data.js thì thay thế được mà không sửa module. Nút social cũng vậy (SOCIAL /
+   YQ.socialLogins).
 
    Nguyên tắc an toàn (giống các module khác):
      - Chỉ móc vào DOM + event có sẵn: nút [data-yq-account] trong header/offcanvas
@@ -27,6 +35,31 @@
 
   var esc = YQ.escape;
   var KEY = 'yq_user_v1';
+
+  /* Nút social ở popup "Connect Via". id phải có trong YQ.brandIcon. */
+  var SOCIAL = YQ.socialLogins || [
+    { id: 'facebook',  label: 'Facebook'  },
+    { id: 'twitter',   label: 'Twitter'   },
+    { id: 'linkedin',  label: 'LinkedIn'  },
+    { id: 'google',    label: 'Google'    },
+    { id: 'microsoft', label: 'Microsoft' }
+  ];
+
+  /* Menu member — dùng chung cho dropdown (desktop) và panel (mobile).
+       href   -> điều hướng sang trang thật
+       view   -> mở pane con trong panel "My Functions" (dropdown sẽ mở panel tại pane đó)
+       action -> 'logout'
+     Có href thì view bị bỏ qua. */
+  var MENU = YQ.memberMenu || [
+    { key: 'profile',  label: 'My profile',      icon: 'user',     href: 'member/profile.html' },
+    { key: 'orders',   label: 'My orders',       icon: 'bag',      href: 'member/orders.html' },
+    { key: 'wallet',   label: 'My wallet',       icon: 'wallet',   view: 'wallet' },
+    { key: 'password', label: 'Change password', icon: 'lock',     href: 'member/password.html' },
+    { key: 'invite',   label: 'Invite friends',  icon: 'userplus', href: 'member/invite.html' },
+    { key: 'logout',   label: 'Logout',          icon: 'logout',   action: 'logout' }
+  ];
+
+  function isDesktop() { return window.matchMedia('(min-width: 992px)').matches; }
 
   /* ======================================================================
      1. Auth store
@@ -125,12 +158,12 @@
   var authModal = null;
 
   function socialLabel(id) {
-    var s = (YQ.socialLogins || []).filter(function (x) { return x.id === id; })[0];
+    var s = SOCIAL.filter(function (x) { return x.id === id; })[0];
     return (s && s.label) || id;
   }
 
   function socialHtml() {
-    return (YQ.socialLogins || []).map(function (s) {
+    return SOCIAL.map(function (s) {
       return '<button class="yq-auth__soc" type="button" data-yq-social="' + s.id + '" ' +
                'aria-label="Continue with ' + esc(s.label) + '" title="Continue with ' + esc(s.label) + '">' +
                YQ.brandIcon(s.id, 20) +
@@ -250,7 +283,7 @@
   var memberOc = null;
 
   function menuHtml() {
-    return (YQ.memberMenu || []).map(function (m) {
+    return MENU.map(function (m) {
       var tag = m.href ? 'a' : 'button';
       var attrs = m.href
         ? ' href="' + m.href + '"'
@@ -331,14 +364,138 @@
       (mail ? '<span class="yq-mfn__mail">' + esc(mail) + '</span>' : ''));
   }
 
-  function openMember() {
+  function openMember(view) {
     if (!YQ.auth.isIn()) { openAuth('login'); return; }
     buildMember();
     paintMember();
-    showMain();
+    view && views[view] ? showView(view) : showMain();
     memberOc.show();
   }
   function closeMember() { if (memberOc) memberOc.hide(); }
+
+  /* ======================================================================
+     4b. Popup member — dropdown dưới avatar ở header (desktop)
+     Neo vào .yq-header__tools--end nên đi theo header khi thu gọn / dính đỉnh.
+     Header render lại (đổi trang) thì popup cũng mất theo -> build lại khi cần.
+     ====================================================================== */
+  var POP = '#yqAcctPop';
+
+  /** Đường dẫn hiện tại có khớp href của mục menu không (để tô mục đang xem). */
+  function isCurrent(href) {
+    if (!href) return false;
+    var here = location.pathname.replace(/\/index\.html$/, '/');
+    var file = href.split('?')[0].split('#')[0];
+    return here.slice(-file.length) === file;
+  }
+
+  function popHtml() {
+    var items = MENU.filter(function (m) { return m.action !== 'logout'; }).map(function (m) {
+      var tag = m.href ? 'a' : 'button';
+      var attrs = m.href
+        ? ' href="' + m.href + '"' + (isCurrent(m.href) ? ' aria-current="page"' : '')
+        : ' type="button"' + (m.view ? ' data-yq-view="' + m.view + '"' : '') +
+          (m.action ? ' data-yq-do="' + m.action + '"' : '');
+      return '<' + tag + ' class="yq-acct__item' + (isCurrent(m.href) ? ' is-current' : '') + '"' + attrs + '>' +
+               '<span class="yq-acct__ico">' + YQ.icon(m.icon, 17) + '</span>' +
+               '<span class="yq-acct__txt">' + esc(m.label) + '</span>' +
+               YQ.icon('chevright', 14) +
+             '</' + tag + '>';
+    }).join('');
+
+    var logout = MENU.filter(function (m) { return m.action === 'logout'; })[0];
+
+    return '<div class="yq-acct" id="yqAcctPop" role="dialog" aria-label="My account" hidden>' +
+             '<div class="yq-acct__head">' +
+               '<span class="yq-acct__avatar" id="yqAcctAvatar" aria-hidden="true"></span>' +
+               '<div class="yq-acct__who">' +
+                 '<b class="yq-acct__name" id="yqAcctName"></b>' +
+                 '<span class="yq-acct__mail" id="yqAcctMail"></span>' +
+               '</div>' +
+               '<a class="yq-acct__edit" href="member/profile.html?edit=1" aria-label="Edit profile">Edit</a>' +
+             '</div>' +
+             '<nav class="yq-acct__list" aria-label="Member menu">' + items + '</nav>' +
+             (logout
+               ? '<div class="yq-acct__foot">' +
+                   '<button class="yq-acct__logout" type="button" data-yq-do="logout">' +
+                     YQ.icon(logout.icon || 'logout', 16) + '<span>' + esc(logout.label) + '</span>' +
+                   '</button>' +
+                 '</div>'
+               : '') +
+           '</div>';
+  }
+
+  function buildPop() {
+    var $btn = $('#yqAccountBtn');
+    if (!$btn.length) return null;
+    var $pop = $btn.parent().find(POP);
+    /* Chèn NGAY SAU avatar (không phải cuối khối) để Tab từ avatar đi vào popup
+       trước rồi mới tới icon giỏ — đúng thứ tự nhìn thấy. */
+    if (!$pop.length) {
+      $btn.parent().addClass('yq-acct-anchor');
+      $pop = $(YQ.localise(popHtml())).insertAfter($btn);
+    }
+    return $pop;
+  }
+
+  function paintPop() {
+    var u = YQ.auth.user || {};
+    $('#yqAcctAvatar').text(YQ.auth.initial());
+    $('#yqAcctName').text('Hi, ' + YQ.auth.name());
+    $('#yqAcctMail').text(u.email || '').prop('hidden', !u.email);
+  }
+
+  function popOpen() { return $(POP).hasClass('is-open'); }
+
+  function openPop() {
+    var $pop = buildPop();
+    if (!$pop) return;
+    paintPop();
+    /* Mũi tên chỉ đúng giữa avatar: đo khoảng cách từ mép phải khối neo tới tâm nút */
+    var a = $pop.parent()[0].getBoundingClientRect();
+    var b = $('#yqAccountBtn')[0].getBoundingClientRect();
+    $pop[0].style.setProperty('--yq-acct-caret', Math.round(a.right - (b.left + b.width / 2)) + 'px');
+    $pop.prop('hidden', false);
+    /* force reflow để transition chạy từ trạng thái ẩn */
+    void $pop[0].offsetWidth;
+    $pop.addClass('is-open');
+    $('#yqAccountBtn').attr('aria-expanded', 'true');
+    $(document).on('keydown.yqAcct', function (e) {
+      if (e.key === 'Escape') { closePop(); $('#yqAccountBtn').trigger('focus'); }
+    });
+  }
+
+  function closePop() {
+    var $pop = $(POP);
+    if (!$pop.length || !popOpen()) return;
+    $pop.removeClass('is-open');
+    $('#yqAccountBtn').attr('aria-expanded', 'false');
+    $(document).off('keydown.yqAcct');
+    var done = function () { if (!popOpen()) $pop.prop('hidden', true); };
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) done();
+    else setTimeout(done, 240);
+  }
+
+  function togglePop() { popOpen() ? closePop() : openPop(); }
+
+  /* Bấm ra ngoài / header thu gọn / đổi breakpoint -> đóng */
+  $(document).on('pointerdown', function (e) {
+    if (!popOpen()) return;
+    if ($(e.target).closest(POP + ', #yqAccountBtn').length) return;
+    closePop();
+  });
+  $(window).on('resize.yqAcct', function () { if (popOpen() && !isDesktop()) closePop(); });
+  $(window).on('scroll.yqAcct', function () {
+    if (popOpen() && $('#yqHeader').hasClass('is-compact')) closePop();
+  });
+  /* Tab ra khỏi popup (sang icon giỏ chẳng hạn) -> đóng để không bỏ sót popup mở lơ lửng */
+  $(document).on('focusin', function (e) {
+    if (!popOpen()) return;
+    if ($(e.target).closest(POP + ', #yqAccountBtn').length) return;
+    closePop();
+  });
+  /* Rê chuột mở mega menu / Seasonal hoặc mở ô tìm kiếm -> nhường chỗ */
+  $(document).on('mouseenter', '.yq-nav__item--panel', function () { closePop(); })
+             .on('click', '[data-search-toggle]', function () { closePop(); });
 
   /* ======================================================================
      5. Nút account ở header
@@ -348,11 +505,16 @@
     var $btn = $('#yqAccountBtn');
     if ($btn.length) {
       $btn.toggleClass('is-signed', on)
-          .attr('aria-label', on ? 'My Functions — ' + YQ.auth.name() : 'Account')
+          .attr('aria-label', on ? 'My account — ' + YQ.auth.name() : 'Account')
           .attr('title', on ? 'Hi, ' + YQ.auth.name() : 'Log in or register')
+          .attr('aria-haspopup', on ? 'dialog' : null)
+          .attr('aria-expanded', on ? 'false' : null)
           .html(on ? '<span class="yq-acct-initial">' + esc(YQ.auth.initial()) + '</span>' : YQ.icon('user', 19));
     }
     $('[data-yq-account-label]').text(on ? YQ.auth.name() : 'Account');
+    /* Đăng xuất / đổi tên thì popup cũ không còn đúng -> bỏ, lần sau build lại */
+    closePop();
+    $(POP).remove();
   }
 
   $(document).on('yq:header-ready yq:auth-changed', paintHeader);
@@ -369,7 +531,10 @@
       inst.hide();
       return;
     }
-    YQ.auth.isIn() ? openMember() : openAuth('login');
+    if (!YQ.auth.isIn()) { openAuth('login'); return; }
+    /* Desktop: avatar ở header -> dropdown. Còn lại -> panel trượt. */
+    if (this.id === 'yqAccountBtn' && isDesktop()) togglePop();
+    else openMember();
   });
 
   /* ======================================================================
@@ -466,14 +631,23 @@
       YQ.toast('Reset link sent to ' + mail);
     })
 
+    /* --- popup member (dropdown): mục có view -> mở panel tại pane đó --- */
+    .on('click', '#yqAcctPop [data-yq-view]', function () {
+      var v = $(this).attr('data-yq-view');
+      closePop();
+      openMember(v);
+    })
+    .on('click', '#yqAcctPop a[href]', function () { closePop(); })
+
     /* --- panel member: điều hướng pane --- */
     .on('click', '#yqMemberPanel [data-yq-view]', function () {
       var v = $(this).attr('data-yq-view');
       v ? showView(v) : showMain();
     })
-    .on('click', '#yqMemberPanel [data-yq-do="logout"]', function () {
-      YQ.auth.signOut();
+    .on('click', '#yqAcctPop [data-yq-do="logout"], #yqMemberPanel [data-yq-do="logout"]', function () {
+      closePop();
       closeMember();
+      YQ.auth.signOut();
       YQ.toast('You have been logged out');
     })
 
@@ -500,8 +674,9 @@
   YQ.account = {
     login:    function () { openAuth('login'); },
     register: function () { openAuth('register'); },
-    member:   openMember,
-    close:    function () { closeAuth(); closeMember(); },
+    member:   openMember,                       // .member('wallet') mở thẳng pane con
+    popup:    function () { YQ.auth.isIn() ? openPop() : openAuth('login'); },
+    close:    function () { closeAuth(); closeMember(); closePop(); },
     logout:   function () { YQ.auth.signOut(); }
   };
 

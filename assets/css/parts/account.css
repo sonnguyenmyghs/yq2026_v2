@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Module CSS: account — popup Log in / Register + panel member "My Functions"
-   Cặp với assets/js/modules/account.js. Prefix riêng (.yq-auth*, .yq-mfn*)
+   Module CSS: account — popup Log in / Register, popup member (dropdown) + panel
+   member "My Functions". Cặp với assets/js/modules/account.js.
+   Prefix riêng (.yq-auth*, .yq-acct*, .yq-mfn*)
    để không đụng tên class nào đang có trong style.css.
    ========================================================================== */
 
@@ -166,7 +167,117 @@
 .yq-auth__back:hover{ color: var(--yq-ink); }
 
 /* ==========================================================================
-   2. Panel member "My Functions"  (Bootstrap offcanvas-end + lớp áo riêng)
+   2. Popup member — dropdown dưới avatar ở header (desktop)
+   Neo: .yq-header__tools--end (account.js gắn thêm .yq-acct-anchor khi build).
+   --yq-acct-caret: khoảng cách từ mép phải khối neo tới tâm avatar, JS đo lúc mở
+   để mũi tên luôn chỉ đúng nút dù header co giãn.
+   ========================================================================== */
+.yq-acct-anchor{ position: relative; }
+
+.yq-acct{
+  position: absolute; top: calc(100% + 12px); right: 0; z-index: 1031;
+  width: 296px; text-align: left;
+  background: var(--yq-paper);
+  border: 1px solid var(--yq-line);
+  border-radius: var(--yq-radius);
+  box-shadow: var(--yq-shadow-lg);
+  opacity: 0; visibility: hidden;
+  transform: translateY(-8px) scale(.98);
+  transform-origin: top right;
+  transition: opacity .24s var(--yq-ease), transform .28s var(--yq-ease), visibility .28s;
+}
+.yq-acct[hidden]{ display: none; }
+.yq-acct.is-open{ opacity: 1; visibility: visible; transform: none; }
+
+/* mũi tên nhỏ chỉ lên avatar */
+.yq-acct::before{
+  content: ""; position: absolute; top: -6.5px;
+  right: calc(var(--yq-acct-caret, 21px) - 6px);
+  width: 12px; height: 12px;
+  background: var(--yq-paper);
+  border-left: 1px solid var(--yq-line); border-top: 1px solid var(--yq-line);
+  border-top-left-radius: 3px;
+  transform: rotate(45deg);
+}
+
+/* --- đầu: avatar + tên + email + Edit --- */
+.yq-acct__head{
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 18px 16px;
+  border-bottom: 1px solid var(--yq-line-soft);
+}
+.yq-acct__avatar{
+  flex: none; width: 42px; height: 42px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--yq-gold-soft); color: var(--yq-gold-dark);
+  border: 1px solid var(--yq-gold);
+  font-family: var(--yq-serif); font-size: 18px; font-weight: 500; line-height: 1;
+}
+.yq-acct__who{ flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
+.yq-acct__name{
+  font-size: 15px; font-weight: 600; color: var(--yq-ink); line-height: 1.25;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.yq-acct__mail{
+  font-size: 12.5px; color: var(--yq-muted); line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.yq-acct__mail[hidden]{ display: none; }
+.yq-acct__edit{
+  flex: none; align-self: flex-start;
+  font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--yq-gold-dark); padding: 2px 0;
+  border-bottom: 1px solid transparent;
+  transition: color .2s var(--yq-ease), border-color .2s var(--yq-ease);
+}
+.yq-acct__edit:hover{ color: var(--yq-ink); border-color: var(--yq-gold); }
+
+/* --- danh sách chức năng --- */
+.yq-acct__list{ display: block; padding: 8px; }
+.yq-acct__item{
+  width: 100%; text-align: left;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 10px; border: 0; border-radius: var(--yq-radius-sm);
+  background: none; cursor: pointer;
+  font-family: var(--yq-sans); font-size: 14px; font-weight: 500; color: var(--yq-ink);
+  text-decoration: none;
+  transition: background .2s var(--yq-ease), color .2s var(--yq-ease);
+}
+.yq-acct__item:hover,
+.yq-acct__item:focus-visible{ background: var(--yq-cream); color: var(--yq-ink); outline-offset: -2px; }
+.yq-acct__item.is-current{ background: var(--yq-gold-soft); }
+.yq-acct__ico{
+  flex: none; width: 32px; height: 32px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--yq-cream); color: var(--yq-body);
+  transition: background .2s var(--yq-ease), color .2s var(--yq-ease);
+}
+.yq-acct__item:hover .yq-acct__ico,
+.yq-acct__item.is-current .yq-acct__ico{ background: var(--yq-gold); color: #fff; }
+.yq-acct__txt{ flex: 1 1 auto; min-width: 0; }
+.yq-acct__item > .yq-i:last-child{
+  flex: none; color: var(--yq-gold-dark); opacity: 0; transform: translateX(-6px);
+  transition: opacity .22s var(--yq-ease), transform .22s var(--yq-ease);
+}
+.yq-acct__item:hover > .yq-i:last-child,
+.yq-acct__item.is-current > .yq-i:last-child{ opacity: 1; transform: none; }
+
+/* --- chân: Logout --- */
+.yq-acct__foot{ padding: 8px; border-top: 1px solid var(--yq-line-soft); }
+.yq-acct__logout{
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 12px; border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm);
+  background: var(--yq-paper); cursor: pointer;
+  font-family: var(--yq-sans); font-size: 13.5px; font-weight: 600; color: var(--yq-body);
+  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease), color .22s var(--yq-ease);
+}
+.yq-acct__logout:hover{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+
+/* Dưới desktop nút avatar ở header đã ẩn (d-none d-lg-inline-flex) — chặn luôn cho chắc */
+@media (max-width: 991.98px){ .yq-acct{ display: none !important; } }
+
+/* ==========================================================================
+   3. Panel member "My Functions"  (Bootstrap offcanvas-end + lớp áo riêng)
    ========================================================================== */
 .yq-mfn{
   width: min(480px, 100vw);
@@ -261,15 +372,27 @@
 }
 .yq-mfn__stat span{ display: block; font-size: 12.5px; color: var(--yq-muted); margin-top: 6px; }
 
-/* nút account ở header khi đã đăng nhập -> hiện chữ cái đầu */
+/* nút account ở header khi đã đăng nhập -> hiện chữ cái đầu, viền vàng;
+   đang mở popup (aria-expanded) -> đổ đặc màu vàng */
 .yq-acct-initial{
-  font-family: var(--yq-sans); font-size: 12.5px; font-weight: 700;
+  font-family: var(--yq-serif); font-size: 15px; font-weight: 500;
   letter-spacing: .02em; line-height: 1;
 }
-.yq-iconbtn.is-signed{ background: var(--yq-gold-soft); border-color: var(--yq-gold); color: var(--yq-gold-dark); }
+.yq-iconbtn.is-signed{
+  background: var(--yq-gold-soft); color: var(--yq-gold-dark);
+  box-shadow: inset 0 0 0 1px var(--yq-gold);
+  transition: background .22s var(--yq-ease), color .22s var(--yq-ease), box-shadow .22s var(--yq-ease);
+}
+.yq-iconbtn.is-signed::before{ display: none; }
+.yq-iconbtn.is-signed:hover,
+.yq-iconbtn.is-signed[aria-expanded="true"]{
+  background: var(--yq-gold); color: #fff; box-shadow: inset 0 0 0 1px var(--yq-gold);
+}
 
 @media (prefers-reduced-motion: reduce){
   .yq-auth__pane, .yq-mfn__pane{ animation: none; }
+  .yq-acct{ transition: none; }
+  .yq-acct__item > .yq-i:last-child{ transition: none; }
   .yq-auth__soc:hover{ transform: none; }
   .yq-mfn__item{ transition: none; }
   .yq-mfn__item:hover{ padding-left: 4px; }

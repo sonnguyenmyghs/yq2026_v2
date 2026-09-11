@@ -356,6 +356,116 @@ YQ.experiences = [
     desc:'Luxurious overnight stay with breakfast, spa credit, and late checkout.' }
 ];
 
+/* ---------- Giới thiệu bạn bè (trang member/invite.html) ----------
+   `channels` quyết định có những nút chia sẻ nào, theo đúng thứ tự khai báo:
+     kind 'share' -> mở cửa sổ chia sẻ ({u} = link mời, {t} = lời nhắn)
+     kind 'mail'  -> mở ứng dụng email
+   Thêm WhatsApp/X chỉ cần thêm một dòng, không phải sửa controller.
+   id phải có trong YQ.brandIcon thì mới có logo (email/copy dùng YQ.icon).
+*/
+YQ.referral = {
+  reward: 20,                 // ưu đãi cho cả người mời lẫn người được mời
+  landing: 'index.html',      // trang link mời trỏ tới
+  codePrefix: 'GH-',
+  message: 'I shop for gifts at Grand Hyatt Singapore — here is $20 off your first order.',
+  channels: [
+    { id: 'facebook', label: 'Facebook', kind: 'share',
+      url: 'https://www.facebook.com/sharer/sharer.php?u={u}' },
+    { id: 'line', label: 'LINE', kind: 'share',
+      url: 'https://social-plugins.line.me/lineit/share?url={u}&text={t}' },
+    { id: 'email', label: 'Email', kind: 'mail', icon: 'mail' }
+  ]
+};
+
+/* ---------- Hồ sơ thành viên (trang member/profile.html) ----------
+   YQ.profileGroups = SƠ ĐỒ trường (nhóm nào, nhãn gì, sửa được không).
+   YQ.demoProfile   = GIÁ TRỊ mẫu, nạp cho lần truy cập đầu (như YQ.demoCart).
+   Tách đôi để khi nối backend chỉ cần đổ dữ liệu vào YQ.profile, giữ nguyên sơ đồ.
+
+   Mỗi trường: { key, label, type, ro, options }
+     type : 'text' | 'email' | 'tel' | 'date' | 'select'   (mặc định 'text')
+     ro   : true  -> chỉ đọc, không hiện ô nhập khi bấm "Edit my information"
+*/
+YQ.profileGroups = [
+  { title: 'Membership', icon: 'star', fields: [
+    { key: 'memberNo',   label: 'Membership No.', ro: true },
+    { key: 'memberType', label: 'Member Type',    ro: true },
+    { key: 'idCard',     label: 'ID Card' },
+    { key: 'cardName',   label: 'Card Name' },
+    { key: 'referral',   label: 'Member Referral' },
+    { key: 'joinDate',   label: 'Join date',   type: 'date', ro: true },
+    { key: 'expiryDate', label: 'Expiry date', type: 'date', ro: true }
+  ]},
+  { title: 'Personal details', icon: 'user', fields: [
+    { key: 'firstName',  label: 'First name' },
+    { key: 'lastName',   label: 'Last name' },
+    { key: 'title',      label: 'Title',          type: 'select', options: ['Mr', 'Ms', 'Mrs', 'Dr'] },
+    { key: 'gender',     label: 'Gender',         type: 'select', options: ['Male', 'Female', 'Prefer not to say'] },
+    { key: 'marital',    label: 'Marital Status', type: 'select', options: ['Single', 'Married', 'Prefer not to say'] },
+    { key: 'birthday',   label: 'Birthday',    type: 'date' },
+    { key: 'nationality',label: 'Nationality' },
+    { key: 'passport',   label: 'Passport No.' },
+    { key: 'language',   label: 'Language', type: 'select', options: ['English', 'Bahasa Indonesia', '中文', '日本語'] }
+  ]},
+  { title: 'Contact', icon: 'phone', fields: [
+    { key: 'email',       label: 'Email',        type: 'email' },
+    { key: 'mobile',      label: 'Mobile Phone', type: 'tel' },
+    { key: 'homePhone',   label: 'Home Phone',   type: 'tel' },
+    { key: 'officePhone', label: 'Office Phone', type: 'tel' },
+    { key: 'fax',         label: 'Fax Number',   type: 'tel' },
+    { key: 'company',     label: 'Company' }
+  ]},
+  { title: 'Address', icon: 'pin', fields: [
+    { key: 'address1', label: 'Address 1' },
+    { key: 'city',     label: 'City' },
+    { key: 'state',    label: 'State' },
+    { key: 'postal',   label: 'Postal Code' },
+    { key: 'country',  label: 'Country of residence' }
+  ]}
+];
+
+YQ.demoProfile = {
+  memberNo: '000001991', memberType: 'Member', idCard: '', cardName: 'son nguyen',
+  referral: '', joinDate: '2020-12-24', expiryDate: '2026-12-31',
+  firstName: 'son', lastName: 'nguyen', title: '', gender: '', marital: '',
+  birthday: '1994-02-02', nationality: '', passport: '', language: 'English',
+  email: 'sonnguyen@myghs.com', mobile: '6512332432', homePhone: '', officePhone: '',
+  fax: '', company: '',
+  address1: '#123 50 Coronation Rd W, Singapore 269264',
+  city: '', state: '', postal: '', country: 'Singapore'
+};
+
+/* ---------- Lịch sử đơn hàng (trang member/orders.html) ----------
+   Chỉ tham chiếu theo id sản phẩm + optionId; tên/giá/ảnh lấy từ YQ.products
+   nên sửa giá một chỗ là cả lịch sử đơn cập nhật theo.
+     status : 'completed' (đã thanh toán) | 'pending' (chờ thanh toán)
+     date   : ISO 'YYYY-MM-DD', hiển thị thành '06-February-2026'
+   Thay mảng này bằng dữ liệu từ API khi có backend.
+*/
+YQ.orders = [
+  { id: '354646799', date: '2026-08-21', status: 'completed', items: [
+    { id: 'signature-chocolate-cake', optionId: 'medium',  qty: 1 },
+    { id: 'the-grand-hamper',         optionId: 'classic', qty: 1 },
+    { id: 'grand-pralines',           optionId: '12',      qty: 2 },
+    { id: 'gh-champagne-brut',        optionId: 'bottle',  qty: 1 }
+  ]},
+  { id: '868514922', date: '2026-06-14', status: 'completed', items: [
+    { id: 'cellar-selection-trio', optionId: 'trio', qty: 1 }
+  ]},
+  { id: '423838196', date: '2026-02-06', status: 'completed', items: [
+    { id: 'festive-yule-log',   optionId: 'reg', qty: 1 },
+    { id: 'artisan-cookie-box', optionId: '16',  qty: 2 }
+  ]},
+  { id: '771204558', date: '2026-09-05', status: 'pending', items: [
+    { id: 'prosperity-yusheng', optionId: '10',   qty: 1 },
+    { id: 'brix-tote',          optionId: 'sand', qty: 2 }
+  ]},
+  { id: '690318742', date: '2026-09-01', status: 'pending', items: [
+    { id: 'damai-wellness-set', optionId: 'complete', qty: 1 },
+    { id: 'afternoon-tea-two',  optionId: 'bubbly',   qty: 1 }
+  ]}
+];
+
 /* ---------- eCard designs ---------- */
 YQ.cardDesigns = [
   { id:'gold',   name:'Classic Gold',  art:'art-gold',   glyph:'✦', theme:'' },

@@ -202,6 +202,11 @@
      ====================================================================== */
   var PKEY = 'yq_profile_v1';
 
+  function hasAnyValue(obj) {
+    for (var k in obj) if (obj[k] != null && $.trim(String(obj[k])) !== '') return true;
+    return false;
+  }
+
   YQ.profile = {
     data: {},
 
@@ -209,7 +214,9 @@
       var raw = null;
       try { raw = localStorage.getItem(PKEY); } catch (e) {}
       try { this.data = JSON.parse(raw) || null; } catch (e) { this.data = null; }
-      if (!this.data) this.data = $.extend({}, YQ.demoProfile || {});   // lần đầu: hồ sơ mẫu
+      /* Lần đầu (chưa có key) hoặc bản đã lưu rỗng toàn bộ (VD: lưu lúc thiếu YQ.demoProfile)
+         -> nạp hồ sơ mẫu. memberNo là read-only nên hồ sơ thật không bao giờ rỗng hết. */
+      if (!this.data || !hasAnyValue(this.data)) this.data = $.extend({}, YQ.demoProfile || {});
       return this.data;
     },
     save: function () {
