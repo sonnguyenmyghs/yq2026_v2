@@ -745,162 +745,122 @@
      11. Member profile (member/profile.html)
      ====================================================================== */
   YQ.initProfile = function () {
-    var P = YQ.profile;
-    var editing = YQ.param('edit') === '1';
+    /* Markup nằm sẵn trong member/profile.html (backend đổ dữ liệu vào HTML).
+       Controller này KHÔNG dựng HTML — chỉ bật/tắt chế độ sửa, kiểm tra ô nhập
+       và chép giá trị vừa nhập ngược lại phần hiển thị sau khi "Save". Lưu thật
+       là việc của backend (form method="post"); demo chặn submit và chỉ cập nhật
+       trên trang. */
+    var $form = $('#profForm');
+    if (!$form.length) return;
     var RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-    function fieldId(key) { return 'pf_' + key; }
-
-    /** Giá trị để hiển thị: ngày thì đổi định dạng, rỗng thì "Not provided". */
-    function shown(f) {
-      var v = $.trim(P.get(f.key));
-      if (!v) return null;
-      return f.type === 'date' ? YQ.dateLabel(v) : v;
-    }
-
-    function inputHtml(f) {
-      var v = YQ.escape(P.get(f.key));
-      var id = fieldId(f.key);
-      if (f.type === 'select') {
-        var opts = '<option value="">Not provided</option>' +
-          (f.options || []).map(function (o) {
-            return '<option value="' + YQ.escape(o) + '"' + (o === P.get(f.key) ? ' selected' : '') + '>' +
-                   YQ.escape(o) + '</option>';
-          }).join('');
-        return '<select class="yq-input yq-prof__control" id="' + id + '">' + opts + '</select>';
+    function setEditing(on) {
+      $form.toggleClass('is-editing', on);
+      if (on) {
+        var el = $form.find('.yq-prof__control')[0];
+        if (el) el.focus();
       }
-      return '<input class="yq-input yq-prof__control" id="' + id + '" type="' +
-             (f.type || 'text') + '" value="' + v + '">';
     }
 
-    function rowHtml(f) {
-      var val = shown(f);
-      var body;
-
-      if (editing && !f.ro) {
-        body = inputHtml(f) + '<div class="yq-error" data-err-for="' + fieldId(f.key) + '"></div>';
-      } else {
-        body = val
-          ? '<span class="yq-prof__value">' + YQ.escape(val) + '</span>'
-          : '<span class="yq-prof__value is-empty">Not provided</span>';
-        if (editing && f.ro) body += '<span class="yq-prof__lock">' + YQ.icon('lock', 13) + 'Locked</span>';
-      }
-
-      return '<div class="yq-prof__row' + (editing && !f.ro ? ' is-editing' : '') + '">' +
-               '<dt class="yq-prof__label">' + YQ.escape(f.label) + '</dt>' +
-               '<dd class="yq-prof__field">' + body + '</dd>' +
-             '</div>';
-    }
-
-    function groupHtml(g) {
-      return '<section class="yq-prof__group">' +
-               '<header class="yq-prof__grouphead">' +
-                 '<span class="yq-prof__groupico">' + YQ.icon(g.icon || 'user', 17) + '</span>' +
-                 '<h2 class="yq-prof__grouptitle">' + YQ.escape(g.title) + '</h2>' +
-               '</header>' +
-               '<dl class="yq-prof__rows">' + g.fields.map(rowHtml).join('') + '</dl>' +
-             '</section>';
-    }
-
-    function asideHtml() {
-      var pct = P.completeness();
-      var missing = P.missing();
-      var name = P.fullName() || 'Your profile';
-      var initials = ((P.get('firstName').charAt(0) || name.charAt(0) || '?') +
-                      P.get('lastName').charAt(0)).toUpperCase();
-      var type = P.get('memberType') || 'Member';
-      var no = P.get('memberNo');
-
-      var actions = editing
-        ? '<button class="yq-btn yq-btn--block" type="button" id="pfSave">Save changes</button>' +
-          '<button class="yq-btn yq-btn--yqost yq-btn--block mt-2" type="button" id="pfCancel">Cancel</button>'
-        : '<button class="yq-btn yq-btn--block" type="button" id="pfEdit">Edit my information</button>';
-
-      return '<div class="yq-prof__card">' +
-               '<div class="yq-prof__avatar" aria-hidden="true">' + YQ.escape(initials) + '</div>' +
-               '<h1 class="yq-prof__name">' + YQ.escape(name) + '</h1>' +
-               '<div class="yq-prof__badges">' +
-                 '<span class="yq-prof__chip">' + YQ.escape(type) + '</span>' +
-                 (no ? '<span class="yq-prof__no">No. ' + YQ.escape(no) + '</span>' : '') +
-               '</div>' +
-
-               '<div class="yq-prof__meter">' +
-                 '<div class="yq-prof__meterhead"><span>Profile complete</span><b>' + pct + '%</b></div>' +
-                 '<div class="yq-prof__bar"><i style="width:' + pct + '%"></i></div>' +
-                 (missing.length
-                   ? '<p class="yq-prof__hint">' + missing.length +
-                     (missing.length === 1 ? ' field left: ' : ' fields left: ') +
-                     YQ.escape(missing.slice(0, 3).join(', ')) +
-                     (missing.length > 3 ? '…' : '') + '</p>'
-                   : '<p class="yq-prof__hint">Everything is filled in — thank you.</p>') +
-               '</div>' +
-
-               '<dl class="yq-prof__facts">' +
-                 '<div><dt>Member since</dt><dd>' + (YQ.dateLabel(P.get('joinDate')) || '—') + '</dd></div>' +
-                 '<div><dt>Valid until</dt><dd>' + (YQ.dateLabel(P.get('expiryDate')) || '—') + '</dd></div>' +
-               '</dl>' +
-
-               '<div class="yq-prof__actions">' + actions + '</div>' +
-
-               '<div class="yq-prof__links">' +
-                 '<a class="yq-link-arrow" href="member/orders.html">My orders ' + YQ.icon('chevright', 14) + '</a>' +
-               '</div>' +
-             '</div>';
-    }
-
-    function render() {
-      $('#profAside').html(YQ.localise(asideHtml()));
-      $('#profBody').html(YQ.localise((YQ.profileGroups || []).map(groupHtml).join('')))
-                    .toggleClass('is-editing', editing);
-    }
-
-    /* --- lưu --- */
-    function collect() {
-      var out = {}, bad = null;
-      $('#profBody .yq-error').removeClass('is-on').text('');
-      $('#profBody .yq-prof__control').removeClass('is-invalid');
-
-      $.each(YQ.profileGroups || [], function (_, g) {
-        $.each(g.fields, function (_, f) {
-          if (f.ro) return;
-          var $el = $('#' + fieldId(f.key));
-          if (!$el.length) return;
-          var v = $.trim($el.val() || '');
-
-          if (f.type === 'email' && v && !RE_MAIL.test(v)) {
-            $el.addClass('is-invalid');
-            $('[data-err-for="' + fieldId(f.key) + '"]').text('Enter a valid email address').addClass('is-on');
-            bad = bad || $el;
-            return;
-          }
-          out[f.key] = v;
-        });
-      });
-      return bad ? null : out;
-    }
-
-    $(document)
-      .on('click', '#pfEdit', function () { editing = true; render(); })
-      .on('click', '#pfCancel', function () { editing = false; render(); })
-      .on('click', '#pfSave', function () {
-        var patch = collect();
-        if (!patch) { YQ.toast('Please check the highlighted field'); return; }
-
-        P.set(patch);
-        /* Giữ phiên đăng nhập khớp với hồ sơ vừa sửa. */
-        if (YQ.auth && YQ.auth.isIn()) {
-          YQ.auth.update({ first: patch.firstName, last: patch.lastName, email: patch.email });
+    /** Ghi nhớ giá trị hiện tại làm "mặc định" để Cancel (form.reset) quay về đúng bản đã lưu. */
+    function commitDefaults() {
+      $form.find('.yq-prof__control').each(function () {
+        if (this.tagName === 'SELECT') {
+          $(this).find('option').each(function () { this.defaultSelected = this.selected; });
+        } else {
+          this.defaultValue = this.value;
         }
-        editing = false;
-        render();
+      });
+    }
+
+    function clearError(el) {
+      $(el).removeClass('is-invalid');
+      $('[data-err-for="' + el.id + '"]').removeClass('is-on').text('');
+    }
+    function showError(el, msg) {
+      $(el).addClass('is-invalid');
+      $('[data-err-for="' + el.id + '"]').text(msg).addClass('is-on');
+    }
+
+    function validate() {
+      var bad = null;
+      $form.find('.yq-prof__control').each(function () {
+        clearError(this);
+        var v = $.trim(this.value || '');
+        if (this.type === 'email' && v && !RE_MAIL.test(v)) {
+          showError(this, 'Enter a valid email address');
+          bad = bad || this;
+        }
+      });
+      return bad;
+    }
+
+    /** Chép giá trị ô nhập -> span hiển thị của từng hàng --edit. */
+    function applyToView() {
+      $form.find('.yq-prof__row--edit').each(function () {
+        var $row = $(this);
+        var el = $row.find('.yq-prof__control')[0];
+        var $val = $row.find('.yq-prof__value');
+        if (!el) return;
+        var v = $.trim(el.value || '');
+        if (!v) { $val.addClass('is-empty').text('Not provided'); return; }
+        $val.removeClass('is-empty').text(el.type === 'date' ? YQ.dateLabel(v) : v);
+      });
+    }
+
+    /** Thẻ trái: tên, chữ cái đầu, % hoàn thiện — tính lại từ DOM. */
+    function refreshCard() {
+      var first = $.trim($('#pf_firstName').val() || '');
+      var last  = $.trim($('#pf_lastName').val() || '');
+      var name  = $.trim(first + ' ' + last);
+      $('#profName').text(name || 'Your profile');
+      $('#profInitials').text(((first.charAt(0) || name.charAt(0) || '?') + last.charAt(0)).toUpperCase());
+
+      var $rows = $form.find('.yq-prof__row');
+      var filled = $rows.filter(function () { return !$(this).find('.yq-prof__value').hasClass('is-empty'); }).length;
+      var pct = $rows.length ? Math.round(filled / $rows.length * 100) : 100;
+      $('#profPct').text(pct + '%');
+      $('#profBar').css('width', pct + '%');
+
+      var missing = $form.find('.yq-prof__row--edit').filter(function () {
+        return $(this).find('.yq-prof__value').hasClass('is-empty');
+      }).map(function () { return $.trim($(this).find('.yq-prof__label').text()); }).get();
+      $('#profHint').text(missing.length
+        ? missing.length + (missing.length === 1 ? ' field left: ' : ' fields left: ') +
+          missing.slice(0, 3).join(', ') + (missing.length > 3 ? '…' : '')
+        : 'Everything is filled in — thank you.');
+    }
+
+    $form
+      .on('click', '[data-prof-edit]', function () { setEditing(true); })
+      .on('click', '[data-prof-cancel]', function () {
+        $form[0].reset();
+        $form.find('.yq-prof__control').each(function () { clearError(this); });
+        setEditing(false);
+      })
+      .on('submit', function (e) {
+        e.preventDefault();                        // demo: không có server nhận POST
+        var bad = validate();
+        if (bad) { bad.focus(); YQ.toast('Please check the highlighted field'); return; }
+
+        applyToView();
+        refreshCard();
+        commitDefaults();
+        /* Giữ phiên đăng nhập (avatar/lời chào ở header) khớp với hồ sơ vừa sửa. */
+        if (YQ.auth && YQ.auth.isIn()) {
+          YQ.auth.update({
+            first: $.trim($('#pf_firstName').val() || ''),
+            last:  $.trim($('#pf_lastName').val() || ''),
+            email: $.trim($('#pf_email').val() || '')
+          });
+        }
+        setEditing(false);
         YQ.toast('Profile updated');
       })
-      .on('input change', '#profBody .yq-prof__control', function () {
-        $(this).removeClass('is-invalid');
-        $('[data-err-for="' + this.id + '"]').removeClass('is-on').text('');
-      });
+      .on('input change', '.yq-prof__control', function () { clearError(this); });
 
-    render();
+    commitDefaults();
+    if (YQ.param('edit') === '1') setEditing(true);
   };
 
   /* ======================================================================

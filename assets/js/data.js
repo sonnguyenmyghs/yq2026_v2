@@ -377,53 +377,12 @@ YQ.referral = {
   ]
 };
 
-/* ---------- Hồ sơ thành viên (trang member/profile.html) ----------
-   YQ.profileGroups = SƠ ĐỒ trường (nhóm nào, nhãn gì, sửa được không).
-   YQ.demoProfile   = GIÁ TRỊ mẫu, nạp cho lần truy cập đầu (như YQ.demoCart).
-   Tách đôi để khi nối backend chỉ cần đổ dữ liệu vào YQ.profile, giữ nguyên sơ đồ.
-
-   Mỗi trường: { key, label, type, ro, options }
-     type : 'text' | 'email' | 'tel' | 'date' | 'select'   (mặc định 'text')
-     ro   : true  -> chỉ đọc, không hiện ô nhập khi bấm "Edit my information"
+/* ---------- Hồ sơ thành viên (mẫu) ----------
+   member/profile.html là HTML TĨNH (backend đổ dữ liệu thẳng vào markup), không
+   render từ đây. Bản mẫu này chỉ còn nạp vào YQ.profile (app.js) cho lần truy cập
+   đầu, phục vụ password.html (email, ngày đổi mật khẩu) và invite.html (memberNo
+   -> mã giới thiệu). Giá trị nên khớp với những gì đang ghi trong profile.html.
 */
-YQ.profileGroups = [
-  { title: 'Membership', icon: 'star', fields: [
-    { key: 'memberNo',   label: 'Membership No.', ro: true },
-    { key: 'memberType', label: 'Member Type',    ro: true },
-    { key: 'idCard',     label: 'ID Card' },
-    { key: 'cardName',   label: 'Card Name' },
-    { key: 'referral',   label: 'Member Referral' },
-    { key: 'joinDate',   label: 'Join date',   type: 'date', ro: true },
-    { key: 'expiryDate', label: 'Expiry date', type: 'date', ro: true }
-  ]},
-  { title: 'Personal details', icon: 'user', fields: [
-    { key: 'firstName',  label: 'First name' },
-    { key: 'lastName',   label: 'Last name' },
-    { key: 'title',      label: 'Title',          type: 'select', options: ['Mr', 'Ms', 'Mrs', 'Dr'] },
-    { key: 'gender',     label: 'Gender',         type: 'select', options: ['Male', 'Female', 'Prefer not to say'] },
-    { key: 'marital',    label: 'Marital Status', type: 'select', options: ['Single', 'Married', 'Prefer not to say'] },
-    { key: 'birthday',   label: 'Birthday',    type: 'date' },
-    { key: 'nationality',label: 'Nationality' },
-    { key: 'passport',   label: 'Passport No.' },
-    { key: 'language',   label: 'Language', type: 'select', options: ['English', 'Bahasa Indonesia', '中文', '日本語'] }
-  ]},
-  { title: 'Contact', icon: 'phone', fields: [
-    { key: 'email',       label: 'Email',        type: 'email' },
-    { key: 'mobile',      label: 'Mobile Phone', type: 'tel' },
-    { key: 'homePhone',   label: 'Home Phone',   type: 'tel' },
-    { key: 'officePhone', label: 'Office Phone', type: 'tel' },
-    { key: 'fax',         label: 'Fax Number',   type: 'tel' },
-    { key: 'company',     label: 'Company' }
-  ]},
-  { title: 'Address', icon: 'pin', fields: [
-    { key: 'address1', label: 'Address 1' },
-    { key: 'city',     label: 'City' },
-    { key: 'state',    label: 'State' },
-    { key: 'postal',   label: 'Postal Code' },
-    { key: 'country',  label: 'Country of residence' }
-  ]}
-];
-
 YQ.demoProfile = {
   memberNo: '000001991', memberType: 'Member', idCard: '', cardName: 'son nguyen',
   referral: '', joinDate: '2020-12-24', expiryDate: '2026-12-31',

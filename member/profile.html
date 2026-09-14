@@ -29,12 +29,320 @@
   </div>
 </section>
 
+<!-- ============================================================================
+     Member Profile — markup TĨNH, backend đổ dữ liệu thẳng vào HTML này.
+     Hai chế độ dùng CÙNG một markup, đổi bằng class .is-editing trên <form class="yq-prof">
+     (JS chỉ bật/tắt class, không dựng lại HTML):
+       - Xem : hiện .yq-prof__value, ẩn ô nhập / nút Save-Cancel / nhãn Locked
+       - Sửa : .yq-prof__row--edit hiện ô nhập thay cho giá trị,
+               .yq-prof__row--ro  giữ giá trị + hiện nhãn "Locked"
+     Mỗi trường sửa được gồm: <span.yq-prof__value> (giá trị hiển thị) + <input|select>
+     cùng giá trị (name = key gửi lên server) + <div.yq-error> báo lỗi.
+     Trống thì value="" và span mang class is-empty với chữ "Not provided".
+     Ngày: input type="date" value="YYYY-MM-DD", span hiển thị "DD-Month-YYYY".
+     Mở thẳng chế độ sửa: profile.html?edit=1
+     ============================================================================ -->
 <section style="padding-bottom:clamp(56px,8vw,104px)">
   <div class="yq-container">
-    <div class="yq-prof">
-      <aside id="profAside"></aside>
-      <div class="yq-prof__body" id="profBody"></div>
-    </div>
+    <form class="yq-prof" id="profForm" method="post" action="#" novalidate>
+
+      <!-- Thẻ tóm tắt (dính bên trái) -->
+      <aside class="yq-prof__card">
+        <div class="yq-prof__avatar" id="profInitials" aria-hidden="true">SN</div>
+        <h1 class="yq-prof__name" id="profName">son nguyen</h1>
+        <div class="yq-prof__badges">
+          <span class="yq-prof__chip">Member</span>
+          <span class="yq-prof__no">No. 000001991</span>
+        </div>
+
+        <div class="yq-prof__meter">
+          <div class="yq-prof__meterhead"><span>Profile complete</span><b id="profPct">48%</b></div>
+          <div class="yq-prof__bar"><i id="profBar" style="width:48%"></i></div>
+          <p class="yq-prof__hint" id="profHint">14 fields left: ID Card, Member Referral, Title…</p>
+        </div>
+
+        <dl class="yq-prof__facts">
+          <div><dt>Member since</dt><dd>24-December-2020</dd></div>
+          <div><dt>Valid until</dt><dd>31-December-2026</dd></div>
+        </dl>
+
+        <div class="yq-prof__actions">
+          <div class="yq-prof__actions--view">
+            <button class="yq-btn yq-btn--block" type="button" data-prof-edit>Edit my information</button>
+          </div>
+          <div class="yq-prof__actions--edit">
+            <button class="yq-btn yq-btn--block" type="submit">Save changes</button>
+            <button class="yq-btn yq-btn--yqost yq-btn--block mt-2" type="button" data-prof-cancel>Cancel</button>
+          </div>
+        </div>
+
+        <div class="yq-prof__links">
+          <a class="yq-link-arrow" href="orders.html">My orders <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+        </div>
+      </aside>
+
+      <!-- Các nhóm thông tin -->
+      <div class="yq-prof__body">
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8L12 3.5Z" fill="currentColor" stroke="none"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Membership</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row yq-prof__row--ro">
+            <dt class="yq-prof__label">Membership No.</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">000001991</span><span class="yq-prof__lock"><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg>Locked</span></dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--ro">
+            <dt class="yq-prof__label">Member Type</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">Member</span><span class="yq-prof__lock"><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg>Locked</span></dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_idCard">ID Card</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_idCard" name="idCard" type="text" value="">
+              <div class="yq-error" data-err-for="pf_idCard"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_cardName">Card Name</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">son nguyen</span>
+              <input class="yq-input yq-prof__control" id="pf_cardName" name="cardName" type="text" value="son nguyen">
+              <div class="yq-error" data-err-for="pf_cardName"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_referral">Member Referral</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_referral" name="referral" type="text" value="">
+              <div class="yq-error" data-err-for="pf_referral"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--ro">
+            <dt class="yq-prof__label">Join date</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">24-December-2020</span><span class="yq-prof__lock"><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg>Locked</span></dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--ro">
+            <dt class="yq-prof__label">Expiry date</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">31-December-2026</span><span class="yq-prof__lock"><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg>Locked</span></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Personal details</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_firstName">First name</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">son</span>
+              <input class="yq-input yq-prof__control" id="pf_firstName" name="firstName" type="text" value="son">
+              <div class="yq-error" data-err-for="pf_firstName"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_lastName">Last name</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">nguyen</span>
+              <input class="yq-input yq-prof__control" id="pf_lastName" name="lastName" type="text" value="nguyen">
+              <div class="yq-error" data-err-for="pf_lastName"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_title">Title</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <select class="yq-input yq-prof__control" id="pf_title" name="title">
+                <option value="">Not provided</option>
+                <option>Mr</option>
+                <option>Ms</option>
+                <option>Mrs</option>
+                <option>Dr</option>
+              </select>
+              <div class="yq-error" data-err-for="pf_title"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_gender">Gender</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <select class="yq-input yq-prof__control" id="pf_gender" name="gender">
+                <option value="">Not provided</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Prefer not to say</option>
+              </select>
+              <div class="yq-error" data-err-for="pf_gender"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_marital">Marital Status</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <select class="yq-input yq-prof__control" id="pf_marital" name="marital">
+                <option value="">Not provided</option>
+                <option>Single</option>
+                <option>Married</option>
+                <option>Prefer not to say</option>
+              </select>
+              <div class="yq-error" data-err-for="pf_marital"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_birthday">Birthday</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">02-February-1994</span>
+              <input class="yq-input yq-prof__control" id="pf_birthday" name="birthday" type="date" value="1994-02-02">
+              <div class="yq-error" data-err-for="pf_birthday"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_nationality">Nationality</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_nationality" name="nationality" type="text" value="">
+              <div class="yq-error" data-err-for="pf_nationality"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_passport">Passport No.</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_passport" name="passport" type="text" value="">
+              <div class="yq-error" data-err-for="pf_passport"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_language">Language</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">English</span>
+              <select class="yq-input yq-prof__control" id="pf_language" name="language">
+                <option value="">Not provided</option>
+                <option selected>English</option>
+                <option>Bahasa Indonesia</option>
+                <option>中文</option>
+                <option>日本語</option>
+              </select>
+              <div class="yq-error" data-err-for="pf_language"></div>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2Z"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Contact</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_email">Email</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">sonnguyen@myghs.com</span>
+              <input class="yq-input yq-prof__control" id="pf_email" name="email" type="email" value="sonnguyen@myghs.com">
+              <div class="yq-error" data-err-for="pf_email"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_mobile">Mobile Phone</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">6512332432</span>
+              <input class="yq-input yq-prof__control" id="pf_mobile" name="mobile" type="tel" value="6512332432">
+              <div class="yq-error" data-err-for="pf_mobile"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_homePhone">Home Phone</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_homePhone" name="homePhone" type="tel" value="">
+              <div class="yq-error" data-err-for="pf_homePhone"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_officePhone">Office Phone</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_officePhone" name="officePhone" type="tel" value="">
+              <div class="yq-error" data-err-for="pf_officePhone"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_fax">Fax Number</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_fax" name="fax" type="tel" value="">
+              <div class="yq-error" data-err-for="pf_fax"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_company">Company</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_company" name="company" type="text" value="">
+              <div class="yq-error" data-err-for="pf_company"></div>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Address</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_address1">Address 1</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">#123 50 Coronation Rd W, Singapore 269264</span>
+              <input class="yq-input yq-prof__control" id="pf_address1" name="address1" type="text" value="#123 50 Coronation Rd W, Singapore 269264">
+              <div class="yq-error" data-err-for="pf_address1"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_city">City</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_city" name="city" type="text" value="">
+              <div class="yq-error" data-err-for="pf_city"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_state">State</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_state" name="state" type="text" value="">
+              <div class="yq-error" data-err-for="pf_state"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_postal">Postal Code</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value is-empty">Not provided</span>
+              <input class="yq-input yq-prof__control" id="pf_postal" name="postal" type="text" value="">
+              <div class="yq-error" data-err-for="pf_postal"></div>
+            </dd>
+          </div>
+          <div class="yq-prof__row yq-prof__row--edit">
+            <dt class="yq-prof__label"><label for="pf_country">Country of residence</label></dt>
+            <dd class="yq-prof__field">
+              <span class="yq-prof__value">Singapore</span>
+              <input class="yq-input yq-prof__control" id="pf_country" name="country" type="text" value="Singapore">
+              <div class="yq-error" data-err-for="pf_country"></div>
+            </dd>
+          </div>
+        </dl>
+      </section>
+      </div>
+
+    </form>
   </div>
 </section>
 

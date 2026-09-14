@@ -28,7 +28,7 @@ python3 -m http.server 8000
 ├── cart.html             Giỏ hàng — line items, order summary, thanh free-shipping
 ├── checkout.html         Checkout 4 bước: Information → Shipping → Payment → Review
 ├── member/               Khu vực thành viên (xem mục "Trang trong thư mục con")
-│   ├── profile.html      Member Profile — thẻ tóm tắt + nhóm thông tin, sửa tại chỗ
+│   ├── profile.html      Member Profile — HTML tĩnh: thẻ tóm tắt + 4 nhóm thông tin, sửa tại chỗ
 │   ├── orders.html       My Orders — 2 tab Completed orders / Pending payment, ReOrder
 │   ├── password.html     Change Password — thanh sức mạnh + 4 điều kiện tự tick
 │   └── invite.html       Invite Friends — link mời, chia sẻ Facebook / LINE / email
@@ -135,7 +135,7 @@ nên cả hai hàm là no-op.
 | Tài khoản | Popup "Connect Via": 5 nút social, 2 tab Log in / Register Now, pane quên mật khẩu |
 | Member | Desktop: bấm avatar ở header mở **popup dropdown** (lời chào, email, Edit, My profile / My orders / My wallet / Change password / Invite friends, Logout; tô đậm mục đang xem). Mobile: panel "My Functions" trượt từ phải |
 | Đơn hàng | Trang My Orders 2 tab, thẻ đơn mở/đóng, ReOrder đẩy nguyên đơn vào giỏ |
-| Hồ sơ | Member Profile: thẻ tóm tắt dính, thanh % hoàn thiện, 4 nhóm thông tin, sửa tại chỗ |
+| Hồ sơ | Member Profile (HTML tĩnh): thẻ tóm tắt dính, thanh % hoàn thiện, 4 nhóm thông tin, sửa tại chỗ cùng markup |
 | Mật khẩu | Đổi mật khẩu có thanh sức mạnh 4 mức, checklist điều kiện, nút hiện/ẩn |
 | Mời bạn | Link mời riêng theo số thẻ, chia sẻ Facebook / LINE / email, danh sách đã mời |
 
@@ -240,31 +240,45 @@ YQ.orders = [
 
 ### Hồ sơ thành viên
 
-`member/profile.html` (controller `YQ.initProfile`) tách làm hai phần trong `data.js`:
+`member/profile.html` là **HTML tĩnh** — toàn bộ thẻ tóm tắt và 4 nhóm thông tin nằm
+sẵn trong file, backend đổ dữ liệu thẳng vào markup. JS (`YQ.initProfile` trong
+`pages.js`) **không dựng HTML**, chỉ bật/tắt chế độ sửa, kiểm tra ô nhập và chép giá
+trị vừa nhập ngược lại phần hiển thị sau khi Save.
 
-```js
-YQ.profileGroups = [                     // SƠ ĐỒ: nhóm nào, nhãn gì, sửa được không
-  { title:'Membership', icon:'star', fields:[
-    { key:'memberNo', label:'Membership No.', ro:true },        // ro = chỉ đọc
-    { key:'joinDate', label:'Join date', type:'date', ro:true }
-  ]},
-  { title:'Personal details', icon:'user', fields:[
-    { key:'title', label:'Title', type:'select', options:['Mr','Ms','Mrs','Dr'] }
-  ]}
-];
+Hai chế độ dùng cùng một markup, đổi bằng class `is-editing` trên `<form class="yq-prof">`:
 
-YQ.demoProfile = { memberNo:'000001991', firstName:'son', … };   // GIÁ TRỊ mẫu
+```html
+<!-- trường sửa được: giá trị hiển thị + ô nhập cùng giá trị + chỗ báo lỗi -->
+<div class="yq-prof__row yq-prof__row--edit">
+  <dt class="yq-prof__label"><label for="pf_email">Email</label></dt>
+  <dd class="yq-prof__field">
+    <span class="yq-prof__value">sonnguyen@myghs.com</span>
+    <input class="yq-input yq-prof__control" id="pf_email" name="email" type="email" value="sonnguyen@myghs.com">
+    <div class="yq-error" data-err-for="pf_email"></div>
+  </dd>
+</div>
+
+<!-- trường chỉ đọc: chỉ có giá trị + nhãn Locked (hiện khi đang sửa) -->
+<div class="yq-prof__row yq-prof__row--ro">
+  <dt class="yq-prof__label">Membership No.</dt>
+  <dd class="yq-prof__field"><span class="yq-prof__value">000001991</span><span class="yq-prof__lock">…Locked</span></dd>
+</div>
 ```
 
-- `type`: `text` (mặc định) | `email` | `tel` | `date` | `select`.
-- Thêm/bớt/đổi thứ tự trường chỉ cần sửa `YQ.profileGroups` — phần xem, phần sửa và
-  thanh **% hoàn thiện** đều tự tính lại theo sơ đồ.
-- Giá trị lưu ở `localStorage` (`yq_profile_v1`), lần đầu nạp từ `YQ.demoProfile`.
-- Trường `ro` không bao giờ thành ô nhập, chỉ hiện nhãn "Locked" khi đang sửa.
-- Vào thẳng chế độ sửa: `member/profile.html?edit=1` — nút **Edit** trong panel member
-  dùng đúng link này. Panel member giờ chỉ còn pane **My Wallet**; hồ sơ, đơn hàng,
-  mật khẩu và mời bạn đều là trang riêng để không phải sửa cùng một thứ ở hai nơi.
-- Lưu xong, nếu đang đăng nhập thì `YQ.auth` được đồng bộ tên + email theo hồ sơ.
+- Trống thì `value=""` và span mang `class="yq-prof__value is-empty"` với chữ "Not provided".
+- Ngày: `<input type="date" value="YYYY-MM-DD">`, span hiển thị `DD-Month-YYYY`.
+- `<select>` có `<option value="">Not provided</option>` đứng đầu; option đang chọn đánh `selected`.
+- `name` của ô nhập là key gửi lên server; form là `method="post" action="#"` — demo chặn
+  submit và chỉ cập nhật trên trang (không lưu localStorage), lưu thật là việc của backend.
+- Thẻ trái (`#profName`, `#profInitials`, `#profPct`, `#profBar`, `#profHint`) được JS tính
+  lại từ DOM sau khi Save; giá trị ban đầu backend tự điền.
+- Vào thẳng chế độ sửa: `member/profile.html?edit=1` — link **Edit** trong popup member
+  dùng đúng link này. Cancel trả về bản đã lưu gần nhất (`form.reset()`).
+- Lưu xong, nếu đang đăng nhập thì `YQ.auth` được đồng bộ tên + email để avatar/lời chào
+  ở header khớp.
+- `YQ.demoProfile` trong `data.js` **không** còn dùng cho trang này; nó chỉ nạp vào
+  `YQ.profile` (localStorage `yq_profile_v1`) cho `password.html` (email, ngày đổi mật
+  khẩu) và `invite.html` (memberNo → mã giới thiệu). Giá trị nên khớp với profile.html.
 
 ### Đổi mật khẩu
 

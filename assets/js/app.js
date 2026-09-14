@@ -199,6 +199,8 @@
 
   /* ======================================================================
      2b. Profile store (localStorage) — hồ sơ thành viên
+     Trang profile.html giờ là HTML tĩnh, KHÔNG đọc store này. Store chỉ còn
+     phục vụ password.html (email, ngày đổi mật khẩu) và invite.html (memberNo).
      ====================================================================== */
   var PKEY = 'yq_profile_v1';
 
@@ -231,27 +233,6 @@
 
     fullName: function () {
       return $.trim(this.get('firstName') + ' ' + this.get('lastName'));
-    },
-
-    /** Bao nhiêu % số trường đã điền — dùng cho thanh "profile complete". */
-    completeness: function () {
-      var all = [];
-      $.each(YQ.profileGroups || [], function (_, g) {
-        $.each(g.fields, function (_, f) { all.push(f.key); });
-      });
-      if (!all.length) return 100;
-      var self = this;
-      var done = all.filter(function (k) { return $.trim(self.get(k)) !== ''; }).length;
-      return Math.round(done / all.length * 100);
-    },
-    missing: function () {
-      var self = this, out = [];
-      $.each(YQ.profileGroups || [], function (_, g) {
-        $.each(g.fields, function (_, f) {
-          if (!f.ro && $.trim(self.get(f.key)) === '') out.push(f.label);
-        });
-      });
-      return out;
     }
   };
   YQ.profile.load();

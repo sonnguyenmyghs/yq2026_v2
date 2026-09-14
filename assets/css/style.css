@@ -1072,8 +1072,8 @@ img{ max-width: 100%; display: block; }
   padding: 13px 0; border-bottom: 1px solid var(--yq-line-soft);
 }
 .yq-prof__row:last-child{ border-bottom: 0; }
-.yq-prof__row.is-editing{ align-items: center; }
 .yq-prof__label{ font-size: 13.5px; color: var(--yq-body); font-weight: 400; }
+.yq-prof__label label{ margin: 0; font: inherit; color: inherit; cursor: pointer; }
 .yq-prof__field{ margin: 0; min-width: 0; }
 .yq-prof__value{ font-size: 14.5px; font-weight: 500; color: var(--yq-ink); word-break: break-word; }
 .yq-prof__value.is-empty{ color: var(--yq-muted); font-weight: 400; font-style: italic; }
@@ -1082,6 +1082,20 @@ img{ max-width: 100%; display: block; }
   font-size: 11px; color: var(--yq-muted); vertical-align: middle;
 }
 .yq-prof__control{ width: 100%; max-width: 420px; }
+
+/* --- Xem / Sửa: cùng một markup tĩnh, đổi bằng .is-editing trên .yq-prof ---
+   Mặc định (xem): ẩn ô nhập, nhãn Locked và cụm nút Save/Cancel.
+   .is-editing    : hàng --edit đổi giá trị -> ô nhập; hàng --ro hiện "Locked";
+                    cụm nút đổi Edit -> Save/Cancel. */
+.yq-prof__control,
+.yq-prof__lock,
+.yq-prof__actions--edit{ display: none; }
+.yq-prof.is-editing .yq-prof__row--edit{ align-items: center; }
+.yq-prof.is-editing .yq-prof__row--edit .yq-prof__value{ display: none; }
+.yq-prof.is-editing .yq-prof__row--edit .yq-prof__control{ display: block; }
+.yq-prof.is-editing .yq-prof__row--ro .yq-prof__lock{ display: inline-flex; }
+.yq-prof.is-editing .yq-prof__actions--view{ display: none; }
+.yq-prof.is-editing .yq-prof__actions--edit{ display: block; }
 
 @media (max-width: 991.98px){
   .yq-prof{ grid-template-columns: 1fr; }
