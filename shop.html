@@ -33,16 +33,18 @@
   <div class="yq-container">
 
     <div class="yq-panel mb-4" style="padding:20px 22px">
-      <div class="yq-filterbar" id="shopCats"></div>
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3" style="border-bottom:1px dashed var(--yq-line)">
-        <span class="yq-results-count" id="shopCount">13 products</span>
-        <select class="yq-select" id="shopSort" aria-label="Sort products">
-          <option value="featured">Featured</option>
-          <option value="new">Newest</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="name">Name: A–Z</option>
-        </select>
+      <div class="yq-filterbar">
+        <div class="yq-filterbar__chips" id="shopCats"></div>
+        <div class="yq-filterbar__tools">
+          <span class="yq-results-count" id="shopCount">13 products</span>
+          <select class="yq-select" id="shopSort" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="new">Newest</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name">Name: A–Z</option>
+          </select>
+        </div>
       </div>
       <div class="yq-seasonal">
         <span class="yq-seasonal__label">Seasonal:</span>

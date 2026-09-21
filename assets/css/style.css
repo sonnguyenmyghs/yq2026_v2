@@ -405,11 +405,19 @@ img{ max-width: 100%; display: block; }
 .yq-chip--gold.is-active{ background: var(--yq-gold); border-color: var(--yq-gold); color: var(--yq-ink); }
 .yq-chip__count{ font-size: 11px; opacity: .6; }
 
+/* Hàng 1: chips bên trái, số kết quả + sort bên phải (rớt xuống hàng riêng khi hẹp) */
 .yq-filterbar{
-  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-  padding-bottom: 14px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px;
+  padding-bottom: 16px;
 }
-.yq-filterbar__spacer{ flex: 1 1 auto; }
+.yq-filterbar__chips{
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  flex: 1 1 auto; min-width: 0;
+}
+.yq-filterbar__tools{
+  display: flex; align-items: center; gap: 14px;
+  flex: none; margin-left: auto;
+}
 .yq-seasonal{
   display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
   padding-top: 14px; border-top: 1px dashed var(--yq-line);
@@ -426,7 +434,7 @@ img{ max-width: 100%; display: block; }
 }
 .yq-select:focus{ outline: none; border-color: var(--yq-gold); }
 
-.yq-results-count{ font-size: 13px; color: var(--yq-muted); }
+.yq-results-count{ font-size: 13px; color: var(--yq-muted); white-space: nowrap; }
 
 /* ---------- 10. Product detail ---------- */
 .yq-pdp__gallery{ position: sticky; top: calc(var(--yq-header-h) + 24px); }
@@ -769,17 +777,19 @@ img{ max-width: 100%; display: block; }
 
 /* ---------- 20. Filter chips: cuộn ngang trên mobile (tiết kiệm chiều cao) ---------- */
 @media (max-width: 767.98px){
-  .yq-filterbar,
+  .yq-filterbar__chips,
   .yq-seasonal > .d-flex{
     flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
     margin-inline: -2px; padding-inline: 2px 18px;
     scrollbar-width: none;
   }
-  .yq-filterbar::-webkit-scrollbar,
+  .yq-filterbar__chips::-webkit-scrollbar,
   .yq-seasonal > .d-flex::-webkit-scrollbar{ display: none; }
   .yq-filterbar .yq-chip,
   .yq-seasonal .yq-chip{ scroll-snap-align: start; flex: 0 0 auto; }
+  .yq-filterbar__chips{ flex-basis: 100%; }
+  .yq-filterbar__tools{ width: 100%; justify-content: space-between; }
   .yq-seasonal{ align-items: flex-start; flex-direction: column; gap: 10px; }
   .yq-seasonal > .d-flex{ width: 100%; }
 }
