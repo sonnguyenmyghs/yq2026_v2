@@ -16,6 +16,11 @@
   YQ.money0 = function (n) {
     return C.currencySymbol + Math.round(Number(n || 0)).toLocaleString('en-US');
   };
+  /* % giảm so với giá gốc (compareAt); trả 0 nếu không giảm */
+  YQ.discount = function (price, compareAt) {
+    price = Number(price || 0); compareAt = Number(compareAt || 0);
+    return compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
+  };
   YQ.param = function (key) {
     var m = new RegExp('[?&]' + key + '=([^&#]*)').exec(window.location.search);
     return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : null;

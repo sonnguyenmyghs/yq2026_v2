@@ -160,6 +160,17 @@ Lần đầu vào site giỏ được nạp sẵn dữ liệu mẫu từ `YQ.dem
 
 **Sản phẩm** — sửa mảng `YQ.products` trong `assets/js/data.js`.
 
+Nhãn trên ảnh sản phẩm (`YQ.labelsHtml` trong `pages.js`, dùng cho card + ảnh chính PDP):
+- `badge`: `'Bestseller' | 'New' | 'Seasonal'` — ribbon góc trên-trái (đen / vàng / trắng).
+- `promo`: nhãn khuyến mãi, ví dụ `'Limited Time Offer'` — ribbon chuyển sang màu crimson,
+  hiện cùng `badge` dạng `Limited Time Offer | New`.
+- `compareAt`: giá gốc trước giảm (ở sản phẩm = giá "From", ở từng `option` = giá option).
+  Có `compareAt` > `price` thì tự hiện tag `% Off` góc trên-phải, giá gạch ngang và chip
+  "Save x%" ở PDP — % tính bằng `YQ.discount(price, compareAt)`.
+
+`index.html` / `celebrations.html` là markup tĩnh nên khi đổi nhãn/giá trong `data.js`
+nhớ sửa tay các card tương ứng ở đó.
+
 ### Giỏ hàng mẫu
 
 `cart.html` và `checkout.html` render từ `localStorage`, nên máy chưa từng thêm sản phẩm

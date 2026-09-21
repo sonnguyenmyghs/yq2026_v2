@@ -9,17 +9,41 @@
   /* ======================================================================
      1. Components
      ====================================================================== */
+  /** Nhãn trên ảnh sản phẩm: ribbon góc trên-trái (promo | badge) + tag % giảm góc trên-phải.
+      Dùng chung cho card và ảnh chính trang chi tiết. */
+  YQ.labelsHtml = function (p) {
+    var tags = [];
+    if (p.promo) tags.push(p.promo);
+    if (p.badge) tags.push(p.badge);
+
+    var ribbon = '';
+    if (tags.length) {
+      var mod = p.promo ? ' yq-ribbon--promo'
+              : p.badge === 'New' ? ' yq-ribbon--gold'
+              : p.badge === 'Seasonal' ? ' yq-ribbon--light' : '';
+      ribbon = '<span class="yq-ribbon' + mod + '">' +
+                 tags.map(function (t) { return '<span>' + YQ.escape(t) + '</span>'; }).join('') +
+               '</span>';
+    }
+
+    var pct = YQ.discount(p.price, p.compareAt);
+    var off = pct ? '<span class="yq-off"><b>' + pct + '%</b>Off</span>' : '';
+    return ribbon + off;
+  };
+
+  /** Giá + giá gốc gạch ngang (nếu có giảm). */
+  YQ.priceHtml = function (price, compareAt) {
+    return YQ.money0(price) + (YQ.discount(price, compareAt) ? '<s>' + YQ.money0(compareAt) + '</s>' : '');
+  };
+
   YQ.productCard = function (p, opts) {
     opts = opts || {};
-    var badge = p.badge
-      ? '<span class="yq-badge ' + (p.badge === 'New' ? 'yq-badge--gold' : (p.badge === 'Seasonal' ? 'yq-badge--light' : '')) + '">' + p.badge + '</span>'
-      : '';
     var meta = p.meta ? '<span class="yq-card__cat">' + YQ.icon('gift', 13) + ' ' + p.meta + '</span>' : '';
 
     return '' +
       '<article class="yq-card yq-reveal">' +
         '<div class="yq-card__mediawrap">' +
-          badge +
+          YQ.labelsHtml(p) +
           '<a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=' + p.id + '" aria-label="' + YQ.escape(p.name) + '">' +
             YQ.mediaInner(p) +
           '</a>' +
@@ -32,7 +56,7 @@
           '<h3 class="yq-card__title"><a href="product.html?id=' + p.id + '">' + YQ.escape(p.name) + '</a></h3>' +
           '<p class="yq-card__desc">' + YQ.escape(p.short || p.desc) + '</p>' +
           '<div class="yq-card__foot">' +
-            '<span class="yq-card__price"><small>From</small>' + YQ.money0(p.price) + '</span>' +
+            '<span class="yq-card__price"><small>From</small>' + YQ.priceHtml(p.price, p.compareAt) + '</span>' +
             '<a class="yq-link-arrow" href="product.html?id=' + p.id + '">View ' + YQ.icon('arrow', 14) + '</a>' +
           '</div>' +
         '</div>' +
@@ -202,6 +226,7 @@
       while (shots.length < 4) shots.push({ tone: [3, 6, 8][shots.length % 3], name: p.name });
     }
     $('#pdpMain').html(YQ.mediaInner(p, { eager: true }));
+    $('#pdpLabels').html(YQ.labelsHtml(p));   // nằm ngoài .yq-media để ribbon không bị clip
     $('#pdpThumbs').html(shots.map(function (sh, i) {
       return '<button class="yq-pdp__thumb' + (i === 0 ? ' is-active' : '') + '" type="button" data-shot="' + i + '">' +
                '<span class="yq-media">' + YQ.mediaInner(sh) + '</span></button>';
@@ -217,7 +242,11 @@
     }).join(''));
 
     function paint() {
-      $('#pdpPrice').html(YQ.money0(sel.price) + '<small>per ' + (sel.label.split(' (')[0]) + '</small>');
+      var pct = YQ.discount(sel.price, sel.compareAt);
+      $('#pdpPrice').html(
+        YQ.priceHtml(sel.price, sel.compareAt) +
+        (pct ? '<em class="yq-pdp__save">Save ' + pct + '%</em>' : '') +
+        '<small>per ' + (sel.label.split(' (')[0]) + '</small>');
       $('#pdpAddLabel').text('Add to cart — ' + YQ.money0(sel.price * qty));
     }
     paint();

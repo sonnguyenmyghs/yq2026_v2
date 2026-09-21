@@ -179,6 +179,10 @@ YQ.seasons = [
 ];
 
 /* ---------- Products ---------- */
+/* badge: 'Bestseller' | 'New' | 'Seasonal' — nhãn thường.
+   promo: nhãn khuyến mãi ('Limited Time Offer', 'Early Bird'…) — hiện cùng badge trên ribbon.
+   compareAt: giá gốc trước giảm (ở sản phẩm = giá "From", ở option = giá option);
+   % giảm tự tính bằng YQ.discount(price, compareAt). */
 YQ.products = [
   {
     id: 'signature-chocolate-cake', img:'assets/img/p-chocolate-cake.jpg', name: 'Signature Chocolate Cake',
@@ -231,21 +235,21 @@ YQ.products = [
   },
   {
     id: 'the-pantry-hamper', img:'assets/img/p-pantry-hamper.jpg', name: 'The Pantry Hamper',
-    cat: 'celebration', catLabel: 'Hampers', tone: 6, badge: 'New',
-    price: 168, seasons: ['festive'], featured: true, rank: 5, meta: '8 items',
+    cat: 'celebration', catLabel: 'Hampers', tone: 6, badge: 'New', promo: 'Limited Time Offer',
+    price: 168, compareAt: 210, seasons: ['festive'], featured: true, rank: 5, meta: '8 items',
     desc: 'A collection of gourmet pantry essentials—artisan honey, olive oil, preserves, and hand-baked crackers from our kitchens.',
     short: 'A collection of gourmet pantry essentials—artisan honey, preserves, and crackers.',
     optionLabel: 'Presentation',
-    options: [{ id: 'std', label: 'Signature basket', price: 168 }]
+    options: [{ id: 'std', label: 'Signature basket', price: 168, compareAt: 210 }]
   },
   {
     id: 'cellar-selection-trio', img:'assets/img/p-cellar-trio.jpg', name: 'Cellar Selection Trio',
-    cat: 'beverages', catLabel: 'Wine & Champagne', tone: 5, badge: 'New',
-    price: 288, seasons: ['festive','nye'], featured: true, rank: 6, meta: '3 bottles',
+    cat: 'beverages', catLabel: 'Wine & Champagne', tone: 5, badge: 'New', promo: 'Limited Time Offer',
+    price: 288, compareAt: 480, seasons: ['festive','nye'], featured: true, rank: 6, meta: '3 bottles',
     desc: 'Three bottles of our finest wines—one red, one white, one sparkling—selected by our head sommelier and presented in a wooden case.',
     short: 'Three bottles of our finest wines—one red, one white, one sparkling.',
     optionLabel: 'Case',
-    options: [{ id: 'trio', label: 'Wooden gift case', price: 288 }]
+    options: [{ id: 'trio', label: 'Wooden gift case', price: 288, compareAt: 480 }]
   },
   {
     id: 'artisan-cookie-box', img:'assets/img/p-cookies.jpg', name: 'Artisan Cookie Box',
@@ -310,14 +314,14 @@ YQ.products = [
   },
   {
     id: 'festive-yule-log', img:'assets/img/p-yule-log.jpg', name: 'Festive Yule Log',
-    cat: 'cakes', catLabel: 'Cakes & Pastries', tone: 1, badge: 'Seasonal',
-    price: 88, seasons: ['festive','nye'], rank: 12,
+    cat: 'cakes', catLabel: 'Cakes & Pastries', tone: 1, badge: 'Seasonal', promo: 'Early Bird',
+    price: 88, compareAt: 98, seasons: ['festive','nye'], rank: 12,
     desc: 'A chestnut and dark chocolate bûche finished with meringue mushrooms and a dusting of snow sugar.',
     short: 'A chestnut and dark chocolate bûche, finished with meringue and snow sugar.',
     optionLabel: 'Size',
     options: [
-      { id: 'reg', label: 'Serves 6', price: 88 },
-      { id: 'lg',  label: 'Serves 12', price: 138 }
+      { id: 'reg', label: 'Serves 6', price: 88, compareAt: 98 },
+      { id: 'lg',  label: 'Serves 12', price: 138, compareAt: 153 }
     ]
   },
   {

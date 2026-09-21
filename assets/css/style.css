@@ -327,7 +327,7 @@ img{ max-width: 100%; display: block; }
 /* ---------- 8. Cards ---------- */
 .yq-card{
   background: var(--yq-paper); border: 1px solid var(--yq-line-soft);
-  border-radius: var(--yq-radius); overflow: hidden; height: 100%;
+  border-radius: var(--yq-radius); height: 100%;   /* không overflow:hidden — ribbon cần thò ra ngoài mép trái */
   display: flex; flex-direction: column;
   transition: transform .35s var(--yq-ease), box-shadow .35s var(--yq-ease), border-color .35s var(--yq-ease);
 }
@@ -343,6 +343,7 @@ img{ max-width: 100%; display: block; }
 .yq-card__foot{ margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .yq-card__price{ font-family: var(--yq-serif); font-size: 1rem; color: var(--yq-ink); }
 .yq-card__price small{ font-family: var(--yq-sans); font-size: 11.5px; color: var(--yq-muted); margin-right: 4px; }
+.yq-card__price s{ font-family: var(--yq-sans); font-size: 12px; color: var(--yq-muted); margin-left: 7px; }
 
 .yq-badge{
   position: absolute; top: 12px; left: 12px; z-index: 2;
@@ -357,6 +358,61 @@ img{ max-width: 100%; display: block; }
   display: inline-flex; align-items: center; gap: 5px;
 }
 .yq-badge--rate svg{ color: var(--yq-gold-dark); }
+
+/* Ribbon nhãn (góc trên-trái): "promo | badge". Thò ra ngoài mép trái ảnh 8px, phần thò
+   ra có nếp gấp (::after) bên dưới như đang quấn ra sau ảnh; đuôi bên phải vát chữ V.
+   Nền vẽ bằng ::before để clip-path không cắt mất nếp gấp. Cần .yq-card không overflow:hidden.
+   Chỉ cần set --rb (màu ribbon) — nếp gấp tự tối đi bằng filter brightness. */
+.yq-ribbon{
+  --rb: var(--yq-ink); --rb-ink: #fff; --rb-over: 8px;
+  position: absolute; top: 14px; left: calc(-1 * var(--rb-over)); z-index: 2;
+  display: inline-flex; align-items: center;
+  height: 26px; padding: 0 18px 0 calc(var(--rb-over) + 12px);
+  color: var(--rb-ink); font-size: 10.5px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; line-height: 1; white-space: nowrap;
+}
+.yq-ribbon::before{
+  content: ""; position: absolute; inset: 0; z-index: -1; background: var(--rb);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 50%, 100% 100%, 0 100%);
+}
+.yq-ribbon::after{
+  content: ""; position: absolute; left: 0; top: 100%; width: 0; height: 0;
+  border-style: solid; border-width: 0 var(--rb-over) 6px 0;
+  border-color: transparent var(--rb) transparent transparent;
+  filter: brightness(75%);
+}
+.yq-ribbon > span + span::before{
+  content: ""; display: inline-block; width: 1px; height: 10px; margin: 0 9px;
+  vertical-align: -1px; background: currentColor; opacity: .45;
+}
+.yq-ribbon--gold{  --rb: var(--yq-gold);  --rb-ink: var(--yq-ink); }
+.yq-ribbon--light{ --rb: #fff;             --rb-ink: var(--yq-ink); }
+.yq-ribbon--promo{ --rb: var(--yq-brand); }
+
+/* Tag % giảm (góc trên-phải): bookmark treo từ mép trên, khấc chữ V ở đáy */
+.yq-off{
+  position: absolute; top: 0; right: 14px; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 46px; padding: 10px 7px 15px;
+  background: var(--yq-brand-dark); color: #fff;
+  font-size: 9.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%);
+}
+.yq-off b{ font-family: var(--yq-serif); font-size: 16px; font-weight: 600; letter-spacing: 0; margin-bottom: 4px; }
+
+/* Card hẹp (4 cột ở ~992px, 2 cột trên mobile): ribbon xuống góc dưới-trái để không
+   đè lên tag % giảm; hẹp nữa thì chỉ giữ nhãn đầu (promo) và thu nhỏ chữ. */
+.yq-card{ container-type: inline-size; }
+@container (max-width: 279px){
+  .yq-ribbon{ top: auto; bottom: 12px; }
+}
+@container (max-width: 199px){
+  .yq-ribbon{ height: 22px; font-size: 9px; padding: 0 14px 0 calc(var(--rb-over) + 9px); }
+  .yq-ribbon > span + span{ display: none; }
+  .yq-off{ right: 10px; min-width: 40px; padding: 8px 6px 13px; }
+  .yq-off b{ font-size: 14px; }
+  .yq-card__price s{ display: block; margin: 2px 0 0; }   /* giá gốc xuống dòng riêng, không đẩy link View tràn ra ngoài */
+}
 
 .yq-quickadd{
   position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2;
@@ -438,6 +494,7 @@ img{ max-width: 100%; display: block; }
 
 /* ---------- 10. Product detail ---------- */
 .yq-pdp__gallery{ position: sticky; top: calc(var(--yq-header-h) + 24px); }
+.yq-pdp__mainwrap{ position: relative; }   /* chứa nhãn (ribbon/% off) đặt ngoài .yq-media */
 .yq-pdp__main{ border-radius: var(--yq-radius); aspect-ratio: 1/1; }
 .yq-pdp__thumbs{ display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 10px; }
 .yq-pdp__thumb{
@@ -451,6 +508,12 @@ img{ max-width: 100%; display: block; }
 .yq-pdp h1{ font-size: clamp(1.9rem, 3.6vw, 2.9rem); margin-bottom: 14px; }
 .yq-pdp__price{ font-family: var(--yq-serif); font-size: 1.9rem; color: var(--yq-ink); }
 .yq-pdp__price small{ font-family: var(--yq-sans); font-size: 13px; color: var(--yq-muted); margin-left: 8px; }
+.yq-pdp__price s{ font-size: 1.15rem; color: var(--yq-muted); margin-left: 10px; }
+.yq-pdp__save{
+  display: inline-block; vertical-align: middle; margin-left: 12px; padding: 5px 10px;
+  border-radius: var(--yq-radius-pill); background: var(--yq-brand); color: #fff;
+  font: 600 10.5px/1 var(--yq-sans); letter-spacing: .1em; text-transform: uppercase; font-style: normal;
+}
 .yq-field-label{ font-size: 12.5px; font-weight: 600; color: var(--yq-ink); margin-bottom: 10px; display: block; }
 
 .yq-option{
@@ -750,8 +813,11 @@ img{ max-width: 100%; display: block; }
 }
 
 /* ---------- 18. Patches / helpers ---------- */
-.yq-card__mediawrap{ position: relative; overflow: hidden; }
-.yq-card__mediawrap .yq-card__media{ display: block; }
+.yq-card__mediawrap{
+  position: relative;
+  border-radius: calc(var(--yq-radius) - 1px) calc(var(--yq-radius) - 1px) 0 0;
+}
+.yq-card__mediawrap .yq-card__media{ display: block; border-radius: inherit; }  /* .yq-media tự overflow:hidden -> clip ảnh + zoom */
 .min-width-0{ min-width: 0; }
 
 /* Hero: bỏ watermark GH trên ảnh nền lớn */
@@ -800,6 +866,7 @@ img{ max-width: 100%; display: block; }
    ========================================================================== */
 :root{
   --yq-brand:      #C10B44;   /* crimson của Grand Hyatt */
+  --yq-brand-dark: #8E0A34;   /* crimson đậm: tag % giảm */
   --yq-brand-sub:  #58575B;   /* xám của chữ SINGAPORE */
 }
 
