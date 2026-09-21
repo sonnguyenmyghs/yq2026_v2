@@ -443,6 +443,9 @@ a.yq-mega__col-title:hover{ color: var(--yq-ink); border-bottom-color: var(--yq-
 .yq-nav__link:focus-visible{ outline-offset: -6px; }
 .yq-season__card:focus-visible,
 .yq-mega__promo:focus-visible{ outline-offset: 3px; }
+/* Ô nhập tìm kiếm: focus đã được thể hiện bằng gạch chân đổi sang vàng
+   (.yq-search__field:focus-within), không cần khung outline bo góc nữa */
+.yq-header .yq-search__input:focus-visible{ outline: none; border-radius: 0; }
 
 /* ==========================================================================
    9. Offcanvas (mobile)
