@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout — Grand Hyatt Singapore</title>
+<meta name="description" content="Single-page checkout: your details, self-collection or delivery with map picker, and order summary.">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Thư viện giống production (select_payment_food.html) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.0/build/css/intlTelInput.css">
+<!-- [DEMO] Leaflet thay cho Google Maps; production: bỏ 2 dòng leaflet, mở dòng maps.googleapis ở cuối trang -->
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" rel="stylesheet">
+<link href="assets/css/style.css" rel="stylesheet">
+<link href="assets/css/parts/nav.css" rel="stylesheet">
+<link href="assets/css/parts/banner.css" rel="stylesheet">
+<link href="assets/css/parts/buynow.css" rel="stylesheet">
+<link href="assets/css/parts/cart-anim.css" rel="stylesheet">
+<link href="assets/css/parts/account.css" rel="stylesheet">
+<link href="assets/css/parts/checkout-v2.css" rel="stylesheet">
+</head>
+<body>
+<!-- appv6 đọc base URL cho AJAX từ #root[data-base] -->
+<span id="root" data-base="" hidden></span>
+
+<div id="yq-header"></div>
+
+<!-- Banner ảnh full-width (đổi ảnh tại đây) -->
+<section class="cv2-hero">
+  <img src="assets/img/editorial-cake.jpg" alt="" loading="eager" decoding="async">
+  <div class="cv2-hero__cap">
+    <div class="yq-container">
+      <div class="yq-eyebrow">Secure checkout</div>
+      <h1 class="cv2-hero__title">Almost there</h1>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     Markup bám theo template production select_payment_food.html:
+     giữ nguyên id / class / name của input + hidden input để appv6_dev_demo.js
+     và control__telinputv25.js chạy được không cần sửa. Chỗ production in
+     giá trị từ server ({$...}) thì demo để trống, JS [DEMO] điền từ YQ.cart.
+     ===================================================================== -->
+<form method="post" action="" class="inform--frm">
+  <section class="sec--payment">
+    <div class="yq-container" id="cv2Top">
+
+      <a class="yq-back" href="cart.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+        Back to cart
+      </a>
+
+      <div class="row g-4">
+        <!-- ============ Cột trái ============ -->
+        <div class="col-lg-7" id="cv2Main">
+
+          <!-- 1. Enter Information -->
+          <div class="pay--part in--member">
+            <div class="container">
+              <h3>1. Enter Information</h3>
+
+              <!-- Khách chưa đăng nhập -->
+              <div class="nonmember--form">
+                <div class="form-group">
+                  <input id="inputRegister" type="email" name="register[email]" class="form-control mr--notes full-width input__guest__email" placeholder="Your email address" value="" autocomplete="email">
+                </div>
+                <div class="form-group">
+                  <input type="email" name="register[email_confirm]" class="form-control mr--notes full-width input__guest__reemail" placeholder="Re-confirm email" value="" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <div class="row">
+                    <span class="col-6"><input name="register[firstname]" type="text" class="form-control mr--notes full-width input__guest__firstname" value="" placeholder="First Name" autocomplete="given-name"></span>
+                    <span class="col-6"><input name="register[lastname]" type="text" class="form-control mr--notes full-width input__guest__lastname" value="" placeholder="Last Name" autocomplete="family-name"></span>
+                  </div>
+                </div>
+                <div class="form-group mb-0">
+                  <div class="row">
+                    <div class="col-12 col-md-6">
+                      <select id="country" name="register[country]" class="ubox_input biger_input full-width form-control mb-3">
+                        <!-- production: {$option_list_country} -->
+                        <option value="SG" selected>Singapore</option>
+                        <option value="MY">Malaysia</option>
+                        <option value="ID">Indonesia</option>
+                        <option value="TH">Thailand</option>
+                        <option value="AU">Australia</option>
+                        <option value="JP">Japan</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="US">United States</option>
+                        <option value="OT">Other</option>
+                      </select>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <input type="text" name="register[birthday]" class="ubox_input biger_input full-width form-control mb-3 datepicker" placeholder="Birthday" value="">
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group mb-3">
+                  <div class="row">
+                    <div class="col-12">
+                      <input type="text" placeholder="Phone number" value="" class="form-control mr--notes full-width input__guest__phone mb-3" id="phone_register">
+                      <i class="phone--tip"><span id="result_register"></span></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Khách đã đăng nhập (production bật bằng {$__htmllogined}; demo ẩn, giữ vì control__telinput cần #phone_member) -->
+              <div class="memberinfo--form">
+                <div class="form-group">
+                  <input type="email" name="member[email]" class="form-control full-width input__member__email" placeholder="Your email address" value="" disabled="disabled">
+                </div>
+                <div class="form-group">
+                  <div class="row">
+                    <span class="col-6"><input name="member[firstname]" type="text" class="form-control mr--notes full-width input__member__firstname" value="" placeholder="First Name"></span>
+                    <span class="col-6"><input name="member[lastname]" type="text" class="form-control mr--notes full-width input__member__lastname" value="" placeholder="Last Name"></span>
+                  </div>
+                </div>
+                <div class="form-group mb-0">
+                  <div class="row">
+                    <div class="col-12 col-md-6">
+                      <select name="member[country]" class="ubox_input biger_input full-width form-control mb-3"><option value="">Country</option></select>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <input type="text" placeholder="Phone number" value="" class="form-control mr--notes full-width input__member__phone mb-3" id="phone_member">
+                      <i class="phone--tip"><span id="result_member"></span></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group mb-2 mt-1">
+                <div class="row">
+                  <div class="col-12">
+                    <input name="redeem_detail[receive_delivery_notes_prefix_2]" type="text" class="form-control mr--notes full-width input__woh" value="" placeholder="Your World of Hyatt membership number" inputmode="numeric">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group mb-0">
+                <div class="checkbox--animated agree--zone">
+                  <input class="checkbox" name="agree" type="checkbox" id="becomeamember">
+                  <label for="becomeamember" class="marl--md">
+                    <span></span>
+                    <div>I accept the <a class="m-0" href="#" target="_blank">terms and conditions</a> and I have read the <a class="m-0" href="#" target="_blank">privacy policy</a>.</div>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group mb-0">
+                <div class="checkbox--animated agree--zone">
+                  <input class="checkbox" name="register[subscribed]" type="checkbox" id="forsubscribed">
+                  <label for="forsubscribed" class="marl--md">
+                    <span></span>
+                    <div>Subscribe to Grand Hyatt Singapore and discover exclusive updates and curated offers</div>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row">
+                  <span class="col-12">
+                    <div class="input-group">
+                      <input type="input" name="promotion_code_yq" id="input-promo-code" placeholder="Enter Promo Code" class="form-control mr--notes full-width" value="" autocomplete="off" autocapitalize="characters">
+                      <div class="input-group-append">
+                        <button id="btn-check-promocode" class="btn btn-primary btn-black" type="button">Apply</button>
+                      </div>
+                    </div>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group mb-0">
+                <div class="row">
+                  <span class="col-12"><span id="warning-promo"></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Shipping Information -->
+          <div class="pay--part">
+            <div class="container">
+              <h3>2. Shipping Information</h3>
+              <p class="in--receivings--hint">How would you like to receive your order?</p>
+
+              <!-- Chọn hình thức: appv6 gắn .active vào .in--receivings (thu gọn) + label được chọn -->
+              <div class="pay--part--head d-flex in--method--receiving">
+                <div class="in--receivings">
+                  <label for="in__pickup" class="in-receiving" data-recei="1">
+                    <input type="radio" name="redeem_detail[receive_type]" value="pick up" id="in__pickup">
+                    <span class="in-receiving__icon" data-cv2-icon="store"></span>
+                    <span>Self-Collection</span>
+                    <small>Free · Lobby Level</small>
+                  </label>
+                  <label for="in__delivery" class="in-receiving d-none" data-recei="2">
+                    <input type="radio" name="redeem_detail[receive_type]" value="delivery" id="in__delivery">
+                    <span class="in-receiving__icon" data-cv2-icon="scooter"></span>
+                    <span>Hotel Van</span>
+                  </label>
+                  <label for="in__delivery__lalamove" class="in-receiving" data-recei="3">
+                    <input type="radio" name="redeem_detail[receive_type]" value="delivery" id="in__delivery__lalamove">
+                    <span class="in-receiving__icon" data-cv2-icon="scooter"></span>
+                    <span>Delivery</span>
+                    <small>Islandwide · Lalamove</small>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Self-Collection -->
+              <section class="in--pickup in--type--recei">
+                <div class="container">
+                  <div class="row form-group">
+                    <div class="col-lg-6 col-6">
+                      <input type="text" class="mr--notes form-control pickup__picker__date__second" placeholder="Date" name="redeem_detail[receive_date_pickup]" readonly>
+                      <div class="append__pickup__picker__date"></div>
+                    </div>
+                    <div class="col-lg-6 col-6 pickup__time__zone">
+                      <!-- appv6 thay bằng <select class="pickup__picker__hour__second"> khi __useTimeSlotByHourForPickup -->
+                      <input type="text" class="mr--notes pickup__picker__hour__second form-control" placeholder="Time" name="redeem_detail[receive_hour_pickup]">
+                      <div class="append__pickup__picker__hour"></div>
+                    </div>
+                  </div>
+
+                  <div class="pickup--location pickup--location__pickup__lobby">
+                    <label class="m-0" for="pickup__lobby"><span>Pickup at <b>The Shop, Lobby Level</b> Self-Collection</span></label>
+                    <input type="radio" name="redeem_detail[receive_delivery_notes_prefix]" class="pickup--location--radio" value="Pickup at The Shop, Lobby Level Self-Collection" id="pickup__lobby" checked>
+                  </div>
+                  <div class="pickup--location pickup--location__pickup__level2">
+                    <label class="m-0" for="pickup__level2"><span>Pickup at <b>Grand Salon, Level 2</b> Self-Collection</span></label>
+                    <input type="radio" name="redeem_detail[receive_delivery_notes_prefix]" class="pickup--location--radio" value="Pickup at Grand Salon, Level 2 Self-Collection" id="pickup__level2">
+                  </div>
+                  <div class="pickup--location pickup--location__pickup__drivethrough">
+                    <label class="m-0" for="pickup__drivethrough"><span><b>Drive-Through</b> Collection, Hotel Driveway</span></label>
+                    <input type="radio" name="redeem_detail[receive_delivery_notes_prefix]" class="pickup--location--radio" value="Drive-Through Collection, Hotel Driveway" id="pickup__drivethrough">
+                  </div>
+
+                  <div class="form-group mt-2 car--plate--section">
+                    <label for="" class="m-0">Car Plate Number</label>
+                    <p class="car--plate--tip"><i>Upon arrival, call 6416 7117 and provide your order number</i></p>
+                    <input type="text" class="mr--notes form-control input--car--plate--number" placeholder="Car plate number" name="">
+                  </div>
+                </div>
+              </section>
+
+              <!-- Hotel Van (production giữ, mặc định ẩn) -->
+              <section class="in--location in--deliverry in--type--recei">
+                <div class="container">
+                  <div class="in--location--room form-group">
+                    <label for="">Unit number</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend"><span class="input-group-text">#</span></div>
+                      <input type="text" id="deli__unitnumber" class="form-control" placeholder="Unit number" name="redeem_detail[receive_delivery_unitnumber]">
+                    </div>
+                  </div>
+                  <div class="delivery__status">Sorry we do not delivery to your location</div>
+                </div>
+              </section>
+
+              <!-- Delivery (Lalamove) -->
+              <section class="in--location in--delivery--lalamove in--type--recei">
+                <div class="container">
+                  <p class="text-warning mb-0">
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <span>For delivery by lalamove, we allow delivery orders 30 days in advance.</span>
+                  </p>
+                  <p class="text-warning">
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <span>Minimum order of $300 and above to enjoy complimentary delivery.</span>
+                  </p>
+                  <h5 class="in--sec--title">Delivery to</h5>
+                  <div class="row getlocation--label d-none">
+                    <div class="in--location--name col open__slide__page" data-spage="mylocation"><span>Get your address</span></div>
+                    <div class="in--location--edit col-3 open__slide__page" data-spage="mylocation">Enter</div>
+                  </div>
+                  <div class="input-group form-group">
+                    <input type="text" class="form-control" placeholder="Get your address" aria-label="Get your address" id="output_address_show" readonly>
+                    <div class="input-group-append">
+                      <button class="btn btn-primary btn-black open__slide__page btn__call__map" data-spage="mylocation" type="button" aria-label="Pick on map"><span class="ti-map-alt" data-cv2-icon="map"></span></button>
+                    </div>
+                  </div>
+
+                  <div class="row form-group lalamove__datetime__zone">
+                    <div class="col-lg-6 col-6">
+                      <input type="text" class="mr--notes form-control delilalamove__picker__date" placeholder="Date" name="redeem_detail[receive_date]" readonly>
+                      <div class="append__delilalamove__picker__date"></div>
+                    </div>
+                    <div class="col-lg-6 col-6 lalamove__time__zone">
+                      <!-- appv6 thay bằng <select class="delilalamove__picker__hour"> khi __useTimeSlotLalamove -->
+                      <input type="text" class="mr--notes form-control delilalamove__picker__hour" placeholder="Time" name="redeem_detail[receive_hour]">
+                      <div class="append__delilalamove__picker__hour"></div>
+                    </div>
+                  </div>
+                  <div class="delivery__status">Sorry we do not delivery to your location</div>
+
+                  <!-- appv6 append .delivery__type (CAR / MINIVAN) vào đây sau khi có báo giá -->
+                  <div class="delivery__types mb-3"></div>
+
+                  <div class="in--location--room form-group">
+                    <label for="lalamove__unitnumber">Unit number (*)</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend"><span class="input-group-text">#</span></div>
+                      <input type="text" id="lalamove__unitnumber" class="form-control" placeholder="Unit number" name="redeem_detail[receive_delivery_unitnumber]">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="">Postal code (*)</label>
+                    <input type="text" class="mr--notes form-control postalcode__input" placeholder="Postal code" name="redeem_detail[extra][postalcode]" inputmode="numeric" maxlength="6">
+                  </div>
+                </div>
+              </section>
+
+              <div class="form-group mx-3 notes--zone">
+                <label for="">Notes</label>
+                <input type="text" class="mr--notes form-control" placeholder="Notes" name="redeem_detail[receive_delivery_notes]">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Cột phải: Order Summary ============ -->
+        <div class="col-lg-5" id="cv2Aside">
+          <div class="pay--part yq-sticky">
+            <div class="container">
+              <h3>Order Summary</h3>
+              <div class="summary__list">
+                <!-- production: {$_htmlListCartCheckOut} — <p>Tên <strong>X 1</strong></p> ; demo: JS điền từ YQ.cart -->
+                <div class="summary__list--items"></div>
+
+                <div class="inform--money">
+                  <div class="row mb-1">
+                    <div class="col">Subtotal:</div>
+                    <div class="col-5 pl-0 text-right">
+                      <span class="provisional" data-subtotal="0"><span>0.00</span> SGD</span>
+                    </div>
+                  </div>
+                  <div id="div-show-discount-promo" class="row mb-1 d-none">
+                    <div id="name-show-discount-promo" class="col"></div>
+                    <div class="col-5 pl-0 text-right">
+                      <div class="checkchange" id="costdiscount-show-discount-promo" data-discount></div>
+                    </div>
+                  </div>
+                  <div class="row transport--fee">
+                    <div class="col">
+                      Delivery fee:
+                      <input type="hidden" class="checkchange" name="redeem_detail[transport_fee]" id="transport__fee" value="">
+                    </div>
+                    <div class="col-5 pl-0 text-right">
+                      <span class=""><span id="feeTrans">0.00</span> SGD</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between mb-2 align-items-center total--row">
+                  <div>Total Amount :</div>
+                  <div class="confirm--price"><strong><span id="div-total-cost" class="price" data-price="0">0.00</span> SGD</strong></div>
+                </div>
+                <div class="form-group mt-2">
+                  <input class="btn btn-primary confirm--order--btn btn__paynow btn-black w-100" type="submit" value="Order Now">
+                </div>
+                <div class="summary--meta">
+                  <span data-cv2-icon="lock"></span> Secure checkout · VISA, Mastercard, AMEX, PayNow
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ spage: My Location (trượt từ phải, giống production) ============ -->
+  <div class="slide--page" data-spage="mylocation">
+    <div class="slide--page--content slide--fullcolor">
+      <div class="slide--page--header">
+        <div class="container">
+          <div class="spage--header--title">
+            <span class="ti-arrow-left close--spage" role="button" aria-label="Back"></span>
+            <h3>My Location</h3>
+          </div>
+        </div>
+      </div>
+      <div class="slide--page--body">
+        <div class="container">
+          <div class="mylocation--map">
+            <div class="form-group">
+              <small class="form-text text-muted"><i>Enter the address so we can find you, adjust the map for a more accurate address.</i></small>
+            </div>
+            <input type="hidden" name="my[latitude]" value="1.30641" id="my_lat">
+            <input type="hidden" name="my[longitude]" value="103.83301" id="my_lgn">
+            <div class="position-relative">
+              <div id="section_search" class="input-group px-2 pt-1">
+                <input id="search_input" class="form-control px-2" type="text" placeholder="Address" autocomplete="off">
+                <div id="clearable_search" class="input-group-append d-none"><span class="fa fa-times px-2 bg-white input-group-text d-flex justify-content-center border-left-0">&times;</span></div>
+                <!-- [DEMO] gợi ý địa chỉ từ Nominatim; production dùng Google Places SearchBox -->
+                <div id="search_suggest" class="search--suggest d-none"></div>
+              </div>
+              <svg id="current_location" width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-cursor position-absolute" fill="currentColor" xmlns="http://www.w3.org/2000/svg" role="button" aria-label="Use my current location">
+                <path fill-rule="evenodd" d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103zM2.25 8.184l3.897 1.67a.5.5 0 0 1 .262.263l1.67 3.897L12.743 3.52 2.25 8.184z"/>
+              </svg>
+              <div id="my_map" data-latitude="1.30641" data-longitude="103.83301"></div>
+            </div>
+            <button class="btn btn-primary btn-black full-width mt-2 btn--okmap" type="button">Okay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ hidden input (giống production) ============ -->
+  <input type="hidden" value="1.30641" id="hotel__lat">
+  <input type="hidden" value="103.83301" id="hotel__long">
+  <input type="hidden" name="food_mode" value="1">
+  <input type="hidden" name="redeem_detail[receive_delivery]" id="output_address">
+  <input type="hidden" name="redeem_detail[extra][lat]" value="" id="myLat">
+  <input type="hidden" name="redeem_detail[extra][lng]" value="" id="myLng">
+  <input type="hidden" id="propertyAddress" value="10 Scotts Road, Singapore 228211">
+  <input type="hidden" id="propertyAlias" value="yqhyattsgstore">
+  <input type="hidden" id="transportdistanceMeter" name="redeem_detail[extra][transport_distance_meter]" value="">
+  <input type="hidden" id="transportdistanceKm" name="redeem_detail[extra][transport_distance_km]" value="">
+  <input type="hidden" name="action" value="payment">
+  <input type="hidden" id="total-default-no-promo" name="" value="0">
+  <input type="hidden" id="totalPriceWithDiscount" value="">
+  <input type="hidden" id="priceDiscount" value="">
+  <input type="hidden" id="checkDiscount" value="">
+  <input type="hidden" id="catewsupermarket__hidden" value="">
+  <input type="hidden" id="cateflag__hidden" value="">
+  <input type="hidden" id="cateflag__special5h" value="">
+  <input type="hidden" id="cateflag__special" value="">
+  <input type="hidden" id="category__specialtime72h" value="">
+  <input type="hidden" id="category__specialtime48h" value="">
+  <input type="hidden" id="category__specialtime24h" value="">
+  <input type="hidden" id="category__specialMaxDate" value="">
+  <input type="hidden" id="category__specialXmax" value="">
+  <input type="hidden" id="category__specialMinDate" value="">
+  <input type="hidden" id="category__specialEndOfShifts" value="">
+  <input type="hidden" id="input__isMember" value="">
+  <input type="hidden" id="cateOfFoods" value="">
+  <input type="hidden" id="cateOfBeverages" value="">
+  <input type="hidden" id="input__disableDatesPickup" value="">
+  <input type="hidden" id="input__disableDatesLalamove" value="">
+  <input type="hidden" id="input__disableLalamove" value="">
+  <input type="hidden" id="quotation_log_id" name="quotation_log_id">
+  <input type="hidden" class="checkchange" name="redeem_detail[transport_fee_lalamove]" id="transport__fee__lalamove" value="">
+  <input type="hidden" class="checkchange" name="redeem_detail[transport_fee_default]" id="transport__fee__default" value="">
+  <input type="hidden" value="checkout" id="payment__type__stripe" name="pay_with">
+  <input type="hidden" value="SG" class="flag-hotel-checkout">
+</form>
+
+<div id="yq-footer"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Thư viện giống production -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.0/build/js/intlTelInput.min.js"></script>
+<!-- [DEMO] Leaflet; production: thay bằng
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=initMap&libraries=places" defer></script> -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/modules/nav.js"></script>
+<script src="assets/js/modules/banner.js"></script>
+<script src="assets/js/modules/buynow.js"></script>
+<script src="assets/js/modules/cart-anim.js"></script>
+<script src="assets/js/modules/account.js"></script>
+
+<script type="text/javascript">
+  /* Cấu hình giống block trong select_payment_food.html (production điền từ {$pickup_rule} / {$lalamove_rule}) */
+  window.__pickupOpenHour = 10;
+  window.__pickupOpenMins = 0;
+  window.__pickupCloseHour = 19;
+  window.__pickupCloseMins = 0;
+  window.__pickupPreparingtimeHour = 2;
+  window.__pickupPreparingtimeMins = 60 * __pickupPreparingtimeHour;
+  window.__lalamoveOpenHour = 10;
+  window.__lalamoveOpenMins = 0;
+  window.__lalamoveCloseHour = 19;
+  window.__lalamoveCloseMins = 0;
+  window.__lalamovePreparingtimeHour = 3;
+  window.__lalamovePreparingtimeMins = 60 * __lalamovePreparingtimeHour;
+
+  window.__replaceLalaToHotelVan = false;
+  window.__lalamoveCustomDeliveryType = true;
+  window.__useTimeSlotByHour = true;
+  window.__useTimeSlotByHourForPickup = true;
+  window.__useTimeSlotLalamove = true;
+
+  window.__arrayMapTimeSlotLalamove = [
+    { time: "10:00 AM to 12:00 PM", key: 10 },
+    { time: "14:00 PM to 16:00 PM", key: 14 },
+    { time: "17:00 PM to 19:00 PM", key: 17 }
+  ];
+  window.__arrayMapTimeSlotPickup = [
+    { time: "10:00 AM to 12:00 PM", key: 10 },
+    { time: "14:00 PM to 16:00 PM", key: 14 },
+    { time: "17:00 PM to 19:00 PM", key: 17 }
+  ];
+
+  window.__useDisableDatesLalamove = ["2026-12-31"];
+  window.__useDisableDatesPickup = ["2026-12-31"];
+  window.__minimumPriceForDeli = 300;
+
+  /* [DEMO] số liệu thay cho API — production không cần */
+  window.__demoLalamoveRates = { CAR: { base: 18, perKm: 2.5 }, MINIVAN: { base: 35, perKm: 3.7 } };
+  window.__demoPromoCodes = {
+    WELCOME10: { type: 'pct', value: 10, name: 'Discount (WELCOME10):', message: 'Applied: 10% off your order.' },
+    HYATT20:   { type: 'pct', value: 20, min: 200, name: 'Discount (HYATT20):', message: 'Applied: 20% off orders above $200.' },
+    SAVE30:    { type: 'amt', value: 30, name: 'Discount (SAVE30):', message: 'Applied: $30 off your order.' }
+  };
+</script>
+<!-- Demo stand-in cho appv6_dev_demo.js — cùng tên hàm / DOM hook; production: thay bằng file thật -->
+<script src="assets/js/modules/checkout-v2.js"></script>
+<!-- Copy nguyên bản từ production -->
+<script src="assets/js/modules/control__telinputv25.js"></script>
+<script>
+  jQuery(function ($) {
+    YQ.renderHeader('');
+    YQ.renderFooter();
+    if ($('.datepicker').length) $('.datepicker').flatpickr({ dateFormat: 'Y-m-d', maxDate: 'today' });
+  });
+</script>
+</body>
+</html>

@@ -27,6 +27,8 @@ python3 -m http.server 8000
 ├── personalise.html      Personalise Your Gift — chọn eCard, viết lời nhắn, LIVE PREVIEW (3 bước)
 ├── cart.html             Giỏ hàng — line items, order summary, thanh free-shipping
 ├── checkout.html         Checkout 4 bước: Information → Shipping → Payment → Review
+├── checkout-v2.html      Checkout v2 một màn: banner ảnh, form + Self-Collection / Delivery
+│                         (chọn địa chỉ trên bản đồ, báo giá xe), Order Summary cột phải
 ├── member/               Khu vực thành viên (xem mục "Trang trong thư mục con")
 │   ├── profile.html      Member Profile — HTML tĩnh: thẻ tóm tắt + 4 nhóm thông tin, sửa tại chỗ
 │   ├── orders.html       My Orders — 2 tab Completed orders / Pending payment, ReOrder
@@ -34,7 +36,7 @@ python3 -m http.server 8000
 │   └── invite.html       Invite Friends — link mời, chia sẻ Facebook / LINE / email
 └── assets/
     ├── css/style.css     Design tokens + toàn bộ component
-    ├── css/parts/        CSS theo module: nav, banner, buynow, cart-anim, account
+    ├── css/parts/        CSS theo module: nav, banner, buynow, cart-anim, account, checkout-v2
     ├── img/favicon.svg
     └── js/
         ├── data.js       Nav, icon, logo, 13 sản phẩm, 6 experiences, đơn hàng, hồ sơ, config
@@ -46,7 +48,8 @@ python3 -m http.server 8000
             ├── banner.js     Hero slider 3 slide (autoplay, swipe, dot, progress)
             ├── buynow.js     Buy Now ở PDP + card, sticky buy bar mobile
             ├── cart-anim.js  Fly-to-cart, badge đếm, nút "Added", cart drawer
-            └── account.js    Popup Log in / Register + panel member "My Functions"
+            ├── account.js    Popup Log in / Register + panel member "My Functions"
+            └── checkout-v2.js Controller trang checkout-v2 (form, promo, map, báo giá, summary)
 ```
 
 Header và footer **không lặp lại trong HTML** — được render bằng jQuery từ `app.js`,
@@ -170,6 +173,45 @@ Nhãn trên ảnh sản phẩm (`YQ.labelsHtml` trong `pages.js`, dùng cho card
 
 `index.html` / `celebrations.html` là markup tĩnh nên khi đổi nhãn/giá trong `data.js`
 nhớ sửa tay các card tương ứng ở đó.
+
+### Checkout v2 (`checkout-v2.html`)
+
+Phiên bản checkout **một màn** thay cho 4 bước — bố cục: banner ảnh full-width, cột trái
+`1. Enter Information` + `2. Shipping Information`, cột phải `Order Summary` sticky.
+Không đụng `checkout.html`; nút Checkout ở giỏ vẫn trỏ bản cũ.
+
+**Viết để deploy lên production với ít thay đổi nhất.** Markup bám theo template
+`select_payment_food.html` của hệ thống thật: giữ nguyên id / class / `name` của input,
+hidden input (`#output_address`, `#myLat`, `#myLng`, `#transport__fee`, `#quotation_log_id`…),
+block cấu hình `window.__pickupOpenHour`, `__arrayMapTimeSlotLalamove`, `__useDisableDates*`…
+và class trạng thái do JS gắn (`.in--receivings.active`, `.in--pickup.active`,
+`.lalamove__datetime__zone.show`, `.null` / `.error` / `.null__date`…).
+
+| File | Vai trò | Lên production |
+|---|---|---|
+| `checkout-v2.html` | Markup + block `window.__*` | Đổi giá trị cứng thành `{$pickup_rule…}`, `{$_htmlListCartCheckOut}`…; bỏ 2 dòng Leaflet, mở dòng `maps.googleapis` |
+| `assets/css/parts/checkout-v2.css` | Style theo class production (kể cả markup JS inject `.delivery__type`, `#btn-cancel-promocode`, select giờ) | Dùng nguyên |
+| `assets/js/modules/checkout-v2.js` | **Demo stand-in cho `appv6_dev_demo.js`**: cùng tên hàm (`initMap`, `setCurrentMarker`, `checkDistanceMap`, `appendCustomDeliTypeLalamove`, `applyTotalPriceDefault`, `checkDiscountPromo`…), cùng luồng, cùng chuỗi validate | **Thay bằng `appv6_dev_demo.js` thật** |
+| `assets/js/modules/control__telinputv25.js` | Copy nguyên bản production (intl-tel-input cho `#phone_register` / `#phone_member`) | Dùng nguyên |
+
+Chỗ khác production trong JS đều đánh dấu `[DEMO]`:
+- Bản đồ: Leaflet + OpenStreetMap thay Google Maps; tìm địa chỉ qua Nominatim thay Places
+  SearchBox; vẽ đường thẳng thay Directions. Vẫn ghi vào `#output_address`, `#myLat`, `#myLng`.
+- Báo giá Lalamove: tính tại chỗ theo km từ khách sạn (`window.__demoLalamoveRates`) thay cho
+  `$.ajax('/cart/?check_transportfee=on…')`, trả về cùng cấu trúc `data.lalamove.CAR / MINIVAN`.
+  Đơn ≥ `__minimumPriceForDeli` ($300) → phí 0, hiện "Complimentary".
+- Promo: tra `window.__demoPromoCodes` (`WELCOME10`, `HYATT20`, `SAVE30`) thay cho
+  `/cart?action=check_promo`, dựng `data_j` cùng field server trả về.
+- Order Summary: điền từ `YQ.cart` (production: server render). Không tách dòng thuế như `cart.html`.
+- Submit: chặn `form.submit()` và hiện màn hình cảm ơn + xoá giỏ (production: POST lên server).
+- Không tải được flatpickr → ô ngày chuyển sang `<input type="date">` native.
+
+Hành vi: ban đầu 2 ô lớn Self-Collection / Delivery (chưa chọn sẵn); chọn xong appv6 gắn
+`.in--receivings.active` → CSS thu thành thanh tab thấp. Self-Collection: lịch flatpickr inline
+(`.append__pickup__picker__date`), giờ theo từng giờ (`__useTimeSlotByHourForPickup`), điểm nhận
+The Shop / Drive-Through (chọn Drive-Through hiện ô biển số). Delivery: địa chỉ qua trang trượt
+**My Location** (`.slide--page[data-spage=mylocation]`), sau Okay mới hiện ngày/giờ
+(`__arrayMapTimeSlotLalamove`) + bảng xe, unit number + postal code 6 số bắt buộc.
 
 ### Giỏ hàng mẫu
 
