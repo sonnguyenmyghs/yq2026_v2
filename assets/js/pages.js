@@ -210,27 +210,8 @@
 
     document.title = p.name + ' — Grand Hyatt Singapore';
 
-    /* Gallery.
-       Ưu tiên p.gallery = ['a.jpg','b.jpg', ...] nếu sản phẩm có bộ ảnh riêng.
-       Không có thì lấy ảnh của các sản phẩm cùng danh mục cho đủ 4 khung. */
-    var shots;
-    if (p.gallery && p.gallery.length) {
-      shots = p.gallery.map(function (src) { return { img: src, name: p.name, tone: p.tone }; });
-    } else {
-      shots = [p];
-      var pool = YQ.products.filter(function (x) { return x.id !== p.id && x.img && x.cat === p.cat; })
-        .concat(YQ.products.filter(function (x) { return x.id !== p.id && x.img && x.cat !== p.cat; }));
-      for (var i = 0; i < pool.length && shots.length < 4; i++) {
-        shots.push({ img: pool[i].img, name: p.name, tone: pool[i].tone });
-      }
-      while (shots.length < 4) shots.push({ tone: [3, 6, 8][shots.length % 3], name: p.name });
-    }
-    $('#pdpMain').html(YQ.mediaInner(p, { eager: true }));
-    $('#pdpLabels').html(YQ.labelsHtml(p));   // nằm ngoài .yq-media để ribbon không bị clip
-    $('#pdpThumbs').html(shots.map(function (sh, i) {
-      return '<button class="yq-pdp__thumb' + (i === 0 ? ' is-active' : '') + '" type="button" data-shot="' + i + '">' +
-               '<span class="yq-media">' + YQ.mediaInner(sh) + '</span></button>';
-    }).join(''));
+    /* Gallery (#pdpMain, #pdpLabels, #pdpThumbs) là HTML tĩnh trong product.html —
+       JS không dựng, chỉ xử lý bấm thumb ở phần Events. */
 
     /* Info */
     $('#pdpCat').text(p.catLabel);
@@ -266,7 +247,10 @@
     $(document).on('click', '#pdpThumbs .yq-pdp__thumb', function () {
       $('#pdpThumbs .yq-pdp__thumb').removeClass('is-active');
       $(this).addClass('is-active');
-      $('#pdpMain').html(YQ.mediaInner(shots[parseInt($(this).attr('data-shot'), 10)], { eager: true }));
+      // Chép ảnh của thumb lên khung chính, bỏ lazy để ảnh lớn tải ngay
+      var $shot = $(this).find('.yq-media').children().first().clone();
+      $shot.removeAttr('loading');
+      $('#pdpMain').empty().append($shot);
     });
 
     $(document).on('click', '#pdpOptions .yq-option', function () {

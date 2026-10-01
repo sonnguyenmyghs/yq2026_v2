@@ -402,12 +402,15 @@ YQ.logoImageLight = 'assets/img/logo-grand-hyatt-white.png'; // nền tối (foo
 Sản phẩm chưa có `img` sẽ tự rơi về placeholder gradient (`.ph-1` … `.ph-8`) — template
 không bao giờ vỡ layout vì thiếu ảnh.
 
-Muốn gallery riêng cho 1 sản phẩm (thay vì lấy ảnh cùng danh mục), thêm mảng `gallery`:
+Gallery trang chi tiết (`product.html`) là **HTML tĩnh** — backend đổ ảnh thẳng vào
+`#pdpMain` (ảnh chính), `#pdpLabels` (ribbon / tag % giảm) và `#pdpThumbs` (mỗi thumb một
+`<button class="yq-pdp__thumb">`, thumb đầu mang `is-active`). JS chỉ xử lý bấm thumb:
+chép `<img>` (hoặc placeholder) của thumb lên khung chính.
 
-```js
-{ id:'signature-chocolate-cake',
-  img:'assets/img/p-chocolate-cake.jpg',
-  gallery:['assets/img/cake-1.jpg','assets/img/cake-2.jpg','assets/img/cake-3.jpg'], ... }
+```html
+<button class="yq-pdp__thumb" type="button">
+  <span class="yq-media"><img src="assets/img/cake-2.jpg" alt="..." loading="lazy" decoding="async"></span>
+</button>
 ```
 
 Hero và ảnh editorial nằm trực tiếp trong `index.html`:

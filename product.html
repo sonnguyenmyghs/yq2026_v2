@@ -33,10 +33,31 @@
       <div class="col-lg-6">
         <div class="yq-pdp__gallery">
           <div class="yq-pdp__mainwrap">
-            <div class="yq-media yq-pdp__main" id="pdpMain"></div>
-            <div id="pdpLabels"></div>
+            <div class="yq-media yq-pdp__main" id="pdpMain">
+              <img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" decoding="async">
+            </div>
+            <!-- Nhãn nằm ngoài .yq-media để ribbon không bị clip.
+                 Ribbon: thêm --promo | --gold (New) | --light (Seasonal); có giảm giá thì thêm
+                 <span class="yq-off"><b>20%</b>Off</span> -->
+            <div id="pdpLabels">
+              <span class="yq-ribbon"><span>Bestseller</span></span>
+            </div>
           </div>
-          <div class="yq-pdp__thumbs" id="pdpThumbs"></div>
+          <!-- Thumb đầu tiên = ảnh chính (is-active). Bấm thumb -> ảnh của thumb thay vào #pdpMain. -->
+          <div class="yq-pdp__thumbs" id="pdpThumbs">
+            <button class="yq-pdp__thumb is-active" type="button">
+              <span class="yq-media"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></span>
+            </button>
+            <button class="yq-pdp__thumb" type="button">
+              <span class="yq-media"><img src="assets/img/p-pralines.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></span>
+            </button>
+            <button class="yq-pdp__thumb" type="button">
+              <span class="yq-media"><img src="assets/img/p-cookies.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></span>
+            </button>
+            <button class="yq-pdp__thumb" type="button">
+              <span class="yq-media"><img src="assets/img/p-yule-log.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></span>
+            </button>
+          </div>
         </div>
       </div>
 

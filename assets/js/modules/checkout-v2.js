@@ -720,128 +720,139 @@ $(function() {
     });
     $('#becomeamember').on('change', function() { $(this).closest('.agree--zone').removeClass('null'); });
 
-    /* ---------------------------------------------------------------
-       submit form — chuỗi validate theo thứ tự của appv6 (guest, không inroom)
-       --------------------------------------------------------------- */
-    var scrollTo = function($el) {
-        $('html, body').animate({ scrollTop: $el.offset().top - 150 }, 500);
+    /* ===============================================================
+       SUBMIT — validate theo bảng rule, dừng ở lỗi đầu tiên
+       Thứ tự rule = thứ tự form từ trên xuống: thông tin khách -> T&C ->
+       chọn hình thức nhận -> Self-Collection -> Delivery.
+       Mỗi rule: { when, field, ok, cls | mark, scroll, focus }
+         when   : hàm -> rule có áp dụng không (bỏ qua = luôn áp dụng)
+         field  : selector phần tử kiểm tra
+         ok     : hàm($el) -> true nếu hợp lệ
+         cls    : class lỗi gắn lên field ('error' | 'null'), mặc định 'error'
+         mark   : hàm thay cho cls khi lỗi phải gắn lên phần tử khác (zone)
+         scroll : selector cuộn tới (mặc định = field)
+         focus  : true -> focus vào field sau khi cuộn
+       =============================================================== */
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    var isMember = function() { return !!$('#input__isMember').val(); };
+    var isGuest = function() { return !isMember(); };
+    var isPickup = function() { return $('#in__pickup').is(':checked'); };
+    var isLalamove = function() { return $('#in__delivery__lalamove').is(':checked'); };
+    var isDriveThrough = function() {
+        return isPickup() && $('.pickup--location--radio:checked').val() == "Drive-Through Collection, Hotel Driveway";
     };
+    var filled = function($el) { return !!$.trim($el.val()); };
+    var checked = function($el) { return $el.is(':checked'); };
+    /* Số điện thoại: control__telinput gắn .error khi số không hợp lệ */
+    var phoneOk = function($el) { return filled($el) && !$el.hasClass('error') && $el.val().length > 6; };
+    var zoneMark = function(cls) { return function() { deli__lalamove__zone.addClass(cls); }; };
+
+    var RULES = [
+        /* 1. Enter Information — thành viên đã đăng nhập */
+        { when: isMember, field: '.input__member__email',     ok: filled },
+        { when: isMember, field: '.input__member__firstname', ok: filled },
+        { when: isMember, field: '.input__member__lastname',  ok: filled },
+        { when: isMember, field: '.input__member__phone',     ok: phoneOk },
+        /* 1. Enter Information — khách vãng lai */
+        { when: isGuest, field: '.input__guest__email',     ok: function($el) { return EMAIL_RE.test($.trim($el.val())); } },
+        { when: isGuest, field: '.input__guest__reemail',   ok: function($el) {
+            return filled($el) && $.trim($el.val()).toLowerCase() === $.trim($('.input__guest__email').val()).toLowerCase();
+        }, focus: true },
+        { when: isGuest, field: '.input__guest__firstname', ok: filled },
+        { when: isGuest, field: '.input__guest__lastname',  ok: filled },
+        { when: isGuest, field: '#phone_register',          ok: phoneOk },
+        /* Điều khoản */
+        { field: '#becomeamember', ok: checked, scroll: '.agree--zone',
+          mark: function() { $('.agree--zone').first().addClass('null'); } },
+
+        /* 2. Shipping Information — phải chọn Self-Collection hoặc Delivery */
+        { field: '.in--receivings', ok: function() { return isPickup() || isLalamove(); }, cls: 'null' },
+        /* Self-Collection */
+        { when: isPickup,       field: '.pickup__picker__date__second', ok: filled, cls: 'error' },
+        { when: isPickup,       field: '.pickup__picker__hour__second', ok: filled, cls: 'error' },
+        { when: isDriveThrough, field: '.input--car--plate--number',    ok: filled, cls: 'null' },
+        /* Delivery (Lalamove) */
+        { when: isLalamove, field: '#output_address_show',        ok: filled, cls: 'null' },
+        { when: isLalamove, field: '.delilalamove__picker__date', ok: filled, mark: zoneMark('null__date') },
+        { when: isLalamove, field: '.delilalamove__picker__hour', ok: filled, mark: zoneMark('null__hour') },
+        { when: function() { return isLalamove() && __replaceLalaToHotelVan != true; },
+          field: '.delivery__types', ok: function() { return $('.delivery__type input').is(':checked'); },
+          mark: zoneMark('null__types') },
+        { when: isLalamove, field: '#lalamove__unitnumber', ok: filled, cls: 'null' },
+        { when: isLalamove, field: '.postalcode__input',    ok: function($el) { return /^\d{6}$/.test($el.val()); }, cls: 'null' }
+    ];
+
+    /* Xoá mọi class lỗi của lần bấm trước (#phone_register do control__telinput tự quản) */
+    var clearErrors = function() {
+        $('.pay--part input:not(#phone_register), .pay--part select').removeClass('error null');
+        $('.in--receivings, .agree--zone').removeClass('null');
+        deli__lalamove__zone.removeClass('null null__date null__hour null__types');
+    };
+
+    /* Trả về rule đầu tiên không đạt, hoặc null nếu form hợp lệ */
+    var firstInvalid = function() {
+        for (var i = 0; i < RULES.length; i++) {
+            var r = RULES[i];
+            if (r.when && !r.when()) continue;
+            if (!r.ok($(r.field))) return r;
+        }
+        return null;
+    };
+
+    var scrollTo = function($el) {
+        if ($el.length) $('html, body').animate({ scrollTop: $el.offset().top - 150 }, 500);
+    };
+    var showError = function(r) {
+        var $el = $(r.field);
+        if (r.mark) r.mark($el); else $el.addClass(r.cls || 'error');
+        scrollTo($(r.scroll || r.field));
+        if (r.focus) $el.trigger('focus');
+    };
+
+    /* Ghép dữ liệu trước khi gửi (giống appv6) */
+    var prepareSubmit = function() {
+        var plate = $.trim($('.input--car--plate--number').val());
+        if (isDriveThrough() && plate) {
+            $('.pickup--location--radio:checked').val("Drive-Through Collection, Hotel Driveway. Car Plate Number: " + plate);
+        }
+        if (isLalamove()) $('.pickup--location--radio').prop("checked", false);   // không gửi điểm nhận khi giao hàng
+    };
+
     $('.confirm--order--btn').on('click', function(e) {
         e.preventDefault();
-        var input__isMember = $('#input__isMember');
-        var input__member__email = $('.input__member__email');
-        var input__member__firstname = $('.input__member__firstname');
-        var input__member__lastname = $('.input__member__lastname');
-        var input__member__phone = $('.input__member__phone');
-        var input__guest__email = $('.input__guest__email');
-        var input__guest__reemail = $('.input__guest__reemail');
-        var input__guest__firstname = $('.input__guest__firstname');
-        var input__guest__lastname = $('.input__guest__lastname');
-        var input__guest__phone = $('#phone_register');
-        var in__receivings = $('.in--receivings');
-        var agree__checkbox = $('#becomeamember');
-        var pickup__picker__date = $('.pickup__picker__date__second');
-        var pickup__picker__hour = $('.pickup__picker__hour__second');
-        var in__pickup = $('#in__pickup');
-        var lalamove__picker__date = $('.delilalamove__picker__date');
-        var lalamove__picker__hour = $('.delilalamove__picker__hour');
-        var input__lalamove__unitnumber = $('#lalamove__unitnumber');
-        var input__lalamove__postalcode = $('.postalcode__input');
-        var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test($.trim(input__guest__email.val()));
-
-        // ---- clear ----
-        in__receivings.removeClass('null');
-        deli__lalamove__zone.removeClass('null__types null null__date null__hour');
-        $('.pay--part input:not(#phone_register)').removeClass('error');
-        input__lalamove__unitnumber.removeClass('null');
-        input__lalamove__postalcode.removeClass('null');
-        $('.agree--zone').removeClass('null');
-        $('.input--car--plate--number').removeClass('null');
-        pickup__picker__hour.removeClass('error');
-        pickup__picker__date.removeClass('error');
-
-        if (!in__pickup.is(":checked") && !type__delivery__lalamove__input.is(":checked")) {
-            scrollTo(in__receivings);
-            in__receivings.addClass('null');
-        } else if (in__pickup.is(":checked") && !pickup__picker__date.val()) {
-            scrollTo(in__receivings);
-            pickup__picker__date.addClass('error');
-        } else if (in__pickup.is(":checked") && !pickup__picker__hour.val()) {
-            scrollTo(in__receivings);
-            pickup__picker__hour.addClass('error');
-        } else if (in__pickup.is(":checked") && $('.pickup--location--radio:checked').val() == "Drive-Through Collection, Hotel Driveway" && !$('.input--car--plate--number').val()) {
-            scrollTo(in__receivings);
-            $('.input--car--plate--number').addClass('null');
-        } else if (input__isMember.val() && (!input__member__email.val())) {
-            scrollTo(input__member__email); input__member__email.addClass('error');
-        } else if (input__isMember.val() && (!input__member__firstname.val())) {
-            scrollTo(input__member__firstname); input__member__firstname.addClass('error');
-        } else if (input__isMember.val() && (!input__member__lastname.val())) {
-            scrollTo(input__member__lastname); input__member__lastname.addClass('error');
-        } else if (input__isMember.val() == '' && (!input__guest__email.val() || !emailOk)) {
-            scrollTo(input__guest__email); input__guest__email.addClass('error');
-        } else if (input__isMember.val() == '' && (!input__guest__reemail.val() || $.trim(input__guest__reemail.val()).toLowerCase() !== $.trim(input__guest__email.val()).toLowerCase())) {
-            scrollTo(input__guest__reemail); input__guest__reemail.addClass('error').focus();
-        } else if (input__isMember.val() == '' && (!input__guest__firstname.val())) {
-            scrollTo(input__guest__firstname); input__guest__firstname.addClass('error');
-        } else if (input__isMember.val() == '' && (!input__guest__lastname.val())) {
-            scrollTo(input__guest__lastname); input__guest__lastname.addClass('error');
-        } else if (input__isMember.val() && (!input__member__phone.val() || input__member__phone.hasClass('error') == true || input__member__phone.val().length <= 6)) {
-            scrollTo(input__member__phone); input__member__phone.addClass('error');
-        } else if (input__isMember.val() == '' && (!input__guest__phone.val() || input__guest__phone.hasClass('error') == true || input__guest__phone.val().length <= 6)) {
-            scrollTo(input__guest__phone); input__guest__phone.addClass('error');
-        } else if (!agree__checkbox.is(":checked")) {
-            scrollTo($('.agree--zone').first());
-            $('.agree--zone').first().addClass('null');
-        } else if (!output_address_show.val() && type__delivery__lalamove__input.is(":checked")) {
-            scrollTo(in__receivings);
-            output_address_show.addClass('null');
-        } else if (type__delivery__lalamove__input.is(":checked") && !lalamove__picker__date.val()) {
-            scrollTo(in__receivings);
-            deli__lalamove__zone.addClass('null__date');
-        } else if (type__delivery__lalamove__input.is(":checked") && !lalamove__picker__hour.val()) {
-            scrollTo(in__receivings);
-            deli__lalamove__zone.addClass('null__hour');
-        } else if (type__delivery__lalamove__input.is(":checked") && !$('.delivery__type input').is(':checked') && __replaceLalaToHotelVan != true) {
-            scrollTo($('.delivery__types'));
-            deli__lalamove__zone.addClass('null__types');
-        } else if (type__delivery__lalamove__input.is(":checked") && !input__lalamove__unitnumber.val()) {
-            scrollTo(input__lalamove__unitnumber);
-            input__lalamove__unitnumber.addClass('null');
-        } else if (type__delivery__lalamove__input.is(":checked") && !/^\d{6}$/.test(input__lalamove__postalcode.val())) {
-            scrollTo(input__lalamove__postalcode);
-            input__lalamove__postalcode.addClass('null');
-        } else {
-            if (in__pickup.is(":checked") && $('.pickup--location--radio:checked').val() == "Drive-Through Collection, Hotel Driveway" && $('.input--car--plate--number').val()) {
-                $('.pickup--location--radio:checked[value="Drive-Through Collection, Hotel Driveway"]').val("Drive-Through Collection, Hotel Driveway. Car Plate Number: " + $('.input--car--plate--number').val());
-            }
-            if (type__delivery__lalamove__input.is(":checked")) {
-                $('.pickup--location--radio').prop("checked", false);
-            }
-            $('.inform--frm').submit();
-        }
+        clearErrors();
+        var bad = firstInvalid();
+        if (bad) { showError(bad); return; }
+        prepareSubmit();
+        $('.inform--frm').submit();
     });
 
     /* Drive-Through -> hiện ô biển số (giống inline script production) */
     $('.pickup--location--radio').on('change', function() {
         var carPlateSection = $('.car--plate--section');
-        if ($('input[name="redeem_detail[receive_delivery_notes_prefix]"]:checked').val() === 'Drive-Through Collection, Hotel Driveway') carPlateSection.slideDown();
-        else carPlateSection.hide();
+        if (isDriveThrough()) carPlateSection.slideDown(); else carPlateSection.hide();
     });
 
     /* ---------------------------------------------------------------
        [DEMO] không có backend: chặn submit, hiện màn hình cảm ơn, xoá giỏ.
        Production: bỏ block này, form POST lên server như bình thường.
        --------------------------------------------------------------- */
+    var esc = function(str) { return $('<b>').text(str || '').html(); };
+    var summaryLine = function() {
+        if (isLalamove()) {
+            return 'Delivery on ' + $('.delilalamove__picker__date').val() + ', ' +
+                   $('.delilalamove__picker__hour option:selected').text() + ' to ' + esc(output_address.val());
+        }
+        var place = ($('.pickup--location--radio:checked').val() || '').replace('Self-Collection', '');
+        return 'Self-collection on ' + $('.pickup__picker__date__second').val() + ' at ' +
+               $('.pickup__picker__hour__second').val() + ' — ' + esc(place);
+    };
     $('.inform--frm').on('submit', function(e) {
         e.preventDefault();
         var num = 'GH' + Date.now().toString().slice(-8);
         var total = $('#div-total-cost').text();
-        var email = $('.input__guest__email').val();
-        var when = type__delivery__lalamove__input.is(':checked')
-            ? 'Delivery on ' + $('.delilalamove__picker__date').val() + ', ' + $('.delilalamove__picker__hour option:selected').text() + ' to ' + $('<b>').text(output_address.val()).html()
-            : 'Self-collection on ' + $('.pickup__picker__date__second').val() + ' at ' + $('.pickup__picker__hour__second').val() + ' — ' +
-              $('<b>').text(($('.pickup--location--radio:checked').val() || '').replace('Self-Collection', '')).html();
+        var email = isMember() ? $('.input__member__email').val() : $('.input__guest__email').val();
+        var when = summaryLine();
         if (window.YQ && YQ.cart) YQ.cart.clear();
         $('#cv2Main').html(
             '<div class="pay--part cv2-done">' +
@@ -849,7 +860,7 @@ $(function() {
                 '<h2 class="yq-h2 mb-2">Thank you for your order</h2>' +
                 '<p class="yq-muted mb-1">Order <span class="cv2-done__num">' + num + '</span> · ' + total + ' SGD</p>' +
                 '<p class="yq-muted mb-1">' + when + '.</p>' +
-                '<p class="yq-muted mb-4">A receipt has been sent to <b>' + $('<b>').text(email).html() + '</b>.</p>' +
+                '<p class="yq-muted mb-4">A receipt has been sent to <b>' + esc(email) + '</b>.</p>' +
                 '<a class="yq-btn" href="index.html">Back to the shop ' + YQ.icon('arrow', 16) + '</a>' +
             '</div>'
         );
