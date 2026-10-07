@@ -128,55 +128,54 @@
       return '<button class="yq-chip yq-chip--gold" type="button" data-season="' + s.id + '">' + s.label + '</button>';
     }).join(''));
 
-    function filtered() {
-      var q = state.q.toLowerCase();
-      var list = YQ.products.filter(function (p) {
-        if (state.cat !== 'all' && p.cat !== state.cat) return false;
-        if (state.season && (p.seasons || []).indexOf(state.season) === -1) return false;
-        if (q && (p.name + ' ' + p.catLabel + ' ' + p.desc).toLowerCase().indexOf(q) === -1) return false;
-        return true;
-      });
+    /* #shopGrid là HTML tĩnh trong shop.html — JS không dựng card,
+       chỉ ẩn/hiện và sắp lại thứ tự các cột theo data-* của chúng. */
+    var $grid = $('#shopGrid');
+    var $items = $grid.children();
 
+    function match($el) {
+      var q = state.q.toLowerCase();
+      if (state.cat !== 'all' && $el.attr('data-cat') !== state.cat) return false;
+      if (state.season && (' ' + $el.attr('data-seasons') + ' ').indexOf(' ' + state.season + ' ') === -1) return false;
+      if (q && $el.find('.yq-card__body').text().toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    }
+
+    function sorted() {
       var s = state.sort;
-      list.sort(function (a, b) {
-        if (s === 'price-asc')  return a.price - b.price;
-        if (s === 'price-desc') return b.price - a.price;
-        if (s === 'name')       return a.name.localeCompare(b.name);
-        if (s === 'new')        return (b.badge === 'New' ? 1 : 0) - (a.badge === 'New' ? 1 : 0) || a.rank - b.rank;
-        return a.rank - b.rank;
+      function num($el, k) { return parseFloat($el.attr('data-' + k)) || 0; }
+      return $items.get().sort(function (a, b) {
+        var $a = $(a), $b = $(b);
+        if (s === 'price-asc')  return num($a, 'price') - num($b, 'price');
+        if (s === 'price-desc') return num($b, 'price') - num($a, 'price');
+        if (s === 'name')       return $a.attr('data-name').localeCompare($b.attr('data-name'));
+        if (s === 'new')        return num($b, 'new') - num($a, 'new') || num($a, 'rank') - num($b, 'rank');
+        return num($a, 'rank') - num($b, 'rank');
       });
-      return list;
     }
 
     function render() {
-      var list = filtered();
-
       $('#shopCats .yq-chip').each(function () {
         $(this).toggleClass('is-active', $(this).attr('data-cat') === state.cat);
       });
       $('#shopSeasons .yq-chip').each(function () {
         $(this).toggleClass('is-active', $(this).attr('data-season') === state.season);
       });
-      $('#shopCount').text(list.length + ' product' + (list.length === 1 ? '' : 's'));
       $('#shopQuery').toggle(!!state.q).find('b').text(state.q);
 
-      if (!list.length) {
-        $('#shopGrid').html(
-          '<div class="col-12"><div class="yq-empty">' +
-            '<div class="yq-empty__icon">' + YQ.icon('search', 26) + '</div>' +
-            '<h3 class="yq-h3 mb-2">No products found</h3>' +
-            '<p class="yq-muted mb-4">Try another category or clear your filters.</p>' +
-            '<button class="yq-btn yq-btn--yqost" type="button" id="shopReset">Clear filters</button>' +
-          '</div></div>'
-        );
-        return;
-      }
+      var shown = 0;
+      $grid.append(sorted());
+      $items.each(function () {
+        var ok = match($(this));
+        $(this).toggle(ok);
+        if (ok) shown++;
+      });
 
-      $('#shopGrid').html(list.map(function (p) {
-        return '<div class="col-6 col-lg-3">' + YQ.productCard(p) + '</div>';
-      }).join(''));
+      $('#shopCount').text(shown + ' product' + (shown === 1 ? '' : 's'));
+      $grid.toggle(shown > 0);
+      $('#shopEmpty').toggle(shown === 0);
 
-      YQ.stagger('#shopGrid .yq-reveal', 45);
+      YQ.stagger('#shopGrid > :visible .yq-reveal', 45);
       YQ.initReveal();
     }
 
