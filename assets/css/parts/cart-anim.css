@@ -40,7 +40,7 @@
   background: var(--yq-cream-2);
   box-shadow: 0 10px 24px rgba(23,22,19,.18), 0 26px 56px rgba(23,22,19,.14);
   /* viền vàng mảnh — gợi cảm giác "món quà được nâng niu" */
-  outline: 1px solid rgba(196,164,106,.55);
+  outline: 1px solid rgba(148,131,93,.55);
   outline-offset: -1px;
 }
 .yq-fly__media{
@@ -56,7 +56,7 @@
   content: "";
   position: absolute; inset: 0;
   border-radius: inherit;
-  background: linear-gradient(150deg, rgba(255,255,255,.20), transparent 46%, rgba(196,164,106,.22));
+  background: linear-gradient(150deg, rgba(255,255,255,.20), transparent 46%, rgba(148,131,93,.22));
 }
 
 /* ==========================================================================
@@ -70,7 +70,7 @@
   pointer-events: none;
   border-radius: 50%;
   border: 1.5px solid var(--yq-gold);
-  box-shadow: 0 0 0 1px rgba(196,164,106,.18) inset;
+  box-shadow: 0 0 0 1px rgba(148,131,93,.18) inset;
   transform: translate(-50%, -50%) scale(.3);
   opacity: 0;
   animation: yqFlyRing .66s var(--yq-ease) forwards;
@@ -98,7 +98,7 @@
   content: "";
   position: absolute; inset: -2px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(196,164,106,.34), transparent 70%);
+  background: radial-gradient(circle, rgba(148,131,93,.34), transparent 70%);
   animation: yqCartGlow .62s var(--yq-ease) forwards;
   pointer-events: none;
 }
@@ -134,8 +134,8 @@
   animation: yqAddedRing .8s var(--yq-ease) forwards;
 }
 @keyframes yqAddedRing{
-  0%   { box-shadow: 0 0 0 0 rgba(196,164,106,.50); }
-  100% { box-shadow: 0 0 0 14px rgba(196,164,106,0); }
+  0%   { box-shadow: 0 0 0 0 rgba(148,131,93,.50); }
+  100% { box-shadow: 0 0 0 14px rgba(148,131,93,0); }
 }
 
 .yq-added-layer{
@@ -298,9 +298,9 @@ body.yq-drawer-open .yq-toast-wrap{
              yqRowNew 1.5s var(--yq-ease) calc(var(--yqd, 0ms) + 240ms);
 }
 @keyframes yqRowNew{
-  0%   { background: rgba(196,164,106,0); box-shadow: inset 3px 0 0 rgba(196,164,106,0); }
-  22%  { background: rgba(196,164,106,.15); box-shadow: inset 3px 0 0 var(--yq-gold); }
-  100% { background: rgba(196,164,106,0); box-shadow: inset 3px 0 0 rgba(196,164,106,0); }
+  0%   { background: rgba(148,131,93,0); box-shadow: inset 3px 0 0 rgba(148,131,93,0); }
+  22%  { background: rgba(148,131,93,.15); box-shadow: inset 3px 0 0 var(--yq-gold); }
+  100% { background: rgba(148,131,93,0); box-shadow: inset 3px 0 0 rgba(148,131,93,0); }
 }
 
 .yq-cdrawer__empty{ text-align: center; padding: 56px 10px; }

@@ -59,7 +59,7 @@ function initMap() {
     }).addTo(map);
 
     /* marker khách sạn (production: google.maps.Marker) */
-    L.circleMarker([hotel_location.lat, hotel_location.lng], { radius: 7, color: '#C4A46A', fillColor: '#C4A46A', fillOpacity: 1 })
+    L.circleMarker([hotel_location.lat, hotel_location.lng], { radius: 7, color: '#94835D', fillColor: '#94835D', fillOpacity: 1 })
         .addTo(map).bindTooltip('Grand Hyatt Singapore');
 
     directionsRenderer = L.polyline([], { color: '#171613', weight: 2, dashArray: '6 6' }).addTo(map);

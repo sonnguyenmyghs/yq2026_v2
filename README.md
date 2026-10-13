@@ -154,7 +154,7 @@ Lần đầu vào site giỏ được nạp sẵn dữ liệu mẫu từ `YQ.dem
 ```css
 :root{
   --yq-ink:  #171613;   /* chữ & nút chính */
-  --yq-gold: #C4A46A;   /* accent vàng */
+  --yq-gold: #94835D;   /* The Shop Brass (CMYK 0/19/51/45) */
   --yq-cream:#F6F4EF;   /* nền */
   --yq-serif: "Playfair Display", Georgia, serif;
   --yq-sans:  "Inter", -apple-system, sans-serif;
@@ -379,7 +379,7 @@ nên luôn sắc nét ở mọi kích thước và đổi màu chỉ bằng 1 d�
 
 ```css
 :root{
-  --yq-brand:     #C10B44;   /* crimson GRAND | HYATT */
+  --yq-brand-logo: #171613; /* màu chữ GRAND | HYATT */
   --yq-brand-sub: #58575B;   /* xám chữ SINGAPORE */
 }
 ```

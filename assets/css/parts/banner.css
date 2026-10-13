@@ -239,13 +239,13 @@
 .yq-promo::after{
   content: "";
   position: absolute; inset: 0;
-  border: 1px solid rgba(196,164,106,0);
+  border: 1px solid rgba(148,131,93,0);
   border-radius: inherit;
   pointer-events: none;
   transition: border-color .35s var(--yq-ease);
   z-index: 3;
 }
-.yq-promo:hover::after{ border-color: rgba(196,164,106,.85); }
+.yq-promo:hover::after{ border-color: rgba(148,131,93,.85); }
 
 .yq-promo__body{
   position: relative;
@@ -278,7 +278,7 @@
   letter-spacing: .1em; text-transform: uppercase;
   color: var(--yq-gold);
   padding-bottom: 6px;
-  border-bottom: 1px solid rgba(196,164,106,.5);
+  border-bottom: 1px solid rgba(148,131,93,.5);
   transition: color .25s var(--yq-ease), border-color .25s var(--yq-ease), gap .25s var(--yq-ease);
 }
 .yq-promo:hover .yq-promo__cta{ color: #fff; border-color: #fff; gap: 14px; }

@@ -73,7 +73,7 @@
   box-shadow: none; transition: border-color .2s var(--yq-ease), box-shadow .2s var(--yq-ease);
 }
 .sec--payment .form-control::placeholder{ color: #B9B2A7; }
-.sec--payment .form-control:focus{ border-color: var(--yq-gold); box-shadow: 0 0 0 3px rgba(196,164,106,.16); outline: none; }
+.sec--payment .form-control:focus{ border-color: var(--yq-gold); box-shadow: 0 0 0 3px rgba(148,131,93,.16); outline: none; }
 .sec--payment .form-control[readonly]{ background: var(--yq-paper); cursor: pointer; }
 .sec--payment .form-control:disabled{ background: var(--yq-cream); }
 .sec--payment select.form-control{
@@ -167,7 +167,7 @@
 }
 .in-receiving__icon svg{ width: 28px; height: 28px; transition: width .3s var(--yq-ease), height .3s var(--yq-ease); }
 .in-receiving small{ font-size: 12px; font-weight: 400; color: var(--yq-muted); }
-label.in-receiving.active{ border-color: var(--yq-ink); background: #FDFBF6; color: var(--yq-ink); box-shadow: 0 0 0 3px rgba(196,164,106,.16); }
+label.in-receiving.active{ border-color: var(--yq-ink); background: #FDFBF6; color: var(--yq-ink); box-shadow: 0 0 0 3px rgba(148,131,93,.16); }
 label.in-receiving.active .in-receiving__icon{ background: var(--yq-gold); color: var(--yq-ink); }
 /* Thu gọn */
 .in--receivings.active{ gap: 10px; margin-bottom: 16px; }
@@ -250,7 +250,7 @@ label.in-receiving.active .in-receiving__icon{ background: var(--yq-gold); color
   border-radius: 50%; border: 1.5px solid #B9B2A7; background: #fff; box-sizing: border-box;
   transition: border-color .2s var(--yq-ease), box-shadow .2s var(--yq-ease);
 }
-.delivery__type input:checked ~ label{ border-color: var(--yq-gold); background: #FDFBF6; color: var(--yq-ink); font-weight: 600; box-shadow: 0 0 0 3px rgba(196,164,106,.14); }
+.delivery__type input:checked ~ label{ border-color: var(--yq-gold); background: #FDFBF6; color: var(--yq-ink); font-weight: 600; box-shadow: 0 0 0 3px rgba(148,131,93,.14); }
 .delivery__type input:checked ~ label::after{ border: 5px solid var(--yq-ink); }
 /* spinner của appv6 (<i class="fas fa-spinner fa-spin">) khi không có Font Awesome */
 .delivery__types .fa-spinner, #btn-check-promocode .fa-spinner{
@@ -376,7 +376,7 @@ body.spage-open{ overflow: hidden; }
   border-radius: var(--yq-radius-sm); background: rgba(255,255,255,.97); color: var(--yq-ink);
   font-family: var(--yq-sans); font-size: 15px; box-shadow: var(--yq-shadow-sm);
 }
-#search_input:focus{ outline: none; border-color: var(--yq-gold); box-shadow: 0 0 0 3px rgba(196,164,106,.18); }
+#search_input:focus{ outline: none; border-color: var(--yq-gold); box-shadow: 0 0 0 3px rgba(148,131,93,.18); }
 #clearable_search{ position: absolute; right: 6px; top: 6px; cursor: pointer; }
 #clearable_search .input-group-text{
   width: 34px; height: 34px; padding: 0 !important; border: 0; border-radius: 50%; font-size: 18px; line-height: 1;

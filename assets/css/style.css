@@ -14,9 +14,9 @@
   --yq-paper:      #FFFFFF;
   --yq-line:       #E4DFD4;
   --yq-line-soft:  #EFEBE3;
-  --yq-gold:       #C4A46A;
-  --yq-gold-dark:  #A8874A;
-  --yq-gold-soft:  #F0E6D2;
+  --yq-gold:       #94835D;   /* The Shop Brass — CMYK 0/19/51/45 */
+  --yq-gold-dark:  #736649;
+  --yq-gold-soft:  #ECE7DC;
 
   --yq-serif: "Playfair Display", "Times New Roman", Georgia, serif;
   --yq-sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -221,7 +221,7 @@ img{ max-width: 100%; display: block; }
 }
 .yq-mega__promo::before{
   content:""; position:absolute; inset:0;
-  background: radial-gradient(120% 90% at 80% 10%, rgba(196,164,106,.55), transparent 60%);
+  background: radial-gradient(120% 90% at 80% 10%, rgba(148,131,93,.55), transparent 60%);
 }
 .yq-mega__promo > *{ position: relative; }
 .yq-mega__promo h4{ color:#fff; font-size: 1.35rem; margin: 6px 0 10px; }
@@ -273,7 +273,7 @@ img{ max-width: 100%; display: block; }
     radial-gradient(50% 50% at 78% 80%, rgba(0,0,0,.18), transparent 60%);
 }
 .ph-1{ background: linear-gradient(150deg,#5B4432 0%,#8E6C4C 55%,#3A2C22 100%); }
-.ph-2{ background: linear-gradient(150deg,#7A6034 0%,#C4A46A 55%,#5A4726 100%); }
+.ph-2{ background: linear-gradient(150deg,#5E5239 0%,#94835D 55%,#453C2A 100%); }
 .ph-3{ background: linear-gradient(150deg,#B9A88C 0%,#E5DCC9 50%,#9C8A6E 100%); }
 .ph-4{ background: linear-gradient(150deg,#2E3A34 0%,#5E7365 55%,#1F2A25 100%); }
 .ph-5{ background: linear-gradient(150deg,#6E2C2C 0%,#A85454 55%,#4A1D1D 100%); }
@@ -620,7 +620,7 @@ img{ max-width: 100%; display: block; }
   transition: border-color .2s var(--yq-ease), box-shadow .2s var(--yq-ease);
 }
 .yq-input::placeholder{ color: #B9B2A7; }
-.yq-input:focus{ border-color: var(--yq-gold); box-shadow: 0 0 0 3px rgba(196,164,106,.16); outline: none; }
+.yq-input:focus{ border-color: var(--yq-gold); box-shadow: 0 0 0 3px rgba(148,131,93,.16); outline: none; }
 .yq-input.is-invalid{ border-color: #C0564C; box-shadow: 0 0 0 3px rgba(192,86,76,.12); }
 .yq-error{ font-size: 12px; color: #C0564C; margin-top: 6px; display: none; }
 .yq-error.is-on{ display: block; }
@@ -651,7 +651,7 @@ img{ max-width: 100%; display: block; }
   cursor: pointer; text-align: left; transition: all .25s var(--yq-ease);
 }
 .yq-delivery:hover{ border-color: var(--yq-ink); }
-.yq-delivery.is-active{ border-color: var(--yq-gold); background: #FDFBF6; box-shadow: 0 0 0 3px rgba(196,164,106,.14); }
+.yq-delivery.is-active{ border-color: var(--yq-gold); background: #FDFBF6; box-shadow: 0 0 0 3px rgba(148,131,93,.14); }
 .yq-delivery__icon{
   width: 40px; height: 40px; border-radius: 50%; background: var(--yq-cream-2);
   display: inline-flex; align-items: center; justify-content: center; flex: none; color: var(--yq-gold-dark);
@@ -666,7 +666,7 @@ img{ max-width: 100%; display: block; }
   position: relative; overflow: hidden; box-shadow: var(--yq-shadow-lg);
 }
 .yq-ecard::after{
-  content:""; position: absolute; inset: 12px; border: 1px solid rgba(196,164,106,.35);
+  content:""; position: absolute; inset: 12px; border: 1px solid rgba(148,131,93,.35);
   border-radius: 8px; pointer-events: none;
 }
 .yq-ecard__brand{ font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--yq-gold); margin-bottom: 22px; }
@@ -862,12 +862,13 @@ img{ max-width: 100%; display: block; }
 
 /* ==========================================================================
    21. LOGO — lockup "GRAND | HYATT / SINGAPORE"
-   Đổi màu thương hiệu: sửa --yq-brand.
+   Đổi màu logo: sửa --yq-brand-logo.
    ========================================================================== */
 :root{
-  --yq-brand:      #C10B44;   /* crimson của Grand Hyatt */
-  --yq-brand-dark: #8E0A34;   /* crimson đậm: tag % giảm */
+  --yq-brand:      #94835D;   /* The Shop Brass: ribbon promo, chip Save */
+  --yq-brand-dark: #736649;   /* brass đậm: tag % giảm */
   --yq-brand-sub:  #58575B;   /* xám của chữ SINGAPORE */
+  --yq-brand-logo: #171613;   /* đen của logo THE SHOP */
 }
 
 .yq-logo{
@@ -883,7 +884,7 @@ img{ max-width: 100%; display: block; }
   font-weight: 300;
   letter-spacing: .20em;
   text-transform: uppercase;
-  color: var(--yq-brand);
+  color: var(--yq-brand-logo);
   position: relative;
 }
 .yq-logo__word{ display: inline-block; }

@@ -62,7 +62,7 @@
 }
 /* Buy Now nhấn mạnh hơn Add to cart một chút */
 .yq-buynow{ font-weight: 600; }
-.yq-buynow:hover{ box-shadow: 0 10px 26px rgba(196, 164, 106, .38); }
+.yq-buynow:hover{ box-shadow: 0 10px 26px rgba(148,131,93, .38); }
 
 /* ---------- 3. Card sản phẩm: nút Buy now trong overlay hover ---------- */
 /* .yq-quickadd gốc chỉ chứa 1 nút block; khi có thêm Buy now thì chia 2 cột */
