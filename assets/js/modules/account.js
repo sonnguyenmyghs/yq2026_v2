@@ -107,6 +107,20 @@
   };
   YQ.auth.load();
 
+  /* Khu member (<html data-member-area>: các trang trong member/) chỉ vào được khi
+     đã đăng nhập — production server chặn ở cổng và in sẵn trạng thái đăng nhập.
+     Bản demo: chưa đăng nhập thì tự đăng nhập bằng hồ sơ mẫu (YQ.profile, cùng dữ liệu
+     trang profile hiển thị) để avatar ở header mở được menu user thay vì popup Log in. */
+  if (!YQ.auth.isIn() && document.documentElement.hasAttribute('data-member-area')) {
+    var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+    var P = YQ.profile;
+    YQ.auth.signIn({
+      email: P ? P.get('email') : '',
+      first: P ? cap(P.get('firstName')) : '',
+      last:  P ? cap(P.get('lastName')) : ''
+    });
+  }
+
   /* ======================================================================
      2. Tiện ích form
      ====================================================================== */
@@ -649,6 +663,10 @@
       closeMember();
       YQ.auth.signOut();
       YQ.toast('You have been logged out');
+      /* Đang ở khu member thì rời đi — trang này chỉ dành cho người đã đăng nhập */
+      if (document.documentElement.hasAttribute('data-member-area')) {
+        setTimeout(function () { window.location.href = YQ.url('index.html'); }, 900);
+      }
     })
 
     /* --- panel member: các form con --- */

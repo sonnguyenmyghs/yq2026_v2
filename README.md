@@ -403,6 +403,11 @@ YQ.referral = {
 - Link mời là URL tuyệt đối kèm `?ref=<mã>`, mã bám theo `memberNo` nên mỗi người một mã.
 - Danh sách đã mời lưu ở `localStorage` (`yq_invites_v1`), tự bỏ email trùng.
 
+**Khu member** — 4 trang trong `member/` có `<html data-member-area>`. Vào đó khi chưa đăng
+nhập thì demo tự đăng nhập bằng hồ sơ mẫu (`YQ.profile`) để avatar header mở menu user;
+Logout ở khu member thì chuyển về `index.html`. Production: server chặn ở cổng và in sẵn
+trạng thái đăng nhập vào header.
+
 > **Chưa nối backend.** Mọi email/mật khẩu đúng định dạng đều đăng nhập được và
 > **mật khẩu không được lưu ở đâu cả** — localStorage (`yq_user_v1`) chỉ giữ email,
 > tên và tuỳ chọn nhận khuyến mãi. Phần `6. Chỗ nối API` trong `account.js` là 3 hàm
