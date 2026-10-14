@@ -1,214 +1,226 @@
 /* ==========================================================================
-   Module JS: add-to-cart — nút "Add to cart" / "Buy now" theo cấu trúc template cũ
-   Nạp sau data.js / app.js / pages.js / cart-anim.js.
+   Module JS: add-to-cart — nút "Add To Cart" / "Buy Now"
+   Viết theo đúng file JS của template cũ (cùng tên biến, cùng thứ tự kiểm tra,
+   cùng URL AJAX và cùng field response) để backend không phải đổi gì.
 
-   Giữ nguyên hợp đồng với backend cũ để không phải đổi server:
-     - Nút: .addToCart + data-productid / data-quantity / data-attribute
-            data-buynow="1" (mua nhanh) · data-var="1" (sang trang chi tiết để chọn)
-            data-page="1" (card ở trang list) · data-go
-     - Thuộc tính: #form-list-attribute (serialize gửi kèm), .redeem_attreibute,
-            .status-product-attribute, .product--attr[data-max] .single--attribute input,
-            .sku--variable--max / .sku--variable--cur, .sec--product--detail
-            (.noo__need__choose, data-addon="use__addon__version")
-     - AJAX: POST baseUrl + '/cart/?action=addCart&product_id=…&quantity=…&product_att=…&amoun_att=…'
-            response JSON { html, totalItems, totalCost, htmlModal, htmlWarning }
+   HTML nút (giống template cũ):
+     <button class="addToCart" data-page="1" data-productid="29176" data-quantity="1"
+             data-attribute="1" data-go="1" data-var="0">Add To Cart</button>
+     <button class="addToCart" data-buynow="1" ...>Buy Now</button>
 
-   Hai chế độ:
-     - Production: có <span id="root" data-base="…"> → gọi AJAX như cũ.
-     - Demo (không có #root): thêm vào YQ.cart (localStorage) bằng id trong data.js.
+   Khác template cũ:
+     1. Cập nhật thêm badge giỏ của header mới (#yqCartCount, #yqCartCountM).
+     2. imageAnimation() dùng hiệu ứng bay vào giỏ của cart-anim.js.
+     3. Không có <span id="root" data-base="..."> (bản demo HTML) thì thêm vào giỏ
+        demo YQ.cart (localStorage) thay cho AJAX — xem addCartDemo().
    ========================================================================== */
-(function ($) {
-  'use strict';
+$(function () {
 
-  var $root = $('#root');
-  var baseUrl = $root.length ? ($root.data('base') || '') : null;   // null = demo
-  var SERVER = baseUrl !== null;
+    var baseUrl = $('#root').data('base');
+    var isDemo = $('#root').length == 0;       // demo HTML: không có backend
 
-  var URL_VIEW_CART = SERVER ? baseUrl + '/cart/?action=view' : 'checkout.html';
-  function urlDetail(id) {
-    return SERVER ? baseUrl + '/member/redemption/' + id : YQ.url('product.html?id=' + id);
-  }
+    // add to cart
 
-  var REDIRECT_DELAY = 420;   // ms — đủ để thấy spinner Buy now
-  var busy = false;           // chặn bấm liên tục gây thêm trùng
+    $(document).on('click', '.addToCart', function (e) {
+        e.preventDefault();
 
-  /* ======================================================================
-     1. Kiểm tra lựa chọn (giữ nguyên logic template cũ)
-     ====================================================================== */
-  function shake($el) {
-    $el.addClass('shake');
-    setTimeout(function () { $el.removeClass('shake'); }, 1200);
-  }
+        var _this = $(this);
+        var cartProductId = $(this).attr('data-productid'),
+            cartQuantiry = $(this).attr('data-quantity'),
+            cartAttribute = $('.redeem_attreibute').val(),
+            __status_attribute = $('.status-product-attribute').val(),
+            _data_list_attribute = $('#form-list-attribute').serialize(),
+            section__product__detail = $('.sec--product--detail');
 
-  /** variable v1: phải chọn đủ số SKU */
-  function invalidVariable() {
-    if (!$('.sku--variable--max').length) return false;
-    var max = parseInt($('.sku--variable--max').val(), 10);
-    var cur = parseInt($('.sku--variable--cur').val() || 0, 10);
-    if (cur !== max) { shake($('.sku--variables--zone')); return true; }
-    return false;
-  }
+        // Nút trên card ở trang list (data-page="1") không kiểm tra thuộc tính
+        // của trang chi tiết (VD: card "You may also like" nằm trong trang chi tiết)
+        var isProductDetail = _this.data('page') != 1;
 
-  /** attribute v2: mỗi nhóm .product--attr phải chọn đúng data-max */
-  function invalidAttribute() {
-    var $sec = $('.sec--product--detail');
-    var noNeed = $sec.hasClass('noo__need__choose');
-    var addonVer = $sec.data('addon') === 'use__addon__version';
-    var flag = false;
+        // variable v1
+        var flagVariable = 0;
+        if (isProductDetail && $('.sku--variable--max').length > 0) {
+            var var__max = parseInt($('.sku--variable--max').val());
+            var var__cur = $('.sku--variable--cur').val();
+            var__cur = var__cur === '' ? 0 : var__cur;
 
-    if (noNeed && !addonVer && $('.product--attr .single--attribute input:checked').length === 0) return false;
+            if (parseInt(var__cur) != var__max) {
+                $('.sku--variables--zone').addClass('shake');
+                setTimeout(function () { $('.sku--variables--zone').removeClass('shake'); }, 1200);
+                flagVariable = 1;
+            }
+        }
 
-    if (addonVer) {
-      if ($('.product--attr').find('.single--attribute input:checked').length !== 1) {
-        shake($('.product--attr'));
-        flag = true;
-      }
-      return flag;
-    }
+        // attribute v2
+        var flagAttribute = 0;
+        if (!isProductDetail) {
+            flagAttribute = 0;
+        } else if (section__product__detail.hasClass('noo__need__choose') && $('.product--attr .single--attribute input:checked').length == 0 && section__product__detail.data('addon') != 'use__addon__version') {
+            flagAttribute = 0;
+        } else {
+            if (section__product__detail.data('addon') == 'use__addon__version') {
 
-    $('.product--attr').each(function () {
-      var $g = $(this);
-      var checked = $g.find('.single--attribute input:checked').length;
-      var max = $g.data('max');
-      // noo__need__choose: không bắt chọn, nhưng đã chọn thì phải chọn đủ
-      if ((noNeed && checked > 0 && checked != max) || (!noNeed && checked != max)) {
-        shake($g);
-        flag = true;
-      }
+                if ($('.product--attr').find('.single--attribute input:checked').length != 1) {
+                    $('.product--attr').addClass('shake');
+                    setTimeout(function () { $('.product--attr').removeClass('shake'); }, 1200);
+                    flagAttribute = 1;
+                }
+
+            } else {
+                $('.product--attr').each(function () {
+                    var _attr = $(this);
+                    var inputOfItemChecked = _attr.find('.single--attribute input:checked').length;
+                    var dataMaxOfItem = _attr.data('max');
+
+                    if (section__product__detail.hasClass('noo__need__choose')) {
+                        // không bắt buộc chọn, nhưng đã chọn thì phải chọn đủ
+                        if (inputOfItemChecked != dataMaxOfItem && inputOfItemChecked > 0) {
+                            _attr.addClass('shake');
+                            setTimeout(function () { _attr.removeClass('shake'); }, 1200);
+                            flagAttribute = 1;
+                        }
+                    } else {
+                        if (inputOfItemChecked != dataMaxOfItem) {
+                            _attr.addClass('shake');
+                            setTimeout(function () { _attr.removeClass('shake'); }, 1200);
+                            flagAttribute = 1;
+                        }
+                    }
+                });
+            }
+        }
+
+        //condition to add cart
+
+        if (flagVariable == 1) {
+            return;
+        }
+
+        if (flagAttribute == 1) {
+            return;
+        }
+
+        // sản phẩm có biến thể -> sang trang chi tiết để chọn
+        if (_this.data('var') == 1) {
+            window.location.href = isDemo ? 'product.html?id=' + cartProductId : baseUrl + '/member/redemption/' + cartProductId;
+            return;
+        }
+
+        if (__status_attribute == '1' && cartAttribute <= 0) {
+            alert('Please select one price!');
+            return;
+        }
+
+        if (__status_attribute != '1') {
+            cartAttribute = '';
+            var __amount = '';
+        } else {
+            var __amount = $('.redeem_attreibute option:selected').attr('data-amount');
+        }
+
+        if (_this.data('buynow') == '1') {
+            _this.addClass('is-buying');           // spinner trên nút Buy Now
+        }
+
+        if (isDemo) {
+            addCartDemo(_this, cartProductId, cartQuantiry);
+            return;
+        }
+
+        var cartCountBefore = parseInt($('#yqCartCount').text()) || 0;
+
+        $.ajax({
+            url: baseUrl + '/cart/?action=addCart&product_id=' + cartProductId + '&quantity=' + cartQuantiry + '&product_att=' + cartAttribute + '&amoun_att=' + __amount,
+            type: 'post',
+            data: _data_list_attribute,
+
+            success: function (data) {
+                var data = $.parseJSON(data);
+
+                // giống template cũ
+                $('.cart--items').html(data.html);
+                $('.cart--header .badge').html(data.totalItems);
+                $('#cart').find('.badge').html(data.totalItems);
+                $('.cart--header .main-color-text').html(data.totalCost);
+
+                $('#modalShowCartCheckOut').html(data.htmlModal);
+                $('#modalShowWarning').html(data.htmlWarning);
+
+                // badge giỏ của header mới
+                $('#yqCartCount, #yqCartCountM').html(data.totalItems).toggleClass('is-on', data.totalItems > 0);
+
+                // buynow
+                if (_this.hasClass('submit-frm-redeem')) {
+                    cartAttribute = $('.redeem_attreibute').val();
+                    __status_attribute = $('.status-product-attribute').val();
+                    if ((__status_attribute == 1 && cartAttribute > 0) || __status_attribute != 1) {
+                        window.location.href = baseUrl + '/cart/?action=view';
+                    }
+                }
+
+                if (_this.data('buynow') == '1') {
+                    window.location.href = baseUrl + '/cart/?action=view';
+                    return;
+                }
+
+                imageAnimation(_this, cartCountBefore, parseInt(data.totalItems) || 0);
+                YQ.toast('Added to cart', 'View cart', baseUrl + '/cart/?action=view');
+            },
+
+            error: function () {
+                _this.removeClass('is-buying');
+                YQ.toast('Could not add to cart. Please try again.');
+            }
+        });
     });
-    return flag;
-  }
 
-  /* ======================================================================
-     2. Cập nhật giao diện sau khi thêm
-     ====================================================================== */
-  function paintBadges(n) {
-    $('#yqCartCount, #yqCartCountM').text(n).toggleClass('is-on', n > 0);
-    $('.cart--header .badge, #cart .badge').html(n);            // header template cũ (nếu còn)
-  }
+    /* Ảnh sản phẩm bay vào icon giỏ + badge đếm tăng (cart-anim.js).
+       Template cũ tự clone ảnh và animate; ở đây gọi lại hiệu ứng có sẵn. */
+    var imageAnimation = function (button, cartCountBefore, cartCountAfter) {
+        if (YQ.cartFx) {
+            YQ.cartFx.added(button[0], cartCountBefore, cartCountAfter);
+        }
+    };
 
-  /** Production: đổ dữ liệu server trả về vào DOM — cùng field như template cũ. */
-  function applyServer(data) {
-    $('.cart--items').html(data.html);
-    $('.cart--header .main-color-text').html(data.totalCost);
-    $('#modalShowCartCheckOut').html(data.htmlModal);
-    $('#modalShowWarning').html(data.htmlWarning);
-    paintBadges(parseInt(data.totalItems, 10) || 0);
-    $(document).trigger('yq:cart-server', [data]);              // hook cho drawer / trang khác
-  }
+    /* Bản demo HTML (không có backend): thêm vào giỏ localStorage YQ.cart.
+       cart-anim.js tự chạy hiệu ứng bay + mở drawer khi giỏ đổi. */
+    var addCartDemo = function (button, cartProductId, cartQuantiry) {
+        var product = YQ.product(String(cartProductId));
+        if (!product) {
+            button.removeClass('is-buying');
+            return;
+        }
 
-  function lock($btn, buynow) {
-    busy = true;
-    $('.addToCart').addClass('is-disabled');
-    $btn.removeClass('is-disabled');
-    if (buynow) $btn.addClass('is-buying').attr('aria-busy', 'true');
-  }
-  function unlock() {
-    busy = false;
-    $('.addToCart').removeClass('is-disabled is-buying').removeAttr('aria-busy');
-  }
+        // Ở trang chi tiết: lấy option đang chọn; card ở trang list: option đầu tiên
+        var option = product.options[0];
+        if (button.data('page') != 1) {
+            var optionId = $('#pdpOptions .yq-option.is-active').attr('data-opt');
+            $.each(product.options, function (i, item) {
+                if (String(item.id) == optionId) option = item;
+            });
+        }
 
-  function done($btn, name) {
-    if ($btn.data('buynow') == 1) {
-      setTimeout(function () { window.location.href = URL_VIEW_CART; }, REDIRECT_DELAY);
-      setTimeout(unlock, 2500);           // user bấm Back / điều hướng bị huỷ
-      return;
-    }
-    // form đổi điểm cũ: nút submit-frm-redeem cũng đi thẳng sang giỏ
-    if ($btn.hasClass('submit-frm-redeem')) {
-      var att = $('.redeem_attreibute').val();
-      if ($('.status-product-attribute').val() != 1 || att > 0) window.location.href = URL_VIEW_CART;
-    }
-    unlock();
-    YQ.toast((name || 'Item') + ' added to cart', 'View cart', SERVER ? URL_VIEW_CART : 'cart.html');
-  }
+        YQ.cart.add(product, option, parseInt(cartQuantiry) || 1);
 
-  /* ======================================================================
-     3. Thêm vào giỏ
-     ====================================================================== */
-  function addServer($btn, id, qty) {
-    var att = $('.redeem_attreibute').val();
-    var hasAtt = $('.status-product-attribute').val() == '1';
-    var amount = '';
+        if (button.data('buynow') == '1') {
+            setTimeout(function () { window.location.href = 'checkout.html'; }, 400);
+            return;
+        }
 
-    if (hasAtt && !(att > 0)) { alert('Please select one price!'); return; }
-    if (hasAtt) amount = $('.redeem_attreibute option:selected').attr('data-amount');
-    else att = '';
+        YQ.toast(product.name + ' added to cart', 'View cart', 'cart.html');
+    };
 
-    var before = parseInt($('#yqCartCount').text(), 10) || 0;
-    var buynow = $btn.data('buynow') == 1;
-    lock($btn, buynow);
-
-    $.ajax({
-      url: baseUrl + '/cart/?action=addCart&product_id=' + id + '&quantity=' + qty +
-           '&product_att=' + att + '&amoun_att=' + amount,
-      type: 'post',
-      data: $('#form-list-attribute').serialize(),
-      dataType: 'text'
-    }).done(function (res) {
-      var data;
-      try { data = typeof res === 'string' ? $.parseJSON(res) : res; } catch (e) { data = null; }
-      if (!data) { unlock(); YQ.toast('Could not add to cart. Please try again.'); return; }
-
-      applyServer(data);
-      if (!buynow && YQ.cartFx) YQ.cartFx.added($btn[0], before, parseInt(data.totalItems, 10) || 0);
-      done($btn, $.trim($btn.closest('.yq-card').find('.yq-card__title').text()) || $.trim($('#pdpTitle').text()));
-    }).fail(function () {
-      unlock();
-      YQ.toast('Could not add to cart. Please try again.');
+    // Bấm Back từ trang giỏ/checkout về: bỏ spinner Buy Now còn sót
+    $(window).on('pageshow', function () {
+        $('.addToCart').removeClass('is-buying');
     });
-  }
 
-  /** Demo: option đang chọn ở PDP (nếu nút nằm trong PDP), không thì option đầu tiên. */
-  function demoOption(p, $btn) {
-    var opts = p.options || [];
-    if ($btn.closest('.yq-pdp, #pdpBuyBar').length) {
-      var optId = $('#pdpOptions .yq-option.is-active').attr('data-opt');   // attr(): giữ '12' là string
-      var hit = opts.filter(function (o) { return String(o.id) === String(optId); })[0];
-      if (hit) return hit;
-    }
-    return opts[0];
-  }
+    // Trang chi tiết: đổi số lượng thì cập nhật data-quantity của các nút
+    // (bộ +/- của template mới phát event yq:qty; input #rdChangeQuantity của template cũ)
+    $(document).on('yq:qty', '#pdpQty', function (e, quantity) {
+        $('.yq-pdp .addToCart, #pdpBuyBar .addToCart').attr('data-quantity', quantity);
+    });
+    $(document).on('change', '#rdChangeQuantity', function () {
+        $('.yq-pdp .addToCart, #pdpBuyBar .addToCart').attr('data-quantity', $(this).val());
+    });
 
-  function addDemo($btn, id, qty) {
-    var p = YQ.product(String(id));
-    if (!p) return;
-    var buynow = $btn.data('buynow') == 1;
-    lock($btn, buynow);
-    YQ.cart.add(p, demoOption(p, $btn), qty);   // cart-anim bắt yq:cart-changed → bay + drawer
-    done($btn, p.name);
-  }
-
-  $(document).on('click', '.addToCart', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var $btn = $(this);
-    if (busy || $btn.hasClass('is-yqadded')) return;
-
-    var id = $btn.attr('data-productid');
-    var qty = parseInt($btn.attr('data-quantity'), 10) || 1;
-
-    // Card ở trang list chỉ check thuộc tính khi đang ở trang chi tiết
-    if (!$btn.data('page')) {
-      if (invalidVariable() | invalidAttribute()) return;   // `|`: shake cả hai nhóm cùng lúc
-    }
-
-    // Sản phẩm có biến thể → sang trang chi tiết để chọn
-    if ($btn.data('var') == 1) { window.location.href = urlDetail(id); return; }
-
-    if (SERVER) addServer($btn, id, qty);
-    else addDemo($btn, id, qty);
-  });
-
-  /* ======================================================================
-     4. PDP: đồng bộ số lượng vào data-quantity của các nút (như #rdChangeQuantity cũ)
-     ====================================================================== */
-  function syncQty(n) {
-    $('.yq-pdp .addToCart, #pdpBuyBar .addToCart').attr('data-quantity', n);
-  }
-  $(document).on('yq:qty', '#pdpQty', function (e, n) { syncQty(n); });
-  $(document).on('change input', '#rdChangeQuantity', function () {
-    syncQty(Math.max(1, parseInt(this.value, 10) || 1));
-  });
-
-})(jQuery);
+});
