@@ -46,7 +46,7 @@ python3 -m http.server 8000
     ├── img/favicon.svg
     └── js/
         ├── data.js       Nav, icon, logo, 13 sản phẩm, 6 experiences, đơn hàng, hồ sơ, config
-        ├── app.js        Helper, cart + profile (localStorage), header/footer, toast, reveal
+        ├── app.js        Helper, cart + profile (localStorage), init header, render footer, toast, reveal
         ├── pages.js      Component (card, tile, summary) + controller từng trang
         └── modules/      Tính năng rời, mỗi file một việc:
             ├── nav.js        Sticky/thu gọn khi cuộn, mega menu, panel Seasonal,
@@ -58,8 +58,13 @@ python3 -m http.server 8000
             └── checkout-v2.js Controller trang checkout-v2 (form, promo, map, báo giá, summary)
 ```
 
-Header và footer **không lặp lại trong HTML** — được render bằng jQuery từ `app.js`,
-nên sửa nav/footer chỉ cần sửa một chỗ (`YQ.nav`, `YQ.megaMenu` trong `data.js`).
+**Header là HTML tĩnh** (khối `<!-- HEADER -->` … `<!-- /HEADER -->` đầu `<body>` mỗi trang:
+`#yqHeader` + mega menu `#yqMega` + panel `#yqSeasonal` + search `#yqSearch` + offcanvas
+`#yqOffcanvas`). Markup giống hệt nhau ở mọi trang, chỉ khác mục nav đang xem
+(`.yq-nav__item.is-active` + `aria-current="page"`, và `.is-active`/`.show` trong offcanvas);
+trang trong `member/` dùng đường dẫn `../`. Sửa nav thì sửa khối này ở **mọi** trang
+(production: backend include 1 partial). `YQ.initHeader()` chỉ đồng bộ badge giỏ + phát
+`yq:header-ready`. Footer vẫn render bằng jQuery từ `app.js` (`YQ.renderFooter()`).
 
 Mỗi file trong `assets/js/modules/` là một tính năng độc lập, chỉ móc vào DOM và event
 có sẵn — xoá file nào thì mất đúng tính năng đó, phần còn lại vẫn chạy. Module chạy đúng
@@ -408,7 +413,7 @@ nên luôn sắc nét ở mọi kích thước và đổi màu chỉ bằng 1 d�
 }
 ```
 
-Khi có file logo chính thức, chỉ cần gán đường dẫn — header, footer và menu mobile tự đổi theo:
+Khi có file logo chính thức: footer tự đổi theo 2 biến dưới; logo ở header + menu mobile là HTML tĩnh nên thay `<a class="yq-logo">…</a>` trong khối HEADER bằng `<img>`:
 
 ```js
 // assets/js/data.js

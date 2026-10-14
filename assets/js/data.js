@@ -99,69 +99,6 @@ YQ.logo = function (opts) {
   return '<a class="' + cls + '" href="' + (opts.href || 'index.html') + '" aria-label="' + label + '">' + inner + '</a>';
 };
 
-/* ---------- Navigation ----------
-   Nav 2 tầng cho gọn hàng ngang:
-     - 4 mục chính luôn hiện: The Online Shop / Shop by Category / Experiences / Celebrations
-     - Nhóm mùa vụ (Retreats, Festive, NYE, Father's Day, CNY) gom vào 1 mục "Seasonal"
-       mở panel dropdown -> nav chỉ còn 5 mục, thoáng và có phân cấp rõ.
-   Thuộc tính:
-     panel     : 'mega' | 'seasonal'  -> mục này mở panel thả xuống
-     megaIndex : chỉ số cột trong YQ.megaMenu dùng làm submenu (accordion trên mobile)
-     children  : danh sách con (dùng cho panel 'seasonal' + accordion mobile)
-*/
-YQ.nav = [
-  { label: 'The Online Shop',  href: 'index.html',        key: 'home' },
-  { label: 'Shop by Category', href: 'shop.html',         key: 'shop',         panel: 'mega', megaIndex: 0 },
-  { label: 'Experiences',      href: 'experiences.html',  key: 'experiences',  megaIndex: 1 },
-  { label: 'Celebrations',     href: 'celebrations.html', key: 'celebrations', megaIndex: 2 },
-  {
-    label: 'Seasonal', key: 'seasonal', panel: 'seasonal',
-    intro: 'Limited-time menus, hampers and events — available for a short season only.',
-    children: [
-      { label: 'The Festive Season',    href: 'shop.html?season=festive',  key: 'festive',  icon: 'sparkle',  tag: 'Now on',
-        desc: 'Yule logs, festive hampers & gifting' },
-      { label: 'Chinese New Year',      href: 'shop.html?season=cny',      key: 'cny',      icon: 'gift',
-        desc: 'Yusheng, pen cai & prosperity hampers' },
-      { label: "New Year's Eve Events", href: 'shop.html?season=nye',      key: 'nye',      icon: 'star',
-        desc: 'Countdown dinners & celebration packages' },
-      { label: "Father's Day Brunch",   href: 'shop.html?season=fathers',  key: 'fathers',  icon: 'users',
-        desc: 'Free-flow brunch and gifts for him' },
-      { label: 'Retreats',              href: 'shop.html?season=retreats', key: 'retreats', icon: 'leaf',
-        desc: 'Wellness escapes, spa journeys & stays' }
-    ]
-  }
-];
-
-YQ.megaMenu = [
-  { title: 'Shop', href: 'shop.html', links: [
-    ['Cakes & Pastries',   'shop.html?cat=cakes'],
-    ['Breads & Pastries',  'shop.html?cat=bakery'],
-    ['Pantry & Tea',       'shop.html?cat=pantry'],
-    ['Hampers & Gift Sets','shop.html?cat=celebration'],
-    ['Wines & Champagne',  'shop.html?cat=beverages'],
-    ['Wellness & Spa',     'shop.html?cat=wellness'],
-    ['Brix Merchandise',   'shop.html?cat=brix'],
-    ['Dining Vouchers',    'shop.html?cat=dining'],
-    ['View All Products',  'shop.html']
-  ]},
-  { title: 'Experiences', href: 'experiences.html', links: [
-    ['Dining Experiences','experiences.html'],
-    ['Spa & Wellness',    'experiences.html'],
-    ['Afternoon Tea',     'experiences.html'],
-    ["Chef's Table",      'experiences.html'],
-    ['Weekend Staycation','experiences.html'],
-    ['Corporate Gifting', 'celebrations.html']
-  ]},
-  { title: 'Occasions', href: 'celebrations.html', links: [
-    ['Birthdays',      'celebrations.html'],
-    ['Anniversaries',  'celebrations.html'],
-    ['Festive Season', 'shop.html?season=festive'],
-    ['Chinese New Year','shop.html?season=cny'],
-    ['Corporate',      'celebrations.html'],
-    ['Personalise a Gift','personalise.html']
-  ]}
-];
-
 /* ---------- Products ----------
    CHỈ dùng cho giỏ hàng demo (localStorage): tra tên/giá/ảnh theo data-productid khi
    Add to cart, giỏ mẫu, đơn hàng mẫu. Card, chip danh mục và trang chi tiết đều là
