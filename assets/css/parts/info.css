@@ -1,0 +1,72 @@
+/* ==========================================================================
+   Info pages — FAQs, Returns Policy, Terms & Conditions, Privacy Policy
+   Nội dung lấy từ file "Grand Hyatt Singapore-new online shop.pdf".
+   Bố cục: cột trái = menu Help & Info + thẻ liên hệ (sticky), cột phải = nội dung.
+   Dùng token của style.css (--yq-ink, --yq-gold, --yq-line…).
+   ========================================================================== */
+
+.yq-info{ padding-bottom: clamp(56px, 8vw, 104px); }
+
+/* ---------- Menu trái ---------- */
+.yq-info__nav{ display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
+.yq-info__nav a{
+  display: block; padding: 10px 14px; border-radius: var(--yq-radius-sm);
+  font-size: 14px; color: var(--yq-body); border-left: 2px solid transparent;
+}
+.yq-info__nav a:hover{ color: var(--yq-ink); background: var(--yq-paper); }
+.yq-info__nav a.is-active{
+  color: var(--yq-ink); font-weight: 600; background: var(--yq-paper);
+  border-left-color: var(--yq-gold);
+}
+.yq-info__navlabel{
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--yq-muted); padding: 0 14px 8px;
+}
+
+/* ---------- Thẻ liên hệ ---------- */
+.yq-help{ font-size: 14px; }
+.yq-help h3{ font-size: 1.05rem; margin-bottom: 14px; }
+.yq-help__row{ display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; color: var(--yq-body); }
+.yq-help__row .yq-i{ flex: none; margin-top: 3px; color: var(--yq-gold-dark); }
+.yq-help__row a{ color: var(--yq-ink); }
+.yq-help__row a:hover{ color: var(--yq-gold-dark); }
+
+/* ---------- Nội dung ---------- */
+.yq-info__body{ max-width: 760px; }
+.yq-info__body h2{ font-size: clamp(1.25rem, 2vw, 1.5rem); margin: 0 0 12px; }
+.yq-info__body p,
+.yq-info__body li{ font-size: 15px; line-height: 1.75; }
+.yq-info__body ol{ padding-left: 1.25rem; margin-bottom: 0; }
+.yq-info__body li + li{ margin-top: 6px; }
+.yq-info__body a{ color: var(--yq-gold-dark); text-decoration: underline; text-underline-offset: 3px; }
+.yq-info__body a:hover{ color: var(--yq-ink); }
+
+.yq-info__block{ padding: 28px 0; border-top: 1px solid var(--yq-line); }
+.yq-info__block:first-child{ padding-top: 0; border-top: 0; }
+.yq-info__block[id]{ scroll-margin-top: calc(var(--yq-header-h) + 24px); }
+
+.yq-info__links{ display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.yq-info__links a{ word-break: break-all; }
+
+/* FAQ: mỗi nhóm câu hỏi = 1 accordion */
+.yq-faq .accordion-button{ font-size: 15px; line-height: 1.5; }
+.yq-faq .accordion-body{ font-size: 14.5px; line-height: 1.75; }
+
+/* ---------- Mobile: menu trái thành hàng chip cuộn ngang ---------- */
+@media (max-width: 991.98px){
+  .yq-info__nav{
+    flex-direction: row; gap: 8px; overflow-x: auto; margin: 0 -24px 24px; padding: 0 24px 4px;
+    scrollbar-width: none;
+  }
+  .yq-info__nav::-webkit-scrollbar{ display: none; }
+  .yq-info__navlabel{ display: none; }
+  .yq-info__nav a{
+    flex: none; white-space: nowrap; padding: 8px 14px; font-size: 13px;
+    border: 1px solid var(--yq-line); border-radius: var(--yq-radius-pill); background: var(--yq-paper);
+  }
+  .yq-info__nav a.is-active{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+  .yq-info__aside .yq-help{ display: none; }   /* thẻ liên hệ đã có ở cuối nội dung */
+}
+@media (min-width: 992px){
+  .yq-info__help-end{ display: none; }
+}

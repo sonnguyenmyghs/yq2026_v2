@@ -29,6 +29,12 @@ python3 -m http.server 8000
 ├── checkout.html         Checkout 4 bước: Information → Shipping → Payment → Review
 ├── checkout-v2.html      Checkout v2 một màn: banner ảnh, form + Self-Collection / Delivery
 │                         (chọn địa chỉ trên bản đồ, báo giá xe), Order Summary cột phải
+├── faq.html              FAQs (accordion theo nhóm: ordering, self-collection, delivery…)
+├── returns.html          Returns Policy
+├── terms.html            Terms & Conditions (+ Self-Collection, Delivery)
+├── privacy.html          Privacy Policy (link Hyatt + OneTrust)
+│                         4 trang trên lấy nguyên văn từ "Grand Hyatt Singapore-new online shop.pdf",
+│                         dùng chung assets/css/parts/info.css
 ├── member/               Khu vực thành viên (xem mục "Trang trong thư mục con")
 │   ├── profile.html      Member Profile — HTML tĩnh: thẻ tóm tắt + 4 nhóm thông tin, sửa tại chỗ
 │   ├── orders.html       My Orders — 2 tab Completed orders / Pending payment, ReOrder
@@ -129,7 +135,7 @@ nên cả hai hàm là no-op.
 | Shop | Lọc 7 category + 5 seasonal, 5 kiểu sort, deep-link `?cat=`, `?season=`, `?q=` |
 | Product | Đổi option → giá cập nhật, stepper số lượng, accordion thông tin, sản phẩm liên quan |
 | Personalise | 4 mẫu eCard, eCard/Physical (+$5), live preview, đếm ký tự 200 |
-| Cart | Sửa số lượng, xoá, subtotal/shipping/tax 9%/total, free-ship từ $150 |
+| Cart | Sửa số lượng, xoá, subtotal/shipping/tax 9%/total, free-ship từ $300 |
 | Checkout | 4 bước có validate, auto-format số thẻ & expiry, màn hình xác nhận đơn |
 | Header | 5 mục chính + panel Seasonal, thu gọn khi cuộn xuống / hiện lại khi cuộn lên, phím tắt `/` mở tìm kiếm |
 | Banner | Hero slider 3 slide (autoplay, prev/next, dot, progress, swipe) + promo strip 2 cột |
@@ -160,6 +166,19 @@ Lần đầu vào site giỏ được nạp sẵn dữ liệu mẫu từ `YQ.dem
   --yq-sans:  "Inter", -apple-system, sans-serif;
 }
 ```
+
+**Font** — theo brand The Shop: Neutraface Demi (tiêu đề) + Neutraface Text Book (nội dung).
+Đây là font bản quyền nên chưa nhúng; chép file `.woff2` vào `assets/fonts/` rồi bỏ comment dòng
+`url()` trong `@font-face` ở đầu `style.css`. Trong lúc chờ, site dùng Josefin Sans / Inter.
+
+**Ảnh The Shop** — ảnh gốc (838MB) để ở `assets/estore-assets/` (đã gitignore). Bản web đã xuất:
+- `assets/img/shop/*.jpg` — 78 ảnh WhiteBox, crop 4:3, 1200×900 (`cake-*`, `tart-*`, `petit-*` (cỡ nhỏ),
+  `choc-bar-*`, `pralines-*`, `truffles-*`, `jar-*`, `bake-*`, `danish-*`, `bread-*`, `sand-*`, `group-*`…)
+- `assets/img/lifestyle/*.jpg` — 6 ảnh lifestyle (hero trang chủ, editorial, tile Birthdays, banner checkout-v2)
+
+Sản phẩm từ rank 14 trở đi trong `YQ.products` là hàng The Shop theo bộ ảnh này.
+**Tên đặt theo ảnh (trừ cookies/nuts có tên trong file ảnh) và giá là giá tạm** — cần thay bằng
+tên + giá chính thức. Field `gallery` (mảng ảnh phụ) hiện ở thumb trang chi tiết.
 
 **Sản phẩm** — sửa mảng `YQ.products` trong `assets/js/data.js`.
 
@@ -396,7 +415,7 @@ YQ.logoImageLight = 'assets/img/logo-grand-hyatt-white.png'; // nền tối (foo
 `e-*` (experience), `o-*` (occasion). Đổi ảnh = thay file cùng tên, hoặc sửa field `img`:
 
 ```js
-{ id:'signature-chocolate-cake', img:'assets/img/p-chocolate-cake.jpg', ... }
+{ id:'signature-chocolate-cake', img:'assets/img/shop/cake-chocolate-gold.jpg', ... }
 ```
 
 Sản phẩm chưa có `img` sẽ tự rơi về placeholder gradient (`.ph-1` … `.ph-8`) — template
@@ -422,7 +441,7 @@ Hero và ảnh editorial nằm trực tiếp trong `index.html`:
 **Phí ship / thuế** — `YQ.config` cuối `data.js`:
 
 ```js
-YQ.config = { shipping: 15, freeShippingThreshold: 150, taxRate: 0.09, physicalCardFee: 5 };
+YQ.config = { shipping: 15, freeShippingThreshold: 300, taxRate: 0.09, physicalCardFee: 5 };
 ```
 
 ---

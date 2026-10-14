@@ -210,7 +210,18 @@
     document.title = p.name + ' — Grand Hyatt Singapore';
 
     /* Gallery (#pdpMain, #pdpLabels, #pdpThumbs) là HTML tĩnh trong product.html —
-       JS không dựng, chỉ xử lý bấm thumb ở phần Events. */
+       backend đổ đúng sản phẩm thì JS không dựng lại. Bản demo chỉ có markup của 1 sản phẩm,
+       nên khi ảnh chính tĩnh không phải ảnh của p thì dựng gallery từ p.img + p.gallery. */
+    if (p.img && $('#pdpMain img').attr('src') !== YQ.url(p.img)) {
+      var shots = [p.img].concat(p.gallery || []);
+      $('#pdpMain').html(YQ.mediaInner(p, { eager: true }));
+      $('#pdpLabels').html(YQ.labelsHtml(p));
+      $('#pdpThumbs').html(shots.length < 2 ? '' : shots.map(function (src, i) {
+        return '<button class="yq-pdp__thumb' + (i === 0 ? ' is-active' : '') + '" type="button">' +
+                 '<span class="yq-media">' + YQ.mediaInner({ img: src, name: p.name }) + '</span>' +
+               '</button>';
+      }).join(''));
+    }
 
     /* Info */
     $('#pdpCat').text(p.catLabel);

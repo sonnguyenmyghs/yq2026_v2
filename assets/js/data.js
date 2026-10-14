@@ -134,6 +134,8 @@ YQ.nav = [
 YQ.megaMenu = [
   { title: 'Shop', href: 'shop.html', links: [
     ['Cakes & Pastries',   'shop.html?cat=cakes'],
+    ['Breads & Pastries',  'shop.html?cat=bakery'],
+    ['Pantry & Tea',       'shop.html?cat=pantry'],
     ['Hampers & Gift Sets','shop.html?cat=celebration'],
     ['Wines & Champagne',  'shop.html?cat=beverages'],
     ['Wellness & Spa',     'shop.html?cat=wellness'],
@@ -163,6 +165,8 @@ YQ.megaMenu = [
 YQ.categories = [
   { id: 'all',         label: 'All Products' },
   { id: 'cakes',       label: 'Cakes, Cookies & Pralines' },
+  { id: 'bakery',      label: 'Breads & Pastries' },
+  { id: 'pantry',      label: 'Pantry & Tea' },
   { id: 'dining',      label: 'Dining' },
   { id: 'beverages',   label: 'Beverages' },
   { id: 'wellness',    label: 'Wellness' },
@@ -185,9 +189,10 @@ YQ.seasons = [
    % giảm tự tính bằng YQ.discount(price, compareAt). */
 YQ.products = [
   {
-    id: 'signature-chocolate-cake', img:'assets/img/p-chocolate-cake.jpg', name: 'Signature Chocolate Cake',
+    id: 'signature-chocolate-cake', img:'assets/img/shop/cake-chocolate-gold.jpg', name: 'Signature Chocolate Cake',
     cat: 'cakes', catLabel: 'Cakes & Pastries', tone: 1, badge: 'Bestseller',
     price: 78, seasons: ['festive'], featured: true, rank: 1,
+    gallery: ['assets/img/shop/group-cakes.jpg', 'assets/img/lifestyle/cake-table.jpg'],
     desc: 'A modern classic—layers of velvety chocolate sponge, silky ganache, and refined finishes. Available in three sizes to suit any celebration.',
     short: 'A modern classic—layers of velvety chocolate sponge, silky ganache, and refined finishes.',
     optionLabel: 'Select option',
@@ -198,9 +203,10 @@ YQ.products = [
     ]
   },
   {
-    id: 'grand-pralines', img:'assets/img/p-pralines.jpg', name: 'Grand Pralines Collection',
+    id: 'grand-pralines', img:'assets/img/shop/pralines-25.jpg', name: 'Grand Pralines Collection',
     cat: 'cakes', catLabel: 'Cakes & Pastries', tone: 8, badge: 'Bestseller',
     price: 58, seasons: ['festive','cny'], featured: true, rank: 2,
+    gallery: ['assets/img/shop/pralines-16.jpg'],
     desc: '24 handcrafted pralines in an elegant gold gift box. Dark, milk, and white chocolate shells filled with single-origin ganache.',
     short: '24 handcrafted pralines in an elegant gold gift box. Dark, milk, and white chocolate.',
     optionLabel: 'Box size',
@@ -210,7 +216,7 @@ YQ.products = [
     ]
   },
   {
-    id: 'the-grand-hamper', img:'assets/img/p-grand-hamper.jpg', name: 'The Grand Hamper',
+    id: 'the-grand-hamper', img:'assets/img/shop/hamper-grand.jpg', name: 'The Grand Hamper',
     cat: 'celebration', catLabel: 'Hampers', tone: 3, badge: 'Bestseller',
     price: 218, seasons: ['festive','cny'], featured: true, rank: 3, meta: '12 items',
     desc: 'Our signature seasonal selection featuring artisan treats, preserves, fine teas, and a bottle of house champagne—presented in a hand-woven basket.',
@@ -234,7 +240,7 @@ YQ.products = [
     ]
   },
   {
-    id: 'the-pantry-hamper', img:'assets/img/p-pantry-hamper.jpg', name: 'The Pantry Hamper',
+    id: 'the-pantry-hamper', img:'assets/img/shop/hamper-pantry.jpg', name: 'The Pantry Hamper',
     cat: 'celebration', catLabel: 'Hampers', tone: 6, badge: 'New', promo: 'Limited Time Offer',
     price: 168, compareAt: 210, seasons: ['festive'], featured: true, rank: 5, meta: '8 items',
     desc: 'A collection of gourmet pantry essentials—artisan honey, olive oil, preserves, and hand-baked crackers from our kitchens.',
@@ -335,6 +341,462 @@ YQ.products = [
       { id: '6',  label: 'Serves 6', price: 128 },
       { id: '10', label: 'Serves 10', price: 188 }
     ]
+  },
+
+  /* ---------- The Shop — sản phẩm theo bộ ảnh WhiteBox (assets/img/shop/) ----------
+     Tên đặt theo ảnh, GIÁ LÀ GIÁ TẠM — thay bằng tên + giá chính thức của The Shop.
+     Bánh/tart có 2 cỡ: Petite (cỡ nhỏ 1 người) và Whole (nguyên ổ). */
+
+  /* Whole cakes */
+  {
+    id: 'dark-chocolate-cherry-cake', img:'assets/img/shop/cake-chocolate-cherry.jpg', name: 'Dark Chocolate Cherry Cake',
+    cat: 'cakes', catLabel: 'Cakes', tone: 1, price: 11, seasons: [], rank: 14,
+    gallery: ['assets/img/shop/petit-chocolate-cherry.jpg', 'assets/img/shop/group-cakes.jpg'],
+    desc: 'A dark chocolate collar filled with light chocolate mousse and Chantilly, crowned with cherries and chocolate curls. Requires 48 hours’ advance notice.',
+    short: 'Dark chocolate mousse and Chantilly, crowned with cherries and chocolate curls.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 11 }, { id: 'whole', label: 'Whole (serves 8)', price: 68 }]
+  },
+  {
+    id: 'peach-chantilly-cake', img:'assets/img/shop/cake-peach-chantilly.jpg', name: 'Peach Chantilly Cake',
+    cat: 'cakes', catLabel: 'Cakes', tone: 3, price: 11, seasons: [], rank: 15,
+    gallery: ['assets/img/shop/petit-peach-chantilly.jpg'],
+    desc: 'Vanilla sponge layered with whipped Chantilly cream and fresh stone fruit, finished with piped rosettes. Requires 48 hours’ advance notice.',
+    short: 'Vanilla sponge, whipped Chantilly cream and fresh stone fruit.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 11 }, { id: 'whole', label: 'Whole (serves 8)', price: 68 }]
+  },
+  {
+    id: 'caramel-coconut-cake', img:'assets/img/shop/cake-caramel-coconut.jpg', name: 'Caramel Coconut Cake',
+    cat: 'cakes', catLabel: 'Cakes', tone: 3, price: 11, seasons: [], rank: 16,
+    gallery: ['assets/img/shop/petit-caramel-coconut.jpg'],
+    desc: 'Coconut mousse on a crisp dacquoise base, glazed with golden caramel and edged with toasted coconut. Requires 48 hours’ advance notice.',
+    short: 'Coconut mousse and golden caramel glaze on a crisp dacquoise base.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 11 }, { id: 'whole', label: 'Whole (serves 8)', price: 68 }]
+  },
+  {
+    id: 'lavender-blossom-cake', img:'assets/img/shop/cake-lavender.jpg', name: 'Lavender Blossom Cake',
+    cat: 'cakes', catLabel: 'Cakes', tone: 8, price: 11, seasons: [], rank: 17,
+    gallery: ['assets/img/shop/petit-lavender.jpg'],
+    desc: 'A delicate blush mousse cake on a sablé base, scattered with lavender blossoms. Requires 48 hours’ advance notice.',
+    short: 'A delicate blush mousse cake scattered with lavender blossoms.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 11 }, { id: 'whole', label: 'Whole (serves 8)', price: 68 }]
+  },
+  {
+    id: 'matcha-strawberry-cake', img:'assets/img/shop/cake-matcha-strawberry.jpg', name: 'Matcha Strawberry Cake',
+    cat: 'cakes', catLabel: 'Cakes', tone: 6, price: 11, seasons: [], rank: 18,
+    gallery: ['assets/img/shop/petit-matcha-strawberry.jpg'],
+    desc: 'Layers of matcha mousse and vanilla cream under a glossy green tea glaze, topped with fresh strawberries. Requires 48 hours’ advance notice.',
+    short: 'Matcha mousse, vanilla cream and fresh strawberries.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 11 }, { id: 'whole', label: 'Whole (serves 8)', price: 68 }]
+  },
+
+  /* Tarts */
+  {
+    id: 'citrus-meringue-tart', img:'assets/img/shop/tart-citrus-meringue.jpg', name: 'Citrus Meringue Tart',
+    cat: 'cakes', catLabel: 'Tarts', tone: 3, price: 10, seasons: [], rank: 19,
+    gallery: ['assets/img/shop/petit-citrus-meringue.jpg', 'assets/img/shop/group-tarts.jpg'],
+    desc: 'Buttery sablé filled with tangy citrus curd, finished with torched Italian meringue petals. Requires 48 hours’ advance notice.',
+    short: 'Tangy citrus curd under torched Italian meringue petals.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 10 }, { id: 'whole', label: 'Whole (serves 8)', price: 62 }]
+  },
+  {
+    id: 'strawberry-mango-tart', img:'assets/img/shop/tart-strawberry-mango.jpg', name: 'Strawberry Mango Tart',
+    cat: 'cakes', catLabel: 'Tarts', tone: 1, price: 10, seasons: [], rank: 20,
+    gallery: ['assets/img/shop/petit-strawberry-mango.jpg', 'assets/img/shop/group-tarts.jpg'],
+    desc: 'Vanilla crème pâtissière in a crisp tart shell, piled high with fresh strawberries and ripe mango. Requires 48 hours’ advance notice.',
+    short: 'Vanilla custard piled high with fresh strawberries and mango.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 10 }, { id: 'whole', label: 'Whole (serves 8)', price: 62 }]
+  },
+  {
+    id: 'caramel-coffee-tart', img:'assets/img/shop/tart-caramel-coffee.jpg', name: 'Caramel Coffee Tart',
+    cat: 'cakes', catLabel: 'Tarts', tone: 3, price: 10, seasons: [], rank: 21,
+    gallery: ['assets/img/shop/petit-caramel-coffee.jpg', 'assets/img/shop/group-tarts.jpg'],
+    desc: 'Coffee caramel ganache piped into a sunflower of petals, centred with crunchy chocolate pearls. Requires 48 hours’ advance notice.',
+    short: 'Coffee caramel ganache petals with crunchy chocolate pearls.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 10 }, { id: 'whole', label: 'Whole (serves 8)', price: 62 }]
+  },
+  {
+    id: 'cherry-vanilla-tart', img:'assets/img/shop/tart-cherry-vanilla.jpg', name: 'Cherry Vanilla Tart',
+    cat: 'cakes', catLabel: 'Tarts', tone: 1, price: 10, seasons: [], rank: 22,
+    gallery: ['assets/img/shop/petit-cherry-vanilla.jpg', 'assets/img/shop/group-tarts.jpg'],
+    desc: 'Vanilla cream quenelles and glossy fresh cherries on an almond tart base. Requires 48 hours’ advance notice.',
+    short: 'Vanilla cream and glossy fresh cherries on an almond tart base.',
+    optionLabel: 'Size',
+    options: [{ id: 'petite', label: 'Petite (serves 1)', price: 10 }, { id: 'whole', label: 'Whole (serves 8)', price: 62 }]
+  },
+  {
+    id: 'pink-grapefruit-tart', img:'assets/img/shop/tart-pink-grapefruit.jpg', name: 'Pink Grapefruit Tart',
+    cat: 'cakes', catLabel: 'Tarts', tone: 8, price: 62, seasons: [], rank: 23,
+    desc: 'Segments of pink grapefruit and berries over citrus cream, finished with fresh mint. Requires 48 hours’ advance notice.',
+    short: 'Pink grapefruit and berries over citrus cream, with fresh mint.',
+    optionLabel: 'Size',
+    options: [{ id: 'whole', label: 'Whole (serves 8)', price: 62 }]
+  },
+  {
+    id: 'lemon-meringue-tart', img:'assets/img/shop/tart-lemon-meringue.jpg', name: 'Lemon Meringue Tart',
+    cat: 'cakes', catLabel: 'Tarts', tone: 3, price: 62, seasons: [], rank: 24,
+    desc: 'A classic—sharp lemon curd beneath a crown of torched meringue kisses. Requires 48 hours’ advance notice.',
+    short: 'Sharp lemon curd beneath a crown of torched meringue kisses.',
+    optionLabel: 'Size',
+    options: [{ id: 'whole', label: 'Whole (serves 8)', price: 62 }]
+  },
+  {
+    id: 'mango-rose-tart', img:'assets/img/shop/tart-mango-rose.jpg', name: 'Mango Rose Tart',
+    cat: 'cakes', catLabel: 'Tarts', tone: 3, price: 68, seasons: [], rank: 25,
+    desc: 'Ribbons of ripe mango folded into roses over passion fruit cream, scattered with edible flowers. Requires 48 hours’ advance notice.',
+    short: 'Ripe mango roses over passion fruit cream, with edible flowers.',
+    optionLabel: 'Size',
+    options: [{ id: 'whole', label: 'Whole (serves 8)', price: 68 }]
+  },
+
+  /* Chocolates */
+  {
+    id: 'signature-truffles', img:'assets/img/shop/truffles-25.jpg', name: 'Signature Truffle Collection',
+    cat: 'cakes', catLabel: 'Chocolates', tone: 8, price: 38, seasons: ['festive','cny'], rank: 26,
+    gallery: ['assets/img/shop/truffles-9.jpg'],
+    desc: 'Hand-rolled truffles in seasonal flavours, presented in The Shop’s signature gold-trimmed gift box.',
+    short: 'Hand-rolled truffles in seasonal flavours, in a signature gift box.',
+    optionLabel: 'Box size',
+    options: [{ id: '9', label: '9 pieces', price: 38 }, { id: '25', label: '25 pieces', price: 88 }]
+  },
+  {
+    id: 'dark-raspberry-bar', img:'assets/img/shop/choc-bar-raspberry.jpg', name: 'Dark Chocolate Raspberry Bar',
+    cat: 'cakes', catLabel: 'Chocolates', tone: 1, price: 18, seasons: [], rank: 27,
+    desc: 'Single-origin dark chocolate scattered with freeze-dried raspberries, in a keepsake slide box.',
+    short: 'Dark chocolate with freeze-dried raspberries.',
+    optionLabel: 'Format', options: [{ id: 'bar', label: 'Bar', price: 18 }]
+  },
+  {
+    id: 'white-cranberry-bar', img:'assets/img/shop/choc-bar-cranberry.jpg', name: 'White Chocolate Cranberry Bar',
+    cat: 'cakes', catLabel: 'Chocolates', tone: 3, price: 18, seasons: [], rank: 28,
+    desc: 'Creamy white chocolate studded with tart dried cranberries, in a keepsake slide box.',
+    short: 'Creamy white chocolate with dried cranberries.',
+    optionLabel: 'Format', options: [{ id: 'bar', label: 'Bar', price: 18 }]
+  },
+  {
+    id: 'milk-hazelnut-bar', img:'assets/img/shop/choc-bar-hazelnut.jpg', name: 'Milk Chocolate Hazelnut Bar',
+    cat: 'cakes', catLabel: 'Chocolates', tone: 8, price: 18, seasons: [], rank: 29,
+    desc: 'Smooth milk chocolate loaded with whole roasted hazelnuts, in a keepsake slide box.',
+    short: 'Milk chocolate with whole roasted hazelnuts.',
+    optionLabel: 'Format', options: [{ id: 'bar', label: 'Bar', price: 18 }]
+  },
+
+  /* Cookies & coated nuts — tên theo file ảnh gốc */
+  {
+    id: 'assorted-rocher', img:'assets/img/shop/jar-assorted-rocher.jpg', name: 'Assorted Rocher',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 8, price: 32, seasons: [], rank: 30,
+    desc: 'Clusters of roasted nuts and crisp almonds bound in fine chocolate, in a signature Shop jar.',
+    short: 'Roasted nut clusters bound in fine chocolate.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 32 }]
+  },
+  {
+    id: 'chocolate-bark', img:'assets/img/shop/jar-chocolate-bark.jpg', name: 'Chocolate Bark',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 8, price: 32, seasons: [], rank: 31,
+    desc: 'Shards of dark and milk chocolate bark with nuts and dried fruit, in a signature Shop jar.',
+    short: 'Dark and milk chocolate bark with nuts and dried fruit.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 32 }]
+  },
+  {
+    id: 'cocoa-almonds', img:'assets/img/shop/jar-cocoa-almonds.jpg', name: 'Cocoa Almonds',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 8, price: 30, seasons: [], rank: 32,
+    desc: 'Roasted almonds enrobed in dark chocolate and dusted with cocoa, in a signature Shop jar.',
+    short: 'Roasted almonds in dark chocolate, dusted with cocoa.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 30 }]
+  },
+  {
+    id: 'milk-coated-hazelnuts', img:'assets/img/shop/jar-milk-hazelnuts.jpg', name: 'Milk Chocolate Coated Hazelnuts',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 8, price: 30, seasons: [], rank: 33,
+    desc: 'Whole roasted hazelnuts panned in smooth milk chocolate, in a signature Shop jar.',
+    short: 'Whole roasted hazelnuts in smooth milk chocolate.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 30 }]
+  },
+  {
+    id: 'chocolate-gourmand-almonds', img:'assets/img/shop/jar-gourmand-almonds.jpg', name: 'Chocolate Gourmand Mix Almonds',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 8, price: 32, seasons: [], rank: 34,
+    desc: 'A gourmand mix of almonds coated in dark, milk and caramelised chocolate, in a signature Shop jar.',
+    short: 'Almonds coated in dark, milk and caramelised chocolate.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 32 }]
+  },
+  {
+    id: 'cashew-nut-cookies', img:'assets/img/shop/jar-cashew-cookies.jpg', name: 'Cashew Nut Cookies',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 3, price: 28, seasons: [], rank: 35,
+    desc: 'Crisp, buttery fingers baked with roasted cashews, in a signature Shop jar.',
+    short: 'Crisp, buttery cookies baked with roasted cashews.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 28 }]
+  },
+  {
+    id: 'choco-dipped-butter-cookies', img:'assets/img/shop/jar-butter-cookies.jpg', name: 'Chocolate Dipped Butter Cookies',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 3, price: 28, seasons: [], rank: 36,
+    desc: 'Piped Viennese butter cookies half-dipped in dark chocolate, in a signature Shop jar.',
+    short: 'Viennese butter cookies half-dipped in dark chocolate.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 28 }]
+  },
+  {
+    id: 'chocolate-fudge-cookies', img:'assets/img/shop/jar-fudge-cookies.jpg', name: 'Chocolate Fudge Cookies',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 1, price: 28, seasons: [], rank: 37,
+    desc: 'Rich, chewy double-chocolate fudge cookies, in a signature Shop jar.',
+    short: 'Rich, chewy double-chocolate fudge cookies.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 28 }]
+  },
+  {
+    id: 'chocolate-chip-cookies', img:'assets/img/shop/jar-choc-chip-cookies.jpg', name: 'Chocolate Chip Cookies',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 3, price: 28, seasons: [], rank: 38,
+    desc: 'Golden brown-butter cookies loaded with dark chocolate chips, in a signature Shop jar.',
+    short: 'Brown-butter cookies loaded with dark chocolate chips.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 28 }]
+  },
+  {
+    id: 'oatmeal-cranberry-cookies', img:'assets/img/shop/jar-oatmeal-cranberry.jpg', name: 'Oatmeal Cranberry Cookies',
+    cat: 'cakes', catLabel: 'Cookies & Nuts', tone: 3, price: 28, seasons: [], rank: 39,
+    desc: 'Wholesome rolled-oat cookies with tart dried cranberries, in a signature Shop jar.',
+    short: 'Rolled-oat cookies with tart dried cranberries.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 28 }]
+  },
+
+  /* Pantry & tea */
+  {
+    id: 'golden-moscato-oolong', img:'assets/img/shop/tea-moscato-oolong.jpg', name: 'Golden Moscato Oolong',
+    cat: 'pantry', catLabel: 'Tea', tone: 5, price: 38, seasons: [], rank: 40,
+    desc: 'Loose-leaf oolong with notes of muscat grape, specially blended for Grand Hyatt Singapore by Monogram Tea.',
+    short: 'Loose-leaf oolong blended for Grand Hyatt Singapore by Monogram Tea.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Loose leaf jar', price: 38 }]
+  },
+  {
+    id: 'yuzu-raw-honey', img:'assets/img/shop/honey-yuzu.jpg', name: 'Yuzu Infused Raw Honey',
+    cat: 'pantry', catLabel: 'Pantry', tone: 3, price: 26, seasons: [], rank: 41,
+    desc: 'Hives Keeper raw honey infused with bright, fragrant yuzu.',
+    short: 'Hives Keeper raw honey infused with fragrant yuzu.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 26 }]
+  },
+  {
+    id: 'ginger-raw-honey', img:'assets/img/shop/honey-ginger.jpg', name: 'Ginger Infused Raw Honey',
+    cat: 'pantry', catLabel: 'Pantry', tone: 3, price: 26, seasons: [], rank: 42,
+    desc: 'Hives Keeper raw honey infused with warming ginger.',
+    short: 'Hives Keeper raw honey infused with warming ginger.',
+    optionLabel: 'Format', options: [{ id: 'jar', label: 'Jar', price: 26 }]
+  },
+  {
+    id: 'signature-fruit-cake', img:'assets/img/shop/fruit-cake.jpg', name: 'Signature Fruit Cake',
+    cat: 'pantry', catLabel: 'Pantry', tone: 1, price: 42, seasons: ['festive'], rank: 43,
+    desc: 'A rich loaf of macerated dried fruit and nuts, wrapped and tied with The Shop ribbon—made for gifting.',
+    short: 'Macerated dried fruit and nuts, wrapped for gifting.',
+    optionLabel: 'Format', options: [{ id: 'loaf', label: 'Loaf', price: 42 }]
+  },
+  {
+    id: 'grissini-cristal', img:'assets/img/shop/grissini.jpg', name: 'Grissini Cristal',
+    cat: 'pantry', catLabel: 'Pantry', tone: 3, price: 12, seasons: [], rank: 44,
+    desc: 'Thin, crisp Italian breadsticks—perfect with cheese, charcuterie or an aperitif.',
+    short: 'Thin, crisp Italian breadsticks for the aperitif hour.',
+    optionLabel: 'Format', options: [{ id: 'pack', label: 'Pack', price: 12 }]
+  },
+
+  /* Breads & pastries — Viennoiserie */
+  {
+    id: 'butter-croissant', img:'assets/img/shop/bake-croissant.jpg', name: 'Butter Croissant',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 5, seasons: [], rank: 45,
+    desc: 'Laminated with French butter and baked daily for a shatteringly crisp, honeycombed croissant.',
+    short: 'Laminated with French butter and baked daily.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 5 }, { id: '6', label: 'Box of 6', price: 28 }]
+  },
+  {
+    id: 'pain-au-chocolat', img:'assets/img/shop/bake-pain-au-chocolat.jpg', name: 'Pain au Chocolat',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 6, seasons: [], rank: 46,
+    desc: 'Buttery croissant dough wrapped around two batons of dark chocolate.',
+    short: 'Buttery croissant dough wrapped around dark chocolate.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 6 }, { id: '6', label: 'Box of 6', price: 30 }]
+  },
+  {
+    id: 'ham-cheese-croissant', img:'assets/img/shop/bake-ham-cheese-croissant.jpg', name: 'Ham & Cheese Croissant',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 8, seasons: [], rank: 47,
+    desc: 'Our butter croissant baked with smoked ham and a golden crust of melted cheese.',
+    short: 'Butter croissant baked with smoked ham and melted cheese.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 8 }]
+  },
+  {
+    id: 'sausage-roll', img:'assets/img/shop/bake-sausage-roll.jpg', name: 'Sausage Roll',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 6, seasons: [], rank: 48,
+    desc: 'A soft, glazed brioche spiral wrapped around a juicy sausage and finished with sesame.',
+    short: 'Glazed brioche spiral wrapped around a juicy sausage.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 6 }]
+  },
+  {
+    id: 'streusel-muffin', img:'assets/img/shop/bake-streusel-muffin.jpg', name: 'Streusel Muffin',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 6, seasons: [], rank: 49,
+    desc: 'A tall, tender muffin baked in a tulip case under a crunchy cinnamon streusel.',
+    short: 'Tender muffin under a crunchy cinnamon streusel.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 6 }]
+  },
+  {
+    id: 'chicken-pie', img:'assets/img/shop/bake-chicken-pie.jpg', name: 'Chicken Pie',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 9, seasons: [], rank: 50,
+    desc: 'A golden puff-pastry pie filled with creamy braised chicken and vegetables.',
+    short: 'Golden puff pastry filled with creamy braised chicken.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 9 }]
+  },
+  {
+    id: 'spinach-quiche', img:'assets/img/shop/bake-spinach-quiche.jpg', name: 'Spinach & Cheese Quiche',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 6, price: 8, seasons: [], rank: 51,
+    desc: 'A crisp shortcrust filled with silky egg custard, spinach and cheese.',
+    short: 'Silky egg custard with spinach and cheese.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 8 }]
+  },
+  {
+    id: 'apple-turnover', img:'assets/img/shop/bake-apple-turnover.jpg', name: 'Apple Turnover',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 6, seasons: [], rank: 52,
+    desc: 'Flaky puff pastry folded over cinnamon-spiced apple compote.',
+    short: 'Flaky puff pastry with cinnamon-spiced apple.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 6 }]
+  },
+  {
+    id: 'scones-jam-cream', img:'assets/img/shop/bake-scones.jpg', name: 'Scones with Jam & Clotted Cream',
+    cat: 'bakery', catLabel: 'Viennoiserie', tone: 3, price: 12, seasons: [], rank: 53,
+    desc: 'Three warm raisin scones served with berry jam and clotted cream.',
+    short: 'Raisin scones with berry jam and clotted cream.',
+    optionLabel: 'Set', options: [{ id: 'set', label: 'Set of 3', price: 12 }]
+  },
+
+  /* Danish */
+  {
+    id: 'chocolate-danish', img:'assets/img/shop/danish-chocolate.jpg', name: 'Chocolate Danish',
+    cat: 'bakery', catLabel: 'Danish', tone: 3, price: 6, seasons: [], rank: 54,
+    desc: 'A finely laminated Danish folded around dark chocolate.',
+    short: 'Finely laminated Danish folded around dark chocolate.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 6 }]
+  },
+  {
+    id: 'apricot-custard-danish', img:'assets/img/shop/danish-apricot.jpg', name: 'Apricot Custard Danish',
+    cat: 'bakery', catLabel: 'Danish', tone: 3, price: 6, seasons: [], rank: 55,
+    desc: 'Crisp Danish pastry with vanilla custard and a glazed apricot.',
+    short: 'Vanilla custard and glazed apricot on crisp Danish pastry.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 6 }]
+  },
+  {
+    id: 'cube-croissant', img:'assets/img/shop/danish-cube.jpg', name: 'Cube Croissant',
+    cat: 'bakery', catLabel: 'Danish', tone: 3, price: 7, seasons: [], rank: 56,
+    desc: 'Croissant dough baked in a cube mould and dusted with icing sugar.',
+    short: 'Croissant dough baked as a cube, dusted with icing sugar.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 7 }]
+  },
+  {
+    id: 'mixed-berry-danish', img:'assets/img/shop/danish-berry.jpg', name: 'Mixed Berry Danish',
+    cat: 'bakery', catLabel: 'Danish', tone: 1, price: 7, seasons: [], rank: 57,
+    desc: 'A spiralled Danish filled with cream and topped with fresh raspberries and blackberries.',
+    short: 'Spiralled Danish with cream and fresh berries.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 7 }]
+  },
+
+  /* Breads */
+  {
+    id: 'country-sourdough', img:'assets/img/shop/bread-country-sourdough.jpg', name: 'Country Sourdough',
+    cat: 'bakery', catLabel: 'Breads', tone: 3, price: 12, seasons: [], rank: 58,
+    gallery: ['assets/img/shop/bread-petite-sourdough.jpg', 'assets/img/lifestyle/bakery-counter.jpg'],
+    desc: 'Slow-fermented sourdough with a blistered crust and open, tangy crumb.',
+    short: 'Slow-fermented, with a blistered crust and tangy crumb.',
+    optionLabel: 'Size', options: [{ id: 'petite', label: 'Petite boule', price: 6 }, { id: 'loaf', label: 'Loaf', price: 12 }]
+  },
+  {
+    id: 'multigrain-oat-loaf', img:'assets/img/shop/bread-multigrain-oat.jpg', name: 'Multigrain Oat Loaf',
+    cat: 'bakery', catLabel: 'Breads', tone: 3, price: 13, seasons: [], rank: 59,
+    desc: 'A hearty multigrain loaf rolled in oats.',
+    short: 'Hearty multigrain loaf rolled in oats.',
+    optionLabel: 'Size', options: [{ id: 'loaf', label: 'Loaf', price: 13 }]
+  },
+  {
+    id: 'rye-seed-loaf', img:'assets/img/shop/bread-rye-seed.jpg', name: 'Rye & Seed Loaf',
+    cat: 'bakery', catLabel: 'Breads', tone: 3, price: 13, seasons: [], rank: 60,
+    desc: 'Dark rye bread crusted with seeds, dense and full of flavour.',
+    short: 'Dark rye crusted with seeds.',
+    optionLabel: 'Size', options: [{ id: 'loaf', label: 'Loaf', price: 13 }]
+  },
+  {
+    id: 'pumpkin-seed-loaf', img:'assets/img/shop/bread-pumpkin-seed.jpg', name: 'Pumpkin Seed Loaf',
+    cat: 'bakery', catLabel: 'Breads', tone: 3, price: 13, seasons: [], rank: 61,
+    desc: 'A wholegrain tin loaf topped with toasted pumpkin seeds.',
+    short: 'Wholegrain tin loaf topped with pumpkin seeds.',
+    optionLabel: 'Size', options: [{ id: 'loaf', label: 'Loaf', price: 13 }]
+  },
+  {
+    id: 'twisted-country-loaf', img:'assets/img/shop/bread-twisted-loaf.jpg', name: 'Twisted Country Loaf',
+    cat: 'bakery', catLabel: 'Breads', tone: 3, price: 11, seasons: [], rank: 62,
+    desc: 'A rustic twisted loaf with a golden, crackling crust.',
+    short: 'Rustic twisted loaf with a crackling crust.',
+    optionLabel: 'Size', options: [{ id: 'loaf', label: 'Loaf', price: 11 }]
+  },
+  {
+    id: 'traditional-baguette', img:'assets/img/shop/bread-baguette.jpg', name: 'Traditional Baguette',
+    cat: 'bakery', catLabel: 'Breads', tone: 3, price: 6, seasons: [], rank: 63,
+    desc: 'A classic French baguette, baked fresh every morning.',
+    short: 'Classic French baguette, baked every morning.',
+    optionLabel: 'Size', options: [{ id: 'baguette', label: 'Baguette', price: 6 }]
+  },
+  {
+    id: 'olive-focaccia', img:'assets/img/shop/bread-olive-focaccia.jpg', name: 'Olive Focaccia',
+    cat: 'bakery', catLabel: 'Breads', tone: 6, price: 10, seasons: [], rank: 64,
+    desc: 'Olive oil focaccia dimpled with olives and rosemary.',
+    short: 'Olive oil focaccia with olives and rosemary.',
+    optionLabel: 'Size', options: [{ id: 'slab', label: 'Slab', price: 10 }]
+  },
+
+  /* Sandwiches */
+  {
+    id: 'smoked-ham-croissant', img:'assets/img/shop/sand-ham-croissant.jpg', name: 'Smoked Ham Croissant',
+    cat: 'bakery', catLabel: 'Sandwiches', tone: 3, price: 12, seasons: [], rank: 65,
+    gallery: ['assets/img/shop/group-croissant-sandwiches.jpg'],
+    desc: 'Butter croissant generously filled with shaved smoked ham.',
+    short: 'Butter croissant filled with shaved smoked ham.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 12 }]
+  },
+  {
+    id: 'scrambled-egg-croissant', img:'assets/img/shop/sand-egg-croissant.jpg', name: 'Scrambled Egg Croissant',
+    cat: 'bakery', catLabel: 'Sandwiches', tone: 3, price: 12, seasons: [], rank: 66,
+    gallery: ['assets/img/shop/group-croissant-sandwiches.jpg'],
+    desc: 'Soft scrambled eggs in a butter croissant, finished with grated Parmesan and chives.',
+    short: 'Soft scrambled eggs, Parmesan and chives.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 12 }]
+  },
+  {
+    id: 'roast-beef-rye', img:'assets/img/shop/sand-roast-beef-rye.jpg', name: 'Roast Beef & Rocket on Rye',
+    cat: 'bakery', catLabel: 'Sandwiches', tone: 1, price: 16, seasons: [], rank: 67,
+    gallery: ['assets/img/shop/group-sandwiches.jpg'],
+    desc: 'Thinly sliced roast beef with peppery rocket on a seeded rye baguette.',
+    short: 'Roast beef and rocket on a seeded rye baguette.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 16 }]
+  },
+  {
+    id: 'tuna-melt-baguette', img:'assets/img/shop/sand-tuna-melt.jpg', name: 'Tuna Melt Baguette',
+    cat: 'bakery', catLabel: 'Sandwiches', tone: 3, price: 14, seasons: [], rank: 68,
+    desc: 'Tuna and melted cheese with ripe tomato and rocket in a crusty baguette.',
+    short: 'Tuna, melted cheese, tomato and rocket.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 14 }]
+  },
+  {
+    id: 'prawn-brioche', img:'assets/img/shop/sand-prawn-brioche.jpg', name: 'Prawn Brioche Bun',
+    cat: 'bakery', catLabel: 'Sandwiches', tone: 3, price: 16, seasons: [], rank: 69,
+    gallery: ['assets/img/shop/group-sandwiches.jpg'],
+    desc: 'Tiger prawns in a light spiced mayonnaise with greens, in a toasted sesame brioche.',
+    short: 'Spiced prawns and greens in a sesame brioche.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 16 }]
+  },
+  {
+    id: 'bacon-egg-brioche', img:'assets/img/shop/sand-bacon-egg-brioche.jpg', name: 'Bacon & Egg Brioche',
+    cat: 'bakery', catLabel: 'Sandwiches', tone: 3, price: 14, seasons: [], rank: 70,
+    desc: 'Crisp bacon and a sunny-side egg in a toasted brioche bun.',
+    short: 'Crisp bacon and a sunny-side egg in toasted brioche.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 14 }]
+  },
+  {
+    id: 'sourdough-melt', img:'assets/img/shop/sand-sourdough-melt.jpg', name: 'Toasted Sourdough Melt',
+    cat: 'bakery', catLabel: 'Sandwiches', tone: 3, price: 14, seasons: [], rank: 71,
+    desc: 'Toasted sourdough with smoked chicken, mozzarella and sun-dried tomato.',
+    short: 'Smoked chicken, mozzarella and sun-dried tomato on sourdough.',
+    optionLabel: 'Quantity', options: [{ id: '1', label: 'Single', price: 14 }]
   }
 ];
 
@@ -443,7 +905,7 @@ YQ.config = {
   currencySymbol: '$',
   currencyCode: 'SGD',
   shipping: 15,
-  freeShippingThreshold: 150,
+  freeShippingThreshold: 300,  // T&C The Shop: free 1 lần giao cho đơn từ SGD 300
   taxRate: 0.09,
   physicalCardFee: 5
 };

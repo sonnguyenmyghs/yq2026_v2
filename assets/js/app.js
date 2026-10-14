@@ -332,7 +332,7 @@
         '<div class="yq-container"><div class="yq-mega__inner"><div class="row g-4">' + cols +
           '<div class="col-lg-3 d-none d-lg-block">' +
             '<a class="yq-mega__promo" href="personalise.html">' +
-              '<span class="yq-mega__promo-media"><img src="assets/img/p-grand-hamper.jpg" alt="" loading="lazy" decoding="async"></span>' +
+              '<span class="yq-mega__promo-media"><img src="assets/img/shop/hamper-grand.jpg" alt="" loading="lazy" decoding="async"></span>' +
               '<span class="yq-mega__promo-body">' +
                 '<span class="yq-mega__promo-eyebrow">New</span>' +
                 '<span class="yq-mega__promo-title">Personalise your gift</span>' +
@@ -509,7 +509,8 @@
   YQ.renderFooter = function () {
     var cols = [
       { title: 'Shop', links: [
-        ['Cakes & Pastries','shop.html?cat=cakes'], ['Hampers & Gift Sets','shop.html?cat=celebration'],
+        ['Cakes & Pastries','shop.html?cat=cakes'], ['Breads & Pastries','shop.html?cat=bakery'],
+        ['Pantry & Tea','shop.html?cat=pantry'], ['Hampers & Gift Sets','shop.html?cat=celebration'],
         ['Wines & Champagne','shop.html?cat=beverages'], ['Wellness & Spa','shop.html?cat=wellness'],
         ['Brix Merchandise','shop.html?cat=brix'], ['Dining Vouchers','shop.html?cat=dining'],
         ['View All Products','shop.html'] ] },
@@ -518,21 +519,25 @@
         ['Afternoon Tea','experiences.html'], ["Chef's Table",'experiences.html'],
         ['Weekend Staycation','experiences.html'], ['Corporate Gifting','celebrations.html'],
         ['Chinese New Year','shop.html?season=cny'] ] },
+      /* Link thứ 3 = true -> mở tab mới (bài viết bên ngoài) */
       { title: 'Blog & Gift Guides', links: [
-        ['Top 10 Luxury Hampers in Singapore','#'], ['How to Plan a Luxury Celebration','#'],
-        ['Best Corporate Gift Ideas 2025','#'], ['Spa Gift Ideas for Her','#'],
-        ['Wine Pairing Guide','#'], ['CNY Gifting Etiquette','#'] ] },
+        ['Indulge this Festive Season: Grand Hyatt Singapore is Back For Christmas',
+         'https://danamic.org/2024/12/11/indulge-this-festive-season-grand-hyatt-singapore-is-back-for-christmas/', true],
+        ['Grand Hyatt Singapore CNY 2025: Local Delights & Festive Treats',
+         'https://www.aspirantsg.com/grand-hyatt-singapore-cny-2025/', true] ] },
       { title: 'Help & Info', links: [
         ['My Profile','member/profile.html'], ['My Orders','member/orders.html'],
-        ['FAQs','#'], ['Delivery Information','#'],
-        ['Returns Policy','#'], ['Contact Us','#'], ['Terms of Service','#'],
-        ['Privacy Policy','#'] ] }
+        ['FAQs','faq.html'], ['Delivery & Collection','faq.html#delivery'],
+        ['Returns Policy','returns.html'], ['Contact Us','faq.html#help'],
+        ['Terms & Conditions','terms.html'], ['Privacy Policy','privacy.html'] ] }
     ];
 
     var colHtml = '';
     $.each(cols, function (_, c) {
       var li = '';
-      $.each(c.links, function (_, l) { li += '<li><a href="' + l[1] + '">' + l[0] + '</a></li>'; });
+      $.each(c.links, function (_, l) {
+        li += '<li><a href="' + l[1] + '"' + (l[2] ? ' target="_blank" rel="noopener"' : '') + '>' + l[0] + '</a></li>';
+      });
       colHtml += '<div class="col-6 col-lg-2 mb-4 mb-lg-0"><h4>' + c.title + '</h4><ul>' + li + '</ul></div>';
     });
 
@@ -563,8 +568,9 @@
             '</div>' +
             '<h4>Contact</h4>' +
             '<div class="yq-footer__contact">' +
-              '<a href="mailto:singapore@hyatt.com">singapore@hyatt.com</a>' +
-              '<a href="tel:+6567321234">+65 6732 1234</a>' +
+              '<a href="mailto:theshop.sg@hyatt.com">theshop.sg@hyatt.com</a>' +
+              '<a href="tel:+6564167117">+65 6416 7117</a>' +
+              '<span>The Shop, Lobby Level &middot; 10:00 AM – 7:00 PM daily</span>' +
             '</div>' +
           '</div>' +
           colHtml +

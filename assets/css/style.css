@@ -18,8 +18,12 @@
   --yq-gold-dark:  #736649;
   --yq-gold-soft:  #ECE7DC;
 
-  --yq-serif: "Playfair Display", "Times New Roman", Georgia, serif;
-  --yq-sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Font thương hiệu The Shop: Neutraface Demi (tiêu đề) + Neutraface Text Book (nội dung).
+     Neutraface là font bản quyền — đặt file webfont vào assets/fonts/ (xem @font-face bên dưới).
+     Chưa có file thì rơi về Josefin Sans (tiêu đề) / Inter (nội dung) từ Google Fonts.
+     Tên biến --yq-serif giữ nguyên cho khỏi sửa khắp nơi, dù giờ là font sans. */
+  --yq-serif: "Neutraface", "Josefin Sans", "Helvetica Neue", Arial, sans-serif;
+  --yq-sans:  "Neutraface Text", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --yq-radius:    14px;
   --yq-radius-sm: 10px;
@@ -31,6 +35,21 @@
 
   --yq-header-h: 112px;
   --yq-ease: cubic-bezier(.22,.61,.36,1);
+}
+
+/* ---------- Font Neutraface (bản quyền House Industries) ----------
+   Hiện chỉ dùng được khi máy người xem đã cài font (local()).
+   Có file webfont đã mua license: chép vào assets/fonts/ rồi bỏ comment dòng url() —
+   để comment cho tới lúc đó, tránh mỗi trang báo 4 lỗi 404. */
+@font-face{
+  font-family: "Neutraface"; font-weight: 600; font-style: normal; font-display: swap;
+  src: local("Neutraface Display Demi"), local("Neutraface Demi"), local("Neutraface2Display-Demi")
+       /* , url("../fonts/Neutraface-Demi.woff2") format("woff2") */;
+}
+@font-face{
+  font-family: "Neutraface Text"; font-weight: 400; font-style: normal; font-display: swap;
+  src: local("Neutraface Text Book"), local("Neutraface2Text-Book")
+       /* , url("../fonts/NeutrafaceText-Book.woff2") format("woff2") */;
 }
 
 /* ---------- 2. Base ---------- */
@@ -744,7 +763,8 @@ img{ max-width: 100%; display: block; }
 }
 .yq-social a:hover{ background: var(--yq-gold); border-color: var(--yq-gold); color: var(--yq-ink); }
 .yq-footer__contact{ font-size: 13px; }
-.yq-footer__contact a{ display: block; margin-top: 4px; }
+.yq-footer__contact a,
+.yq-footer__contact span{ display: block; margin-top: 4px; }
 
 .yq-footer__bottom{
   margin-top: 46px; padding: 20px 0 24px; border-top: 1px solid rgba(255,255,255,.10);
