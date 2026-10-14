@@ -69,36 +69,6 @@ YQ.brandIcon = function (name, size) {
          'viewBox="' + g[0] + '" fill="currentColor" aria-hidden="true"><path d="' + g[1] + '"/></svg>';
 };
 
-/* ---------- Logo ----------
-   Mặc định: lockup dựng bằng HTML/CSS (nét mảnh, giãn chữ) — luôn sắc nét, đổi màu 1 dòng CSS.
-   Có logo chính thức? Gán đường dẫn vào YQ.logoImage (và YQ.logoImageLight cho nền tối)
-   là toàn site tự chuyển sang dùng ảnh, không phải sửa gì thêm.
-   VD: YQ.logoImage = 'assets/img/logo-grand-hyatt.png';
-*/
-YQ.logoImage = null;        // logo cho nền sáng (header)
-YQ.logoImageLight = null;   // logo đảo màu cho nền tối (footer)
-
-YQ.logo = function (opts) {
-  opts = opts || {};
-  var light = !!opts.light;
-  var cls = 'yq-logo' + (light ? ' yq-logo--light' : '') + (opts.className ? ' ' + opts.className : '');
-  var label = 'Grand Hyatt Singapore';
-  var img = light ? (YQ.logoImageLight || YQ.logoImage) : YQ.logoImage;
-
-  var inner = img
-    ? '<img class="yq-logo__img" src="' + img + '" alt="' + label + '">'
-    : '<span class="yq-logo__mark">' +
-        '<span class="yq-logo__word">Grand</span>' +
-        '<span class="yq-logo__bar" aria-hidden="true"></span>' +
-        '<span class="yq-logo__word">Hyatt</span>' +
-        '<span class="yq-logo__tm" aria-hidden="true">\u2122</span>' +
-      '</span>' +
-      '<span class="yq-logo__sub">Singapore</span>';
-
-  if (opts.tag === 'div') return '<div class="' + cls + '" role="img" aria-label="' + label + '">' + inner + '</div>';
-  return '<a class="' + cls + '" href="' + (opts.href || 'index.html') + '" aria-label="' + label + '">' + inner + '</a>';
-};
-
 /* ---------- Products ----------
    CHỈ dùng cho giỏ hàng demo (localStorage): tra tên/giá/ảnh theo data-productid khi
    Add to cart, giỏ mẫu, đơn hàng mẫu. Card, chip danh mục và trang chi tiết đều là

@@ -265,7 +265,7 @@
   };
 
   /* ======================================================================
-     4. Header / Footer render
+     4. Header / Footer (markup tĩnh, chỉ init)
      ====================================================================== */
   /* ---------- Header ----------
      Header (#yqHeader + offcanvas #yqOffcanvas) là HTML tĩnh trong từng trang —
@@ -278,82 +278,11 @@
     $(document).trigger('yq:header-ready');
   };
 
-  YQ.renderFooter = function () {
-    var cols = [
-      { title: 'Shop', links: [
-        ['Cakes & Pastries','shop.html?cat=cakes'], ['Breads & Pastries','shop.html?cat=bakery'],
-        ['Pantry & Tea','shop.html?cat=pantry'], ['Hampers & Gift Sets','shop.html?cat=celebration'],
-        ['Wines & Champagne','shop.html?cat=beverages'], ['Wellness & Spa','shop.html?cat=wellness'],
-        ['Brix Merchandise','shop.html?cat=brix'], ['Dining Vouchers','shop.html?cat=dining'],
-        ['View All Products','shop.html'] ] },
-      { title: 'Experiences', links: [
-        ['Dining Experiences','experiences.html'], ['Spa & Wellness','experiences.html'],
-        ['Afternoon Tea','experiences.html'], ["Chef's Table",'experiences.html'],
-        ['Weekend Staycation','experiences.html'], ['Corporate Gifting','celebrations.html'],
-        ['Chinese New Year','shop.html?season=cny'] ] },
-      /* Link thứ 3 = true -> mở tab mới (bài viết bên ngoài) */
-      { title: 'Blog & Gift Guides', links: [
-        ['Indulge this Festive Season: Grand Hyatt Singapore is Back For Christmas',
-         'https://danamic.org/2024/12/11/indulge-this-festive-season-grand-hyatt-singapore-is-back-for-christmas/', true],
-        ['Grand Hyatt Singapore CNY 2025: Local Delights & Festive Treats',
-         'https://www.aspirantsg.com/grand-hyatt-singapore-cny-2025/', true] ] },
-      { title: 'Help & Info', links: [
-        ['My Profile','member/profile.html'], ['My Orders','member/orders.html'],
-        ['FAQs','faq.html'], ['Delivery & Collection','faq.html#delivery'],
-        ['Returns Policy','returns.html'], ['Contact Us','faq.html#help'],
-        ['Terms & Conditions','terms.html'], ['Privacy Policy','privacy.html'] ] }
-    ];
-
-    var colHtml = '';
-    $.each(cols, function (_, c) {
-      var li = '';
-      $.each(c.links, function (_, l) {
-        li += '<li><a href="' + l[1] + '"' + (l[2] ? ' target="_blank" rel="noopener"' : '') + '>' + l[0] + '</a></li>';
-      });
-      colHtml += '<div class="col-6 col-lg-2 mb-4 mb-lg-0"><h4>' + c.title + '</h4><ul>' + li + '</ul></div>';
-    });
-
-    var html =
-      '<section class="yq-newsletter">' +
-        '<div class="yq-container"><div class="row align-items-center g-3">' +
-          '<div class="col-lg-6">' +
-            '<h3 class="yq-serif">Stay in the Know</h3>' +
-            '<p>New collections, seasonal offers, and exclusive promotions — delivered to your inbox.</p>' +
-          '</div>' +
-          '<div class="col-lg-6">' +
-            '<form class="yq-newsletter__form" id="yqNewsletter" novalidate>' +
-              '<input type="email" class="form-control yq-input" placeholder="Your email address" aria-label="Email" required>' +
-              '<button class="yq-btn" type="submit">Subscribe</button>' +
-            '</form>' +
-            '<div class="yq-error" id="yqNewsletterErr">Please enter a valid email address.</div>' +
-          '</div>' +
-        '</div></div>' +
-      '</section>' +
-
-      '<footer class="yq-footer">' +
-        '<div class="yq-container"><div class="row">' +
-          '<div class="col-lg-4 mb-5 mb-lg-0 pe-lg-5">' +
-            YQ.logo({ light: true, className: 'yq-logo--footer' }) +
-            '<p>Curated cakes, artisan hampers, and premium wines — crafted in our kitchens and delivered with care.</p>' +
-            '<div class="yq-social">' +
-              '<a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">ig</a>' +
-            '</div>' +
-            '<h4>Contact</h4>' +
-            '<div class="yq-footer__contact">' +
-              '<a href="mailto:theshop.sg@hyatt.com">theshop.sg@hyatt.com</a>' +
-              '<a href="tel:+6564167117">+65 6416 7117</a>' +
-              '<span>The Shop, Lobby Level &middot; 10:00 AM – 7:00 PM daily</span>' +
-            '</div>' +
-          '</div>' +
-          colHtml +
-        '</div>' +
-        '<div class="yq-footer__bottom">' +
-          '<small>&copy; ' + new Date().getFullYear() + ' Grand Hyatt Singapore. All rights reserved.</small>' +
-          '<div class="yq-pay"><span>VISA</span><span>MC</span><span>AMEX</span><span>PayNow</span></div>' +
-        '</div>' +
-      '</div></footer>';
-
-    $('#yq-footer').replaceWith(YQ.localise(html));
+  /* ---------- Footer ----------
+     Newsletter + footer là HTML tĩnh trong từng trang (khối <!-- FOOTER -->). JS chỉ
+     phát yq:layout-ready — các module chờ cả header + footer rồi mới khởi động.
+     Form newsletter (#yqNewsletter) xử lý ở mục 7 bên dưới. */
+  YQ.initFooter = function () {
     $(document).trigger('yq:layout-ready');
   };
 

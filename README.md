@@ -46,7 +46,7 @@ python3 -m http.server 8000
     ├── img/favicon.svg
     └── js/
         ├── data.js       Nav, icon, logo, 13 sản phẩm, 6 experiences, đơn hàng, hồ sơ, config
-        ├── app.js        Helper, cart + profile (localStorage), init header, render footer, toast, reveal
+        ├── app.js        Helper, cart + profile (localStorage), init header/footer, toast, reveal
         ├── pages.js      Component (card, tile, summary) + controller từng trang
         └── modules/      Tính năng rời, mỗi file một việc:
             ├── nav.js        Sticky/thu gọn khi cuộn, mega menu, panel Seasonal,
@@ -64,7 +64,12 @@ python3 -m http.server 8000
 (`.yq-nav__item.is-active` + `aria-current="page"`, và `.is-active`/`.show` trong offcanvas);
 trang trong `member/` dùng đường dẫn `../`. Sửa nav thì sửa khối này ở **mọi** trang
 (production: backend include 1 partial). `YQ.initHeader()` chỉ đồng bộ badge giỏ + phát
-`yq:header-ready`. Footer vẫn render bằng jQuery từ `app.js` (`YQ.renderFooter()`).
+`yq:header-ready`.
+
+**Footer cũng là HTML tĩnh** (khối `<!-- FOOTER -->` … `<!-- /FOOTER -->` cuối `<body>`:
+newsletter + footer), giống hệt nhau mọi trang, chỉ khác đường dẫn `../` ở `member/`.
+Năm bản quyền viết cứng (`&copy; 2026`) — production để backend in năm hiện tại.
+`YQ.initFooter()` chỉ phát `yq:layout-ready`.
 
 Mỗi file trong `assets/js/modules/` là một tính năng độc lập, chỉ móc vào DOM và event
 có sẵn — xoá file nào thì mất đúng tính năng đó, phần còn lại vẫn chạy. Module chạy đúng
@@ -403,8 +408,9 @@ YQ.referral = {
 > tên và tuỳ chọn nhận khuyến mãi. Phần `6. Chỗ nối API` trong `account.js` là 3 hàm
 > `apiLogin` / `apiRegister` / `apiSocial`, thay bằng lệnh gọi server thật khi có API.
 
-**Logo** — mặc định logo được dựng bằng HTML/CSS trong `YQ.logo()` (`assets/js/data.js`),
-nên luôn sắc nét ở mọi kích thước và đổi màu chỉ bằng 1 dòng CSS:
+**Logo** — lockup dựng bằng HTML/CSS (`<a class="yq-logo">…</a>`), viết thẳng ở 3 chỗ trong
+mỗi trang: header, menu mobile (`.yq-logo--sm`) và footer (`.yq-logo--light .yq-logo--footer`).
+Luôn sắc nét ở mọi kích thước và đổi màu chỉ bằng 1 dòng CSS:
 
 ```css
 :root{
@@ -413,13 +419,8 @@ nên luôn sắc nét ở mọi kích thước và đổi màu chỉ bằng 1 d�
 }
 ```
 
-Khi có file logo chính thức: footer tự đổi theo 2 biến dưới; logo ở header + menu mobile là HTML tĩnh nên thay `<a class="yq-logo">…</a>` trong khối HEADER bằng `<img>`:
-
-```js
-// assets/js/data.js
-YQ.logoImage      = 'assets/img/logo-grand-hyatt.png';       // nền sáng (header)
-YQ.logoImageLight = 'assets/img/logo-grand-hyatt-white.png'; // nền tối (footer)
-```
+Khi có file logo chính thức: thay phần ruột của `<a class="yq-logo">` bằng `<img>` ở cả 3 chỗ
+(bản đảo màu cho footer nền tối).
 
 **Ảnh** — 29 ảnh trong `assets/img/`, đặt tên theo nhóm: `hero-*`, `banner-*`, `p-*` (product),
 `e-*` (experience), `o-*` (occasion). Đổi ảnh = thay file cùng tên, hoặc sửa field `img`:
