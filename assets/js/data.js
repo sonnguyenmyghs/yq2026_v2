@@ -10,6 +10,7 @@ YQ.icon = function (name, size) {
   var p = {
     search:   '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/>',
     bag:      '<path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+    bolt:     '<path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/>',
     user:     '<circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/>',
     menu:     '<path d="M4 7h16M4 12h16M4 17h16"/>',
     close:    '<path d="M6 6l12 12M18 6L6 18"/>',
@@ -161,28 +162,10 @@ YQ.megaMenu = [
   ]}
 ];
 
-/* ---------- Category filters ---------- */
-YQ.categories = [
-  { id: 'all',         label: 'All Products' },
-  { id: 'cakes',       label: 'Cakes, Cookies & Pralines' },
-  { id: 'bakery',      label: 'Breads & Pastries' },
-  { id: 'pantry',      label: 'Pantry & Tea' },
-  { id: 'dining',      label: 'Dining' },
-  { id: 'beverages',   label: 'Beverages' },
-  { id: 'wellness',    label: 'Wellness' },
-  { id: 'brix',        label: 'Brix Merchandise' },
-  { id: 'celebration', label: 'Celebration' }
-];
-
-YQ.seasons = [
-  { id: 'festive',  label: 'The Festive Season' },
-  { id: 'retreats', label: 'Retreats' },
-  { id: 'cny',      label: 'Chinese New Year' },
-  { id: 'fathers',  label: "Father's Day Brunch" },
-  { id: 'nye',      label: "New Year's Eve Events" }
-];
-
-/* ---------- Products ---------- */
+/* ---------- Products ----------
+   CHỈ dùng cho giỏ hàng demo (localStorage): tra tên/giá/ảnh theo data-productid khi
+   Add to cart, giỏ mẫu, đơn hàng mẫu. Card, chip danh mục và trang chi tiết đều là
+   HTML tĩnh — sửa sản phẩm hiển thị thì sửa HTML, không sửa ở đây. */
 /* badge: 'Bestseller' | 'New' | 'Seasonal' — nhãn thường.
    promo: nhãn khuyến mãi ('Limited Time Offer', 'Early Bird'…) — hiện cùng badge trên ribbon.
    compareAt: giá gốc trước giảm (ở sản phẩm = giá "From", ở option = giá option);

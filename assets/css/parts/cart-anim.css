@@ -382,3 +382,13 @@ body.yq-drawer-open .yq-toast-wrap{
   .yq-cdrawer__row{ animation: none !important; opacity: 1 !important; transform: none !important; }
   .yq-cdrawer__bar i{ transition: none !important; }
 }
+
+/* ---------- Thiếu lựa chọn khi Add to cart (add-to-cart.js thêm .shake ~1.2s) ---------- */
+.shake{ animation: yqShake .6s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes yqShake{
+  10%, 90%{ transform: translateX(-1px); }
+  20%, 80%{ transform: translateX(2px); }
+  30%, 50%, 70%{ transform: translateX(-4px); }
+  40%, 60%{ transform: translateX(4px); }
+}
+@media (prefers-reduced-motion: reduce){ .shake{ animation: none; outline: 1px solid var(--yq-gold); } }

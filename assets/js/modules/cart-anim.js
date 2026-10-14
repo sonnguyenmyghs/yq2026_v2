@@ -29,7 +29,8 @@
   var CFG = {
     /* Mọi điểm bấm "thêm vào giỏ" hiện có (và [data-buynow] của agent khác
        nếu nó tồn tại — không bắt buộc phải có). */
-    triggers: '[data-quickadd], #pdpAdd, [data-buynow], [data-yq-add]',
+    /* Buy now (data-buynow="1") đi thẳng sang giỏ nên không bay / không mở drawer. */
+    triggers: '.addToCart:not([data-buynow="1"]), [data-quickadd], [data-yq-add]',
     flyMs:     780,   // thời gian bay
     addedMs:  1200,   // thời gian nút giữ trạng thái "Added"
     pendingMs: 1200,  // click quá cũ thì bỏ, tránh ăn nhầm cart-changed khác
@@ -108,7 +109,7 @@
     var $btn = $(btn), $m = $();
 
     /* Trang chi tiết sản phẩm */
-    if (btn.id === 'pdpAdd' || $btn.closest('.yq-pdp, .yq-pdp__gallery').length) {
+    if ($btn.closest('.yq-pdp, .yq-pdp__gallery').length) {
       $m = $('#pdpMain').find('img, .yq-media__ph').first();
     }
     /* Card sản phẩm / dòng giỏ / panel */
@@ -127,7 +128,7 @@
       html = mediaEl.outerHTML;
     } else {
       /* Không thấy ảnh trong DOM → dựng lại từ dữ liệu sản phẩm. */
-      var id = $btn.attr('data-quickadd') || $btn.attr('data-buynow') ||
+      var id = $btn.attr('data-productid') || $btn.attr('data-quickadd') ||
                $btn.attr('data-yq-add') || (YQ.param ? YQ.param('id') : null);
       var p = (id && YQ.product) ? YQ.product(id) : null;
       if (p && YQ.mediaInner) html = YQ.mediaInner(p, { eager: true });
@@ -578,6 +579,18 @@
     var added = p && (Date.now() - p.at <= CFG.pendingMs) && after > p.before;
 
     if (!added) { if (DR.open) renderDrawer(false); return; }
+    play(p, after, true);
+  });
+
+  /**
+   * Phát hiệu ứng thêm vào giỏ: nút "Added" → bay → badge đếm tăng → (drawer).
+   * @param {Object}  p       { btn, before, src } — bản ghi lúc click
+   * @param {Number}  after   số lượng trong giỏ sau khi thêm
+   * @param {Boolean} drawer  mở drawer khi tới nơi (drawer vẽ từ YQ.cart nên
+   *                          giỏ ở server thì tắt)
+   */
+  function play(p, after, drawer) {
+    var showDrawer = drawer ? openDrawer : function () {};
 
     /* (3) Nút bấm: chỉ báo "Added" khi giỏ đã đổi thật */
     markAdded(p.btn);
@@ -585,7 +598,7 @@
     var newKey = null;
     var last = YQ.cart.items[YQ.cart.items.length - 1];
     /* Khoá dòng vừa thêm để highlight trong drawer */
-    var pid = $(p.btn).attr('data-quickadd') || $(p.btn).attr('data-buynow') ||
+    var pid = $(p.btn).attr('data-productid') || $(p.btn).attr('data-quickadd') ||
               $(p.btn).attr('data-yq-add') || (YQ.param ? YQ.param('id') : null);
     if (pid) {
       var match = YQ.cart.items.filter(function (i) { return i.id === pid; });
@@ -602,13 +615,13 @@
       hitCart(anchor);
       ring(dst, Math.max(46, anchor && liveRect(anchor) ? liveRect(anchor).width * 1.4 : 46));
       countUp(p.before, after, gen);
-      setTimeout(function () { openDrawer(newKey); }, reduced() ? 0 : CFG.drawerMs);
+      setTimeout(function () { showDrawer(newKey); }, reduced() ? 0 : CFG.drawerMs);
     }
 
     /* Giảm chuyển động, tab ẩn, hoặc không lấy được ảnh nguồn → phản hồi tức thì */
     if (reduced() || D.hidden || !p.src) {
       paintBadge(after, !reduced());
-      openDrawer(newKey);
+      showDrawer(newKey);
       if (!reduced() && !D.hidden) hitCart(anchor);
       return;
     }
@@ -619,7 +632,21 @@
 
     /* (1) Bay */
     fly(p.src, dst, arrive);
-  });
+  }
+
+  /* Giỏ ở server (add-to-cart.js, chế độ production): YQ.cart không đổi nên
+     không có yq:cart-changed — module đó gọi thẳng hàm này sau khi AJAX xong. */
+  YQ.cartFx = {
+    added: function (btn, before, after) {
+      var p = pending;
+      pending = null;
+      cancelBadgeHold();
+      if (!p || p.btn !== btn) p = { btn: btn, before: before, src: captureSource(btn) };
+      p.before = before;
+      if (after > before) play(p, after, false);
+      else paintBadge(after, false);
+    }
+  };
 
   /* ======================================================================
      7. Dọn dẹp — không để sót phần tử animation trong DOM

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Product — Grand Hyatt Singapore</title>
+<title>Signature Chocolate Cake — Grand Hyatt Singapore</title>
 <meta name="description" content="Detailed product storytelling with high-quality imagery from The Online Shop at Grand Hyatt Singapore.">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,14 +62,24 @@
       <div class="col-lg-6 ps-lg-4">
         <div class="yq-eyebrow yq-eyebrow--gold" id="pdpCat">Cakes &amp; Pastries</div>
         <h1 id="pdpTitle">Signature Chocolate Cake</h1>
-        <p class="yq-lead" id="pdpDesc"></p>
+        <p class="yq-lead" id="pdpDesc">A modern classic—layers of velvety chocolate sponge, silky ganache, and refined finishes. Available in three sizes to suit any celebration.</p>
 
-        <div class="yq-pdp__price my-4" id="pdpPrice"></div>
+        <div class="yq-pdp__price my-4" id="pdpPrice">$78<small>per Small</small></div>
 
         <div class="mb-4">
           <span class="yq-field-label" id="pdpOptionLabel">Select option</span>
-          <div class="d-flex flex-wrap gap-2" id="pdpOptions"></div>
+          <!-- Mỗi option: data-opt (id) · data-price (giá) · data-compare (giá gốc, nếu giảm) · data-unit (chữ sau "per") -->
+          <div class="d-flex flex-wrap gap-2" id="pdpOptions">
+            <button class="yq-option is-active" type="button" data-opt="small" data-price="78" data-unit="Small">Small (6-inch, serves 6)</button>
+            <button class="yq-option" type="button" data-opt="medium" data-price="108" data-unit="Medium">Medium (8-inch, serves 10)</button>
+            <button class="yq-option" type="button" data-opt="large" data-price="148" data-unit="Large">Large (10-inch, serves 14)</button>
+          </div>
         </div>
+
+        <!-- Thuộc tính sản phẩm do backend đổ vào (giữ id như template cũ — add-to-cart.js
+             serialize form này gửi kèm addCart). Mỗi nhóm: .product--attr[data-max]
+             > .single--attribute input. -->
+        <form id="form-list-attribute"></form>
 
         <div class="mb-4">
           <span class="yq-field-label">Quantity</span>
@@ -86,15 +96,18 @@
 
         <!-- Hàng nút mua: Add to cart (phụ) + Buy Now (chính, mua nhanh) -->
         <div class="yq-buyrow" id="pdpBuyActions">
-          <button class="yq-btn yq-btn--block yq-btn--lg" type="button" id="pdpAdd">
+          <button class="yq-btn yq-btn--block yq-btn--lg addToCart" type="button" id="pdpAdd" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1" data-variable="1">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-            <span id="pdpAddLabel">Add to cart</span>
+            <span id="pdpAddLabel">Add to cart — $78</span>
           </button>
-          <button class="yq-btn yq-btn--gold yq-btn--block yq-btn--lg yq-buynow" type="button" id="pdpBuyNow">
+          <button class="yq-btn yq-btn--gold yq-btn--block yq-btn--lg yq-buynow addToCart" type="button" id="pdpBuyNow" data-buynow="1" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg>
-            <span id="pdpBuyLabel">Buy Now</span>
+            <span id="pdpBuyLabel">Buy Now — $78</span>
           </button>
         </div>
+        <div class="yq-small mt-2"><span id="warning-min-max-voucher" class="warning-expire-date"></span></div>
+        <input type="hidden" class="status-product-attribute" value="0">
+        <input type="hidden" class="currency-hotel" value="SGD">
 
         <div class="yq-trust">
           <span data-trust="check">In stock</span>
@@ -141,7 +154,12 @@
       <hr class="yq-rule">
       <h2 class="yq-h2">You may also like</h2>
     </div>
-    <div class="row g-4" id="pdpRelated"></div>
+    <div class="row g-4" id="pdpRelated">
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="0"><div class="yq-card__mediawrap"><span class="yq-ribbon"><span>Bestseller</span></span><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=grand-pralines" aria-label="Grand Pralines Collection"><img src="assets/img/shop/pralines-25.jpg" alt="Grand Pralines Collection" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="grand-pralines" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="grand-pralines" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Grand Pralines Collection"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"></path></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">Cakes &amp; Pastries</div><h3 class="yq-card__title"><a href="product.html?id=grand-pralines">Grand Pralines Collection</a></h3><p class="yq-card__desc">24 handcrafted pralines in an elegant gold gift box. Dark, milk, and white chocolate.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>$58</span><a class="yq-link-arrow" href="product.html?id=grand-pralines">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"></path><polyline points="13 6 19 12 13 18"></polyline></svg></a></div></div></article></div>
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="70"><div class="yq-card__mediawrap"><span class="yq-ribbon yq-ribbon--gold"><span>New</span></span><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=artisan-cookie-box" aria-label="Artisan Cookie Box"><img src="assets/img/p-cookies.jpg" alt="Artisan Cookie Box" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="artisan-cookie-box" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="artisan-cookie-box" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Artisan Cookie Box"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"></path></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">Cakes &amp; Pastries</div><h3 class="yq-card__title"><a href="product.html?id=artisan-cookie-box">Artisan Cookie Box</a></h3><p class="yq-card__desc">Sixteen hand-baked cookies in four flavours, packed in a keepsake tin.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>$48</span><a class="yq-link-arrow" href="product.html?id=artisan-cookie-box">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"></path><polyline points="13 6 19 12 13 18"></polyline></svg></a></div></div></article></div>
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="140"><div class="yq-card__mediawrap"><span class="yq-ribbon yq-ribbon--promo"><span>Early Bird</span><span>Seasonal</span></span><span class="yq-off"><b>10%</b>Off</span><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=festive-yule-log" aria-label="Festive Yule Log"><img src="assets/img/p-yule-log.jpg" alt="Festive Yule Log" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="festive-yule-log" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="festive-yule-log" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Festive Yule Log"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"></path></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">Cakes &amp; Pastries</div><h3 class="yq-card__title"><a href="product.html?id=festive-yule-log">Festive Yule Log</a></h3><p class="yq-card__desc">A chestnut and dark chocolate bûche, finished with meringue and snow sugar.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>$88<s>$98</s></span><a class="yq-link-arrow" href="product.html?id=festive-yule-log">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"></path><polyline points="13 6 19 12 13 18"></polyline></svg></a></div></div></article></div>
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="210"><div class="yq-card__mediawrap"><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=dark-chocolate-cherry-cake" aria-label="Dark Chocolate Cherry Cake"><img src="assets/img/shop/cake-chocolate-cherry.jpg" alt="Dark Chocolate Cherry Cake" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="dark-chocolate-cherry-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="dark-chocolate-cherry-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Dark Chocolate Cherry Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"></path></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">Cakes</div><h3 class="yq-card__title"><a href="product.html?id=dark-chocolate-cherry-cake">Dark Chocolate Cherry Cake</a></h3><p class="yq-card__desc">Dark chocolate mousse and Chantilly, crowned with cherries and chocolate curls.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>$11</span><a class="yq-link-arrow" href="product.html?id=dark-chocolate-cherry-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"></path><polyline points="13 6 19 12 13 18"></polyline></svg></a></div></div></article></div>
+    </div>
   </div>
 </section>
 
@@ -150,13 +168,13 @@
 <!-- Sticky buy bar (chỉ hiện ở mobile <992px khi đã cuộn qua nút mua chính) -->
 <div class="yq-buybar" id="pdpBuyBar" aria-hidden="true">
   <div class="yq-buybar__info">
-    <span class="yq-buybar__name" id="pdpBarName"></span>
+    <span class="yq-buybar__name" id="pdpBarName">Signature Chocolate Cake</span>
     <span class="yq-buybar__meta">
-      <span class="yq-buybar__price" id="pdpBarPrice"></span>
-      <span class="yq-buybar__opt" id="pdpBarOpt"></span>
+      <span class="yq-buybar__price" id="pdpBarPrice">$78</span>
+      <span class="yq-buybar__opt" id="pdpBarOpt">Small (6-inch, serves 6)</span>
     </span>
   </div>
-  <button class="yq-btn yq-btn--gold" type="button" id="pdpBarBuy">
+  <button class="yq-btn yq-btn--gold addToCart" type="button" id="pdpBarBuy" data-buynow="1" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg>
     <span>Buy Now</span>
   </button>
@@ -171,6 +189,7 @@
 <script src="assets/js/modules/banner.js"></script>
 <script src="assets/js/modules/buynow.js"></script>
 <script src="assets/js/modules/cart-anim.js"></script>
+<script src="assets/js/modules/add-to-cart.js"></script>
 <script src="assets/js/modules/account.js"></script>
 <script>
   jQuery(function ($) {

@@ -180,18 +180,23 @@ Sản phẩm từ rank 14 trở đi trong `YQ.products` là hàng The Shop theo 
 **Tên đặt theo ảnh (trừ cookies/nuts có tên trong file ảnh) và giá là giá tạm** — cần thay bằng
 tên + giá chính thức. Field `gallery` (mảng ảnh phụ) hiện ở thumb trang chi tiết.
 
-**Sản phẩm** — sửa mảng `YQ.products` trong `assets/js/data.js`.
+**Sản phẩm / danh mục là HTML tĩnh** — JS không render card, chip danh mục hay trang chi tiết.
+Backend in thẳng markup; sửa hiển thị thì sửa HTML:
+- `shop.html`: chip danh mục `#shopCats [data-cat]`, chip mùa `#shopSeasons [data-season]`,
+  card trong `#shopGrid` (lọc/sắp xếp theo `data-cat` / `data-seasons` / `data-price` / `data-rank` / `data-new` / `data-name`).
+- `product.html`: gallery, info, giá, option, related. Mỗi option
+  `<button class="yq-option" data-opt data-price data-compare? data-unit>` — JS chỉ đọc
+  các data-* này để đổi giá / nhãn nút khi chọn.
+- `index.html` / `celebrations.html`: card tĩnh.
+- Nút giỏ: `.addToCart` + data-* như template cũ (xem `assets/js/modules/add-to-cart.js`).
 
-Nhãn trên ảnh sản phẩm (`YQ.labelsHtml` trong `pages.js`, dùng cho card + ảnh chính PDP):
-- `badge`: `'Bestseller' | 'New' | 'Seasonal'` — ribbon góc trên-trái (đen / vàng / trắng).
-- `promo`: nhãn khuyến mãi, ví dụ `'Limited Time Offer'` — ribbon chuyển sang màu crimson,
-  hiện cùng `badge` dạng `Limited Time Offer | New`.
-- `compareAt`: giá gốc trước giảm (ở sản phẩm = giá "From", ở từng `option` = giá option).
-  Có `compareAt` > `price` thì tự hiện tag `% Off` góc trên-phải, giá gạch ngang và chip
-  "Save x%" ở PDP — % tính bằng `YQ.discount(price, compareAt)`.
+Nhãn trên ảnh (markup tĩnh):
+- Ribbon góc trên-trái `<span class="yq-ribbon"><span>Bestseller</span></span>` — thêm
+  `--promo` (crimson) | `--gold` (New) | `--light` (Seasonal).
+- Giảm giá: `<span class="yq-off"><b>20%</b>Off</span>` góc trên-phải, giá gạch ngang `<s>`.
 
-`index.html` / `celebrations.html` là markup tĩnh nên khi đổi nhãn/giá trong `data.js`
-nhớ sửa tay các card tương ứng ở đó.
+`YQ.products` trong `data.js` giờ **chỉ** phục vụ giỏ hàng demo (localStorage): tra tên/giá/ảnh
+theo `data-productid`, giỏ mẫu, đơn hàng mẫu.
 
 ### Checkout v2 (`checkout-v2.html`)
 

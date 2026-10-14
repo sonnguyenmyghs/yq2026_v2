@@ -34,7 +34,17 @@
 
     <div class="yq-panel mb-4" style="padding:20px 22px">
       <div class="yq-filterbar">
-        <div class="yq-filterbar__chips" id="shopCats"></div>
+        <div class="yq-filterbar__chips" id="shopCats">
+          <button class="yq-chip is-active" type="button" data-cat="all">All Products</button>
+          <button class="yq-chip" type="button" data-cat="cakes">Cakes, Cookies &amp; Pralines</button>
+          <button class="yq-chip" type="button" data-cat="bakery">Breads &amp; Pastries</button>
+          <button class="yq-chip" type="button" data-cat="pantry">Pantry &amp; Tea</button>
+          <button class="yq-chip" type="button" data-cat="dining">Dining</button>
+          <button class="yq-chip" type="button" data-cat="beverages">Beverages</button>
+          <button class="yq-chip" type="button" data-cat="wellness">Wellness</button>
+          <button class="yq-chip" type="button" data-cat="brix">Brix Merchandise</button>
+          <button class="yq-chip" type="button" data-cat="celebration">Celebration</button>
+        </div>
         <div class="yq-filterbar__tools">
           <span class="yq-results-count" id="shopCount">71 products</span>
           <select class="yq-select" id="shopSort" aria-label="Sort products">
@@ -48,7 +58,13 @@
       </div>
       <div class="yq-seasonal">
         <span class="yq-seasonal__label">Seasonal:</span>
-        <span id="shopSeasons" class="d-flex flex-wrap gap-2"></span>
+        <span id="shopSeasons" class="d-flex flex-wrap gap-2">
+          <button class="yq-chip yq-chip--gold" type="button" data-season="festive">The Festive Season</button>
+          <button class="yq-chip yq-chip--gold" type="button" data-season="retreats">Retreats</button>
+          <button class="yq-chip yq-chip--gold" type="button" data-season="cny">Chinese New Year</button>
+          <button class="yq-chip yq-chip--gold" type="button" data-season="fathers">Father's Day Brunch</button>
+          <button class="yq-chip yq-chip--gold" type="button" data-season="nye">New Year's Eve Events</button>
+        </span>
       </div>
     </div>
 
@@ -74,8 +90,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=signature-chocolate-cake" aria-label="Signature Chocolate Cake">
               <img src="assets/img/shop/cake-chocolate-gold.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="signature-chocolate-cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Signature Chocolate Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -97,8 +114,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=grand-pralines" aria-label="Grand Pralines Collection">
               <img src="assets/img/shop/pralines-25.jpg" alt="Grand Pralines Collection" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="grand-pralines"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="grand-pralines" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="grand-pralines" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Grand Pralines Collection"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -120,8 +138,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=the-grand-hamper" aria-label="The Grand Hamper">
               <img src="assets/img/shop/hamper-grand.jpg" alt="The Grand Hamper" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="the-grand-hamper"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="the-grand-hamper" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="the-grand-hamper" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: The Grand Hamper"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -143,8 +162,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=gh-champagne-brut" aria-label="Grand Hyatt Champagne Brut">
               <img src="assets/img/p-champagne.jpg" alt="Grand Hyatt Champagne Brut" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="gh-champagne-brut"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="gh-champagne-brut" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="gh-champagne-brut" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Grand Hyatt Champagne Brut"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -167,8 +187,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=the-pantry-hamper" aria-label="The Pantry Hamper">
               <img src="assets/img/shop/hamper-pantry.jpg" alt="The Pantry Hamper" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="the-pantry-hamper"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="the-pantry-hamper" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="the-pantry-hamper" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: The Pantry Hamper"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -191,8 +212,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=cellar-selection-trio" aria-label="Cellar Selection Trio">
               <img src="assets/img/p-cellar-trio.jpg" alt="Cellar Selection Trio" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="cellar-selection-trio"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="cellar-selection-trio" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="cellar-selection-trio" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Cellar Selection Trio"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -214,8 +236,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=artisan-cookie-box" aria-label="Artisan Cookie Box">
               <img src="assets/img/p-cookies.jpg" alt="Artisan Cookie Box" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="artisan-cookie-box"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="artisan-cookie-box" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="artisan-cookie-box" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Artisan Cookie Box"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -237,8 +260,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=damai-wellness-set" aria-label="Damai Spa Wellness Set">
               <img src="assets/img/p-spa-set.jpg" alt="Damai Spa Wellness Set" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="damai-wellness-set"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="damai-wellness-set" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="damai-wellness-set" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Damai Spa Wellness Set"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -259,8 +283,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=brix-tote" aria-label="Brix Signature Tote">
               <img src="assets/img/p-tote.jpg" alt="Brix Signature Tote" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="brix-tote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="brix-tote" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="brix-tote" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Brix Signature Tote"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -281,8 +306,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=grand-dining-voucher" aria-label="Grand Dining Voucher">
               <img src="assets/img/p-dining-voucher.jpg" alt="Grand Dining Voucher" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="grand-dining-voucher"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="grand-dining-voucher" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="grand-dining-voucher" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Grand Dining Voucher"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -303,8 +329,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=afternoon-tea-two" aria-label="Afternoon Tea for Two">
               <img src="assets/img/p-afternoon-tea.jpg" alt="Afternoon Tea for Two" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="afternoon-tea-two"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="afternoon-tea-two" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="afternoon-tea-two" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Afternoon Tea for Two"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -327,8 +354,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=festive-yule-log" aria-label="Festive Yule Log">
               <img src="assets/img/p-yule-log.jpg" alt="Festive Yule Log" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="festive-yule-log"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="festive-yule-log" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="festive-yule-log" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Festive Yule Log"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -350,8 +378,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=prosperity-yusheng" aria-label="Prosperity Yu Sheng Set">
               <img src="assets/img/p-yusheng.jpg" alt="Prosperity Yu Sheng Set" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="prosperity-yusheng"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="prosperity-yusheng" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="prosperity-yusheng" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Prosperity Yu Sheng Set"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -372,8 +401,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=dark-chocolate-cherry-cake" aria-label="Dark Chocolate Cherry Cake">
               <img src="assets/img/shop/cake-chocolate-cherry.jpg" alt="Dark Chocolate Cherry Cake" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="dark-chocolate-cherry-cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="dark-chocolate-cherry-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="dark-chocolate-cherry-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Dark Chocolate Cherry Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -394,8 +424,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=peach-chantilly-cake" aria-label="Peach Chantilly Cake">
               <img src="assets/img/shop/cake-peach-chantilly.jpg" alt="Peach Chantilly Cake" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="peach-chantilly-cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="peach-chantilly-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="peach-chantilly-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Peach Chantilly Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -416,8 +447,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=caramel-coconut-cake" aria-label="Caramel Coconut Cake">
               <img src="assets/img/shop/cake-caramel-coconut.jpg" alt="Caramel Coconut Cake" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="caramel-coconut-cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="caramel-coconut-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="caramel-coconut-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Caramel Coconut Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -438,8 +470,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=lavender-blossom-cake" aria-label="Lavender Blossom Cake">
               <img src="assets/img/shop/cake-lavender.jpg" alt="Lavender Blossom Cake" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="lavender-blossom-cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="lavender-blossom-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="lavender-blossom-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Lavender Blossom Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -460,8 +493,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=matcha-strawberry-cake" aria-label="Matcha Strawberry Cake">
               <img src="assets/img/shop/cake-matcha-strawberry.jpg" alt="Matcha Strawberry Cake" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="matcha-strawberry-cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="matcha-strawberry-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="matcha-strawberry-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Matcha Strawberry Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -482,8 +516,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=citrus-meringue-tart" aria-label="Citrus Meringue Tart">
               <img src="assets/img/shop/tart-citrus-meringue.jpg" alt="Citrus Meringue Tart" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="citrus-meringue-tart"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="citrus-meringue-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="citrus-meringue-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Citrus Meringue Tart"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -504,8 +539,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=strawberry-mango-tart" aria-label="Strawberry Mango Tart">
               <img src="assets/img/shop/tart-strawberry-mango.jpg" alt="Strawberry Mango Tart" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="strawberry-mango-tart"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="strawberry-mango-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="strawberry-mango-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Strawberry Mango Tart"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -526,8 +562,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=caramel-coffee-tart" aria-label="Caramel Coffee Tart">
               <img src="assets/img/shop/tart-caramel-coffee.jpg" alt="Caramel Coffee Tart" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="caramel-coffee-tart"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="caramel-coffee-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="caramel-coffee-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Caramel Coffee Tart"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -548,8 +585,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=cherry-vanilla-tart" aria-label="Cherry Vanilla Tart">
               <img src="assets/img/shop/tart-cherry-vanilla.jpg" alt="Cherry Vanilla Tart" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="cherry-vanilla-tart"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="cherry-vanilla-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="cherry-vanilla-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Cherry Vanilla Tart"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -570,8 +608,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=pink-grapefruit-tart" aria-label="Pink Grapefruit Tart">
               <img src="assets/img/shop/tart-pink-grapefruit.jpg" alt="Pink Grapefruit Tart" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="pink-grapefruit-tart"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="pink-grapefruit-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="pink-grapefruit-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Pink Grapefruit Tart"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -592,8 +631,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=lemon-meringue-tart" aria-label="Lemon Meringue Tart">
               <img src="assets/img/shop/tart-lemon-meringue.jpg" alt="Lemon Meringue Tart" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="lemon-meringue-tart"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="lemon-meringue-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="lemon-meringue-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Lemon Meringue Tart"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -614,8 +654,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=mango-rose-tart" aria-label="Mango Rose Tart">
               <img src="assets/img/shop/tart-mango-rose.jpg" alt="Mango Rose Tart" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="mango-rose-tart"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="mango-rose-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="mango-rose-tart" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Mango Rose Tart"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -636,8 +677,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=signature-truffles" aria-label="Signature Truffle Collection">
               <img src="assets/img/shop/truffles-25.jpg" alt="Signature Truffle Collection" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="signature-truffles"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="signature-truffles" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="signature-truffles" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Signature Truffle Collection"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -658,8 +700,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=dark-raspberry-bar" aria-label="Dark Chocolate Raspberry Bar">
               <img src="assets/img/shop/choc-bar-raspberry.jpg" alt="Dark Chocolate Raspberry Bar" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="dark-raspberry-bar"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="dark-raspberry-bar" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="dark-raspberry-bar" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Dark Chocolate Raspberry Bar"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -680,8 +723,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=white-cranberry-bar" aria-label="White Chocolate Cranberry Bar">
               <img src="assets/img/shop/choc-bar-cranberry.jpg" alt="White Chocolate Cranberry Bar" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="white-cranberry-bar"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="white-cranberry-bar" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="white-cranberry-bar" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: White Chocolate Cranberry Bar"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -702,8 +746,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=milk-hazelnut-bar" aria-label="Milk Chocolate Hazelnut Bar">
               <img src="assets/img/shop/choc-bar-hazelnut.jpg" alt="Milk Chocolate Hazelnut Bar" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="milk-hazelnut-bar"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="milk-hazelnut-bar" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="milk-hazelnut-bar" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Milk Chocolate Hazelnut Bar"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -724,8 +769,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=assorted-rocher" aria-label="Assorted Rocher">
               <img src="assets/img/shop/jar-assorted-rocher.jpg" alt="Assorted Rocher" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="assorted-rocher"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="assorted-rocher" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="assorted-rocher" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Assorted Rocher"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -746,8 +792,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=chocolate-bark" aria-label="Chocolate Bark">
               <img src="assets/img/shop/jar-chocolate-bark.jpg" alt="Chocolate Bark" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="chocolate-bark"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="chocolate-bark" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="chocolate-bark" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Chocolate Bark"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -768,8 +815,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=cocoa-almonds" aria-label="Cocoa Almonds">
               <img src="assets/img/shop/jar-cocoa-almonds.jpg" alt="Cocoa Almonds" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="cocoa-almonds"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="cocoa-almonds" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="cocoa-almonds" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Cocoa Almonds"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -790,8 +838,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=milk-coated-hazelnuts" aria-label="Milk Chocolate Coated Hazelnuts">
               <img src="assets/img/shop/jar-milk-hazelnuts.jpg" alt="Milk Chocolate Coated Hazelnuts" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="milk-coated-hazelnuts"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="milk-coated-hazelnuts" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="milk-coated-hazelnuts" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Milk Chocolate Coated Hazelnuts"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -812,8 +861,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=chocolate-gourmand-almonds" aria-label="Chocolate Gourmand Mix Almonds">
               <img src="assets/img/shop/jar-gourmand-almonds.jpg" alt="Chocolate Gourmand Mix Almonds" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="chocolate-gourmand-almonds"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="chocolate-gourmand-almonds" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="chocolate-gourmand-almonds" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Chocolate Gourmand Mix Almonds"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -834,8 +884,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=cashew-nut-cookies" aria-label="Cashew Nut Cookies">
               <img src="assets/img/shop/jar-cashew-cookies.jpg" alt="Cashew Nut Cookies" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="cashew-nut-cookies"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="cashew-nut-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="cashew-nut-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Cashew Nut Cookies"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -856,8 +907,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=choco-dipped-butter-cookies" aria-label="Chocolate Dipped Butter Cookies">
               <img src="assets/img/shop/jar-butter-cookies.jpg" alt="Chocolate Dipped Butter Cookies" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="choco-dipped-butter-cookies"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="choco-dipped-butter-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="choco-dipped-butter-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Chocolate Dipped Butter Cookies"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -878,8 +930,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=chocolate-fudge-cookies" aria-label="Chocolate Fudge Cookies">
               <img src="assets/img/shop/jar-fudge-cookies.jpg" alt="Chocolate Fudge Cookies" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="chocolate-fudge-cookies"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="chocolate-fudge-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="chocolate-fudge-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Chocolate Fudge Cookies"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -900,8 +953,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=chocolate-chip-cookies" aria-label="Chocolate Chip Cookies">
               <img src="assets/img/shop/jar-choc-chip-cookies.jpg" alt="Chocolate Chip Cookies" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="chocolate-chip-cookies"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="chocolate-chip-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="chocolate-chip-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Chocolate Chip Cookies"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -922,8 +976,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=oatmeal-cranberry-cookies" aria-label="Oatmeal Cranberry Cookies">
               <img src="assets/img/shop/jar-oatmeal-cranberry.jpg" alt="Oatmeal Cranberry Cookies" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="oatmeal-cranberry-cookies"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="oatmeal-cranberry-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="oatmeal-cranberry-cookies" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Oatmeal Cranberry Cookies"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -944,8 +999,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=golden-moscato-oolong" aria-label="Golden Moscato Oolong">
               <img src="assets/img/shop/tea-moscato-oolong.jpg" alt="Golden Moscato Oolong" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="golden-moscato-oolong"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="golden-moscato-oolong" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="golden-moscato-oolong" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Golden Moscato Oolong"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -966,8 +1022,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=yuzu-raw-honey" aria-label="Yuzu Infused Raw Honey">
               <img src="assets/img/shop/honey-yuzu.jpg" alt="Yuzu Infused Raw Honey" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="yuzu-raw-honey"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="yuzu-raw-honey" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="yuzu-raw-honey" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Yuzu Infused Raw Honey"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -988,8 +1045,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=ginger-raw-honey" aria-label="Ginger Infused Raw Honey">
               <img src="assets/img/shop/honey-ginger.jpg" alt="Ginger Infused Raw Honey" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="ginger-raw-honey"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="ginger-raw-honey" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="ginger-raw-honey" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Ginger Infused Raw Honey"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1010,8 +1068,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=signature-fruit-cake" aria-label="Signature Fruit Cake">
               <img src="assets/img/shop/fruit-cake.jpg" alt="Signature Fruit Cake" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="signature-fruit-cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="signature-fruit-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="signature-fruit-cake" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Signature Fruit Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1032,8 +1091,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=grissini-cristal" aria-label="Grissini Cristal">
               <img src="assets/img/shop/grissini.jpg" alt="Grissini Cristal" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="grissini-cristal"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="grissini-cristal" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="grissini-cristal" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Grissini Cristal"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1054,8 +1114,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=butter-croissant" aria-label="Butter Croissant">
               <img src="assets/img/shop/bake-croissant.jpg" alt="Butter Croissant" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="butter-croissant"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="butter-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="butter-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Butter Croissant"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1076,8 +1137,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=pain-au-chocolat" aria-label="Pain au Chocolat">
               <img src="assets/img/shop/bake-pain-au-chocolat.jpg" alt="Pain au Chocolat" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="pain-au-chocolat"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="pain-au-chocolat" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="pain-au-chocolat" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Pain au Chocolat"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1098,8 +1160,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=ham-cheese-croissant" aria-label="Ham &amp; Cheese Croissant">
               <img src="assets/img/shop/bake-ham-cheese-croissant.jpg" alt="Ham &amp; Cheese Croissant" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="ham-cheese-croissant"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="ham-cheese-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="ham-cheese-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Ham &amp; Cheese Croissant"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1120,8 +1183,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=sausage-roll" aria-label="Sausage Roll">
               <img src="assets/img/shop/bake-sausage-roll.jpg" alt="Sausage Roll" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="sausage-roll"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="sausage-roll" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="sausage-roll" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Sausage Roll"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1142,8 +1206,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=streusel-muffin" aria-label="Streusel Muffin">
               <img src="assets/img/shop/bake-streusel-muffin.jpg" alt="Streusel Muffin" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="streusel-muffin"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="streusel-muffin" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="streusel-muffin" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Streusel Muffin"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1164,8 +1229,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=chicken-pie" aria-label="Chicken Pie">
               <img src="assets/img/shop/bake-chicken-pie.jpg" alt="Chicken Pie" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="chicken-pie"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="chicken-pie" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="chicken-pie" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Chicken Pie"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1186,8 +1252,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=spinach-quiche" aria-label="Spinach &amp; Cheese Quiche">
               <img src="assets/img/shop/bake-spinach-quiche.jpg" alt="Spinach &amp; Cheese Quiche" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="spinach-quiche"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="spinach-quiche" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="spinach-quiche" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Spinach &amp; Cheese Quiche"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1208,8 +1275,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=apple-turnover" aria-label="Apple Turnover">
               <img src="assets/img/shop/bake-apple-turnover.jpg" alt="Apple Turnover" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="apple-turnover"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="apple-turnover" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="apple-turnover" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Apple Turnover"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1230,8 +1298,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=scones-jam-cream" aria-label="Scones with Jam &amp; Clotted Cream">
               <img src="assets/img/shop/bake-scones.jpg" alt="Scones with Jam &amp; Clotted Cream" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="scones-jam-cream"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="scones-jam-cream" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="scones-jam-cream" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Scones with Jam &amp; Clotted Cream"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1252,8 +1321,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=chocolate-danish" aria-label="Chocolate Danish">
               <img src="assets/img/shop/danish-chocolate.jpg" alt="Chocolate Danish" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="chocolate-danish"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="chocolate-danish" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="chocolate-danish" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Chocolate Danish"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1274,8 +1344,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=apricot-custard-danish" aria-label="Apricot Custard Danish">
               <img src="assets/img/shop/danish-apricot.jpg" alt="Apricot Custard Danish" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="apricot-custard-danish"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="apricot-custard-danish" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="apricot-custard-danish" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Apricot Custard Danish"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1296,8 +1367,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=cube-croissant" aria-label="Cube Croissant">
               <img src="assets/img/shop/danish-cube.jpg" alt="Cube Croissant" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="cube-croissant"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="cube-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="cube-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Cube Croissant"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1318,8 +1390,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=mixed-berry-danish" aria-label="Mixed Berry Danish">
               <img src="assets/img/shop/danish-berry.jpg" alt="Mixed Berry Danish" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="mixed-berry-danish"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="mixed-berry-danish" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="mixed-berry-danish" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Mixed Berry Danish"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1340,8 +1413,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=country-sourdough" aria-label="Country Sourdough">
               <img src="assets/img/shop/bread-country-sourdough.jpg" alt="Country Sourdough" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="country-sourdough"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="country-sourdough" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="country-sourdough" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Country Sourdough"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1362,8 +1436,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=multigrain-oat-loaf" aria-label="Multigrain Oat Loaf">
               <img src="assets/img/shop/bread-multigrain-oat.jpg" alt="Multigrain Oat Loaf" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="multigrain-oat-loaf"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="multigrain-oat-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="multigrain-oat-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Multigrain Oat Loaf"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1384,8 +1459,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=rye-seed-loaf" aria-label="Rye &amp; Seed Loaf">
               <img src="assets/img/shop/bread-rye-seed.jpg" alt="Rye &amp; Seed Loaf" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="rye-seed-loaf"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="rye-seed-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="rye-seed-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Rye &amp; Seed Loaf"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1406,8 +1482,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=pumpkin-seed-loaf" aria-label="Pumpkin Seed Loaf">
               <img src="assets/img/shop/bread-pumpkin-seed.jpg" alt="Pumpkin Seed Loaf" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="pumpkin-seed-loaf"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="pumpkin-seed-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="pumpkin-seed-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Pumpkin Seed Loaf"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1428,8 +1505,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=twisted-country-loaf" aria-label="Twisted Country Loaf">
               <img src="assets/img/shop/bread-twisted-loaf.jpg" alt="Twisted Country Loaf" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="twisted-country-loaf"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="twisted-country-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="twisted-country-loaf" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Twisted Country Loaf"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1450,8 +1528,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=traditional-baguette" aria-label="Traditional Baguette">
               <img src="assets/img/shop/bread-baguette.jpg" alt="Traditional Baguette" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="traditional-baguette"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="traditional-baguette" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="traditional-baguette" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Traditional Baguette"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1472,8 +1551,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=olive-focaccia" aria-label="Olive Focaccia">
               <img src="assets/img/shop/bread-olive-focaccia.jpg" alt="Olive Focaccia" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="olive-focaccia"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="olive-focaccia" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="olive-focaccia" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Olive Focaccia"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1494,8 +1574,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=smoked-ham-croissant" aria-label="Smoked Ham Croissant">
               <img src="assets/img/shop/sand-ham-croissant.jpg" alt="Smoked Ham Croissant" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="smoked-ham-croissant"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="smoked-ham-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="smoked-ham-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Smoked Ham Croissant"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1516,8 +1597,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=scrambled-egg-croissant" aria-label="Scrambled Egg Croissant">
               <img src="assets/img/shop/sand-egg-croissant.jpg" alt="Scrambled Egg Croissant" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="scrambled-egg-croissant"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="scrambled-egg-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="scrambled-egg-croissant" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Scrambled Egg Croissant"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1538,8 +1620,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=roast-beef-rye" aria-label="Roast Beef &amp; Rocket on Rye">
               <img src="assets/img/shop/sand-roast-beef-rye.jpg" alt="Roast Beef &amp; Rocket on Rye" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="roast-beef-rye"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="roast-beef-rye" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="roast-beef-rye" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Roast Beef &amp; Rocket on Rye"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1560,8 +1643,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=tuna-melt-baguette" aria-label="Tuna Melt Baguette">
               <img src="assets/img/shop/sand-tuna-melt.jpg" alt="Tuna Melt Baguette" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="tuna-melt-baguette"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="tuna-melt-baguette" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="tuna-melt-baguette" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Tuna Melt Baguette"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1582,8 +1666,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=prawn-brioche" aria-label="Prawn Brioche Bun">
               <img src="assets/img/shop/sand-prawn-brioche.jpg" alt="Prawn Brioche Bun" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="prawn-brioche"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="prawn-brioche" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="prawn-brioche" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Prawn Brioche Bun"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1604,8 +1689,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=bacon-egg-brioche" aria-label="Bacon &amp; Egg Brioche">
               <img src="assets/img/shop/sand-bacon-egg-brioche.jpg" alt="Bacon &amp; Egg Brioche" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="bacon-egg-brioche"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="bacon-egg-brioche" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="bacon-egg-brioche" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Bacon &amp; Egg Brioche"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1626,8 +1712,9 @@
             <a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=sourdough-melt" aria-label="Toasted Sourdough Melt">
               <img src="assets/img/shop/sand-sourdough-melt.jpg" alt="Toasted Sourdough Melt" loading="lazy" decoding="async">
             </a>
-            <div class="yq-quickadd">
-              <button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="sourdough-melt"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Quick add</button>
+            <div class="yq-quickadd yq-quickadd--duo">
+              <button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="sourdough-melt" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button>
+              <button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="sourdough-melt" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Toasted Sourdough Melt"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button>
             </div>
           </div>
           <div class="yq-card__body">
@@ -1663,6 +1750,7 @@
 <script src="assets/js/modules/banner.js"></script>
 <script src="assets/js/modules/buynow.js"></script>
 <script src="assets/js/modules/cart-anim.js"></script>
+<script src="assets/js/modules/add-to-cart.js"></script>
 <script src="assets/js/modules/account.js"></script>
 <script>
   jQuery(function () {

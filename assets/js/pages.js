@@ -9,58 +9,9 @@
   /* ======================================================================
      1. Components
      ====================================================================== */
-  /** Nhãn trên ảnh sản phẩm: ribbon góc trên-trái (promo | badge) + tag % giảm góc trên-phải.
-      Dùng chung cho card và ảnh chính trang chi tiết. */
-  YQ.labelsHtml = function (p) {
-    var tags = [];
-    if (p.promo) tags.push(p.promo);
-    if (p.badge) tags.push(p.badge);
-
-    var ribbon = '';
-    if (tags.length) {
-      var mod = p.promo ? ' yq-ribbon--promo'
-              : p.badge === 'New' ? ' yq-ribbon--gold'
-              : p.badge === 'Seasonal' ? ' yq-ribbon--light' : '';
-      ribbon = '<span class="yq-ribbon' + mod + '">' +
-                 tags.map(function (t) { return '<span>' + YQ.escape(t) + '</span>'; }).join('') +
-               '</span>';
-    }
-
-    var pct = YQ.discount(p.price, p.compareAt);
-    var off = pct ? '<span class="yq-off"><b>' + pct + '%</b>Off</span>' : '';
-    return ribbon + off;
-  };
-
   /** Giá + giá gốc gạch ngang (nếu có giảm). */
   YQ.priceHtml = function (price, compareAt) {
     return YQ.money0(price) + (YQ.discount(price, compareAt) ? '<s>' + YQ.money0(compareAt) + '</s>' : '');
-  };
-
-  YQ.productCard = function (p, opts) {
-    opts = opts || {};
-    var meta = p.meta ? '<span class="yq-card__cat">' + YQ.icon('gift', 13) + ' ' + p.meta + '</span>' : '';
-
-    return '' +
-      '<article class="yq-card yq-reveal">' +
-        '<div class="yq-card__mediawrap">' +
-          YQ.labelsHtml(p) +
-          '<a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=' + p.id + '" aria-label="' + YQ.escape(p.name) + '">' +
-            YQ.mediaInner(p) +
-          '</a>' +
-          (opts.quickAdd === false ? '' :
-            '<div class="yq-quickadd"><button class="yq-btn yq-btn--sm yq-btn--block" type="button" data-quickadd="' + p.id + '">' +
-              YQ.icon('bag', 15) + ' Quick add</button></div>') +
-        '</div>' +
-        '<div class="yq-card__body">' +
-          '<div class="yq-card__cat">' + (p.meta ? p.meta + ' · ' : '') + p.catLabel + '</div>' +
-          '<h3 class="yq-card__title"><a href="product.html?id=' + p.id + '">' + YQ.escape(p.name) + '</a></h3>' +
-          '<p class="yq-card__desc">' + YQ.escape(p.short || p.desc) + '</p>' +
-          '<div class="yq-card__foot">' +
-            '<span class="yq-card__price"><small>From</small>' + YQ.priceHtml(p.price, p.compareAt) + '</span>' +
-            '<a class="yq-link-arrow" href="product.html?id=' + p.id + '">View ' + YQ.icon('arrow', 14) + '</a>' +
-          '</div>' +
-        '</div>' +
-      '</article>';
   };
 
   /** Order summary block (dùng ở cart + checkout) */
@@ -119,17 +70,9 @@
       sort: 'featured'
     };
 
-    /* Chips */
-    $('#shopCats').html(YQ.categories.map(function (c) {
-      return '<button class="yq-chip" type="button" data-cat="' + c.id + '">' + c.label + '</button>';
-    }).join(''));
-
-    $('#shopSeasons').html(YQ.seasons.map(function (s) {
-      return '<button class="yq-chip yq-chip--gold" type="button" data-season="' + s.id + '">' + s.label + '</button>';
-    }).join(''));
-
-    /* #shopGrid là HTML tĩnh trong shop.html — JS không dựng card,
-       chỉ ẩn/hiện và sắp lại thứ tự các cột theo data-* của chúng. */
+    /* Chip danh mục (#shopCats [data-cat]), chip mùa (#shopSeasons [data-season]) và
+       #shopGrid đều là HTML tĩnh trong shop.html — JS không dựng gì, chỉ ẩn/hiện,
+       đánh dấu chip đang chọn và sắp lại thứ tự các cột theo data-* của chúng. */
     var $grid = $('#shopGrid');
     var $items = $grid.children();
 
@@ -202,58 +145,27 @@
      4. Product detail
      ====================================================================== */
   YQ.initProduct = function () {
-    var id = YQ.param('id') || YQ.products[0].id;
-    var p = YQ.product(id) || YQ.products[0];
-    var sel = p.options[0];
+    /* Toàn bộ nội dung PDP (gallery, info, option, giá, related) là HTML tĩnh trong
+       product.html — backend in sẵn. JS chỉ xử lý tương tác:
+         - bấm thumb -> đổi ảnh chính
+         - chọn option -> giá + nhãn nút theo data-price / data-compare / data-unit
+         - đổi số lượng -> nhãn nút */
+    var $sel = $('#pdpOptions .yq-option.is-active').first();
     var qty = 1;
 
-    document.title = p.name + ' — Grand Hyatt Singapore';
-
-    /* Gallery (#pdpMain, #pdpLabels, #pdpThumbs) là HTML tĩnh trong product.html —
-       backend đổ đúng sản phẩm thì JS không dựng lại. Bản demo chỉ có markup của 1 sản phẩm,
-       nên khi ảnh chính tĩnh không phải ảnh của p thì dựng gallery từ p.img + p.gallery. */
-    if (p.img && $('#pdpMain img').attr('src') !== YQ.url(p.img)) {
-      var shots = [p.img].concat(p.gallery || []);
-      $('#pdpMain').html(YQ.mediaInner(p, { eager: true }));
-      $('#pdpLabels').html(YQ.labelsHtml(p));
-      $('#pdpThumbs').html(shots.length < 2 ? '' : shots.map(function (src, i) {
-        return '<button class="yq-pdp__thumb' + (i === 0 ? ' is-active' : '') + '" type="button">' +
-                 '<span class="yq-media">' + YQ.mediaInner({ img: src, name: p.name }) + '</span>' +
-               '</button>';
-      }).join(''));
-    }
-
-    /* Info */
-    $('#pdpCat').text(p.catLabel);
-    $('#pdpTitle').text(p.name);
-    $('#pdpDesc').text(p.desc);
-    $('#pdpOptionLabel').text(p.optionLabel || 'Select option');
-    $('#pdpOptions').html(p.options.map(function (o, i) {
-      return '<button class="yq-option' + (i === 0 ? ' is-active' : '') + '" type="button" data-opt="' + o.id + '">' + o.label + '</button>';
-    }).join(''));
-
     function paint() {
-      var pct = YQ.discount(sel.price, sel.compareAt);
+      if (!$sel.length) return;
+      var price = parseFloat($sel.attr('data-price')) || 0;
+      var compareAt = parseFloat($sel.attr('data-compare')) || 0;
+      var pct = YQ.discount(price, compareAt);
+      var unit = $sel.attr('data-unit');
       $('#pdpPrice').html(
-        YQ.priceHtml(sel.price, sel.compareAt) +
+        YQ.priceHtml(price, compareAt) +
         (pct ? '<em class="yq-pdp__save">Save ' + pct + '%</em>' : '') +
-        '<small>per ' + (sel.label.split(' (')[0]) + '</small>');
-      $('#pdpAddLabel').text('Add to cart — ' + YQ.money0(sel.price * qty));
+        (unit ? '<small>per ' + YQ.escape(unit) + '</small>' : ''));
+      $('#pdpAddLabel').text('Add to cart — ' + YQ.money0(price * qty));
     }
-    paint();
 
-    /* Related */
-    var related = YQ.products.filter(function (x) { return x.id !== p.id && x.cat === p.cat; });
-    if (related.length < 4) {
-      related = related.concat(YQ.products.filter(function (x) {
-        return x.id !== p.id && related.indexOf(x) === -1;
-      }));
-    }
-    $('#pdpRelated').html(related.slice(0, 4).map(function (r) {
-      return '<div class="col-6 col-lg-3">' + YQ.productCard(r) + '</div>';
-    }).join(''));
-
-    /* Events */
     $(document).on('click', '#pdpThumbs .yq-pdp__thumb', function () {
       $('#pdpThumbs .yq-pdp__thumb').removeClass('is-active');
       $(this).addClass('is-active');
@@ -265,18 +177,11 @@
 
     $(document).on('click', '#pdpOptions .yq-option', function () {
       $('#pdpOptions .yq-option').removeClass('is-active');
-      $(this).addClass('is-active');
-      var optId = $(this).attr('data-opt');           // attr(): tránh jQuery ép '12' -> 12
-      sel = p.options.filter(function (o) { return String(o.id) === optId; })[0] || sel;
+      $sel = $(this).addClass('is-active');
       paint();
     });
 
     $('#pdpQty').on('yq:qty', function (e, n) { qty = n; paint(); });
-
-    $(document).on('click', '#pdpAdd', function () {
-      YQ.cart.add(p, sel, qty);
-      YQ.toast(p.name + ' added to cart', 'View cart', 'cart.html');
-    });
 
     YQ.stagger('#pdpRelated .yq-reveal');
     YQ.initReveal();

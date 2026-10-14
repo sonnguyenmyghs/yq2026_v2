@@ -650,15 +650,7 @@
       if (ok) { $inp.val(''); YQ.toast('Thank you — you are on the list.'); }
     });
 
-    /* Quick add từ card sản phẩm */
-    $(document).on('click', '[data-quickadd]', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var p = YQ.product($(this).data('quickadd'));
-      if (!p) return;
-      YQ.cart.add(p, p.options && p.options[0], 1);
-      YQ.toast(p.name + ' added to cart', 'View cart', 'cart.html');
-    });
+    /* Add to cart / Buy now trên card + PDP: xem assets/js/modules/add-to-cart.js */
 
     /* Smooth anchor scroll */
     $(document).on('click', 'a[href^="#"]:not([data-bs-toggle])', function (e) {
