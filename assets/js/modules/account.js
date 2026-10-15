@@ -7,8 +7,9 @@
      2) Popup auth   : "Connect Via" + 5 nút social, 2 tab Log in / Register Now,
                        kèm pane quên mật khẩu. Dựng trên Bootstrap modal.
      3) Popup member : dropdown thả xuống dưới avatar ở header (desktop, >= 992px):
-                       lời chào + danh sách chức năng + Logout. Đóng khi bấm ra
-                       ngoài / Esc / header thu gọn lúc cuộn.
+                       lời chào + danh sách chức năng + Logout. Markup là HTML tĩnh
+                       (#yqAcctPop trong khối HEADER), JS chỉ điền tên + bật/tắt.
+                       Đóng khi bấm ra ngoài / Esc / header thu gọn lúc cuộn.
      4) Panel member : "My Functions" trượt từ phải (Bootstrap offcanvas) — dùng ở
                        mobile (nút Account nằm trong menu offcanvas nên không có chỗ
                        neo dropdown) và cho các mục có `view` (pane con như My Wallet).
@@ -45,7 +46,8 @@
     { id: 'microsoft', label: 'Microsoft' }
   ];
 
-  /* Menu member — dùng chung cho dropdown (desktop) và panel (mobile).
+  /* Menu member cho panel "My Functions" (mobile). Dropdown desktop là HTML tĩnh
+     trong header — đổi menu thì sửa cả #yqAcctPop ở mọi trang.
        href   -> điều hướng sang trang thật
        view   -> mở pane con trong panel "My Functions" (dropdown sẽ mở panel tại pane đó)
        action -> 'logout'
@@ -389,66 +391,15 @@
 
   /* ======================================================================
      4b. Popup member — dropdown dưới avatar ở header (desktop)
-     Neo vào .yq-header__tools--end nên đi theo header khi thu gọn / dính đỉnh.
-     Header render lại (đổi trang) thì popup cũng mất theo -> build lại khi cần.
+     Markup là HTML tĩnh trong khối HEADER mỗi trang (#yqAcctPop, ngay sau avatar
+     để Tab đi đúng thứ tự). Mục trang đang xem đã đánh dấu sẵn trong HTML
+     (.is-current + aria-current). JS chỉ điền tên/email lúc mở và bật/tắt.
      ====================================================================== */
   var POP = '#yqAcctPop';
 
-  /** Đường dẫn hiện tại có khớp href của mục menu không (để tô mục đang xem). */
-  function isCurrent(href) {
-    if (!href) return false;
-    var here = location.pathname.replace(/\/index\.html$/, '/');
-    var file = href.split('?')[0].split('#')[0];
-    return here.slice(-file.length) === file;
-  }
-
-  function popHtml() {
-    var items = MENU.filter(function (m) { return m.action !== 'logout'; }).map(function (m) {
-      var tag = m.href ? 'a' : 'button';
-      var attrs = m.href
-        ? ' href="' + m.href + '"' + (isCurrent(m.href) ? ' aria-current="page"' : '')
-        : ' type="button"' + (m.view ? ' data-yq-view="' + m.view + '"' : '') +
-          (m.action ? ' data-yq-do="' + m.action + '"' : '');
-      return '<' + tag + ' class="yq-acct__item' + (isCurrent(m.href) ? ' is-current' : '') + '"' + attrs + '>' +
-               '<span class="yq-acct__ico">' + YQ.icon(m.icon, 17) + '</span>' +
-               '<span class="yq-acct__txt">' + esc(m.label) + '</span>' +
-               YQ.icon('chevright', 14) +
-             '</' + tag + '>';
-    }).join('');
-
-    var logout = MENU.filter(function (m) { return m.action === 'logout'; })[0];
-
-    return '<div class="yq-acct" id="yqAcctPop" role="dialog" aria-label="My account" hidden>' +
-             '<div class="yq-acct__head">' +
-               '<span class="yq-acct__avatar" id="yqAcctAvatar" aria-hidden="true"></span>' +
-               '<div class="yq-acct__who">' +
-                 '<b class="yq-acct__name" id="yqAcctName"></b>' +
-                 '<span class="yq-acct__mail" id="yqAcctMail"></span>' +
-               '</div>' +
-               '<a class="yq-acct__edit" href="member/profile.html?edit=1" aria-label="Edit profile">Edit</a>' +
-             '</div>' +
-             '<nav class="yq-acct__list" aria-label="Member menu">' + items + '</nav>' +
-             (logout
-               ? '<div class="yq-acct__foot">' +
-                   '<button class="yq-acct__logout" type="button" data-yq-do="logout">' +
-                     YQ.icon(logout.icon || 'logout', 16) + '<span>' + esc(logout.label) + '</span>' +
-                   '</button>' +
-                 '</div>'
-               : '') +
-           '</div>';
-  }
-
   function buildPop() {
-    var $btn = $('#yqAccountBtn');
-    if (!$btn.length) return null;
-    var $pop = $btn.parent().find(POP);
-    /* Chèn NGAY SAU avatar (không phải cuối khối) để Tab từ avatar đi vào popup
-       trước rồi mới tới icon giỏ — đúng thứ tự nhìn thấy. */
-    if (!$pop.length) {
-      $btn.parent().addClass('yq-acct-anchor');
-      $pop = $(YQ.localise(popHtml())).insertAfter($btn);
-    }
-    return $pop;
+    var $pop = $(POP);
+    return $pop.length ? $pop : null;
   }
 
   function paintPop() {
@@ -526,9 +477,8 @@
           .html(on ? '<span class="yq-acct-initial">' + esc(YQ.auth.initial()) + '</span>' : YQ.icon('user', 19));
     }
     $('[data-yq-account-label]').text(on ? YQ.auth.name() : 'Account');
-    /* Đăng xuất / đổi tên thì popup cũ không còn đúng -> bỏ, lần sau build lại */
+    /* Đăng xuất / đổi tên -> đóng, lần mở sau paintPop() điền lại tên mới */
     closePop();
-    $(POP).remove();
   }
 
   $(document).on('yq:header-ready yq:auth-changed', paintHeader);

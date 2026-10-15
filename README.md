@@ -281,7 +281,14 @@ Popup đăng nhập, popup member (dropdown) và panel "My Functions" đều n�
 - **Đã đăng nhập, mobile** → nút Account nằm trong menu offcanvas nên không có chỗ neo
   dropdown; mở panel "My Functions" trượt từ phải, cùng danh sách chức năng.
 
-Danh sách nút social (`SOCIAL`) và menu member (`MENU`) có sẵn mặc định ngay đầu
+**Popup dropdown là HTML tĩnh**: khối `#yqAcctPop` nằm ngay sau `#yqAccountBtn` trong
+khối HEADER mỗi trang (`.yq-header__tools--end` có thêm class `yq-acct-anchor`). Mục trùng
+trang đang mở đánh dấu sẵn bằng `.is-current` + `aria-current="page"` (chỉ 4 trang
+`member/`); trang trong `member/` dùng đường dẫn `../`. JS chỉ điền avatar/tên/email lúc mở
+(`#yqAcctAvatar`, `#yqAcctName`, `#yqAcctMail`) và bật/tắt. Đổi menu dropdown thì sửa khối
+này ở **mọi** trang.
+
+Danh sách nút social (`SOCIAL`) và menu của panel "My Functions" (`MENU`) có sẵn mặc định ngay đầu
 `account.js`. Muốn đổi mà không sửa module thì khai báo trong `data.js` — có thì module
 dùng thay cho mặc định:
 
@@ -295,9 +302,9 @@ YQ.memberMenu = [
 ];
 ```
 
-Có `href` thì mục đó điều hướng như link bình thường và `view` bị bỏ qua. Mục có `view`
-bấm từ dropdown sẽ đóng dropdown và mở panel đúng pane đó (dropdown quá nhỏ để chứa
-form). Mục `action:'logout'` trong dropdown được tách xuống chân popup thành nút riêng.
+Có `href` thì mục đó điều hướng như link bình thường và `view` bị bỏ qua. Trong dropdown
+HTML, mục có `data-yq-view` sẽ đóng dropdown và mở panel đúng pane đó (dropdown quá nhỏ để
+chứa form); nút Logout ở chân popup dùng `data-yq-do="logout"`.
 
 Mở từ chỗ khác: `YQ.account.login()`, `.register()`, `.popup()` (dropdown),
 `.member()` / `.member('wallet')` (panel), `.close()` đóng tất cả.

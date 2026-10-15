@@ -168,7 +168,7 @@
 
 /* ==========================================================================
    2. Popup member — dropdown dưới avatar ở header (desktop)
-   Neo: .yq-header__tools--end (account.js gắn thêm .yq-acct-anchor khi build).
+   Neo: .yq-header__tools--end.yq-acct-anchor (HTML tĩnh trong khối HEADER).
    --yq-acct-caret: khoảng cách từ mép phải khối neo tới tâm avatar, JS đo lúc mở
    để mũi tên luôn chỉ đúng nút dù header co giãn.
    ========================================================================== */
