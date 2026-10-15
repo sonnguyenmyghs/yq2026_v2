@@ -288,13 +288,18 @@ trang đang mở đánh dấu sẵn bằng `.is-current` + `aria-current="page"`
 (`#yqAcctAvatar`, `#yqAcctName`, `#yqAcctMail`) và bật/tắt. Đổi menu dropdown thì sửa khối
 này ở **mọi** trang.
 
-Danh sách nút social (`SOCIAL`) và menu của panel "My Functions" (`MENU`) có sẵn mặc định ngay đầu
-`account.js`. Muốn đổi mà không sửa module thì khai báo trong `data.js` — có thì module
-dùng thay cho mặc định:
+**Popup đăng nhập cũng là HTML tĩnh**: khối `<!-- AUTH POPUP -->` … `<!-- /AUTH POPUP -->`
+(`#yqAuthModal`, Bootstrap modal) nằm ngay sau FOOTER mỗi trang, gồm nút social, 2 tab và
+3 form Log in / Register / quên mật khẩu. JS chỉ chuyển pane, kiểm tra form, hiện/ẩn mật
+khẩu. Thêm/bớt nút social: sửa `<button data-yq-social="id" data-yq-label="Tên">` trong
+khối này ở **mọi** trang (`id` phải có trong `YQ.brandIcon`, `data-yq-label` dùng cho
+toast "Signed in with …").
+
+Menu của panel "My Functions" (`MENU`) có sẵn mặc định ngay đầu `account.js`. Muốn đổi
+mà không sửa module thì khai báo `YQ.memberMenu` trong `data.js` — có thì module dùng thay
+cho mặc định:
 
 ```js
-YQ.socialLogins = [ { id:'facebook', label:'Facebook' }, … ];   // id phải có trong YQ.brandIcon
-
 YQ.memberMenu = [
   { key:'profile', label:'My profile', icon:'user',   href:'member/profile.html' }, // sang trang thật
   { key:'wallet',  label:'My wallet',  icon:'wallet', view:'wallet' },  // pane con trong panel

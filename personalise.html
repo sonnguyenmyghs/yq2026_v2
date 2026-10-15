@@ -456,6 +456,104 @@
 </footer>
 <!-- ========== /FOOTER ========== -->
 
+<!-- ========== AUTH POPUP (Log in / Register) ========== -->
+<div class="modal fade yq-auth" id="yqAuthModal" tabindex="-1" aria-labelledby="yqAuthTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <button class="yq-auth__close" type="button" data-bs-dismiss="modal" aria-label="Close"><svg class="yq-i" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="modal-body">
+        <h2 class="yq-auth__title" id="yqAuthTitle">Connect Via</h2>
+        <div class="yq-auth__social">
+          <button class="yq-auth__soc" type="button" data-yq-social="facebook" data-yq-label="Facebook" aria-label="Continue with Facebook" title="Continue with Facebook"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 320 512" fill="currentColor" aria-hidden="true"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg></button>
+          <button class="yq-auth__soc" type="button" data-yq-social="twitter" data-yq-label="Twitter" aria-label="Continue with Twitter" title="Continue with Twitter"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558A296.63 296.63 0 0 1 0 416.827a217.17 217.17 0 0 0 25.34 1.3c49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772a132.6 132.6 0 0 0 19.818 1.624 105 105 0 0 0 27.614-3.573C58.855 288.828 22.792 246.596 22.792 195.59v-1.299a105.5 105.5 0 0 0 47.432 13.319c-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807a121 121 0 0 1-2.599-24.04c0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827a209 209 0 0 0 60.426-16.243 225 225 0 0 1-52.628 54.253z"/></svg></button>
+          <button class="yq-auth__soc" type="button" data-yq-social="linkedin" data-yq-label="LinkedIn" aria-label="Continue with LinkedIn" title="Continue with LinkedIn"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3z"/></svg></button>
+          <button class="yq-auth__soc" type="button" data-yq-social="google" data-yq-label="Google" aria-label="Continue with Google" title="Continue with Google"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 488 512" fill="currentColor" aria-hidden="true"><path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/></svg></button>
+          <button class="yq-auth__soc" type="button" data-yq-social="microsoft" data-yq-label="Microsoft" aria-label="Continue with Microsoft" title="Continue with Microsoft"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M0 32h214.6v214.6H0zm233.4 0H448v214.6H233.4zM0 265.4h214.6V480H0zm233.4 0H448V480H233.4z"/></svg></button>
+        </div>
+        <p class="yq-auth__or">Or</p>
+        <div class="yq-auth__tabs" role="tablist">
+          <button class="yq-auth__tab is-active" type="button" role="tab" data-yq-tab="login" aria-selected="true">Log in</button>
+          <button class="yq-auth__tab" type="button" role="tab" data-yq-tab="register" aria-selected="false">Register Now</button>
+        </div>
+
+        <!-- pane Log in -->
+        <form class="yq-auth__pane" data-yq-pane="login" id="yqLoginForm" novalidate>
+          <div class="yq-auth__row">
+            <div>
+              <label class="yq-auth__label" for="yqAuthEmail">Email</label>
+              <input type="email" class="yq-input form-control" id="yqAuthEmail" placeholder="you@example.com" autocomplete="email">
+              <div class="yq-error" data-err-for="yqAuthEmail"></div>
+            </div>
+            <div>
+              <label class="yq-auth__label" for="yqAuthPass">Password</label>
+              <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqAuthPass" placeholder="" autocomplete="current-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg></button></div>
+              <div class="yq-error" data-err-for="yqAuthPass"></div>
+            </div>
+          </div>
+          <div class="yq-auth__meta">
+            <label class="yq-auth__check"><input type="checkbox" id="yqAuthKeep" checked><span>Keep me logged in</span></label>
+            <button class="yq-auth__forgot" type="button" data-yq-forgot>Forgot your password?</button>
+          </div>
+          <button class="yq-btn yq-btn--block" type="submit">Log in</button>
+        </form>
+
+        <!-- pane Register -->
+        <form class="yq-auth__pane" data-yq-pane="register" id="yqRegForm" novalidate hidden>
+          <div class="yq-auth__box">
+            <p class="yq-auth__hint">Please fill out the following information</p>
+            <div class="yq-auth__grid">
+              <div class="yq-auth__side">Email*</div>
+              <div>
+                <input type="email" class="yq-input form-control" id="yqRegEmail" placeholder="Your email address" autocomplete="email">
+                <div class="yq-error" data-err-for="yqRegEmail"></div>
+              </div>
+              <div class="yq-auth__side">Password*</div>
+              <div class="yq-auth__stack">
+                <div>
+                  <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqRegPass" placeholder="Your password" autocomplete="new-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg></button></div>
+                  <div class="yq-error" data-err-for="yqRegPass"></div>
+                </div>
+                <div>
+                  <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqRegPass2" placeholder="Repeated password" autocomplete="new-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg></button></div>
+                  <div class="yq-error" data-err-for="yqRegPass2"></div>
+                </div>
+              </div>
+              <div class="yq-auth__side">Your Name*</div>
+              <div class="yq-auth__duo">
+                <div>
+                  <input type="text" class="yq-input form-control" id="yqRegFirst" placeholder="First Name" autocomplete="given-name">
+                  <div class="yq-error" data-err-for="yqRegFirst"></div>
+                </div>
+                <div>
+                  <input type="text" class="yq-input form-control" id="yqRegLast" placeholder="Last Name" autocomplete="family-name">
+                  <div class="yq-error" data-err-for="yqRegLast"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <label class="yq-auth__check"><input type="checkbox" id="yqRegPromo" checked><span>I agree to receive promotion material</span></label>
+          <button class="yq-btn yq-btn--yqost yq-btn--block yq-auth__submit" type="submit">Submit</button>
+        </form>
+
+        <!-- pane quên mật khẩu -->
+        <form class="yq-auth__pane" data-yq-pane="forgot" id="yqForgotForm" novalidate hidden>
+          <button class="yq-auth__back" type="button" data-yq-tab="login"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>Back to log in</button>
+          <p class="yq-auth__hint">Enter your email and we will send you a link to reset your password.</p>
+          <div>
+            <label class="yq-auth__label" for="yqFgEmail">Email</label>
+            <input type="email" class="yq-input form-control" id="yqFgEmail" placeholder="you@example.com" autocomplete="email">
+            <div class="yq-error" data-err-for="yqFgEmail"></div>
+          </div>
+          <button class="yq-btn yq-btn--block yq-auth__submit" type="submit">Send reset link</button>
+        </form>
+
+        <p class="yq-auth__note">Demo store — no account data leaves this browser.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ========== /AUTH POPUP ========== -->
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/data.js"></script>

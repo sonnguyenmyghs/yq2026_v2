@@ -5,7 +5,8 @@
    Gồm 4 mảng:
      1) YQ.auth      : lưu người dùng ở localStorage (KHÔNG lưu mật khẩu).
      2) Popup auth   : "Connect Via" + 5 nút social, 2 tab Log in / Register Now,
-                       kèm pane quên mật khẩu. Dựng trên Bootstrap modal.
+                       kèm pane quên mật khẩu. Bootstrap modal, markup là HTML tĩnh
+                       (#yqAuthModal, khối AUTH POPUP sau footer mỗi trang).
      3) Popup member : dropdown thả xuống dưới avatar ở header (desktop, >= 992px):
                        lời chào + danh sách chức năng + Logout. Markup là HTML tĩnh
                        (#yqAcctPop trong khối HEADER), JS chỉ điền tên + bật/tắt.
@@ -15,8 +16,7 @@
                        neo dropdown) và cho các mục có `view` (pane con như My Wallet).
 
    Danh sách chức năng: mảng MENU ở mục 4 (mặc định); khai báo YQ.memberMenu trong
-   data.js thì thay thế được mà không sửa module. Nút social cũng vậy (SOCIAL /
-   YQ.socialLogins).
+   data.js thì thay thế được mà không sửa module.
 
    Nguyên tắc an toàn (giống các module khác):
      - Chỉ móc vào DOM + event có sẵn: nút [data-yq-account] trong header/offcanvas
@@ -36,15 +36,6 @@
 
   var esc = YQ.escape;
   var KEY = 'yq_user_v1';
-
-  /* Nút social ở popup "Connect Via". id phải có trong YQ.brandIcon. */
-  var SOCIAL = YQ.socialLogins || [
-    { id: 'facebook',  label: 'Facebook'  },
-    { id: 'twitter',   label: 'Twitter'   },
-    { id: 'linkedin',  label: 'LinkedIn'  },
-    { id: 'google',    label: 'Google'    },
-    { id: 'microsoft', label: 'Microsoft' }
-  ];
 
   /* Menu member cho panel "My Functions" (mobile). Dropdown desktop là HTML tĩnh
      trong header — đổi menu thì sửa cả #yqAcctPop ở mọi trang.
@@ -128,24 +119,6 @@
      ====================================================================== */
   var RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  function field(id, label, type, ph, opts) {
-    opts = opts || {};
-    var input = '<input type="' + type + '" class="yq-input form-control" id="' + id + '"' +
-                ' placeholder="' + esc(ph || '') + '"' +
-                (opts.autocomplete ? ' autocomplete="' + opts.autocomplete + '"' : '') + '>';
-
-    if (type === 'password') {
-      input = '<div class="yq-auth__pw">' + input +
-                '<button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password">' +
-                  YQ.icon('eye', 17) +
-                '</button>' +
-              '</div>';
-    }
-    return (label ? '<label class="yq-auth__label" for="' + id + '">' + esc(label) + '</label>' : '') +
-           input +
-           '<div class="yq-error" data-err-for="' + id + '"></div>';
-  }
-
   function fail($el, msg) {
     $el.addClass('is-invalid');
     $('[data-err-for="' + $el.attr('id') + '"]').text(msg).addClass('is-on');
@@ -173,99 +146,17 @@
      ====================================================================== */
   var authModal = null;
 
+  /** Tên hiển thị của nút social, lấy từ data-yq-label trong HTML. */
   function socialLabel(id) {
-    var s = SOCIAL.filter(function (x) { return x.id === id; })[0];
-    return (s && s.label) || id;
-  }
-
-  function socialHtml() {
-    return SOCIAL.map(function (s) {
-      return '<button class="yq-auth__soc" type="button" data-yq-social="' + s.id + '" ' +
-               'aria-label="Continue with ' + esc(s.label) + '" title="Continue with ' + esc(s.label) + '">' +
-               YQ.brandIcon(s.id, 20) +
-             '</button>';
-    }).join('');
+    return $('[data-yq-social="' + id + '"]').attr('data-yq-label') || id;
   }
 
   function buildAuth() {
-    if (authModal) return;
-
-    var html =
-      '<div class="modal fade yq-auth" id="yqAuthModal" tabindex="-1" aria-labelledby="yqAuthTitle" aria-hidden="true">' +
-        '<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">' +
-          '<div class="modal-content">' +
-            '<button class="yq-auth__close" type="button" data-bs-dismiss="modal" aria-label="Close">' +
-              YQ.icon('close', 22) + '</button>' +
-            '<div class="modal-body">' +
-
-              '<h2 class="yq-auth__title" id="yqAuthTitle">Connect Via</h2>' +
-              '<div class="yq-auth__social">' + socialHtml() + '</div>' +
-              '<p class="yq-auth__or">Or</p>' +
-
-              '<div class="yq-auth__tabs" role="tablist">' +
-                '<button class="yq-auth__tab is-active" type="button" role="tab" data-yq-tab="login" aria-selected="true">Log in</button>' +
-                '<button class="yq-auth__tab" type="button" role="tab" data-yq-tab="register" aria-selected="false">Register Now</button>' +
-              '</div>' +
-
-              /* --- pane Log in --- */
-              '<form class="yq-auth__pane" data-yq-pane="login" id="yqLoginForm" novalidate>' +
-                '<div class="yq-auth__row">' +
-                  '<div>' + field('yqAuthEmail', 'Email', 'email', 'you@example.com', { autocomplete: 'email' }) + '</div>' +
-                  '<div>' + field('yqAuthPass', 'Password', 'password', '', { autocomplete: 'current-password' }) + '</div>' +
-                '</div>' +
-                '<div class="yq-auth__meta">' +
-                  '<label class="yq-auth__check">' +
-                    '<input type="checkbox" id="yqAuthKeep" checked><span>Keep me logged in</span>' +
-                  '</label>' +
-                  '<button class="yq-auth__forgot" type="button" data-yq-forgot>Forgot your password?</button>' +
-                '</div>' +
-                '<button class="yq-btn yq-btn--block" type="submit">Log in</button>' +
-              '</form>' +
-
-              /* --- pane Register --- */
-              '<form class="yq-auth__pane" data-yq-pane="register" id="yqRegForm" novalidate hidden>' +
-                '<div class="yq-auth__box">' +
-                  '<p class="yq-auth__hint">Please fill out the following information</p>' +
-                  '<div class="yq-auth__grid">' +
-                    '<div class="yq-auth__side">Email*</div>' +
-                    '<div>' + field('yqRegEmail', '', 'email', 'Your email address', { autocomplete: 'email' }) + '</div>' +
-
-                    '<div class="yq-auth__side">Password*</div>' +
-                    '<div class="yq-auth__stack">' +
-                      '<div>' + field('yqRegPass', '', 'password', 'Your password', { autocomplete: 'new-password' }) + '</div>' +
-                      '<div>' + field('yqRegPass2', '', 'password', 'Repeated password', { autocomplete: 'new-password' }) + '</div>' +
-                    '</div>' +
-
-                    '<div class="yq-auth__side">Your Name*</div>' +
-                    '<div class="yq-auth__duo">' +
-                      '<div>' + field('yqRegFirst', '', 'text', 'First Name', { autocomplete: 'given-name' }) + '</div>' +
-                      '<div>' + field('yqRegLast', '', 'text', 'Last Name', { autocomplete: 'family-name' }) + '</div>' +
-                    '</div>' +
-                  '</div>' +
-                '</div>' +
-                '<label class="yq-auth__check">' +
-                  '<input type="checkbox" id="yqRegPromo" checked><span>I agree to receive promotion material</span>' +
-                '</label>' +
-                '<button class="yq-btn yq-btn--yqost yq-btn--block yq-auth__submit" type="submit">Submit</button>' +
-              '</form>' +
-
-              /* --- pane quên mật khẩu --- */
-              '<form class="yq-auth__pane" data-yq-pane="forgot" id="yqForgotForm" novalidate hidden>' +
-                '<button class="yq-auth__back" type="button" data-yq-tab="login">' +
-                  YQ.icon('chevleft', 14) + 'Back to log in</button>' +
-                '<p class="yq-auth__hint">Enter your email and we will send you a link to reset your password.</p>' +
-                '<div>' + field('yqFgEmail', 'Email', 'email', 'you@example.com', { autocomplete: 'email' }) + '</div>' +
-                '<button class="yq-btn yq-btn--block yq-auth__submit" type="submit">Send reset link</button>' +
-              '</form>' +
-
-              '<p class="yq-auth__note">Demo store — no account data leaves this browser.</p>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-
-    $(YQ.localise(html)).appendTo('body');
-    authModal = new BS.Modal(document.getElementById('yqAuthModal'));
+    if (authModal) return true;
+    var el = document.getElementById('yqAuthModal');
+    if (!el) return false;                          // trang không có khối AUTH POPUP
+    authModal = new BS.Modal(el);
+    return true;
   }
 
   /** Chuyển pane trong popup: 'login' | 'register' | 'forgot'. */
@@ -287,7 +178,7 @@
   }
 
   function openAuth(pane) {
-    buildAuth();
+    if (!buildAuth()) return;
     showPane(pane || 'login');
     authModal.show();
   }
