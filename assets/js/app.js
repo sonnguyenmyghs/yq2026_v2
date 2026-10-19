@@ -290,6 +290,9 @@
      5. Cart badge
      ====================================================================== */
   YQ.syncCartBadge = function (bump) {
+    /* Chế độ server (có <span id="root" data-base>): số trên badge do backend in sẵn
+       và add-to-cart.js cập nhật theo totalItems — không lấy số từ giỏ demo đè lên. */
+    if (document.getElementById('root')) return;
     var n = YQ.cart.count();
     $('#yqCartCount, #yqCartCountM').each(function () {
       var $b = $(this);
@@ -363,13 +366,19 @@
       $('html,body').animate({ scrollTop: $t.offset().top - 130 }, 500);
     });
 
-    /* Stepper dùng chung: [data-step="-1|1"] + [data-qty-target] */
+    /* Stepper dùng chung: [data-qty data-min] > [data-step="-1|1"] + [data-qty-val]
+       [data-qty-val] là <span> (giỏ demo) hoặc <input name="cart[ID]"> (template backend:
+       giá trị nằm trong input để form cập nhật giỏ của server submit được). */
     $(document).on('click', '[data-step]', function () {
       var $wrap = $(this).closest('[data-qty]');
       var $val = $wrap.find('[data-qty-val]');
-      var min = parseInt($wrap.data('min') || 1, 10);
-      var n = Math.max(min, (parseInt($val.text(), 10) || min) + parseInt($(this).data('step'), 10));
-      $val.text(n);
+      var isInput = $val.is('input');
+      var min = $wrap.attr('data-min') != null ? parseInt($wrap.attr('data-min'), 10) : 1;
+      var current = parseInt(isInput ? $val.val() : $val.text(), 10);
+      if (isNaN(current)) current = min;
+      var n = Math.max(min, current + parseInt($(this).data('step'), 10));
+      if (isInput) $val.val(n).trigger('change');
+      else $val.text(n);
       $wrap.trigger('yq:qty', [n]);
     });
   });

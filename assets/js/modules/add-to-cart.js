@@ -10,7 +10,10 @@
 
    Khác template cũ:
      1. Cập nhật thêm badge giỏ của header mới (#yqCartCount, #yqCartCountM).
-     2. imageAnimation() dùng hiệu ứng bay vào giỏ của cart-anim.js.
+     2. imageAnimation() dùng hiệu ứng bay vào giỏ của cart-anim.js, rồi mở drawer
+        giỏ hiển thị data.html + data.totalCost (response giữ nguyên như cũ;
+        htmlModal / htmlWarning vẫn đổ vào #modalShowCartCheckOut / #modalShowWarning
+        nếu trang có các phần tử đó).
      3. Không có <span id="root" data-base="..."> (bản demo HTML) thì thêm vào giỏ
         demo YQ.cart (localStorage) thay cho AJAX — xem addCartDemo().
    ========================================================================== */
@@ -134,7 +137,9 @@ $(function () {
             data: _data_list_attribute,
 
             success: function (data) {
-                var data = $.parseJSON(data);
+                // server trả chuỗi JSON (như template cũ); nếu header là application/json
+                // thì jQuery đã parse sẵn thành object
+                var data = typeof data === 'string' ? $.parseJSON(data) : data;
 
                 // giống template cũ
                 $('.cart--items').html(data.html);
@@ -145,8 +150,8 @@ $(function () {
                 $('#modalShowCartCheckOut').html(data.htmlModal);
                 $('#modalShowWarning').html(data.htmlWarning);
 
-                // badge giỏ của header mới
-                $('#yqCartCount, #yqCartCountM').html(data.totalItems).toggleClass('is-on', data.totalItems > 0);
+                // badge giỏ của header mới (+ badge trong menu mobile)
+                $('#yqCartCount, #yqCartCountM, [data-oc-count]').html(data.totalItems).toggleClass('is-on', data.totalItems > 0);
 
                 // buynow
                 if (_this.hasClass('submit-frm-redeem')) {
@@ -162,8 +167,8 @@ $(function () {
                     return;
                 }
 
-                imageAnimation(_this, cartCountBefore, parseInt(data.totalItems) || 0);
-                YQ.toast('Added to cart', 'View cart', baseUrl + '/cart/?action=view');
+                // ảnh bay vào giỏ, tới nơi thì mở drawer hiển thị data.html + data.totalCost
+                imageAnimation(_this, cartCountBefore, parseInt(data.totalItems) || 0, data);
             },
 
             error: function () {
@@ -173,12 +178,16 @@ $(function () {
         });
     });
 
-    /* Ảnh sản phẩm bay vào icon giỏ + badge đếm tăng (cart-anim.js).
-       Template cũ tự clone ảnh và animate; ở đây gọi lại hiệu ứng có sẵn. */
-    var imageAnimation = function (button, cartCountBefore, cartCountAfter) {
-        if (YQ.cartFx) {
-            YQ.cartFx.added(button[0], cartCountBefore, cartCountAfter);
+    /* Ảnh sản phẩm bay vào icon giỏ + badge đếm tăng, tới nơi thì mở drawer giỏ
+       với dữ liệu server (cart-anim.js). Template cũ tự clone ảnh và animate. */
+    var imageAnimation = function (button, cartCountBefore, cartCountAfter, data) {
+        if (!YQ.cartFx || !YQ.cartDrawer) {
+            YQ.toast('Added to cart', 'View cart', baseUrl + '/cart/?action=view');
+            return;
         }
+        YQ.cartFx.added(button[0], cartCountBefore, cartCountAfter, function () {
+            YQ.cartDrawer.openServer(data);
+        });
     };
 
     /* Bản demo HTML (không có backend): thêm vào giỏ localStorage YQ.cart.

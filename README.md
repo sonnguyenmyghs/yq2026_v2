@@ -199,6 +199,15 @@ Backend in thẳng markup; sửa hiển thị thì sửa HTML:
   các data-* này để đổi giá / nhãn nút khi chọn.
 - `index.html` / `celebrations.html`: card tĩnh.
 - Nút giỏ: `.addToCart` + data-* như template cũ (xem `assets/js/modules/add-to-cart.js`).
+  Production (trang có `<span id="root" data-base="…">`): POST `/cart/?action=addCart…` y như
+  cũ, response giữ nguyên (`html`, `totalItems`, `totalCost`, `htmlModal`, `htmlWarning`).
+  Sau khi thêm, drawer giỏ hiển thị nguyên `data.html` (template backend `cart_product_single`,
+  style ở `.yq-cdrawer__list` trong `cart-anim.css`) + `data.totalCost`; badge lấy `totalItems`
+  và lúc tải trang giữ số backend in sẵn trong `#yqCartCount` / `#yqCartCountM` / `[data-oc-count]`.
+  Template backend tương thích (copy sang `templates/defaultv3.1.yq`, biến Smarty giữ nguyên):
+  `backend-templates/cart_product_single.tpl` (dòng drawer, field `html`) và
+  `backend-templates/cart_product_single_modal.tpl` (dòng có -/+ và `<input name="cart[ID]">`,
+  field `htmlModal`). Backend còn template cũ thì drawer vẫn hiển thị được (CSS `li.clearfix`).
 
 Nhãn trên ảnh (markup tĩnh):
 - Ribbon góc trên-trái `<span class="yq-ribbon"><span>Bestseller</span></span>` — thêm

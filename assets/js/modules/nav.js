@@ -186,6 +186,8 @@
   function syncOcBadge() {
     if (!YQ.cart) return;
     var n = YQ.cart.count();
+    // chế độ server: lấy theo badge header (backend in sẵn / add-to-cart.js cập nhật)
+    if (document.getElementById('root')) n = parseInt($('#yqCartCount').text(), 10) || 0;
     $('[data-oc-count]').text(n).toggleClass('is-on', n > 0);
   }
 

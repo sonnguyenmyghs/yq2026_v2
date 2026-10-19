@@ -468,7 +468,39 @@
     /* Bấm icon giỏ thì đừng nói "Added to your bag" — không có gì vừa được thêm. */
     $('#yqCdEyebrow').text((opts && opts.browsing) ? 'Your shopping bag' : 'Added to your bag');
     renderDrawer(true);
+    showPanel();
+  }
 
+  /* ---------- Giỏ ở server (production) ----------
+     Drawer hiển thị nguyên data.html (danh sách sản phẩm do template backend
+     cart_product_single dựng) + data.totalCost từ response addCart. Backend không
+     phải đổi gì; muốn đổi giao diện dòng sản phẩm thì sửa template backend hoặc CSS
+     `.yq-cdrawer__list` trong cart-anim.css. */
+  var serverCartData = null;     // response addCart gần nhất — bấm icon giỏ thì hiện lại
+
+  function openServerDrawer(data, opts) {
+    if (!drawerAllowed() || !data) return;
+    serverCartData = data;
+    buildDrawer();
+
+    var cartUrl = ($('#root').data('base') || '') + '/cart/?action=view';
+    var n = parseInt(data.totalItems, 10) || 0;
+
+    $('#yqCdEyebrow').text((opts && opts.browsing) ? 'Your shopping bag' : 'Added to your bag');
+    $('#yqCdN').text(n === 1 ? '1 item' : n + ' items');
+    $('#yqCdBody').html('<ul class="yq-cdrawer__list">' + (data.html || '') + '</ul>');
+    $('#yqCdFoot').html(
+      '<div class="yq-cdrawer__sum"><span>Subtotal</span><strong>' + esc(data.totalCost || '') + '</strong></div>' +
+      '<div class="yq-cdrawer__actions">' +
+        '<a class="yq-btn yq-btn--gold yq-btn--block" href="' + cartUrl + '">Checkout ' + icon('arrow', 15) + '</a>' +
+        '<button class="yq-cdrawer__cont" type="button" data-yq-cd-close>Continue shopping</button>' +
+      '</div>'
+    );
+    showPanel();
+  }
+
+  /** Mở panel drawer (nội dung đã được vẽ sẵn). */
+  function showPanel() {
     if (DR.open) return;                 // đã mở rồi thì chỉ vẽ lại nội dung
     if (DR.hideTimer) { clearTimeout(DR.hideTimer); DR.hideTimer = null; }
 
@@ -542,12 +574,20 @@
   $(D).on('click', '[data-yq-cart]', function (e) {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
     if (!drawerAllowed()) return;
+    /* Chế độ server: chưa có dữ liệu giỏ (chưa add lần nào ở trang này) thì
+       đi theo href sang trang giỏ của backend. */
+    if ($('#root').length) {
+      if (!serverCartData) return;
+      e.preventDefault();
+      openServerDrawer(serverCartData, { browsing: true });
+      return;
+    }
     e.preventDefault();
     openDrawer(null, { browsing: true });
   });
 
   /* API nhỏ cho module khác dùng lại (không bắt buộc) */
-  YQ.cartDrawer = { open: openDrawer, close: closeDrawer, render: renderDrawer };
+  YQ.cartDrawer = { open: openDrawer, openServer: openServerDrawer, close: closeDrawer, render: renderDrawer };
 
   /* ======================================================================
      6. Nối dây: click → ghi nhận nguồn, yq:cart-changed → chạy hiệu ứng
@@ -586,11 +626,11 @@
    * Phát hiệu ứng thêm vào giỏ: nút "Added" → bay → badge đếm tăng → (drawer).
    * @param {Object}  p       { btn, before, src } — bản ghi lúc click
    * @param {Number}  after   số lượng trong giỏ sau khi thêm
-   * @param {Boolean} drawer  mở drawer khi tới nơi (drawer vẽ từ YQ.cart nên
-   *                          giỏ ở server thì tắt)
+   * @param {Boolean|Function} drawer  true: mở drawer vẽ từ YQ.cart; function: hàm
+   *                          tự mở drawer (giỏ server); false: không mở
    */
   function play(p, after, drawer) {
-    var showDrawer = drawer ? openDrawer : function () {};
+    var showDrawer = typeof drawer === 'function' ? drawer : (drawer ? openDrawer : function () {});
 
     /* (3) Nút bấm: chỉ báo "Added" khi giỏ đã đổi thật */
     markAdded(p.btn);
@@ -637,14 +677,14 @@
   /* Giỏ ở server (add-to-cart.js, chế độ production): YQ.cart không đổi nên
      không có yq:cart-changed — module đó gọi thẳng hàm này sau khi AJAX xong. */
   YQ.cartFx = {
-    added: function (btn, before, after) {
+    /* onArrive: chạy lúc ảnh chạm giỏ (VD: mở drawer với dữ liệu server). */
+    added: function (btn, before, after, onArrive) {
       var p = pending;
       pending = null;
       cancelBadgeHold();
       if (!p || p.btn !== btn) p = { btn: btn, before: before, src: captureSource(btn) };
       p.before = before;
-      if (after > before) play(p, after, false);
-      else paintBadge(after, false);
+      play(p, after, onArrive || false);
     }
   };
 
@@ -657,6 +697,7 @@
   /* Header có thể được render lại (agent khác) → đồng bộ lại badge cho chắc */
   $(D).on('yq:header-ready', function () {
     cancelBadgeHold();
+    if ($('#root').length) return;       // chế độ server: giữ số backend in sẵn
     paintBadge(YQ.cart.count(), false);
   });
 
