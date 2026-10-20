@@ -115,6 +115,10 @@
   transition: color .2s var(--yq-ease);
 }
 .yq-auth__peek:hover{ color: var(--yq-ink); }
+/* 2 icon có sẵn trong HTML, .is-on (đang hiện mật khẩu) thì đổi sang mắt gạch */
+.yq-auth__peek .yq-auth__eyeoff,
+.yq-auth__peek.is-on .yq-auth__eye{ display: none; }
+.yq-auth__peek.is-on .yq-auth__eyeoff{ display: block; }
 
 /* checkbox nhỏ dùng chung cho cả 2 pane */
 .yq-auth__check{ display: flex; align-items: center; gap: 9px; cursor: pointer; }

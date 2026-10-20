@@ -428,7 +428,7 @@
       var $in = $btn.siblings('.yq-input');
       var show = $in.attr('type') === 'password';
       $in.attr('type', show ? 'text' : 'password');
-      $btn.html(YQ.icon(show ? 'eyeoff' : 'eye', 17))
+      $btn.toggleClass('is-on', show)               // CSS đổi icon mắt / mắt gạch
           .attr('aria-label', show ? 'Hide password' : 'Show password');
     })
 
@@ -524,7 +524,7 @@
       $m.find('form').each(function () { this.reset(); });
       /* form.reset() không trả lại type cho ô đã bấm "hiện mật khẩu" */
       $m.find('.yq-auth__pw .yq-input').attr('type', 'password');
-      $m.find('[data-yq-peek]').html(YQ.icon('eye', 17)).attr('aria-label', 'Show password');
+      $m.find('[data-yq-peek]').removeClass('is-on').attr('aria-label', 'Show password');
       clearErrors($m);
     })
     .on('hidden.bs.offcanvas', '#yqMemberPanel', showMain);
