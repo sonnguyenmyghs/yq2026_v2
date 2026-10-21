@@ -432,3 +432,22 @@ body.yq-drawer-open .yq-toast-wrap{
   .yq-cdrawer__list > li.clearfix{ grid-template-columns: 62px 1fr auto; }
   .yq-cdrawer__list > li.clearfix img{ width: 62px !important; height: 62px; }
 }
+
+/* ---------- Cart sidebar HTML tĩnh: trạng thái trống + gift alert ----------
+   #yqCartDrawer.is-empty (PHP in sẵn khi {$totalItemsCart} == 0; JS tự đồng bộ theo số
+   <li> trong #yqCdList) -> ẩn danh sách + footer, hiện khối "Your bag is empty". */
+.yq-cdrawer.is-empty .yq-cdrawer__list,
+.yq-cdrawer.is-empty .yq-cdrawer__foot,
+.yq-cdrawer.is-empty .yq-cdrawer__gift{ display: none; }
+.yq-cdrawer:not(.is-empty) .yq-cdrawer__empty{ display: none; }
+
+/* Gift alert (cũ: .giftcart--status — class {$hidden_gift_yqreward}, nội dung {$arlet_buy_more_yqreward}) */
+.yq-cdrawer__gift{
+  display: flex; gap: 10px; align-items: flex-start;
+  margin: 12px 0 4px; padding: 12px 14px;
+  border-radius: var(--yq-radius-sm);
+  background: var(--yq-cream-2);
+  font-size: 13px; color: var(--yq-ink); line-height: 1.45;
+}
+.yq-cdrawer__gift svg{ flex: none; color: var(--yq-gold-dark); margin-top: 1px; }
+.yq-cdrawer__gift.d-none{ display: none; }

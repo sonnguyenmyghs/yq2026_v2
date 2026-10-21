@@ -349,59 +349,41 @@
     return !D.getElementById('cartWrap') && !D.getElementById('coSummary');
   }
 
+  /* Production: trang có <span id="root" data-base="…"> — giỏ nằm ở session server. */
+  function isServer() { return !!D.getElementById('root'); }
+
   function icon(name, size) { return YQ.icon ? YQ.icon(name, size) : ''; }
   function esc(s) { return YQ.escape ? YQ.escape(s) : String(s == null ? '' : s); }
 
+  /* Khung sidebar là HTML tĩnh trong mỗi trang (khối <!-- CART SIDEBAR -->, PHP đổ giỏ
+     từ session). JS không dựng markup — chỉ lấy tham chiếu tới khung có sẵn. */
   function buildDrawer() {
-    if (DR.$el) return;
-
-    DR.$back = $('<div class="yq-cdrawer-back" hidden></div>').appendTo('body');
-    DR.$el = $(
-      '<aside class="yq-cdrawer" id="yqCartDrawer" role="dialog" aria-modal="true" ' +
-             'aria-label="Shopping bag" tabindex="-1" hidden>' +
-        '<header class="yq-cdrawer__head">' +
-          '<div>' +
-            '<span class="yq-cdrawer__eyebrow" id="yqCdEyebrow">Added to your bag</span>' +
-            '<h2 class="yq-cdrawer__title">Your bag <small id="yqCdN"></small></h2>' +
-          '</div>' +
-          '<button class="yq-cdrawer__close" type="button" data-yq-cd-close aria-label="Close">' +
-            icon('close', 17) + '</button>' +
-        '</header>' +
-        '<div class="yq-cdrawer__body" id="yqCdBody"></div>' +
-        '<footer class="yq-cdrawer__foot" id="yqCdFoot"></footer>' +
-      '</aside>'
-    ).appendTo('body');
+    if (DR.$el) return true;
+    if (!$('#yqCartDrawer').length) return false;
+    DR.$el = $('#yqCartDrawer');
+    DR.$back = $('.yq-cdrawer-back');
+    return true;
   }
 
+  /** Giỏ trống -> ẩn danh sách + footer, hiện khối "Your bag is empty". */
+  function syncEmpty() {
+    $('#yqCartDrawer').toggleClass('is-empty', $('#yqCdList').children().length === 0);
+  }
+
+  /* Bản demo HTML (không có PHP / #root): đổ giỏ localStorage YQ.cart vào đúng khung
+     tĩnh mà PHP sẽ đổ ở production. */
   function renderDrawer(animate) {
-    if (!DR.$el) return;
+    if (isServer() || !buildDrawer()) return;
     $('#yqCdBody').toggleClass('is-static', animate === false);
     var items = YQ.cart.items || [];
     var n = YQ.cart.count();
 
     $('#yqCdN').text(n === 1 ? '1 item' : n + ' items');
 
-    if (!items.length) {
-      $('#yqCdBody').html(YQ.localise(
-        '<div class="yq-cdrawer__empty">' +
-          '<div class="yq-cdrawer__empty-icon">' + icon('bag', 24) + '</div>' +
-          '<h3>Your bag is empty</h3>' +
-          '<p>Explore our cakes, hampers, and experiences.</p>' +
-          '<a class="yq-btn yq-btn--sm" href="shop.html">Continue shopping ' + icon('arrow', 15) + '</a>' +
-        '</div>'
-      ));
-      $('#yqCdFoot').html(
-        '<div class="yq-cdrawer__actions">' +
-          '<button class="yq-btn yq-btn--yqost yq-btn--block" type="button" data-yq-cd-close>Close</button>' +
-        '</div>'
-      );
-      return;
-    }
-
     var rows = items.map(function (i, idx) {
       var isNew = DR.newKey && i.key === DR.newKey;
       return '' +
-        '<div class="yq-cdrawer__row' + (isNew ? ' is-new' : '') + '" data-key="' + esc(i.key) + '"' +
+        '<li class="yq-cdrawer__row' + (isNew ? ' is-new' : '') + '" data-key="' + esc(i.key) + '"' +
              ' style="--yqd:' + Math.min(idx, 6) * 55 + 'ms">' +
           '<div class="yq-cdrawer__media yq-media">' + (YQ.mediaInner ? YQ.mediaInner(i) : '') + '</div>' +
           '<div class="yq-cdrawer__info">' +
@@ -421,32 +403,25 @@
             '<button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove ' + esc(i.name) + '">' +
               icon('close', 14) + '</button>' +
           '</div>' +
-        '</div>';
+        '</li>';
     }).join('');
 
-    $('#yqCdBody').html(YQ.localise(rows));
+    $('#yqCdList').html(YQ.localise(rows));
+    $('#yqCdTotal').text(YQ.money(YQ.cart.subtotal()));
 
+    /* Thanh "còn X nữa để free shipping" — chỉ bản demo (production không có dữ liệu này) */
     var sub = YQ.cart.subtotal();
     var toFree = YQ.cart.toFree ? YQ.cart.toFree() : 0;
     var thr = (YQ.config && YQ.config.freeShippingThreshold) || 0;
     var pct = thr ? Math.min(100, (sub / thr) * 100) : 100;
-
-    var note = toFree > 0
+    $('#yqCdNote').html(toFree > 0
       ? '<div class="yq-cdrawer__note">' + icon('truck', 15) +
           '<div class="w-100">Add ' + YQ.money(toFree) + ' more for free shipping' +
             '<div class="yq-cdrawer__bar"><i style="width:' + pct + '%"></i></div>' +
           '</div></div>'
-      : '<div class="yq-cdrawer__note">' + icon('check', 15) + '<div>You have unlocked free shipping.</div></div>';
+      : '<div class="yq-cdrawer__note">' + icon('check', 15) + '<div>You have unlocked free shipping.</div></div>');
 
-    $('#yqCdFoot').html(YQ.localise(
-      '<div class="yq-cdrawer__sum"><span>Subtotal</span><strong>' + YQ.money(sub) + '</strong></div>' +
-      note +
-      '<div class="yq-cdrawer__actions">' +
-        '<a class="yq-btn yq-btn--gold yq-btn--block" href="checkout.html">Checkout ' + icon('arrow', 15) + '</a>' +
-        '<a class="yq-btn yq-btn--yqost yq-btn--block" href="cart.html">View bag</a>' +
-        '<button class="yq-cdrawer__cont" type="button" data-yq-cd-close>Continue shopping</button>' +
-      '</div>'
-    ));
+    syncEmpty();
   }
 
   function lockScroll(on) {
@@ -461,41 +436,19 @@
     }
   }
 
+  /**
+   * Mở cart sidebar.
+   *   - Production (có #root): nội dung PHP đã in sẵn / add-to-cart.js vừa cập nhật -> chỉ mở.
+   *   - Demo: vẽ lại từ YQ.cart rồi mở.
+   * opts.browsing: mở từ icon giỏ ở header (không phải vừa thêm hàng).
+   */
   function openDrawer(newKey, opts) {
-    if (!drawerAllowed()) return;
-    buildDrawer();
+    if (!drawerAllowed() || !buildDrawer()) return;
     DR.newKey = newKey || null;
     /* Bấm icon giỏ thì đừng nói "Added to your bag" — không có gì vừa được thêm. */
     $('#yqCdEyebrow').text((opts && opts.browsing) ? 'Your shopping bag' : 'Added to your bag');
     renderDrawer(true);
-    showPanel();
-  }
-
-  /* ---------- Giỏ ở server (production) ----------
-     Drawer hiển thị nguyên data.html (danh sách sản phẩm do template backend
-     cart_product_single dựng) + data.totalCost từ response addCart. Backend không
-     phải đổi gì; muốn đổi giao diện dòng sản phẩm thì sửa template backend hoặc CSS
-     `.yq-cdrawer__list` trong cart-anim.css. */
-  var serverCartData = null;     // response addCart gần nhất — bấm icon giỏ thì hiện lại
-
-  function openServerDrawer(data, opts) {
-    if (!drawerAllowed() || !data) return;
-    serverCartData = data;
-    buildDrawer();
-
-    var cartUrl = ($('#root').data('base') || '') + '/cart/?action=view';
-    var n = parseInt(data.totalItems, 10) || 0;
-
-    $('#yqCdEyebrow').text((opts && opts.browsing) ? 'Your shopping bag' : 'Added to your bag');
-    $('#yqCdN').text(n === 1 ? '1 item' : n + ' items');
-    $('#yqCdBody').html('<ul class="yq-cdrawer__list">' + (data.html || '') + '</ul>');
-    $('#yqCdFoot').html(
-      '<div class="yq-cdrawer__sum"><span>Subtotal</span><strong>' + esc(data.totalCost || '') + '</strong></div>' +
-      '<div class="yq-cdrawer__actions">' +
-        '<a class="yq-btn yq-btn--gold yq-btn--block" href="' + cartUrl + '">Checkout ' + icon('arrow', 15) + '</a>' +
-        '<button class="yq-cdrawer__cont" type="button" data-yq-cd-close>Continue shopping</button>' +
-      '</div>'
-    );
+    syncEmpty();
     showPanel();
   }
 
@@ -576,18 +529,20 @@
     if (!drawerAllowed()) return;
     /* Chế độ server: chưa có dữ liệu giỏ (chưa add lần nào ở trang này) thì
        đi theo href sang trang giỏ của backend. */
-    if ($('#root').length) {
-      if (!serverCartData) return;
-      e.preventDefault();
-      openServerDrawer(serverCartData, { browsing: true });
-      return;
-    }
+    if (!buildDrawer()) return;          // trang không có khung sidebar -> đi theo href
     e.preventDefault();
     openDrawer(null, { browsing: true });
   });
 
   /* API nhỏ cho module khác dùng lại (không bắt buộc) */
-  YQ.cartDrawer = { open: openDrawer, openServer: openServerDrawer, close: closeDrawer, render: renderDrawer };
+  YQ.cartDrawer = {
+    open: openDrawer, close: closeDrawer, render: renderDrawer,
+    show: function (opts) { openDrawer(null, opts); },      // add-to-cart.js (production)
+    syncEmpty: syncEmpty
+  };
+
+  /* Nội dung PHP in sẵn: đồng bộ trạng thái trống ngay khi tải trang */
+  $(syncEmpty);
 
   /* ======================================================================
      6. Nối dây: click → ghi nhận nguồn, yq:cart-changed → chạy hiệu ứng

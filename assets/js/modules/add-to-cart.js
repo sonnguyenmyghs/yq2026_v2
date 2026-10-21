@@ -10,10 +10,10 @@
 
    Khác template cũ:
      1. Cập nhật thêm badge giỏ của header mới (#yqCartCount, #yqCartCountM).
-     2. imageAnimation() dùng hiệu ứng bay vào giỏ của cart-anim.js, rồi mở drawer
-        giỏ hiển thị data.html + data.totalCost (response giữ nguyên như cũ;
-        htmlModal / htmlWarning vẫn đổ vào #modalShowCartCheckOut / #modalShowWarning
-        nếu trang có các phần tử đó).
+     2. Cart sidebar #yqCartDrawer là HTML tĩnh (PHP đổ giỏ từ session, giống modal
+        ShowCartIR cũ). Response addCart (giữ nguyên như cũ) cập nhật lại:
+        data.html -> #yqCdList, data.totalItems -> #yqCdN + badge, data.totalCost -> #yqCdTotal.
+        imageAnimation() dùng hiệu ứng bay vào giỏ của cart-anim.js, tới nơi thì mở sidebar.
      3. Không có <span id="root" data-base="..."> (bản demo HTML) thì thêm vào giỏ
         demo YQ.cart (localStorage) thay cho AJAX — xem addCartDemo().
    ========================================================================== */
@@ -141,17 +141,19 @@ $(function () {
                 // thì jQuery đã parse sẵn thành object
                 var data = typeof data === 'string' ? $.parseJSON(data) : data;
 
-                // giống template cũ
-                $('.cart--items').html(data.html);
-                $('.cart--header .badge').html(data.totalItems);
-                $('#cart').find('.badge').html(data.totalItems);
-                $('.cart--header .main-color-text').html(data.totalCost);
+                // cart sidebar #yqCartDrawer (HTML tĩnh, PHP đổ sẵn giỏ từ session)
+                // — thay cho .cart--items / .cart--header của modal ShowCartIR cũ
+                $('#yqCdList').html(data.html);                                  // cũ: .cart--items   ({$contentCartHtml})
+                $('#yqCdN').html(data.totalItems + (data.totalItems == 1 ? ' item' : ' items'));
+                $('#yqCdTotal').html(data.totalCost);                            // cũ: .cart--header .main-color-text
+                $('#yqCartDrawer').toggleClass('is-empty', data.totalItems == 0);
 
+                // badge giỏ ở header + menu mobile — cũ: .cart--header .badge, #cart .badge
+                $('#yqCartCount, #yqCartCountM, [data-oc-count]').html(data.totalItems).toggleClass('is-on', data.totalItems > 0);
+
+                // giống template cũ (trang nào có 2 phần tử này thì mới hiện)
                 $('#modalShowCartCheckOut').html(data.htmlModal);
                 $('#modalShowWarning').html(data.htmlWarning);
-
-                // badge giỏ của header mới (+ badge trong menu mobile)
-                $('#yqCartCount, #yqCartCountM, [data-oc-count]').html(data.totalItems).toggleClass('is-on', data.totalItems > 0);
 
                 // buynow
                 if (_this.hasClass('submit-frm-redeem')) {
@@ -167,8 +169,8 @@ $(function () {
                     return;
                 }
 
-                // ảnh bay vào giỏ, tới nơi thì mở drawer hiển thị data.html + data.totalCost
-                imageAnimation(_this, cartCountBefore, parseInt(data.totalItems) || 0, data);
+                // ảnh bay vào giỏ, tới nơi thì mở cart sidebar
+                imageAnimation(_this, cartCountBefore, parseInt(data.totalItems) || 0);
             },
 
             error: function () {
@@ -178,15 +180,11 @@ $(function () {
         });
     });
 
-    /* Ảnh sản phẩm bay vào icon giỏ + badge đếm tăng, tới nơi thì mở drawer giỏ
-       với dữ liệu server (cart-anim.js). Template cũ tự clone ảnh và animate. */
-    var imageAnimation = function (button, cartCountBefore, cartCountAfter, data) {
-        if (!YQ.cartFx || !YQ.cartDrawer) {
-            YQ.toast('Added to cart', 'View cart', baseUrl + '/cart/?action=view');
-            return;
-        }
+    /* Ảnh sản phẩm bay vào icon giỏ + badge đếm tăng, tới nơi thì mở cart sidebar
+       (cart-anim.js). Template cũ tự clone ảnh và animate. */
+    var imageAnimation = function (button, cartCountBefore, cartCountAfter) {
         YQ.cartFx.added(button[0], cartCountBefore, cartCountAfter, function () {
-            YQ.cartDrawer.openServer(data);
+            YQ.cartDrawer.show();
         });
     };
 

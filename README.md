@@ -66,6 +66,13 @@ trang trong `member/` dùng đường dẫn `../`. Sửa nav thì sửa khối n
 (production: backend include 1 partial). `YQ.initHeader()` chỉ đồng bộ badge giỏ + phát
 `yq:header-ready`.
 
+**Cart sidebar là HTML tĩnh** (khối `<!-- CART SIDEBAR -->` ngay sau FOOTER, `#yqCartDrawer`):
+PHP đổ giỏ từ session giống modal `ShowCartIR` cũ — `ul#yqCdList` ← `{$contentCartHtml}`,
+`#yqCdN` ← `{$totalItemsCart}`, `#yqCdTotal` ← `{$totalCostCart} {$_OLD_CURRENCY_BY_CART}`,
+gift alert ← `{$hidden_gift_yqreward}` / `{$arlet_buy_more_yqreward}`; thêm class `is-empty`
+khi giỏ trống (JS cũng tự đồng bộ). `cart-anim.js` chỉ mở/đóng; `add-to-cart.js` cập nhật lại
+các chỗ trên sau mỗi lần addCart. Bản demo (không có `#root`) đổ giỏ localStorage vào cùng khung.
+
 **Footer cũng là HTML tĩnh** (khối `<!-- FOOTER -->` … `<!-- /FOOTER -->` cuối `<body>`:
 newsletter + footer), giống hệt nhau mọi trang, chỉ khác đường dẫn `../` ở `member/`.
 Năm bản quyền viết cứng (`&copy; 2026`) — production để backend in năm hiện tại.

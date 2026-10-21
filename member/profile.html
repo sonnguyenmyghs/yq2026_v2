@@ -762,6 +762,47 @@
 </footer>
 <!-- ========== /FOOTER ========== -->
 
+<!-- ========== CART SIDEBAR (HTML tĩnh — PHP đổ giỏ từ session, giống modal ShowCartIR cũ) ==========
+     Biến PHP (theo modal cũ):
+       ul#yqCdList            <- {$contentCartHtml}      (các dòng cart_product_single)
+       #yqCdN                 <- {$totalItemsCart} items
+       #yqCdTotal             <- {$totalCostCart} {$_OLD_CURRENCY_BY_CART}
+       .yq-cdrawer__gift      <- class {$hidden_gift_yqreward} + nội dung {$arlet_buy_more_yqreward}
+       a.yq-cdrawer__viewcart <- {$_hiddenViewShowCart} + href="{$_BASE}/cart/?action=view"
+       aside#yqCartDrawer     <- thêm class "is-empty" khi {$totalItemsCart} == 0 (JS cũng tự đồng bộ)
+     Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- {$totalItemsCart}
+     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart. -->
+<div class="yq-cdrawer-back" hidden></div>
+<aside class="yq-cdrawer is-empty" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
+  <header class="yq-cdrawer__head">
+    <div>
+      <span class="yq-cdrawer__eyebrow" id="yqCdEyebrow">Your shopping bag</span>
+      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">0 items</small></h2>
+    </div>
+    <button class="yq-cdrawer__close" type="button" data-yq-cd-close aria-label="Close"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </header>
+  <div class="yq-cdrawer__body" id="yqCdBody">
+    <div class="yq-cdrawer__gift d-none"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg><div></div></div>
+    <ul class="yq-cdrawer__list" id="yqCdList"></ul>
+    <div class="yq-cdrawer__empty">
+      <div class="yq-cdrawer__empty-icon"><svg class="yq-i" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
+      <h3>Your bag is empty</h3>
+      <p>Explore our cakes, hampers, and experiences.</p>
+      <a class="yq-btn yq-btn--sm" href="../shop.html" data-yq-cd-close>Continue shopping <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+    </div>
+  </div>
+  <footer class="yq-cdrawer__foot" id="yqCdFoot">
+    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$0.00</strong></div>
+    <div id="yqCdNote"></div>
+    <div class="yq-cdrawer__actions">
+      <a class="yq-btn yq-btn--gold yq-btn--block yq-cdrawer__checkout" href="../checkout.html">Checkout <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+      <a class="yq-btn yq-btn--yqost yq-btn--block yq-cdrawer__viewcart" href="../cart.html">View cart</a>
+      <button class="yq-cdrawer__cont" type="button" data-yq-cd-close>Continue shopping</button>
+    </div>
+  </footer>
+</aside>
+<!-- ========== /CART SIDEBAR ========== -->
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/data.js"></script>
