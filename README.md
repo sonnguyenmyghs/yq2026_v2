@@ -298,7 +298,11 @@ trang đang mở đánh dấu sẵn bằng `.is-current` + `aria-current="page"`
 này ở **mọi** trang.
 
 **Popup đăng nhập cũng là HTML tĩnh**: khối `<!-- AUTH POPUP -->` … `<!-- /AUTH POPUP -->`
-(`#yqAuthModal`, Bootstrap modal) nằm ngay sau FOOTER mỗi trang, gồm nút social, 2 tab và
+(`#yqAuthModal`, Bootstrap modal) nằm **trong header**, ngay sau `#yqAccountBtn` — giống
+production, nơi template `portal_login` in cả nút avatar lẫn modal vào chỗ đó. Vì
+`.yq-header__shell` có `backdrop-filter` và header là stacking context riêng, `account.css`
+có một đoạn CSS riêng cho trường hợp này: trong lúc modal mở thì tắt filter/transform, nâng
+header lên trên, và để modal tự vẽ lớp nền mờ. Khối gồm nút social, 2 tab và
 3 form Log in / Register / quên mật khẩu. JS chỉ chuyển pane, kiểm tra form, hiện/ẩn mật
 khẩu. Thêm/bớt nút social: sửa `<button data-yq-social="id" data-yq-label="Tên">` trong
 khối này ở **mọi** trang (`id` phải có trong `YQ.brandIcon`, `data-yq-label` dùng cho

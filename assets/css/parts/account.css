@@ -20,6 +20,27 @@
 .yq-auth .modal-body{ padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 46px) clamp(30px, 4vw, 44px); }
 .yq-auth .modal-backdrop.show{ opacity: .5; }
 
+/* Modal nằm TRONG header (template portal_login của server in #yqAuthModal ngay sau
+   #yqAccountBtn). Hai lỗi nếu để nguyên:
+     - .yq-header__shell có backdrop-filter (mobile thu gọn còn có transform) -> thành
+       khung chứa của position:fixed, modal bị bóp theo chiều cao header.
+     - .yq-header sticky z-index 1030 tạo stacking context -> .modal-backdrop của
+       Bootstrap (gắn ở <body>, z-index 1050) đè lên modal, không bấm được.
+   Bootstrap gắn aria-modal="true" từ lúc bắt đầu mở tới khi đóng xong hiệu ứng, nên
+   dùng làm điều kiện: chỉ trong lúc đó mới tắt filter/transform và nâng header lên
+   trên lớp nền mờ. Lớp nền mờ do chính .yq-auth vẽ (nó phủ kín màn hình), lớp
+   .modal-backdrop ở body thì ẩn đi cho khỏi tối 2 lần. Bấm ra ngoài vẫn đóng được
+   vì Bootstrap bắt click trên chính .modal, không cần .modal-backdrop. */
+.yq-header:has(.yq-auth[aria-modal="true"]){ z-index: 1055; }
+.yq-header:has(.yq-auth[aria-modal="true"]),
+.yq-header:has(.yq-auth[aria-modal="true"]) .yq-header__shell{
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transform: none;
+}
+.yq-header .yq-auth{ background: rgba(0,0,0,.5); }
+body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: none; }
+
 .yq-auth__close{
   position: absolute; top: 14px; right: 14px; z-index: 3;
   width: 40px; height: 40px; border-radius: 50%;
