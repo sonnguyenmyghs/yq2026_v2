@@ -366,6 +366,12 @@
       $('html,body').animate({ scrollTop: $t.offset().top - 130 }, 500);
     });
 
+    /* Thông báo $status do PHP in (.action_status): bấm X thì ẩn */
+    $(document).on('click', '.action_status__close', function () {
+      var $box = $(this).closest('.action_status').addClass('is-closing');
+      setTimeout(function () { $box.remove(); }, 250);
+    });
+
     /* Stepper dùng chung: [data-qty data-min] > [data-step="-1|1"] + [data-qty-val]
        [data-qty-val] là <span> (giỏ demo) hoặc <input name="cart[ID]"> (template backend:
        giá trị nằm trong input để form cập nhật giỏ của server submit được). */

@@ -17,6 +17,7 @@
 <link href="assets/css/parts/cart-anim.css" rel="stylesheet">
 <link href="assets/css/parts/account.css" rel="stylesheet">
 <link href="assets/css/parts/attributes.css" rel="stylesheet">
+<link href="assets/css/parts/status.css" rel="stylesheet">
 </head>
 <body>
 
@@ -356,6 +357,16 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
       Back to shop
     </a>
+
+    <!-- $status: thông báo PHP in sau khi submit (backend-templates/action_status_*.html).
+         Để $status liền trong div (không khoảng trắng) -> không có thông báo thì khung tự ẩn. -->
+    <div class="yq-status-zone">
+      <div class="action_status status_error" data-message="Sorry, only 2 left in stock. Please reduce the quantity and try again." role="alert">
+        <span class="action_status__icon" aria-hidden="true"></span>
+        <div class="action_status__text">Sorry, only <b>2 left in stock</b>. Please reduce the quantity and try again.</div>
+        <button type="button" class="action_status__close" aria-label="Close">&times;</button>
+      </div>
+    </div>
 
     <div class="row g-5">
       <!-- Gallery -->
