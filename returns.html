@@ -57,21 +57,21 @@
         </div>
 
         <!-- pane Log in -->
-        <form class="yq-auth__pane" data-yq-pane="login" id="yqLoginForm" novalidate>
+        <form class="yq-auth__pane" data-yq-pane="login" id="yqLoginForm" method="post" novalidate>
           <div class="yq-auth__row">
             <div>
               <label class="yq-auth__label" for="yqAuthEmail">Email</label>
-              <input type="email" class="yq-input form-control" id="yqAuthEmail" placeholder="you@example.com" autocomplete="email">
+              <input type="email" class="yq-input form-control" id="yqAuthEmail" name="email" placeholder="you@example.com" autocomplete="email">
               <div class="yq-error" data-err-for="yqAuthEmail"></div>
             </div>
             <div>
               <label class="yq-auth__label" for="yqAuthPass">Password</label>
-              <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqAuthPass" placeholder="" autocomplete="current-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i yq-auth__eye" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg><svg class="yq-i yq-auth__eyeoff" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/></svg></button></div>
+              <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqAuthPass" name="password" placeholder="" autocomplete="current-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i yq-auth__eye" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg><svg class="yq-i yq-auth__eyeoff" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/></svg></button></div>
               <div class="yq-error" data-err-for="yqAuthPass"></div>
             </div>
           </div>
           <div class="yq-auth__meta">
-            <label class="yq-auth__check"><input type="checkbox" id="yqAuthKeep" checked><span>Keep me logged in</span></label>
+            <label class="yq-auth__check"><input type="checkbox" id="yqAuthKeep" name="remember" value="1" checked><span>Keep me logged in</span></label>
             <button class="yq-auth__forgot" type="button" data-yq-forgot>Forgot your password?</button>
           </div>
           <button class="yq-btn yq-btn--block" type="submit">Log in</button>

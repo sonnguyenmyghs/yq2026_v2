@@ -23,9 +23,9 @@
        do app.js dựng, và event yq:header-ready.
      - Xoá file này thì mất đúng popup account, phần còn lại của site vẫn chạy.
 
-   LƯU Ý: đây là demo frontend, chưa nối backend — mọi email/mật khẩu hợp lệ đều
-   đăng nhập được và mật khẩu không được lưu ở đâu cả. Thay 3 hàm trong phần
-   "6. Chỗ nối API" bằng lệnh gọi thật khi có server.
+   Log in: form #yqLoginForm POST thẳng lên server (email, password, remember), JS
+   chỉ chặn khi email thiếu @ hoặc mật khẩu trống. Register / social vẫn là demo —
+   thay 2 hàm trong phần "6. Chỗ nối API" bằng lệnh gọi thật khi có server.
    ========================================================================== */
 (function ($) {
   'use strict';
@@ -130,12 +130,14 @@
   }
   function val(id) { return $.trim($('#' + id).val() || ''); }
 
-  /** Kiểm tra 1 ô; rules: {required, email, min, same} */
+  /** Kiểm tra 1 ô; rules: {required, email, at, min, same}
+      at: chỉ cần có ký tự @ (form Log in — server mới là nơi kiểm tra thật) */
   function check(id, rules) {
     var $el = $('#' + id);
     var v = $.trim($el.val() || '');
     if (rules.required && !v) return fail($el, rules.label + ' is required');
     if (rules.email && v && !RE_MAIL.test(v)) return fail($el, 'Enter a valid email address');
+    if (rules.at && v && v.indexOf('@') < 0) return fail($el, 'Enter a valid email address');
     if (rules.min && v.length < rules.min) return fail($el, 'Use at least ' + rules.min + ' characters');
     if (rules.same != null && v !== rules.same) return fail($el, 'Passwords do not match');
     return true;
@@ -393,15 +395,9 @@
   });
 
   /* ======================================================================
-     6. Chỗ nối API — thay 3 hàm này bằng lệnh gọi backend thật
+     6. Chỗ nối API — thay 2 hàm này bằng lệnh gọi backend thật
+     (Log in không qua đây: form #yqLoginForm POST thẳng lên server)
      ====================================================================== */
-  function apiLogin(email) {
-    /* Demo: nhận mọi thông tin hợp lệ. Mật khẩu KHÔNG được lưu.
-       Giữ lại tên đã đăng ký trước đó nếu trùng email. */
-    var prev = YQ.auth.user;
-    var keep = (prev && prev.email === email) ? prev : {};
-    return YQ.auth.signIn({ email: email, first: keep.first || '', last: keep.last || '', promo: !!keep.promo });
-  }
   function apiRegister(data) { return YQ.auth.signIn(data); }
   function apiSocial(id) {
     var prev = YQ.auth.user || {};
@@ -440,18 +436,14 @@
       YQ.toast('Signed in with ' + socialLabel(id));
     })
 
-    /* --- popup: Log in --- */
+    /* --- popup: Log in ---
+       Chỉ chặn khi email thiếu @ hoặc mật khẩu trống; hợp lệ thì để form POST
+       (email, password, remember) lên server — server kiểm tra và trả trang đã đăng nhập. */
     .on('submit', '#yqLoginForm', function (e) {
-      e.preventDefault();
-      var $f = $(this);
-      clearErrors($f);
-      var ok = check('yqAuthEmail', { required: true, email: true, label: 'Email' });
+      clearErrors($(this));
+      var ok = check('yqAuthEmail', { required: true, at: true, label: 'Email' });
       ok = check('yqAuthPass', { required: true, label: 'Password' }) && ok;
-      if (!ok) return;
-
-      apiLogin(val('yqAuthEmail'));
-      closeAuth();
-      YQ.toast('Welcome back, ' + YQ.auth.name());
+      if (!ok) e.preventDefault();
     })
 
     /* --- popup: Register --- */

@@ -443,10 +443,15 @@ nhập thì demo tự đăng nhập bằng hồ sơ mẫu (`YQ.profile`) để a
 Logout ở khu member thì chuyển về `index.html`. Production: server chặn ở cổng và in sẵn
 trạng thái đăng nhập vào header.
 
-> **Chưa nối backend.** Mọi email/mật khẩu đúng định dạng đều đăng nhập được và
-> **mật khẩu không được lưu ở đâu cả** — localStorage (`yq_user_v1`) chỉ giữ email,
-> tên và tuỳ chọn nhận khuyến mãi. Phần `6. Chỗ nối API` trong `account.js` là 3 hàm
-> `apiLogin` / `apiRegister` / `apiSocial`, thay bằng lệnh gọi server thật khi có API.
+> **Log in submit thật lên server.** Form `#yqLoginForm` (`method="post"`, chưa có
+> `action` nên gửi về URL hiện tại — backend gắn `action` nếu cần) gửi 3 trường `email`,
+> `password`, `remember`. JS chỉ chặn submit khi email không có `@` hoặc mật khẩu trống,
+> không còn giả lập đăng nhập. Chạy local bằng `python3 -m http.server` thì POST sẽ báo
+> lỗi 501 — bình thường, vì không có backend.
+>
+> Register và social login **vẫn là demo**: localStorage (`yq_user_v1`) chỉ giữ email,
+> tên và tuỳ chọn nhận khuyến mãi, mật khẩu không lưu ở đâu cả. Phần `6. Chỗ nối API`
+> trong `account.js` là 2 hàm `apiRegister` / `apiSocial`, thay bằng lệnh gọi server thật.
 
 **Logo** — lockup dựng bằng HTML/CSS (`<a class="yq-logo">…</a>`), viết thẳng ở 3 chỗ trong
 mỗi trang: header, menu mobile (`.yq-logo--sm`) và footer (`.yq-logo--light .yq-logo--footer`).
