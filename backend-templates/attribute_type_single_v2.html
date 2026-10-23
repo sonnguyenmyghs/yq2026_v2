@@ -1,0 +1,37 @@
+<!-- v2: hàng xem nhanh + nút "More items" mở modal chọn.
+     {$html_value_list_att_getmodal} = attribute_type_value_single_getmodal_v3.html (chữ xem nhanh)
+     {$html_value_list_att}          = attribute_type_value_single.html (ô chọn trong modal) -->
+<div class="product--attr {$class_attribute_select} {$tmp_stt} v2" data-max="{$max_attibute_select}" data-attr="{$k_list_att}" data-price="{$v_list_att['price']}" data-team="{$k_list_att}">
+    <b class="product--attr--name">{$v_list_att['name']} <span class="tip">{$html_max_choose}</span> {$html_price_attribute}</b>
+    <p class="product--attr--msg" aria-live="polite"></p>
+
+    <div class="more--attr {$k_list_att}">
+        <div class="d-flex">
+            {$html_value_list_att_getmodal}
+            <div class="more--attr--mask"></div>
+        </div>
+        <div class="more">More items <span class="ti-angle-right"></span></div>
+    </div>
+
+    <div class="product--attr--preview">Items selected: <span></span></div>
+
+    <div class="modal--attribute">
+        <div class="modal--attribute--overlay"></div>
+        <div class="modal--attribute--content">
+            <div class="modal--attribute--head d-flex">
+                <div>
+                    <b class="product--attr--name">{$v_list_att['name']} - <span class="tip">Please choose <span>{$max_attibute_select}</span> item!</span></b>
+                    <p class="product--attr--msg" aria-live="polite"></p>
+                </div>
+                <span class="ti-close ml-auto"></span>
+            </div>
+            <div class="modal--attribute--body">
+                {$html_value_list_att}
+            </div>
+            <div class="modal--attribute--foot">
+                <button type="button" class="modal--attribute--done">Done</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="attribute_v2[{$k_list_att}][name]" value="{$v_list_att['name']}">
+</div>

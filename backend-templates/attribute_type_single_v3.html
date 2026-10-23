@@ -1,0 +1,38 @@
+<!-- v3 (sku): mỗi biến thể có +/-; tổng số lượng = {$product_detail['attribute_box']}.
+     Mobile: bấm "More variables" mở popup (.sku--props), trong popup có sẵn số lượng + Add To Cart.
+     Section ngoài cần thêm class {$use__attr__box}. -->
+<div class="sku--variables--zone">
+    <p class="sku--variables--title">{$v_list_att['name']} (Select <span>{$product_detail['attribute_box']}</span> items!)</p>
+    <p class="product--attr--msg" aria-live="polite"></p>
+    <div class="more--attr--mobile more--attr">
+        <div class="d-flex">
+            {$html_value_list_att_getmodal}
+            <div class="more--attr--mask"></div>
+        </div>
+        <div class="more">More variables <span class="ti-angle-right"></span></div>
+    </div>
+    <div class="sku--overlay--mobile"></div>
+    <div class="sku--props">
+        <div class="sku--head--pop--mobile">
+            <div>
+                <p class="sku--tip--mobile">{$v_list_att['name']} (Select <span>{$product_detail['attribute_box']}</span> items!)</p>
+                <p class="product--attr--msg" aria-live="polite"></p>
+            </div>
+            <span class="sku--head--close ti-close"></span>
+        </div>
+        <input type="hidden" class="sku--variable--max" value="{$product_detail['attribute_box']}">
+        <input type="hidden" class="sku--variable--cur" value="">
+        <div class="sku--all--variable">
+            {$html_value_list_att}
+        </div>
+        <input type="hidden" name="attribute_v2[{$k_list_att}][name]" value="{$v_list_att['name']}">
+        <div class="sku--props--footer">
+            <div class="qty btns--count">
+                <span class="minus">-</span>
+                <input class="input__quantity" value="{$_product_min_redeem}" id="rdChangeQuantity" name="redeemtion[quantity]" type="number">
+                <span class="plus">+</span>
+            </div>
+            <button class="btn addToCart" data-productid="{$_REQUEST['pos']}" data-quantity="1" data-attribute="1" data-variable="1">ADD TO CART</button>
+        </div>
+    </div>
+</div>

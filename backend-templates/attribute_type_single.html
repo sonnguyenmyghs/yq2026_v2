@@ -1,0 +1,9 @@
+<!-- v1: nhóm thuộc tính hiện thẳng các lựa chọn (checkbox/radio). {$html_value_list_att} = attribute_type_value_single.html lặp theo từng giá trị -->
+<div class="product--attr {$class_attribute_select} v1" data-max="{$max_attibute_select}" data-attr="{$k_list_att}" data-price="{$v_list_att['price']}" data-team="{$k_list_att}">
+    <b class="product--attr--name">{$v_list_att['name']} <span class="tip">{$html_max_choose}</span> {$html_price_attribute}</b>
+    <p class="product--attr--msg" aria-live="polite"></p>
+    <div class="d-flex">
+        {$html_value_list_att}
+    </div>
+    <input type="hidden" name="attribute_v2[{$k_list_att}][name]" value="{$v_list_att['name']}">
+</div>

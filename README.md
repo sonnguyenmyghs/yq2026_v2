@@ -21,7 +21,10 @@ python3 -m http.server 8000
 ```
 ├── index.html            Trang chủ — hero "Gifts of Distinction", USP, featured, occasions, experiences
 ├── shop.html             All Products — filter theo category + seasonal, sort, badge Bestseller/New
-├── product.html          Chi tiết sản phẩm — gallery, chọn size, quantity, add to cart, cross-sell
+├── product.html          Chi tiết sản phẩm — gallery, giá (PHP in), thuộc tính, quantity, add to cart, cross-sell
+├── product-attr-*.html   Mẫu PDP cho từng loại thuộc tính (v1 · v2 · v3 · dropdown): form
+│                         #form-list-attribute chứa HTML như PHP render từ
+│                         backend-templates/attribute_type_*.html (JS: modules/attributes.js)
 ├── experiences.html      Unforgettable Experiences — grid có rating, duration, địa điểm, "From $X"
 ├── celebrations.html     Seasonal Highlights — occasion tiles, guest favorites, corporate gifting
 ├── personalise.html      Personalise Your Gift — chọn eCard, viết lời nhắn, LIVE PREVIEW (3 bước)

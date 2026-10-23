@@ -1,0 +1,215 @@
+/* ==========================================================================
+   Thuộc tính sản phẩm (PDP) — style cho markup của các fragment backend
+   backend-templates/attribute_type_*.html (PHP render). Dùng token
+   --yq-* của style.css. Hành vi: assets/js/modules/attributes.js
+   ========================================================================== */
+
+/* Icon font cũ (Themify .ti-*) không có trong template mới: vẽ bằng ký tự */
+.yq-pdp .ti-plus::before{ content: "+"; }
+.yq-pdp .ti-minus::before{ content: "\2212"; }
+.yq-pdp .ti-close::before{ content: "\00D7"; }
+.yq-pdp .ti-angle-right::before{ content: "\203A"; }
+
+@keyframes yqAttrShake{
+  0%,100%{ transform: translateX(0); } 20%{ transform: translateX(-4px); }
+  40%{ transform: translateX(4px); } 60%{ transform: translateX(-3px); } 80%{ transform: translateX(3px); }
+}
+@keyframes yqAttrPop{ 0%{ transform: scale(.3); opacity: 0; } 60%{ transform: scale(1.1); } 100%{ transform: scale(1); opacity: 1; } }
+.yq-pdp .shake{ animation: yqAttrShake .45s 1; }
+@media (prefers-reduced-motion: reduce){ .yq-pdp .shake{ animation: none; } }
+
+/* ---- Nhóm thuộc tính ---- */
+.yq-pdp .product--attr{ margin: 0 0 24px; }
+.yq-pdp .product--attr--name{
+  display: block; margin-bottom: 10px; font-size: 12.5px; font-weight: 600; color: var(--yq-ink);
+}
+.yq-pdp .product--attr--name .tip{ font-weight: 400; color: var(--yq-muted); margin-left: 4px; }
+.yq-pdp .product--attr .d-flex{ flex-wrap: wrap; gap: 8px; }
+
+/* ---- Giá trị: ẩn input, label là pill như .yq-option ---- */
+.yq-pdp .single--attribute{ flex: 0 0 auto; position: relative; }
+.yq-pdp .single--attribute input{ position: absolute; opacity: 0; pointer-events: none; }
+.yq-pdp .single--attribute label{
+  display: inline-flex; align-items: center; gap: 8px; margin: 0; cursor: pointer;
+  padding: 12px 20px; border-radius: var(--yq-radius-pill);
+  border: 1px solid var(--yq-line); background: var(--yq-paper);
+  font-size: 13.5px; color: var(--yq-ink-soft);
+  transition: all .25s var(--yq-ease);
+}
+.yq-pdp .single--attribute label:hover{ border-color: var(--yq-ink); }
+.yq-pdp .single--attribute input:checked ~ label{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+.yq-pdp .single--attribute input:focus-visible ~ label{ outline: 2px solid var(--yq-gold); outline-offset: 2px; }
+/* có ảnh: thẻ dọc, ảnh trên chữ dưới */
+.yq-pdp .single--attribute .label--img--attribute{
+  flex-direction: column; border-radius: var(--yq-radius-sm); padding: 8px; height: auto;
+}
+.yq-pdp .single--attribute label img{ display: block; width: 88px; max-width: 100%; border-radius: 6px; }
+
+/* ---- v2: hàng xem nhanh + nút "More items" ---- */
+.yq-pdp .more--attr{ display: flex; align-items: stretch; cursor: pointer; border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm); background: var(--yq-paper); overflow: hidden; }
+.yq-pdp .more--attr > .d-flex{ flex: 1; min-width: 0; flex-wrap: nowrap; gap: 0; overflow: hidden; position: relative; }
+.yq-pdp .more--attr .single{ flex: 0 0 auto; padding: 12px 16px; font-size: 13px; border-right: 1px solid var(--yq-line-soft); white-space: nowrap; }
+.yq-pdp .more--attr--mask{ position: absolute; inset: 0 0 0 auto; width: 48px; background: linear-gradient(90deg, transparent, var(--yq-paper)); pointer-events: none; }
+.yq-pdp .more--attr .more{ flex: 0 0 auto; display: flex; align-items: center; gap: 6px; padding: 0 16px; font-size: 13px; font-weight: 600; color: var(--yq-ink); background: var(--yq-cream); }
+.yq-pdp .product--attr--preview{ display: none; margin-top: 8px; font-size: 13px; color: var(--yq-muted); }
+.yq-pdp .product--attr--preview:has(i){ display: block; }
+.yq-pdp .product--attr--preview i{ font-style: normal; color: var(--yq-ink); margin-right: 8px; }
+.yq-pdp .product--attr--preview i + i::before{ content: "· "; color: var(--yq-muted); }
+
+.yq-pdp .modal--attribute{ display: none; position: fixed; inset: 0; z-index: 1200; align-items: center; justify-content: center; }
+.yq-pdp .modal--attribute.active{ display: flex; }
+.yq-pdp .modal--attribute--overlay{ position: absolute; inset: 0; background: rgba(23,22,19,.5); }
+.yq-pdp .modal--attribute--content{
+  position: relative; width: min(640px, calc(100% - 32px)); max-height: 82vh; display: flex; flex-direction: column;
+  background: var(--yq-paper); border-radius: var(--yq-radius); box-shadow: var(--yq-shadow-lg);
+}
+.yq-pdp .modal--attribute--head{ justify-content: space-between; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--yq-line-soft); flex-wrap: nowrap; }
+.yq-pdp .modal--attribute--head .ti-close{ font-size: 26px; line-height: 1; cursor: pointer; color: var(--yq-ink); }
+.yq-pdp .modal--attribute--body{ display: flex; flex-wrap: wrap; gap: 8px; padding: 22px; overflow: auto; }
+
+/* ---- v3 (sku): lưới biến thể + / − ---- */
+.yq-pdp .sku--variables--zone{ margin-bottom: 24px; }
+.yq-pdp .sku--variables--title{ font-size: 12.5px; font-weight: 600; color: var(--yq-ink); margin-bottom: 10px; }
+.yq-pdp .sku--variables--title span{ font-size: 15px; }
+.yq-pdp .sku--all--variable{ display: flex; flex-wrap: wrap; gap: 8px; }
+.yq-pdp .sku--variable{
+  position: relative; width: calc(50% - 4px); padding: 12px 14px; cursor: pointer;
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm); background: var(--yq-paper);
+}
+.yq-pdp .sku--variable .text{ display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; color: var(--yq-ink-soft); }
+.yq-pdp .sku--variable--badge{
+  display: none; position: absolute; top: -10px; right: 8px; z-index: 1; padding: 1px 8px;
+  border-radius: var(--yq-radius-pill); background: var(--yq-ink); color: #fff; font-size: 12px;
+}
+.yq-pdp .sku--variable--badge.show{ display: block; }
+.yq-pdp .sku--variable--badge.bouncein{ animation: yqAttrPop .45s; }
+.yq-pdp .sku--var--overlay{
+  position: absolute; inset: 0; display: flex; opacity: 0; transition: opacity .25s var(--yq-ease);
+  background: rgba(23,22,19,.78); color: #fff; font-size: 22px; border-radius: inherit; overflow: hidden;
+}
+.yq-pdp .sku--variable:hover .sku--var--overlay{ opacity: 1; }
+.yq-pdp .sku--var--control{ flex: 1; display: flex; align-items: center; justify-content: center; }
+.yq-pdp .sku--var--control:hover{ background: rgba(255,255,255,.14); }
+
+/* popup biến thể: chỉ dùng ≤1024px (desktop hiện lưới trực tiếp) */
+.yq-pdp .more--attr--mobile.more--attr,
+.yq-pdp .sku--overlay--mobile,
+.yq-pdp .sku--head--pop--mobile,
+.yq-pdp .sku--props--footer,
+.yq-pdp .add--product--mobile{ display: none; }
+
+@media (max-width: 1024px){
+  .yq-pdp .sku--variable{ width: 100%; display: flex; border: 0; border-bottom: 1px solid var(--yq-line-soft); border-radius: 0; }
+  .yq-pdp .sku--var--overlay{ position: relative; inset: auto; margin-left: auto; opacity: 1; background: none; color: var(--yq-ink); width: 90px; }
+  .yq-pdp .sku--variable--badge{ position: static; margin-left: auto; align-self: center; }
+  .yq-pdp .more--attr--mobile.more--attr,
+  .yq-pdp .sku--head--pop--mobile,
+  .yq-pdp .sku--props--footer{ display: flex; }
+  .yq-pdp .sku--props--footer{ flex-direction: column; align-items: center; gap: 12px; padding: 16px; }
+  .yq-pdp .sku--overlay--mobile.show{ display: block; position: fixed; inset: 0; z-index: 1190; background: rgba(23,22,19,.5); }
+  .yq-pdp .sku--props{
+    position: fixed; left: 0; right: 0; bottom: -100%; z-index: 1200; max-height: 85vh; overflow: auto;
+    background: var(--yq-paper); border-radius: var(--yq-radius) var(--yq-radius) 0 0; transition: bottom .3s var(--yq-ease);
+  }
+  .yq-pdp .sku--props.show{ bottom: 0; }
+  .yq-pdp .sku--head--pop--mobile{ justify-content: space-between; align-items: center; padding: 16px 18px; border-bottom: 1px solid var(--yq-line-soft); }
+  .yq-pdp .sku--head--close{ font-size: 24px; cursor: pointer; }
+  /* fragment v3 có sẵn bộ +/- số lượng + nút Add To Cart trong popup */
+  .yq-pdp .sku--props--footer .btns--count{ display: inline-flex; align-items: center; gap: 14px; }
+  .yq-pdp .sku--props--footer .btns--count .minus,
+  .yq-pdp .sku--props--footer .btns--count .plus{ cursor: pointer; font-size: 22px; width: 30px; text-align: center; }
+  .yq-pdp .sku--props--footer .input__quantity{ width: 56px; text-align: center; border: 0; background: none; font-size: 15px; }
+  .yq-pdp .sku--props--footer .addToCart{ width: 100%; }
+  .yq-pdp.use__attr__box .add--product--mobile{ display: block; }
+  .yq-pdp.use__attr__box #pdpBuyActions,
+  .yq-pdp.use__attr__box #pdpQty{ display: none; }
+}
+
+/* ---- dropdown (fragment tự gắn JS: .show / .active / .rotate) ---- */
+.yq-pdp .dropdown-container{ position: relative; margin: 0 0 24px; }
+.yq-pdp .dropdown-button{
+  display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 18px;
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm); background: var(--yq-paper);
+  font-size: 13.5px; color: var(--yq-ink-soft); cursor: pointer;
+}
+.yq-pdp .dropdown-button.active{ border-color: var(--yq-ink); }
+.yq-pdp .dropdown-arrow{ font-size: 10px; transition: transform .2s var(--yq-ease); }
+.yq-pdp .dropdown-arrow.rotate{ transform: rotate(180deg); }
+.yq-pdp .dropdown-menu{
+  display: none; position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 20; padding: 10px;
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm); background: var(--yq-paper); box-shadow: var(--yq-shadow-md);
+}
+.yq-pdp .dropdown-menu.show{ display: block; }
+.yq-pdp .dropdown-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.yq-pdp .dropdown-item{ position: relative; }
+.yq-pdp .dropdown-item input{ position: absolute; opacity: 0; pointer-events: none; }
+.yq-pdp .dropdown-item label{
+  display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0; padding: 10px; cursor: pointer;
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm); font-size: 13px; text-align: center;
+}
+.yq-pdp .dropdown-item label img{ width: 100%; border-radius: 6px; }
+.yq-pdp .dropdown-item.single--attribute label{ border-radius: var(--yq-radius-sm); padding: 10px; color: var(--yq-ink-soft); }
+.yq-pdp .dropdown-item.single--attribute input:checked ~ label{ border-color: var(--yq-ink); background: var(--yq-cream); color: var(--yq-ink); }
+
+/* ---- "Your choices" (attributes.js bật .is-on khi đã chọn) ---- */
+.yq-pdp .your--choices--single,
+.yq-pdp .your--choices--combo{
+  display: none; margin: 0 0 20px; padding: 12px 16px; font-size: 13.5px; color: var(--yq-ink-soft);
+  border: 1px solid var(--yq-line-soft); border-radius: var(--yq-radius-sm); background: var(--yq-paper);
+}
+.yq-pdp .your--choices--single.is-on,
+.yq-pdp .your--choices--combo.is-on{ display: block; }
+.yq-pdp .your--choices{ color: var(--yq-ink); font-weight: 600; }
+.yq-pdp .your--choices--single--price,
+.yq-pdp .your--choices--combo--price{ color: var(--yq-gold-dark); margin-left: 4px; }
+
+/* ---- Cảnh báo / trạng thái chọn (attributes.js ghi chữ vào .product--attr--msg) ---- */
+.yq-pdp{ --yq-attr-error: #B3261E; --yq-attr-error-soft: #FBEDEC; --yq-attr-ok: #3F7A4F; }
+.yq-pdp .product--attr--msg{
+  display: flex; align-items: center; gap: 6px; margin: -4px 0 10px;
+  font-size: 12.5px; line-height: 1.4; color: var(--yq-muted);
+}
+.yq-pdp .product--attr--msg:empty{ display: none; }
+.yq-pdp .product--attr--msg::before{
+  flex: 0 0 auto; width: 16px; height: 16px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font: 700 10px/1 var(--yq-sans); color: #fff;
+}
+.yq-pdp .product--attr--msg[data-state="done"]{ color: var(--yq-attr-ok); }
+.yq-pdp .product--attr--msg[data-state="done"]::before{ content: "\2713"; background: var(--yq-attr-ok); }
+.yq-pdp .product--attr--msg[data-state="error"]{ color: var(--yq-attr-error); font-weight: 600; }
+.yq-pdp .product--attr--msg[data-state="error"]::before{ content: "!"; background: var(--yq-attr-error); }
+
+/* Nhóm thiếu khi bấm Add To Cart: viền trái đỏ + nền nhạt, tự hết khi chọn lại */
+.yq-pdp .product--attr.is-invalid,
+.yq-pdp .sku--variables--zone.is-invalid{
+  margin-left: -14px; padding: 12px 14px 4px; border-radius: var(--yq-radius-sm);
+  background: var(--yq-attr-error-soft); box-shadow: inset 3px 0 0 var(--yq-attr-error);
+  transition: background .25s var(--yq-ease);
+}
+.yq-pdp .is-invalid .product--attr--name,
+.yq-pdp .is-invalid .sku--variables--title{ color: var(--yq-attr-error); }
+.yq-pdp .is-invalid .single--attribute label,
+.yq-pdp .is-invalid .more--attr,
+.yq-pdp .is-invalid .dropdown-button,
+.yq-pdp .is-invalid .sku--variable{ border-color: rgba(179,38,30,.45); }
+
+/* Modal v2 / popup v3: chữ trạng thái nằm dưới tên trong head */
+.yq-pdp .modal--attribute--head .product--attr--msg,
+.yq-pdp .sku--head--pop--mobile .product--attr--msg{ margin: 4px 0 0; }
+.yq-pdp .modal--attribute--head .product--attr--name,
+.yq-pdp .sku--tip--mobile{ margin: 0; }
+.yq-pdp .modal--attribute--foot{ padding: 14px 22px; border-top: 1px solid var(--yq-line-soft); text-align: right; }
+.yq-pdp .modal--attribute--done{
+  padding: 10px 26px; border: 0; border-radius: var(--yq-radius-pill);
+  background: var(--yq-ink); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+
+/* Cảnh báo số lượng min/max (quantity.js) */
+.yq-pdp #warning-min-max-voucher:not(:empty){
+  display: inline-flex; align-items: center; gap: 6px; color: var(--yq-attr-error); font-weight: 600; font-size: 12.5px;
+}
+.yq-pdp #warning-min-max-voucher:not(:empty)::before{
+  content: "!"; width: 16px; height: 16px; border-radius: 50%; background: var(--yq-attr-error); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font: 700 10px/1 var(--yq-sans);
+}

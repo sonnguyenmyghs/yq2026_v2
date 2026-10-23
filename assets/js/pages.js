@@ -145,27 +145,10 @@
      4. Product detail
      ====================================================================== */
   YQ.initProduct = function () {
-    /* Toàn bộ nội dung PDP (gallery, info, option, giá, related) là HTML tĩnh trong
-       product.html — backend in sẵn. JS chỉ xử lý tương tác:
+    /* Toàn bộ nội dung PDP (gallery, info, giá, thuộc tính, related) là HTML tĩnh
+       — backend PHP in sẵn, JS không tính giá. JS chỉ xử lý:
          - bấm thumb -> đổi ảnh chính
-         - chọn option -> giá + nhãn nút theo data-price / data-compare / data-unit
-         - đổi số lượng -> nhãn nút */
-    var $sel = $('#pdpOptions .yq-option.is-active').first();
-    var qty = 1;
-
-    function paint() {
-      if (!$sel.length) return;
-      var price = parseFloat($sel.attr('data-price')) || 0;
-      var compareAt = parseFloat($sel.attr('data-compare')) || 0;
-      var pct = YQ.discount(price, compareAt);
-      var unit = $sel.attr('data-unit');
-      $('#pdpPrice').html(
-        YQ.priceHtml(price, compareAt) +
-        (pct ? '<em class="yq-pdp__save">Save ' + pct + '%</em>' : '') +
-        (unit ? '<small>per ' + YQ.escape(unit) + '</small>' : ''));
-      $('#pdpAddLabel').text('Add to cart — ' + YQ.money0(price * qty));
-    }
-
+       (thuộc tính: modules/attributes.js · thêm giỏ: modules/add-to-cart.js) */
     $(document).on('click', '#pdpThumbs .yq-pdp__thumb', function () {
       $('#pdpThumbs .yq-pdp__thumb').removeClass('is-active');
       $(this).addClass('is-active');
@@ -174,14 +157,6 @@
       $shot.removeAttr('loading');
       $('#pdpMain').empty().append($shot);
     });
-
-    $(document).on('click', '#pdpOptions .yq-option', function () {
-      $('#pdpOptions .yq-option').removeClass('is-active');
-      $sel = $(this).addClass('is-active');
-      paint();
-    });
-
-    $('#pdpQty').on('yq:qty', function (e, n) { qty = n; paint(); });
 
     YQ.stagger('#pdpRelated .yq-reveal');
     YQ.initReveal();

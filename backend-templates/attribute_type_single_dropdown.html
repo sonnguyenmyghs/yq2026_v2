@@ -1,0 +1,15 @@
+<!-- dropdown: 1 nút mở menu, chọn 1 giá trị. {$html_value_list_att} = attribute_type_value_single_dropdown.html -->
+<div class="dropdown-container product--attr" data-max="1" data-attr="{$k_list_att}" data-price="{$v_list_att['price']}" data-team="{$k_list_att}">
+    <b class="product--attr--name">{$v_list_att['name']} <span class="tip">{$html_max_choose}</span> {$html_price_attribute}</b>
+    <p class="product--attr--msg" aria-live="polite"></p>
+    <button type="button" class="dropdown-button">
+        <span class="dropdown-selected">Select</span>
+        <span class="dropdown-arrow">▼</span>
+    </button>
+    <div class="dropdown-menu">
+        <div class="dropdown-grid">
+            {$html_value_list_att}
+        </div>
+    </div>
+    <input type="hidden" name="attribute_v2[{$k_list_att}][name]" value="{$v_list_att['name']}">
+</div>

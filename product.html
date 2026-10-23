@@ -16,6 +16,7 @@
 <link href="assets/css/parts/buynow.css" rel="stylesheet">
 <link href="assets/css/parts/cart-anim.css" rel="stylesheet">
 <link href="assets/css/parts/account.css" rel="stylesheet">
+<link href="assets/css/parts/attributes.css" rel="stylesheet">
 </head>
 <body>
 
@@ -347,7 +348,9 @@
 </div>
 <!-- ========== /HEADER ========== -->
 
-<section style="padding:34px 0 clamp(56px,7vw,90px)" class="yq-pdp">
+<!-- Class/ data-* của template cũ (add-to-cart.js + attributes.js cần): sec--product--detail,
+     backend nối thêm {$use__attr__box} (dùng attribute v3) / {$tmp_no_choosee} ("noo__need__choose" = thuộc tính không bắt buộc) -->
+<section style="padding:34px 0 clamp(56px,7vw,90px)" class="yq-pdp sec--product--detail container__productdetail noo__need__choose" data-id="signature-chocolate-cake">
   <div class="yq-container">
     <a class="yq-back" href="shop.html">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
@@ -390,31 +393,51 @@
         <h1 id="pdpTitle">Signature Chocolate Cake</h1>
         <p class="yq-lead" id="pdpDesc">A modern classic—layers of velvety chocolate sponge, silky ganache, and refined finishes. Available in three sizes to suit any celebration.</p>
 
-        <div class="yq-pdp__price my-4" id="pdpPrice">$78<small>per Small</small></div>
+        <!-- Giá do PHP in như template cũ: {$discount__price__detail} (giá gốc gạch, nếu có) +
+             {$currencyProperty} <span>{$product_cost_format}</span>. JS không tính giá. -->
+        <div class="yq-pdp__price pd--price my-4" id="pdpPrice">SGD <span>78.00</span></div>
 
-        <div class="mb-4">
-          <span class="yq-field-label" id="pdpOptionLabel">Select option</span>
-          <!-- Mỗi option: data-opt (id) · data-price (giá) · data-compare (giá gốc, nếu giảm) · data-unit (chữ sau "per") -->
-          <div class="d-flex flex-wrap gap-2" id="pdpOptions">
-            <button class="yq-option is-active" type="button" data-opt="small" data-price="78" data-unit="Small">Small (6-inch, serves 6)</button>
-            <button class="yq-option" type="button" data-opt="medium" data-price="108" data-unit="Medium">Medium (8-inch, serves 10)</button>
-            <button class="yq-option" type="button" data-opt="large" data-price="148" data-unit="Large">Large (10-inch, serves 14)</button>
+        <!-- "Your choices": giá trị đã chọn + giá nhóm / giá combo (JS: attributes.js điền nội dung) -->
+        <div class="your--choices--single">Your choices: <span class="your--choices"></span> <span class="your--choices--single--price"></span></div>
+        <div class="your--choices--combo">Your choices: <span class="your--choices"></span> <span class="your--choices--combo--price"></span></div>
+
+        <!-- Thuộc tính sản phẩm do backend đổ vào {$html_list_attribute} (giữ id/tên field như template cũ —
+             add-to-cart.js serialize form này gửi kèm addCart). Mỗi fragment là 1 trong
+             backend-templates/attribute_type_*.html: v1 / v2 / v3 / dropdown. Ví dụ dưới đây chỉ để xem demo,
+             backend thay toàn bộ nội dung form. -->
+        <form id="form-list-attribute">
+          <!-- v1: attribute_type_single.html (checkbox, chọn tối đa data-max) -->
+          <div class="mt-2 mb-2 product--attr v1" data-max="2" data-attr="1" data-price="5.00" data-team="1">
+            <b class="mb-0 product--attr--name">Flavour <span class="tip">(Choose 2)</span> <span class="tip">+SGD 5.00</span></b>
+            <p class="product--attr--msg" aria-live="polite"></p>
+            <div class="d-flex">
+              <div class="single--attribute" data-price="0" data-team="1">
+                <input type="checkbox" id="att_1_1" name="attribute_v2[1][value_att][Hazelnut]" value="Hazelnut">
+                <label for="att_1_1" title="Hazelnut"><span>Hazelnut</span></label>
+              </div>
+              <div class="single--attribute" data-price="0" data-team="1">
+                <input type="checkbox" id="att_1_2" name="attribute_v2[1][value_att][Raspberry]" value="Raspberry">
+                <label for="att_1_2" title="Raspberry"><span>Raspberry</span></label>
+              </div>
+              <div class="single--attribute" data-price="0" data-team="1">
+                <input type="checkbox" id="att_1_3" name="attribute_v2[1][value_att][Cranberry]" value="Cranberry">
+                <label for="att_1_3" title="Cranberry"><span>Cranberry</span></label>
+              </div>
+            </div>
+            <input type="hidden" name="attribute_v2[1][name]" value="Flavour">
           </div>
-        </div>
-
-        <!-- Thuộc tính sản phẩm do backend đổ vào (giữ id như template cũ — add-to-cart.js
-             serialize form này gửi kèm addCart). Mỗi nhóm: .product--attr[data-max]
-             > .single--attribute input. -->
-        <form id="form-list-attribute"></form>
+        </form>
+        <div class="mb-3"><b><!-- {$html_combo_surchage} (PHP đổ) --></b></div>
 
         <div class="mb-4">
           <span class="yq-field-label">Quantity</span>
-          <div class="yq-qty" id="pdpQty" data-qty data-min="1">
-            <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease">
+          <!-- Như template cũ: .btns--count > .minus / .input__quantity / .plus (JS: modules/quantity.js) -->
+          <div class="yq-qty btns--count" id="pdpQty">
+            <button class="yq-qty__btn minus" type="button" aria-label="Decrease">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14"/></svg>
             </button>
-            <span class="yq-qty__val" data-qty-val>1</span>
-            <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase">
+            <input class="yq-qty__val input__quantity" value="1" id="rdChangeQuantity" name="redeemtion[quantity]" type="number" aria-label="Quantity"><!-- value="{$_product_min_redeem}" -->
+            <button class="yq-qty__btn plus" type="button" aria-label="Increase">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
             </button>
           </div>
@@ -424,16 +447,26 @@
         <div class="yq-buyrow" id="pdpBuyActions">
           <button class="yq-btn yq-btn--block yq-btn--lg addToCart" type="button" id="pdpAdd" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1" data-variable="1">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-            <span id="pdpAddLabel">Add to cart — $78</span>
+            <span id="pdpAddLabel">Add to cart</span>
           </button>
           <button class="yq-btn yq-btn--gold yq-btn--block yq-btn--lg yq-buynow addToCart" type="button" id="pdpBuyNow" data-buynow="1" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg>
-            <span id="pdpBuyLabel">Buy Now — $78</span>
+            <span id="pdpBuyLabel">Buy Now</span>
           </button>
         </div>
+        <div class="add--product--mobile"><a href="" class="btn yq-btn yq-btn--block yq-btn--lg"><span class="ti-plus"></span> <span>Add to cart</span></a></div>
         <div class="yq-small mt-2"><span id="warning-min-max-voucher" class="warning-expire-date"></span></div>
         <input type="hidden" class="status-product-attribute" value="0">
-        <input type="hidden" class="currency-hotel" value="SGD">
+        <input type="hidden" class="currency-hotel" value="SGD"><!-- {$name_hotel_currency} -->
+
+        <!-- Biến PHP của template cũ (giá trị dưới đây chỉ là demo):
+             min/max số lượng · giá theo bậc số lượng (quantity.js) · combo (attributes.js) -->
+        <input type="hidden" id="min_voucher_buy" value="1"><!-- {$_product_min_redeem} -->
+        <input type="hidden" id="max_voucher_buy" value="10"><!-- {$_product_max_redeem} -->
+        <input type="hidden" class="best__price__check" value="1"><!-- {$best__price__check} -->
+        <input type="hidden" id="arr_best_price" value='[{"name":"3","price":"72.00"},{"name":"6","price":"68.00"}]'><!-- value='$arrBestPrice__Json' -->
+        <input type="hidden" id="arr_combo_surchage" value='{}'><!-- value='{$arr_combo_surchage}' -->
+        <!-- {$input__best__price} -->
 
         <div class="yq-trust">
           <span data-trust="check">In stock</span>
@@ -625,8 +658,7 @@
   <div class="yq-buybar__info">
     <span class="yq-buybar__name" id="pdpBarName">Signature Chocolate Cake</span>
     <span class="yq-buybar__meta">
-      <span class="yq-buybar__price" id="pdpBarPrice">$78</span>
-      <span class="yq-buybar__opt" id="pdpBarOpt">Small (6-inch, serves 6)</span>
+      <span class="yq-buybar__price pd--price" id="pdpBarPrice">SGD <span>78.00</span></span>
     </span>
   </div>
   <button class="yq-btn yq-btn--gold addToCart" type="button" id="pdpBarBuy" data-buynow="1" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1">
@@ -645,6 +677,8 @@
 <script src="assets/js/modules/buynow.js"></script>
 <script src="assets/js/modules/cart-anim.js"></script>
 <script src="assets/js/modules/add-to-cart.js"></script>
+<script src="assets/js/modules/attributes.js"></script>
+<script src="assets/js/modules/quantity.js"></script>
 <script src="assets/js/modules/account.js"></script>
 <script>
   jQuery(function ($) {

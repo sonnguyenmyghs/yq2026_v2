@@ -94,11 +94,9 @@ $(function () {
 
         //condition to add cart
 
-        if (flagVariable == 1) {
-            return;
-        }
-
-        if (flagAttribute == 1) {
+        // chưa chọn đủ: attributes.js tô đỏ nhóm thiếu + ghi lý do + cuộn tới
+        if (flagVariable == 1 || flagAttribute == 1) {
+            $(document).trigger('yq:attr-invalid');
             return;
         }
 
@@ -197,16 +195,7 @@ $(function () {
             return;
         }
 
-        // Ở trang chi tiết: lấy option đang chọn; card ở trang list: option đầu tiên
-        var option = product.options[0];
-        if (button.data('page') != 1) {
-            var optionId = $('#pdpOptions .yq-option.is-active').attr('data-opt');
-            $.each(product.options, function (i, item) {
-                if (String(item.id) == optionId) option = item;
-            });
-        }
-
-        YQ.cart.add(product, option, parseInt(cartQuantiry) || 1);
+        YQ.cart.add(product, product.options[0], parseInt(cartQuantiry) || 1);
 
         if (button.data('buynow') == '1') {
             setTimeout(function () { window.location.href = 'checkout.html'; }, 400);
