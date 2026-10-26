@@ -290,12 +290,14 @@
      5. Cart badge
      ====================================================================== */
   YQ.syncCartBadge = function (bump) {
-    /* Chế độ server (có <span id="root" data-base>): số trên badge do backend in sẵn
-       và add-to-cart.js cập nhật theo totalItems — không lấy số từ giỏ demo đè lên. */
-    if (document.getElementById('root')) return;
-    var n = YQ.cart.count();
+    /* Chế độ server (có #root[data-base]): số trên badge do PHP in sẵn ({$totalItemsCart})
+       và add-to-cart.js cập nhật theo totalItems — giữ nguyên số đó, chỉ bật .is-on để
+       badge hiện (CSS ẩn badge bằng scale(0) khi chưa có .is-on).
+       Bản demo: lấy số từ giỏ localStorage. */
+    var isServer = !!document.getElementById('root');
     $('#yqCartCount, #yqCartCountM').each(function () {
       var $b = $(this);
+      var n = isServer ? (parseInt($b.text(), 10) || 0) : YQ.cart.count();
       $b.text(n).toggleClass('is-on', n > 0);
       if (bump && n > 0) {
         $b.removeClass('is-bump');

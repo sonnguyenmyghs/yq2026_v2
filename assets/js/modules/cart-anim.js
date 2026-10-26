@@ -652,7 +652,7 @@
   /* Header có thể được render lại (agent khác) → đồng bộ lại badge cho chắc */
   $(D).on('yq:header-ready', function () {
     cancelBadgeHold();
-    if ($('#root').length) return;       // chế độ server: giữ số backend in sẵn
+    if ($('#root').length) return;       // chế độ server: app.js đã bật badge theo số PHP in sẵn
     paintBadge(YQ.cart.count(), false);
   });
 
