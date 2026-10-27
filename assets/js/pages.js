@@ -249,23 +249,18 @@
      8. Checkout (4 bước)
      ====================================================================== */
   YQ.initCheckout = function () {
-    var steps = ['Information', 'Shipping', 'Payment', 'Review'];
+    // Toàn bộ markup (thanh bước, summary, review, màn cảm ơn, giỏ trống) là HTML tĩnh trong checkout.html
+    // — JS chỉ chuyển bước, validate, đổ text vào review và bật/tắt các khối có sẵn.
     var current = 1;
 
     function paintSteps() {
-      $('#coSteps').html(steps.map(function (s, i) {
-        var n = i + 1;
-        var cls = n === current ? 'is-active' : (n < current ? 'is-done' : '');
-        var num = n < current ? YQ.icon('check', 12) : n;
-        return (i ? '<span class="yq-step__bar"></span>' : '') +
-          '<span class="yq-step ' + cls + '" data-step-idx="' + n + '">' +
-            '<span class="yq-step__num">' + num + '</span>' + s +
-          '</span>';
-      }).join(''));
-    }
-
-    function paintSummary() {
-      $('#coSummary').html(YQ.summaryHtml({ showItems: true }));
+      $('#coSteps .yq-step').each(function () {
+        var n = parseInt($(this).data('step-idx'), 10);
+        var done = n < current;
+        $(this).toggleClass('is-active', n === current).toggleClass('is-done', done);
+        $(this).find('.yq-step__n').prop('hidden', done);
+        $(this).find('.yq-step__ok').prop('hidden', !done);
+      });
     }
 
     function show(n) {
@@ -289,51 +284,30 @@
       return ok;
     }
 
-    function paintReview() {
-      var g = function (id) { return $.trim($('#' + id).val()) || '—'; };
-      $('#coReview').html(
-        '<div class="row g-4">' +
-          '<div class="col-md-6">' +
-            '<div class="yq-tiny yq-muted mb-2">Contact</div>' +
-            '<div>' + YQ.escape(g('coFirst') + ' ' + g('coLast')) + '</div>' +
-            '<div class="yq-small yq-muted">' + YQ.escape(g('coEmail')) + '</div>' +
-            '<div class="yq-small yq-muted">' + YQ.escape(g('coPhone')) + '</div>' +
-          '</div>' +
-          '<div class="col-md-6">' +
-            '<div class="yq-tiny yq-muted mb-2">Delivery</div>' +
-            '<div>' + YQ.escape(g('coAddress')) + '</div>' +
-            '<div class="yq-small yq-muted">Singapore ' + YQ.escape(g('coPostal')) + '</div>' +
-            '<div class="yq-small yq-muted">' + YQ.escape($('#coDate').val() || 'Next available date') + '</div>' +
-          '</div>' +
-          '<div class="col-12">' +
-            '<div class="yq-tiny yq-muted mb-2">Payment</div>' +
-            '<div>' + YQ.icon('card', 15) + ' Card ending ' + YQ.escape(($.trim($('#coCard').val()) || '0000').slice(-4)) + '</div>' +
-          '</div>' +
-        '</div>'
-      );
+    function fillReview() {
+      $('#coReview [data-co-review]').each(function () {
+        var id = $(this).data('co-review');
+        var v = $.trim($('#' + id).val());
+        if (id === 'coCard') v = (v || '0000').slice(-4);
+        if (id === 'coDate') v = v || 'Next available date';
+        $(this).text(v || '—');
+      });
     }
 
     $(document).on('click', '[data-co-next]', function () {
       var n = parseInt($(this).data('co-next'), 10);
       if (!validate(current)) { YQ.toast('Please complete the required fields'); return; }
-      if (n === 4) paintReview();
+      if (n === 4) fillReview();
       show(n);
     });
     $(document).on('click', '[data-co-back]', function () { show(parseInt($(this).data('co-back'), 10)); });
     $(document).on('click', '#coSteps .yq-step.is-done', function () { show(parseInt($(this).data('step-idx'), 10)); });
 
     $(document).on('click', '#coPlaceOrder', function () {
-      var num = 'GH' + Date.now().toString().slice(-8);
       YQ.cart.clear();
-      $('#coMain').html(
-        '<div class="yq-panel text-center py-5">' +
-          '<div class="yq-empty__icon" style="background:var(--yq-gold-soft);color:var(--yq-gold-dark)">' + YQ.icon('check', 28) + '</div>' +
-          '<h2 class="yq-h2 mt-3 mb-2">Thank you for your order</h2>' +
-          '<p class="yq-muted mb-1">Order <b style="color:var(--yq-ink)">' + num + '</b> is confirmed.</p>' +
-          '<p class="yq-muted mb-4">A receipt has been sent to your email.</p>' +
-          '<a class="yq-btn" href="index.html">Back to the shop ' + YQ.icon('arrow', 16) + '</a>' +
-        '</div>'
-      );
+      $('#coOrderNo').text('GH' + Date.now().toString().slice(-8));   // demo — production: {$order_code}
+      $('.co-pane').hide();
+      $('#coDone').fadeIn(220);
       $('#coAside').fadeOut(200);
       $('#coSteps').fadeOut(200);
       $('html,body').animate({ scrollTop: 0 }, 350);
@@ -355,24 +329,7 @@
       $(this).addClass('is-active');
     });
 
-    $(document).on('yq:cart-changed', paintSummary);
-
-    if (!YQ.cart.items.length) {
-      $('#coMain').html(
-        '<div class="yq-panel yq-empty">' +
-          '<div class="yq-empty__icon">' + YQ.icon('bag', 26) + '</div>' +
-          '<h3 class="yq-h3 mb-2">Your cart is empty</h3>' +
-          '<p class="yq-muted mb-4">Add something lovely before checking out.</p>' +
-          '<a class="yq-btn" href="shop.html">Browse the shop ' + YQ.icon('arrow', 16) + '</a>' +
-        '</div>'
-      );
-      $('#coAside, #coSteps').hide();
-      return;
-    }
-
     paintSteps();
-    paintSummary();
-    show(1);
   };
 
   /* ======================================================================

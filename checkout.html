@@ -355,9 +355,27 @@
       Back to cart
     </a>
 
-    <div class="yq-steps" id="coSteps"></div>
+    <!-- Thanh bước (HTML tĩnh). JS chỉ đổi class is-active / is-done khi chuyển bước
+         và bật/tắt hidden giữa số (.yq-step__n) với icon check (.yq-step__ok). -->
+    <div class="yq-steps" id="coSteps">
+      <span class="yq-step is-active" data-step-idx="1"><span class="yq-step__num"><span class="yq-step__n">1</span><svg class="yq-i yq-step__ok" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>Information</span>
+      <span class="yq-step__bar"></span>
+      <span class="yq-step" data-step-idx="2"><span class="yq-step__num"><span class="yq-step__n">2</span><svg class="yq-i yq-step__ok" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>Shipping</span>
+      <span class="yq-step__bar"></span>
+      <span class="yq-step" data-step-idx="3"><span class="yq-step__num"><span class="yq-step__n">3</span><svg class="yq-i yq-step__ok" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>Payment</span>
+      <span class="yq-step__bar"></span>
+      <span class="yq-step" data-step-idx="4"><span class="yq-step__num"><span class="yq-step__n">4</span><svg class="yq-i yq-step__ok" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>Review</span>
+    </div>
 
-    <div class="row g-4">
+    <!-- Giỏ trống (HTML tĩnh) — PHP bỏ class d-none + ẩn #coSteps/.row khi {$totalItemsCart} == 0 -->
+    <div class="yq-panel yq-empty d-none" id="coEmpty">
+      <div class="yq-empty__icon"><svg class="yq-i" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
+      <h3 class="yq-h3 mb-2">Your cart is empty</h3>
+      <p class="yq-muted mb-4">Add something lovely before checking out.</p>
+      <a class="yq-btn" href="shop.html">Browse the shop <svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+    </div>
+
+    <div class="row g-4" id="coLayout">
       <!-- Main -->
       <div class="col-lg-7 col-xl-8" id="coMain">
 
@@ -418,7 +436,7 @@
           <span class="yq-field-label mt-4">Delivery method</span>
           <div class="d-flex flex-column gap-2">
             <button class="yq-delivery co-ship is-active" type="button">
-              <span class="yq-delivery__icon" data-icon="truck"></span>
+              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg></span>
               <span class="flex-grow-1">
                 <span class="yq-delivery__t d-block">Standard islandwide</span>
                 <span class="yq-delivery__s">2–3 business days</span>
@@ -426,7 +444,7 @@
               <span class="yq-sum__val yq-small">$15.00</span>
             </button>
             <button class="yq-delivery co-ship" type="button">
-              <span class="yq-delivery__icon" data-icon="clock"></span>
+              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><polyline points="12 7.5 12 12 15 13.8"/></svg></span>
               <span class="flex-grow-1">
                 <span class="yq-delivery__t d-block">Same-day delivery</span>
                 <span class="yq-delivery__s">Order before 2pm</span>
@@ -434,7 +452,7 @@
               <span class="yq-sum__val yq-small">$25.00</span>
             </button>
             <button class="yq-delivery co-ship" type="button">
-              <span class="yq-delivery__icon" data-icon="pin"></span>
+              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
               <span class="flex-grow-1">
                 <span class="yq-delivery__t d-block">Self-collection</span>
                 <span class="yq-delivery__s">Hotel lobby, 10am–8pm</span>
@@ -454,7 +472,7 @@
         <!-- STEP 3: Payment -->
         <div class="co-pane yq-panel" data-pane="3" style="display:none">
           <h2 class="yq-serif mb-4 d-flex align-items-center gap-2" style="font-size:1.45rem">
-            <span data-icon="lock" style="color:var(--yq-gold-dark)"></span> Payment
+            <span style="color:var(--yq-gold-dark)"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg></span> Payment
           </h2>
           <div class="row g-3">
             <div class="col-12">
@@ -480,8 +498,8 @@
           </div>
 
           <div class="yq-trust">
-            <span data-trust="lock">256-bit SSL encryption</span>
-            <span data-trust="card">VISA · MC · AMEX · PayNow</span>
+            <span><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg>256-bit SSL encryption</span>
+            <span><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="M3 10h18"/></svg>VISA · MC · AMEX · PayNow</span>
           </div>
 
           <div class="d-flex gap-2 mt-4">
@@ -495,7 +513,27 @@
         <!-- STEP 4: Review -->
         <div class="co-pane yq-panel" data-pane="4" style="display:none">
           <h2 class="yq-serif mb-4" style="font-size:1.45rem">Review your order</h2>
-          <div id="coReview"></div>
+          <!-- HTML tĩnh — JS chỉ đổ text từ các ô input vào [data-co-review="<id input>"] -->
+          <div id="coReview">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="yq-tiny yq-muted mb-2">Contact</div>
+                <div><span data-co-review="coFirst">—</span> <span data-co-review="coLast">—</span></div>
+                <div class="yq-small yq-muted" data-co-review="coEmail">—</div>
+                <div class="yq-small yq-muted" data-co-review="coPhone">—</div>
+              </div>
+              <div class="col-md-6">
+                <div class="yq-tiny yq-muted mb-2">Delivery</div>
+                <div data-co-review="coAddress">—</div>
+                <div class="yq-small yq-muted">Singapore <span data-co-review="coPostal">—</span></div>
+                <div class="yq-small yq-muted" data-co-review="coDate">Next available date</div>
+              </div>
+              <div class="col-12">
+                <div class="yq-tiny yq-muted mb-2">Payment</div>
+                <div><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="M3 10h18"/></svg> Card ending <span data-co-review="coCard">0000</span></div>
+              </div>
+            </div>
+          </div>
           <div class="d-flex gap-2 mt-4">
             <button class="yq-btn yq-btn--yqost" type="button" data-co-back="3">Back</button>
             <button class="yq-btn yq-btn--gold flex-grow-1 yq-btn--lg" type="button" id="coPlaceOrder">Place order
@@ -507,11 +545,68 @@
           </p>
         </div>
 
+        <!-- Đặt hàng thành công (HTML tĩnh). Mã đơn #coOrderNo <- {$order_code} (demo: JS tạo mã giả) -->
+        <div class="yq-panel text-center py-5" id="coDone" style="display:none">
+          <div class="yq-empty__icon" style="background:var(--yq-gold-soft);color:var(--yq-gold-dark)"><svg class="yq-i" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></div>
+          <h2 class="yq-h2 mt-3 mb-2">Thank you for your order</h2>
+          <p class="yq-muted mb-1">Order <b style="color:var(--yq-ink)" id="coOrderNo">{$order_code}</b> is confirmed.</p>
+          <p class="yq-muted mb-4">A receipt has been sent to your email.</p>
+          <a class="yq-btn" href="index.html">Back to the shop <svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+        </div>
+
       </div>
 
       <!-- Aside -->
+      <!-- ========== ORDER SUMMARY (HTML tĩnh — PHP đổ từ session giỏ hàng) ==========
+           Biến PHP:
+             .co-sum__items          <- {foreach $cartItems as $item} ... {/foreach}  (mỗi item 1 dòng .co-sum__item bên dưới)
+               img                   <- {$item.image}  /  alt {$item.name}
+               .co-sum__name         <- {$item.name}
+               .co-sum__qty          <- {$item.qty}
+               .co-sum__price        <- {$item.total_format} {$_OLD_CURRENCY_BY_CART}
+             #coSubtotal             <- {$subTotalCart}
+             #coShipping             <- {$shippingCart}   (0 => "Free")
+             #coTax                  <- {$taxCart}
+             #coTotal                <- {$totalCostCart} {$_OLD_CURRENCY_BY_CART}
+             .yq-ship-note           <- {$arlet_buy_more_yqreward} / ẩn bằng {$hidden_ship_note}
+           JS không render lại khối này. -->
       <div class="col-lg-5 col-xl-4" id="coAside">
-        <div class="yq-panel yq-sticky" id="coSummary"></div>
+        <div class="yq-panel yq-sticky" id="coSummary">
+          <h3 class="yq-serif mb-3" style="font-size:1.3rem">Order summary</h3>
+
+          <div class="co-sum__items">
+            <!-- {foreach $cartItems as $item} -->
+            <div class="co-sum__item d-flex gap-3 align-items-center mb-3">
+              <div class="yq-media" style="width:52px;height:52px;border-radius:8px;flex:none"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
+              <div class="flex-grow-1 min-width-0">
+                <div class="co-sum__name yq-small text-truncate" style="color:var(--yq-ink)">Signature Chocolate Cake</div>
+                <div class="yq-tiny yq-muted">Qty: <span class="co-sum__qty">1</span></div>
+              </div>
+              <div class="co-sum__price yq-sum__val yq-small">$88.00</div>
+            </div>
+            <div class="co-sum__item d-flex gap-3 align-items-center mb-3">
+              <div class="yq-media" style="width:52px;height:52px;border-radius:8px;flex:none"><img src="assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
+              <div class="flex-grow-1 min-width-0">
+                <div class="co-sum__name yq-small text-truncate" style="color:var(--yq-ink)">Pantry Hamper</div>
+                <div class="yq-tiny yq-muted">Qty: <span class="co-sum__qty">2</span></div>
+              </div>
+              <div class="co-sum__price yq-sum__val yq-small">$136.00</div>
+            </div>
+            <!-- {/foreach} -->
+          </div>
+          <hr style="border-color:var(--yq-line-soft);opacity:1">
+
+          <div class="yq-sum"><span>Subtotal</span><span class="yq-sum__val" id="coSubtotal">$224.00</span></div>
+          <div class="yq-sum"><span>Shipping</span><span class="yq-sum__val" id="coShipping">$15.00</span></div>
+          <div class="yq-sum"><span>Tax (9%)</span><span class="yq-sum__val" id="coTax">$20.16</span></div>
+          <div class="yq-sum yq-sum--total"><span>Total</span><span class="yq-sum__val" id="coTotal">$259.16</span></div>
+
+          <div class="yq-ship-note"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg>
+            <div class="w-100">Add $76.00 more for free shipping
+              <div class="yq-ship-bar"><i style="width:75%"></i></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -664,8 +759,6 @@
   jQuery(function ($) {
     YQ.initHeader();
     YQ.initFooter();
-    $('[data-icon]').each(function () { $(this).html(YQ.icon($(this).data('icon'), 18)); });
-    $('[data-trust]').each(function () { $(this).prepend(YQ.icon($(this).data('trust'), 15)); });
     YQ.initCheckout();
   });
 </script>
