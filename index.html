@@ -21,6 +21,9 @@
 <body>
 
 <!-- ========== HEADER (HTML tĩnh — giống nhau mọi trang, chỉ khác mục nav .is-active) ========== -->
+<!-- Nút account #yqAccountBtn: đã đăng nhập ({if $isLoggedIn}) thì thêm class "is-signed", thêm hidden cho
+     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in {$member.initial} (chữ cái đầu của first name,
+     viết hoa); aria-label="My account — {$member.first_name}". JS (account.js) chỉ đổi class/attr/text. -->
 <header class="yq-header" id="yqHeader">
   <div class="yq-header__shell">
     <div class="yq-container">
@@ -34,7 +37,7 @@
           <a class="yq-logo" href="index.html" aria-label="Grand Hyatt Singapore"><span class="yq-logo__mark"><span class="yq-logo__word">Grand</span><span class="yq-logo__bar" aria-hidden="true"></span><span class="yq-logo__word">Hyatt</span><span class="yq-logo__tm" aria-hidden="true">™</span></span><span class="yq-logo__sub">Singapore</span></a>
         </div>
         <div class="yq-header__tools yq-header__tools--end yq-acct-anchor">
-          <a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></a>
+          <a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-yq-acct-icon><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg><span class="yq-acct-initial" id="yqAcctInitial" hidden></span></a>
 
 <!-- ========== AUTH POPUP (Log in / Register) ========== -->
 <div class="modal fade yq-auth" id="yqAuthModal" tabindex="-1" aria-labelledby="yqAuthTitle" aria-hidden="true">
@@ -347,10 +350,57 @@
   </div>
 </div>
 <!-- ========== /HEADER ========== -->
+<!-- ========== MEMBER PANEL "My Functions" (HTML tĩnh — offcanvas Bootstrap trượt từ phải) ==========
+     Mở từ nút Account trong menu mobile (#yqOffcanvas) và từ mục có pane con (My wallet) của
+     dropdown #yqAcctPop. Đặt ở cấp <body> (không lồng trong <header>: header có backdrop-filter
+     nên phần tử position:fixed bên trong sẽ bị neo theo header).
+     Production chỉ cần in khi đã đăng nhập ({if $isLoggedIn} … {/if}) — chưa đăng nhập thì JS mở
+     popup Log in thay vì panel.
+     Biến PHP:
+       #yqMfnName              <- {$member.first_name}            (trống thì phần trước @ của {$member.email})
+       #yqMfnMail              <- {$member.email}                 (trống thì thêm thuộc tính hidden)
+       Pane "wallet" (#yqMfnWallet):
+         #yqMfnWalletBal       <- {$member.wallet_balance_format} (VD $0.00 — store credit + gift card)
+     Danh sách mục giống #yqAcctPop trong HEADER — đổi menu thì sửa cả hai.
+     Pane con: mỗi pane là 1 div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] (hidden); nút [data-yq-view="<tên>"]
+     mở pane đó, [data-yq-view=""] quay về danh sách. Thêm pane mới = thêm 1 khối div + 1 nút.
+     JS (account.js) chỉ: điền tên/email bằng .text() (demo: từ localStorage), bật/tắt hidden giữa
+     #yqMfnMain và các pane, mở/đóng offcanvas. -->
+<aside class="offcanvas offcanvas-end yq-mfn" tabindex="-1" id="yqMemberPanel" aria-labelledby="yqMfnTitle">
+  <div class="yq-mfn__head">
+    <h2 class="yq-mfn__title" id="yqMfnTitle">My Functions</h2>
+    <button class="yq-mfn__close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="yq-mfn__body">
+    <div id="yqMfnMain">
+      <div class="yq-mfn__hello">
+        <p class="yq-mfn__hi" id="yqMfnHi">Hi, <em id="yqMfnName"></em><span class="yq-mfn__mail" id="yqMfnMail"></span></p>
+        <a class="yq-btn yq-btn--sm" href="member/profile.html?edit=1">Edit</a>
+      </div>
+      <div class="yq-mfn__list">
+          <a class="yq-mfn__item" href="member/profile.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My profile</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span></a>
+          <a class="yq-mfn__item" href="member/orders.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My orders</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span></a>
+          <button class="yq-mfn__item" type="button" data-yq-view="wallet"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My wallet</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a1.5 1.5 0 0 1 0 3H5.5"/><rect x="3" y="7.5" width="18" height="11.5" rx="2.2"/><circle cx="16.5" cy="13.2" r="1.15" fill="currentColor" stroke="none"/></svg></span></button>
+          <a class="yq-mfn__item" href="member/password.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Change password</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg></span></a>
+          <a class="yq-mfn__item" href="member/invite.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Invite friends</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c1.1-3.6 3.6-5.2 6.5-5.2 1 0 1.9.2 2.7.5"/><path d="M17.5 14v6M14.5 17h6"/></svg></span></a>
+          <button class="yq-mfn__item" type="button" data-yq-do="logout"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Logout</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.5h3.8A2.2 2.2 0 0 1 20 6.7v10.6a2.2 2.2 0 0 1-2.2 2.2H14"/><path d="M10 8.5 6.5 12l3.5 3.5M6.5 12H16"/></svg></span></button>
+      </div>
+    </div>
+    <div class="yq-mfn__pane" id="yqMfnWallet" data-yq-mfn-pane="wallet" hidden>
+      <button class="yq-auth__back" type="button" data-yq-view=""><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>My Functions</button>
+      <h3 class="yq-mfn__sub">My wallet</h3>
+      <p class="yq-mfn__lead">Store credit and gift-card balance, applied automatically at checkout.</p>
+      <div class="yq-mfn__stat"><b id="yqMfnWalletBal">$0.00</b><span>available credit</span></div>
+      <a class="yq-btn yq-btn--yqost yq-btn--block" href="shop.html?cat=dining">Buy a dining voucher <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+    </div>
+  </div>
+</aside>
+<!-- ========== /MEMBER PANEL ========== -->
 
 <!-- ============================ HERO SLIDER ============================ -->
 <!-- Slider 3 slide: ảnh nền + tiêu đề + mô tả + CTA riêng cho từng slide.
-     JS ở assets/js/modules/banner.js sẽ tự dựng nút prev/next, dot và bộ đếm. -->
+     Nút prev/next, dot và bộ đếm là HTML tĩnh (khối .yq-heroslider__foot bên dưới);
+     JS ở assets/js/modules/banner.js chỉ chuyển slide, bật dot đang chọn và đổi số đếm. -->
 <section class="yq-heroslider" id="yqHeroSlider"
          aria-roledescription="carousel" aria-label="Featured collections">
 
@@ -436,13 +486,29 @@
 
   </div>
 
-  <!-- Thanh điều khiển (mũi tên + dot + bộ đếm) — JS đổ nội dung vào -->
+  <!-- Thanh điều khiển (mũi tên + dot + bộ đếm) — HTML tĩnh.
+       Biến PHP (nếu slide lấy từ CMS):
+         .yq-heroslider__dots    <- {foreach $heroSlides as $i => $slide} ... {/foreach}  (mỗi slide 1 nút dot)
+           [data-hero-go]        <- {$i}   (0, 1, 2…)
+           aria-label            <- {$slide.title}   (trùng data-title của slide)
+         .yq-heroslider__count   <- <b>01</b> / {$heroSlides|count}  (số tổng 2 chữ số)
+       Chỉ 1 slide: PHP bỏ cả khối .yq-heroslider__foot + .yq-heroslider__prog (JS cũng tự ẩn).
+       JS (banner.js) chỉ bật .is-on / aria-selected cho dot và đổi text số slide hiện tại. -->
   <div class="yq-heroslider__foot">
     <div class="yq-container">
       <div class="yq-heroslider__ctrl">
-        <div class="yq-heroslider__arrows"></div>
-        <div class="yq-heroslider__dots" role="tablist" aria-label="Choose slide"></div>
-        <div class="yq-heroslider__count" aria-hidden="true"></div>
+        <div class="yq-heroslider__arrows">
+          <button type="button" class="yq-heroslider__btn" data-hero="prev" aria-label="Previous slide"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg></button>
+          <button type="button" class="yq-heroslider__btn" data-hero="next" aria-label="Next slide"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+        </div>
+        <div class="yq-heroslider__dots" role="tablist" aria-label="Choose slide">
+          <!-- {foreach $heroSlides as $i => $slide} -->
+          <button type="button" class="yq-heroslider__dot is-on" data-hero-go="0" role="tab" aria-label="Gifts of Distinction" aria-selected="true"></button>
+          <button type="button" class="yq-heroslider__dot" data-hero-go="1" role="tab" aria-label="The Festive Season" aria-selected="false"></button>
+          <button type="button" class="yq-heroslider__dot" data-hero-go="2" role="tab" aria-label="Unforgettable Experiences" aria-selected="false"></button>
+          <!-- {/foreach} -->
+        </div>
+        <div class="yq-heroslider__count" aria-hidden="true"><b data-hero-cur>01</b> / <span data-hero-total>03</span></div>
       </div>
     </div>
   </div>
@@ -469,25 +535,25 @@
     <div class="row g-4">
       <div class="col-md-6 col-lg-3">
         <div class="yq-usp yq-reveal">
-          <span class="yq-usp__icon" data-icon="truck"></span>
+          <span class="yq-usp__icon"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg></span>
           <div><h4>Delivery or collection</h4><p>Three daily delivery slots, or collect at the Lobby Level.</p></div>
         </div>
       </div>
       <div class="col-md-6 col-lg-3">
         <div class="yq-usp yq-reveal" data-delay="80">
-          <span class="yq-usp__icon" data-icon="leaf"></span>
+          <span class="yq-usp__icon"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4C10 4 4 9 4 16c0 2 .7 3.4.7 3.4S9 12 19 9c0 0-5.5 3.5-8 11 6.5 1 9-4 9-16Z"/></svg></span>
           <div><h4>Crafted in-house</h4><p>By our pastry team, daily.</p></div>
         </div>
       </div>
       <div class="col-md-6 col-lg-3">
         <div class="yq-usp yq-reveal" data-delay="160">
-          <span class="yq-usp__icon" data-icon="gift"></span>
+          <span class="yq-usp__icon"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg></span>
           <div><h4>Personalised gifting</h4><p>Add an eCard and message.</p></div>
         </div>
       </div>
       <div class="col-md-6 col-lg-3">
         <div class="yq-usp yq-reveal" data-delay="240">
-          <span class="yq-usp__icon" data-icon="lock"></span>
+          <span class="yq-usp__icon"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg></span>
           <div><h4>Secure checkout</h4><p>VISA, Mastercard, AMEX, PayNow.</p></div>
         </div>
       </div>
@@ -555,7 +621,7 @@
               From ten hampers to a thousand. Custom ribbons, your logo on the eCard, one invoice
               and a dedicated coordinator from brief to doorstep.
             </p>
-            <span class="yq-promo__cta">Request a quote</span>
+            <span class="yq-promo__cta">Request a quote<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span>
           </div>
         </a>
       </div>
@@ -576,7 +642,7 @@
               Prosperity yusheng, golden pineapple tarts and reunion hampers — reserve early,
               collection and delivery slots fill fast.
             </p>
-            <span class="yq-promo__cta">Shop the collection</span>
+            <span class="yq-promo__cta">Shop the collection<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span>
           </div>
         </a>
       </div>
@@ -781,19 +847,60 @@
        a.yq-cdrawer__viewcart <- {$_hiddenViewShowCart} + href="{$_BASE}/cart/?action=view"
        aside#yqCartDrawer     <- thêm class "is-empty" khi {$totalItemsCart} == 0 (JS cũng tự đồng bộ)
      Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- {$totalItemsCart}
-     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart. -->
+       #yqCdNote              <- note free shipping (xem comment trong khối, biến {$toFreeShippingCart} …)
+     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart.
+     Bản demo HTML (không có #root): cart-anim.js chỉ đổi text số lượng/giá/subtotal/note trên các dòng
+     mẫu có sẵn và gỡ dòng khi bấm X — không dựng dòng mới. -->
 <div class="yq-cdrawer-back" hidden></div>
-<aside class="yq-cdrawer is-empty" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
+<aside class="yq-cdrawer" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
   <header class="yq-cdrawer__head">
     <div>
       <span class="yq-cdrawer__eyebrow" id="yqCdEyebrow">Your shopping bag</span>
-      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">0 items</small></h2>
+      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">3 items</small></h2>
     </div>
     <button class="yq-cdrawer__close" type="button" data-yq-cd-close aria-label="Close"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </header>
   <div class="yq-cdrawer__body" id="yqCdBody">
     <div class="yq-cdrawer__gift d-none"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg><div></div></div>
-    <ul class="yq-cdrawer__list" id="yqCdList"></ul>
+    <ul class="yq-cdrawer__list" id="yqCdList">
+    <!-- {$contentCartHtml} — server in sẵn các dòng giỏ (fragment cart_product_single), add-to-cart.js thay
+         lại bằng data.html sau mỗi addCart. 2 dòng dưới chỉ là MẪU cho bản demo HTML: xoá khi gắn PHP.
+         Mỗi dòng: li.yq-cdrawer__row[data-key={$item.key}][data-price={$item.unit_price}] · img {$item.image}
+         · .yq-cdrawer__name {$item.name} · .yq-cdrawer__opt {$item.option_label} · [data-qty-val] {$item.qty}
+         · .yq-cdrawer__price {$item.total_format} -->
+    <li class="yq-cdrawer__row" data-key="signature-chocolate-cake::medium" data-price="88">
+      <div class="yq-cdrawer__media yq-media"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Signature Chocolate Cake</div>
+        <div class="yq-cdrawer__opt">Medium · 1 kg</div>
+        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
+          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+          <span class="yq-qty__val" data-qty-val>1</span>
+          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">$88.00</div>
+        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Signature Chocolate Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </li>
+    <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68">
+      <div class="yq-cdrawer__media yq-media"><img src="assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Pantry Hamper</div>
+        <div class="yq-cdrawer__opt">Classic · Gift message card</div>
+        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
+          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+          <span class="yq-qty__val" data-qty-val>2</span>
+          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">$136.00</div>
+        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Pantry Hamper"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </li>
+    </ul>
     <div class="yq-cdrawer__empty">
       <div class="yq-cdrawer__empty-icon"><svg class="yq-i" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
       <h3>Your bag is empty</h3>
@@ -802,8 +909,16 @@
     </div>
   </div>
   <footer class="yq-cdrawer__foot" id="yqCdFoot">
-    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$0.00</strong></div>
-    <div id="yqCdNote"></div>
+    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$224.00</strong></div>
+    <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
+           #yqCdShipNote <- còn thiếu tiền: ẩn bằng {$hidden_ship_note}
+             #yqCdToFree <- {$toFreeShippingCart}      #yqCdShipBar <- style="width:{$freeShippingPercent}%"
+           #yqCdShipFree <- đã đủ free ship: ẩn bằng {$hidden_ship_free}
+         Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
+    <div id="yqCdNote">
+      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">$76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
+      <div class="yq-cdrawer__note d-none" id="yqCdShipFree"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg><div>You have unlocked free shipping.</div></div>
+    </div>
     <div class="yq-cdrawer__actions">
       <a class="yq-btn yq-btn--gold yq-btn--block yq-cdrawer__checkout" href="checkout.html">Checkout <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
       <a class="yq-btn yq-btn--yqost yq-btn--block yq-cdrawer__viewcart" href="cart.html">View cart</a>
@@ -812,6 +927,21 @@
   </footer>
 </aside>
 <!-- ========== /CART SIDEBAR ========== -->
+
+<!-- ========== TOAST (HTML tĩnh — thông báo nhỏ góc phải dưới) ==========
+     <template id="yqToastTpl"> là khuôn 1 thông báo (không hiển thị). YQ.toast() trong app.js clone khuôn,
+     điền .yq-toast__msg bằng .text(), link (nếu có) bằng .text() + attr("href") rồi bỏ hidden, thêm vào
+     .yq-toast-wrap và tự gỡ bản clone sau ~4s. Không có biến PHP. -->
+<div class="yq-toast-wrap" id="yqToastWrap">
+  <template id="yqToastTpl">
+    <div class="yq-toast" role="status">
+      <span class="yq-toast__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>
+      <span class="yq-toast__msg"></span>
+      <a class="yq-toast__link" href="#" hidden></a>
+    </div>
+  </template>
+</div>
+<!-- ========== /TOAST ========== -->
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -828,7 +958,6 @@
   jQuery(function ($) {
     YQ.initHeader();
     YQ.initFooter();
-    $('[data-icon]').each(function () { $(this).html(YQ.icon($(this).data('icon'), 19)); });
     YQ.initReveal();   // markup đã tĩnh, chỉ cần bật hiệu ứng reveal
   });
 </script>

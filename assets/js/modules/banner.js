@@ -9,6 +9,8 @@
    Dùng event uỷ quyền ($(document).on('click', sel, fn)) cho DOM render động.
 
    Chức năng: hero carousel ở trang chủ
+     Markup (slide, nút prev/next, dot, bộ đếm, mũi tên CTA promo) là HTML tĩnh
+     trong index.html — JS không dựng phần tử nào, chỉ đổi class / aria / text.
      - tự chuyển slide + thanh tiến trình
      - nút prev/next, dot indicator, phím mũi tên
      - dừng khi hover / focus / tab ẩn
@@ -27,13 +29,6 @@
   var mqReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   function prefersReduced() { return !!(mqReduce && mqReduce.matches); }
 
-  /* Mũi tên nhỏ dùng trong nút CTA của promo banner */
-  function arrowSvg() {
-    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-           'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-           '<path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>';
-  }
-
   /* ======================================================================
      Hero slider
      ====================================================================== */
@@ -49,30 +44,15 @@
     /* Chỉ 1 slide thì không cần bộ điều khiển */
     if (total < 2) {
       $slides.addClass('is-active').attr('aria-hidden', 'false');
-      $root.find('.yq-heroslider__foot, .yq-heroslider__prog').remove();
+      $root.find('.yq-heroslider__foot, .yq-heroslider__prog').prop('hidden', true);
       return;
     }
 
-    /* ---------- Dựng bộ điều khiển ---------- */
+    /* ---------- Bộ điều khiển (HTML tĩnh: nút prev/next, dot [data-hero-go], bộ đếm) ---------- */
     var $ctrl = $root.find('.yq-heroslider__ctrl');
-    var $prev = $(
-      '<button type="button" class="yq-heroslider__btn" data-hero="prev" aria-label="Previous slide">' +
-      YQ.icon('chevleft', 18) + '</button>');
-    var $next = $(
-      '<button type="button" class="yq-heroslider__btn" data-hero="next" aria-label="Next slide">' +
-      YQ.icon('chevright', 18) + '</button>');
-    $ctrl.find('.yq-heroslider__arrows').append($prev, $next);
-
-    var $dots = $ctrl.find('.yq-heroslider__dots');
-    $slides.each(function (i) {
-      var label = $(this).data('title') || ('Slide ' + (i + 1));
-      $dots.append(
-        '<button type="button" class="yq-heroslider__dot" data-hero-go="' + i + '" role="tab" ' +
-        'aria-label="' + YQ.escape(String(label)) + '" aria-selected="false"></button>'
-      );
-    });
-
-    var $count = $ctrl.find('.yq-heroslider__count');
+    var $dots = $ctrl.find('[data-hero-go]');
+    var $cur = $ctrl.find('[data-hero-cur]');
+    $ctrl.find('[data-hero-total]').text(pad(total));
     var $prog = $root.find('.yq-heroslider__prog i');
 
     /* ---------- Trạng thái ---------- */
@@ -92,10 +72,11 @@
         /* Ảnh/nút của slide ẩn không được tab tới */
         $(this).find('a, button').attr('tabindex', on ? null : '-1');
       });
-      $dots.children().each(function (i) {
-        $(this).toggleClass('is-on', i === cur).attr('aria-selected', i === cur ? 'true' : 'false');
+      $dots.each(function () {
+        var on = parseInt($(this).attr('data-hero-go'), 10) === cur;
+        $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
       });
-      if ($count.length) $count.html('<b>' + pad(cur + 1) + '</b> / ' + pad(total));
+      $cur.text(pad(cur + 1));
     }
 
     function setProg(ratio) {
@@ -201,22 +182,10 @@
   }
 
   /* ======================================================================
-     Promo strip: chèn icon mũi tên vào các CTA
-     ====================================================================== */
-  function initPromoStrip() {
-    $('.yq-promo__cta').each(function () {
-      var $el = $(this);
-      if ($el.find('svg').length) return;
-      $el.append(arrowSvg());
-    });
-  }
-
-  /* ======================================================================
      Điểm vào
      ====================================================================== */
   function boot() {
     initHeroSlider();
-    initPromoStrip();
   }
 
   $(document).on('yq:layout-ready', boot);

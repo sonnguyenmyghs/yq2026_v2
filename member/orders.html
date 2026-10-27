@@ -20,6 +20,9 @@
 <body>
 
 <!-- ========== HEADER (HTML tĩnh — giống nhau mọi trang, chỉ khác mục nav .is-active) ========== -->
+<!-- Nút account #yqAccountBtn: đã đăng nhập ({if $isLoggedIn}) thì thêm class "is-signed", thêm hidden cho
+     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in {$member.initial} (chữ cái đầu của first name,
+     viết hoa); aria-label="My account — {$member.first_name}". JS (account.js) chỉ đổi class/attr/text. -->
 <header class="yq-header" id="yqHeader">
   <div class="yq-header__shell">
     <div class="yq-container">
@@ -33,7 +36,7 @@
           <a class="yq-logo" href="../index.html" aria-label="Grand Hyatt Singapore"><span class="yq-logo__mark"><span class="yq-logo__word">Grand</span><span class="yq-logo__bar" aria-hidden="true"></span><span class="yq-logo__word">Hyatt</span><span class="yq-logo__tm" aria-hidden="true">™</span></span><span class="yq-logo__sub">Singapore</span></a>
         </div>
         <div class="yq-header__tools yq-header__tools--end yq-acct-anchor">
-          <a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></a>
+          <a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-yq-acct-icon><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg><span class="yq-acct-initial" id="yqAcctInitial" hidden></span></a>
 
 <!-- ========== AUTH POPUP (Log in / Register) ========== -->
 <div class="modal fade yq-auth" id="yqAuthModal" tabindex="-1" aria-labelledby="yqAuthTitle" aria-hidden="true">
@@ -346,6 +349,52 @@
   </div>
 </div>
 <!-- ========== /HEADER ========== -->
+<!-- ========== MEMBER PANEL "My Functions" (HTML tĩnh — offcanvas Bootstrap trượt từ phải) ==========
+     Mở từ nút Account trong menu mobile (#yqOffcanvas) và từ mục có pane con (My wallet) của
+     dropdown #yqAcctPop. Đặt ở cấp <body> (không lồng trong <header>: header có backdrop-filter
+     nên phần tử position:fixed bên trong sẽ bị neo theo header).
+     Production chỉ cần in khi đã đăng nhập ({if $isLoggedIn} … {/if}) — chưa đăng nhập thì JS mở
+     popup Log in thay vì panel.
+     Biến PHP:
+       #yqMfnName              <- {$member.first_name}            (trống thì phần trước @ của {$member.email})
+       #yqMfnMail              <- {$member.email}                 (trống thì thêm thuộc tính hidden)
+       Pane "wallet" (#yqMfnWallet):
+         #yqMfnWalletBal       <- {$member.wallet_balance_format} (VD $0.00 — store credit + gift card)
+     Danh sách mục giống #yqAcctPop trong HEADER — đổi menu thì sửa cả hai.
+     Pane con: mỗi pane là 1 div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] (hidden); nút [data-yq-view="<tên>"]
+     mở pane đó, [data-yq-view=""] quay về danh sách. Thêm pane mới = thêm 1 khối div + 1 nút.
+     JS (account.js) chỉ: điền tên/email bằng .text() (demo: từ localStorage), bật/tắt hidden giữa
+     #yqMfnMain và các pane, mở/đóng offcanvas. -->
+<aside class="offcanvas offcanvas-end yq-mfn" tabindex="-1" id="yqMemberPanel" aria-labelledby="yqMfnTitle">
+  <div class="yq-mfn__head">
+    <h2 class="yq-mfn__title" id="yqMfnTitle">My Functions</h2>
+    <button class="yq-mfn__close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="yq-mfn__body">
+    <div id="yqMfnMain">
+      <div class="yq-mfn__hello">
+        <p class="yq-mfn__hi" id="yqMfnHi">Hi, <em id="yqMfnName"></em><span class="yq-mfn__mail" id="yqMfnMail"></span></p>
+        <a class="yq-btn yq-btn--sm" href="../member/profile.html?edit=1">Edit</a>
+      </div>
+      <div class="yq-mfn__list">
+          <a class="yq-mfn__item" href="../member/profile.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My profile</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span></a>
+          <a class="yq-mfn__item" href="../member/orders.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My orders</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span></a>
+          <button class="yq-mfn__item" type="button" data-yq-view="wallet"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My wallet</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a1.5 1.5 0 0 1 0 3H5.5"/><rect x="3" y="7.5" width="18" height="11.5" rx="2.2"/><circle cx="16.5" cy="13.2" r="1.15" fill="currentColor" stroke="none"/></svg></span></button>
+          <a class="yq-mfn__item" href="../member/password.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Change password</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg></span></a>
+          <a class="yq-mfn__item" href="../member/invite.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Invite friends</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c1.1-3.6 3.6-5.2 6.5-5.2 1 0 1.9.2 2.7.5"/><path d="M17.5 14v6M14.5 17h6"/></svg></span></a>
+          <button class="yq-mfn__item" type="button" data-yq-do="logout"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Logout</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.5h3.8A2.2 2.2 0 0 1 20 6.7v10.6a2.2 2.2 0 0 1-2.2 2.2H14"/><path d="M10 8.5 6.5 12l3.5 3.5M6.5 12H16"/></svg></span></button>
+      </div>
+    </div>
+    <div class="yq-mfn__pane" id="yqMfnWallet" data-yq-mfn-pane="wallet" hidden>
+      <button class="yq-auth__back" type="button" data-yq-view=""><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>My Functions</button>
+      <h3 class="yq-mfn__sub">My wallet</h3>
+      <p class="yq-mfn__lead">Store credit and gift-card balance, applied automatically at checkout.</p>
+      <div class="yq-mfn__stat"><b id="yqMfnWalletBal">$0.00</b><span>available credit</span></div>
+      <a class="yq-btn yq-btn--yqost yq-btn--block" href="../shop.html?cat=dining">Buy a dining voucher <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+    </div>
+  </div>
+</aside>
+<!-- ========== /MEMBER PANEL ========== -->
 
 <section class="yq-pagehead">
   <div class="yq-container">
@@ -357,10 +406,282 @@
 
 <section style="padding-bottom:clamp(56px,8vw,104px)">
   <div class="yq-container">
+    <!-- ========== MY ORDERS (HTML tĩnh — PHP đổ danh sách đơn của thành viên) ==========
+         Biến PHP:
+           #ordTabs [data-ord-tab="completed"] em   <- {$totalOrdersCompleted}
+           #ordTabs [data-ord-tab="pending"] em     <- {$totalOrdersPending}
+           Tab đang mở (class is-active + aria-pressed="true" trên nút, bỏ hidden ở pane tương ứng)
+                                                    <- {$currentTab}  ('completed' | 'pending', theo ?tab=; JS cũng tự đọc ?tab=)
+           [data-ord-pane="completed"]  <- {foreach $ordersCompleted as $order} ... {/foreach}  (mới nhất trước)
+           [data-ord-pane="pending"]    <- {foreach $ordersPending as $order} ... {/foreach}
+           Mỗi article.yq-ord__card:
+             data-ord-id / #yqOrdBody…  <- {$order.id}
+             .yq-ord__no               <- #{$order.id}
+             .yq-ord__time             <- Order Time: {$order.date_format}   (dạng 21-August-2026)
+             .yq-ord__flag             <- chỉ có ở đơn pending
+             Đơn đầu tiên ({$order@first}): thêm class is-open, aria-expanded="true",
+               .yq-ord__briefs hidden, .yq-ord__full không hidden. Các đơn còn lại ngược lại.
+             .yq-ord__briefs / .yq-ord__full   <- {foreach $order.items as $item} ... {/foreach}
+               img (src/alt)           <- {$item.image} / {$item.name}
+               .yq-ord__name / .yq-ord__briefname <- {$item.name} ({$item.option_label})
+               .yq-ord__qty em / .yq-ord__x       <- {$item.qty}
+               .yq-ord__price          <- {$item.total_format}
+             .yq-ord__total            <- Total: {$order.total_format} {$_OLD_CURRENCY_BY_CART}
+             Nút cuối: completed -> ReOrder (data-ord-reorder); pending -> Pay now href="{$_BASE}/checkout/?order={$order.id}"
+           .yq-ord__empty (mỗi pane 1 khối) <- bỏ hidden khi danh sách tab đó rỗng (count == 0)
+         JS (YQ.initOrders) chỉ chuyển tab + mở/đóng thẻ đơn + ReOrder, không render lại khối này. -->
     <div class="yq-ord">
-      <div class="yq-ord__tabs" id="ordTabs" role="group" aria-label="Order status"></div>
-      <div class="yq-ord__list" id="ordList"></div>
+      <div class="yq-ord__tabs" id="ordTabs" role="group" aria-label="Order status">
+        <button class="yq-ord__tab is-active" type="button" data-ord-tab="completed" aria-pressed="true"><span>Completed orders</span><em>3</em></button>
+        <button class="yq-ord__tab" type="button" data-ord-tab="pending" aria-pressed="false"><span>Pending payment</span><em>2</em></button>
+      </div>
+      <div id="ordList">
+
+        <!-- ---------- Tab: Completed orders ---------- -->
+        <div class="yq-ord__list" data-ord-pane="completed">
+          <!-- {foreach $ordersCompleted as $order} -->
+        <article class="yq-ord__card is-open" data-ord-id="354646799">
+          <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="true" aria-controls="yqOrdBody354646799">
+            <span class="yq-ord__no">#354646799</span>
+            <span class="yq-ord__time">Order Time: 21-August-2026</span>
+            <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
+          </button>
+          <div class="yq-ord__body" id="yqOrdBody354646799">
+            <!-- Rút gọn (khi đóng) -->
+            <div class="yq-ord__briefs" hidden>
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">Signature Chocolate Cake (Medium (8-inch, serves 10))</span><span class="yq-ord__price">108.00</span></div>
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">The Grand Hamper (Classic basket)</span><span class="yq-ord__price">218.00</span></div>
+              <div class="yq-ord__brief"><span class="yq-ord__x">2x</span><span class="yq-ord__briefname">Grand Pralines Collection (12 pieces)</span><span class="yq-ord__price">116.00</span></div>
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">Grand Hyatt Champagne Brut (Bottle (750ml))</span><span class="yq-ord__price">128.00</span></div>
+              <!-- {/foreach} -->
+            </div>
+            <!-- Đầy đủ (khi mở) -->
+            <div class="yq-ord__full">
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/shop/cake-chocolate-gold.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Signature Chocolate Cake (Medium (8-inch, serves 10))</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">108.00</div>
+              </div>
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/shop/hamper-grand.jpg" alt="The Grand Hamper" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">The Grand Hamper (Classic basket)</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">218.00</div>
+              </div>
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/shop/pralines-25.jpg" alt="Grand Pralines Collection" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Grand Pralines Collection (12 pieces)</div>
+                  <div class="yq-ord__qty">Quantity : <em>2</em></div>
+                </div>
+                <div class="yq-ord__price">116.00</div>
+              </div>
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-champagne.jpg" alt="Grand Hyatt Champagne Brut" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Grand Hyatt Champagne Brut (Bottle (750ml))</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">128.00</div>
+              </div>
+              <!-- {/foreach} -->
+              <div class="yq-ord__total">Total: 570.00 SGD</div>
+              <div class="yq-ord__foot">
+                <button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="yq-ord__card" data-ord-id="868514922">
+          <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="false" aria-controls="yqOrdBody868514922">
+            <span class="yq-ord__no">#868514922</span>
+            <span class="yq-ord__time">Order Time: 14-June-2026</span>
+            <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
+          </button>
+          <div class="yq-ord__body" id="yqOrdBody868514922">
+            <!-- Rút gọn (khi đóng) -->
+            <div class="yq-ord__briefs">
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">Cellar Selection Trio (Wooden gift case)</span><span class="yq-ord__price">288.00</span></div>
+              <!-- {/foreach} -->
+            </div>
+            <!-- Đầy đủ (khi mở) -->
+            <div class="yq-ord__full" hidden>
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-cellar-trio.jpg" alt="Cellar Selection Trio" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Cellar Selection Trio (Wooden gift case)</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">288.00</div>
+              </div>
+              <!-- {/foreach} -->
+              <div class="yq-ord__total">Total: 288.00 SGD</div>
+              <div class="yq-ord__foot">
+                <button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="yq-ord__card" data-ord-id="423838196">
+          <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="false" aria-controls="yqOrdBody423838196">
+            <span class="yq-ord__no">#423838196</span>
+            <span class="yq-ord__time">Order Time: 06-February-2026</span>
+            <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
+          </button>
+          <div class="yq-ord__body" id="yqOrdBody423838196">
+            <!-- Rút gọn (khi đóng) -->
+            <div class="yq-ord__briefs">
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">Festive Yule Log (Serves 6)</span><span class="yq-ord__price">88.00</span></div>
+              <div class="yq-ord__brief"><span class="yq-ord__x">2x</span><span class="yq-ord__briefname">Artisan Cookie Box (16 cookies)</span><span class="yq-ord__price">96.00</span></div>
+              <!-- {/foreach} -->
+            </div>
+            <!-- Đầy đủ (khi mở) -->
+            <div class="yq-ord__full" hidden>
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-yule-log.jpg" alt="Festive Yule Log" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Festive Yule Log (Serves 6)</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">88.00</div>
+              </div>
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-cookies.jpg" alt="Artisan Cookie Box" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Artisan Cookie Box (16 cookies)</div>
+                  <div class="yq-ord__qty">Quantity : <em>2</em></div>
+                </div>
+                <div class="yq-ord__price">96.00</div>
+              </div>
+              <!-- {/foreach} -->
+              <div class="yq-ord__total">Total: 184.00 SGD</div>
+              <div class="yq-ord__foot">
+                <button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>
+              </div>
+            </div>
+          </div>
+        </article>
+          <!-- {/foreach} -->
+          <!-- Rỗng — PHP bỏ hidden khi {$totalOrdersCompleted} == 0 -->
+          <div class="yq-panel yq-empty yq-ord__empty" hidden>
+            <div class="yq-empty__icon"><svg class="yq-i" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20.5 7.5v9L12 21 3.5 16.5v-9L12 3Z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></div>
+            <h3 class="yq-h3 mb-2">No completed orders</h3>
+            <p class="yq-muted mb-4">Your completed orders will be listed here.</p>
+            <a class="yq-btn" href="../shop.html">Browse the shop <svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+          </div>
+        </div>
+
+        <!-- ---------- Tab: Pending payment ---------- -->
+        <div class="yq-ord__list" data-ord-pane="pending" hidden>
+          <!-- {foreach $ordersPending as $order} -->
+        <article class="yq-ord__card is-open" data-ord-id="771204558">
+          <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="true" aria-controls="yqOrdBody771204558">
+            <span class="yq-ord__no">#771204558</span>
+            <span class="yq-ord__flag">Awaiting payment</span>
+            <span class="yq-ord__time">Order Time: 05-September-2026</span>
+            <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
+          </button>
+          <div class="yq-ord__body" id="yqOrdBody771204558">
+            <!-- Rút gọn (khi đóng) -->
+            <div class="yq-ord__briefs" hidden>
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">Prosperity Yu Sheng Set (Serves 10)</span><span class="yq-ord__price">188.00</span></div>
+              <div class="yq-ord__brief"><span class="yq-ord__x">2x</span><span class="yq-ord__briefname">Brix Signature Tote (Sand)</span><span class="yq-ord__price">136.00</span></div>
+              <!-- {/foreach} -->
+            </div>
+            <!-- Đầy đủ (khi mở) -->
+            <div class="yq-ord__full">
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-yusheng.jpg" alt="Prosperity Yu Sheng Set" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Prosperity Yu Sheng Set (Serves 10)</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">188.00</div>
+              </div>
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-tote.jpg" alt="Brix Signature Tote" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Brix Signature Tote (Sand)</div>
+                  <div class="yq-ord__qty">Quantity : <em>2</em></div>
+                </div>
+                <div class="yq-ord__price">136.00</div>
+              </div>
+              <!-- {/foreach} -->
+              <div class="yq-ord__total">Total: 324.00 SGD</div>
+              <div class="yq-ord__foot">
+                <a class="yq-btn yq-btn--gold yq-ord__action" href="../checkout.html">Pay now <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="yq-ord__card" data-ord-id="690318742">
+          <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="false" aria-controls="yqOrdBody690318742">
+            <span class="yq-ord__no">#690318742</span>
+            <span class="yq-ord__flag">Awaiting payment</span>
+            <span class="yq-ord__time">Order Time: 01-September-2026</span>
+            <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
+          </button>
+          <div class="yq-ord__body" id="yqOrdBody690318742">
+            <!-- Rút gọn (khi đóng) -->
+            <div class="yq-ord__briefs">
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">Damai Spa Wellness Set (Complete ritual)</span><span class="yq-ord__price">268.00</span></div>
+              <div class="yq-ord__brief"><span class="yq-ord__x">1x</span><span class="yq-ord__briefname">Afternoon Tea for Two (With champagne)</span><span class="yq-ord__price">98.00</span></div>
+              <!-- {/foreach} -->
+            </div>
+            <!-- Đầy đủ (khi mở) -->
+            <div class="yq-ord__full" hidden>
+              <!-- {foreach $order.items as $item} -->
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-spa-set.jpg" alt="Damai Spa Wellness Set" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Damai Spa Wellness Set (Complete ritual)</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">268.00</div>
+              </div>
+              <div class="yq-ord__line">
+                <div class="yq-ord__media yq-media"><img src="../assets/img/p-afternoon-tea.jpg" alt="Afternoon Tea for Two" loading="lazy" decoding="async"></div>
+                <div class="yq-ord__info">
+                  <div class="yq-ord__name">Afternoon Tea for Two (With champagne)</div>
+                  <div class="yq-ord__qty">Quantity : <em>1</em></div>
+                </div>
+                <div class="yq-ord__price">98.00</div>
+              </div>
+              <!-- {/foreach} -->
+              <div class="yq-ord__total">Total: 366.00 SGD</div>
+              <div class="yq-ord__foot">
+                <a class="yq-btn yq-btn--gold yq-ord__action" href="../checkout.html">Pay now <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </article>
+          <!-- {/foreach} -->
+          <!-- Rỗng — PHP bỏ hidden khi {$totalOrdersPending} == 0 -->
+          <div class="yq-panel yq-empty yq-ord__empty" hidden>
+            <div class="yq-empty__icon"><svg class="yq-i" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20.5 7.5v9L12 21 3.5 16.5v-9L12 3Z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></div>
+            <h3 class="yq-h3 mb-2">No pending payments</h3>
+            <p class="yq-muted mb-4">Everything is paid for — nothing waiting here.</p>
+            <a class="yq-btn" href="../shop.html">Browse the shop <svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+          </div>
+        </div>
+
+      </div>
     </div>
+    <!-- ========== /MY ORDERS ========== -->
   </div>
 </section>
 
@@ -463,19 +784,60 @@
        a.yq-cdrawer__viewcart <- {$_hiddenViewShowCart} + href="{$_BASE}/cart/?action=view"
        aside#yqCartDrawer     <- thêm class "is-empty" khi {$totalItemsCart} == 0 (JS cũng tự đồng bộ)
      Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- {$totalItemsCart}
-     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart. -->
+       #yqCdNote              <- note free shipping (xem comment trong khối, biến {$toFreeShippingCart} …)
+     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart.
+     Bản demo HTML (không có #root): cart-anim.js chỉ đổi text số lượng/giá/subtotal/note trên các dòng
+     mẫu có sẵn và gỡ dòng khi bấm X — không dựng dòng mới. -->
 <div class="yq-cdrawer-back" hidden></div>
-<aside class="yq-cdrawer is-empty" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
+<aside class="yq-cdrawer" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
   <header class="yq-cdrawer__head">
     <div>
       <span class="yq-cdrawer__eyebrow" id="yqCdEyebrow">Your shopping bag</span>
-      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">0 items</small></h2>
+      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">3 items</small></h2>
     </div>
     <button class="yq-cdrawer__close" type="button" data-yq-cd-close aria-label="Close"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </header>
   <div class="yq-cdrawer__body" id="yqCdBody">
     <div class="yq-cdrawer__gift d-none"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg><div></div></div>
-    <ul class="yq-cdrawer__list" id="yqCdList"></ul>
+    <ul class="yq-cdrawer__list" id="yqCdList">
+    <!-- {$contentCartHtml} — server in sẵn các dòng giỏ (fragment cart_product_single), add-to-cart.js thay
+         lại bằng data.html sau mỗi addCart. 2 dòng dưới chỉ là MẪU cho bản demo HTML: xoá khi gắn PHP.
+         Mỗi dòng: li.yq-cdrawer__row[data-key={$item.key}][data-price={$item.unit_price}] · img {$item.image}
+         · .yq-cdrawer__name {$item.name} · .yq-cdrawer__opt {$item.option_label} · [data-qty-val] {$item.qty}
+         · .yq-cdrawer__price {$item.total_format} -->
+    <li class="yq-cdrawer__row" data-key="signature-chocolate-cake::medium" data-price="88">
+      <div class="yq-cdrawer__media yq-media"><img src="../assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Signature Chocolate Cake</div>
+        <div class="yq-cdrawer__opt">Medium · 1 kg</div>
+        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
+          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+          <span class="yq-qty__val" data-qty-val>1</span>
+          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">$88.00</div>
+        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Signature Chocolate Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </li>
+    <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68">
+      <div class="yq-cdrawer__media yq-media"><img src="../assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Pantry Hamper</div>
+        <div class="yq-cdrawer__opt">Classic · Gift message card</div>
+        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
+          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+          <span class="yq-qty__val" data-qty-val>2</span>
+          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">$136.00</div>
+        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Pantry Hamper"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </li>
+    </ul>
     <div class="yq-cdrawer__empty">
       <div class="yq-cdrawer__empty-icon"><svg class="yq-i" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
       <h3>Your bag is empty</h3>
@@ -484,8 +846,16 @@
     </div>
   </div>
   <footer class="yq-cdrawer__foot" id="yqCdFoot">
-    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$0.00</strong></div>
-    <div id="yqCdNote"></div>
+    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$224.00</strong></div>
+    <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
+           #yqCdShipNote <- còn thiếu tiền: ẩn bằng {$hidden_ship_note}
+             #yqCdToFree <- {$toFreeShippingCart}      #yqCdShipBar <- style="width:{$freeShippingPercent}%"
+           #yqCdShipFree <- đã đủ free ship: ẩn bằng {$hidden_ship_free}
+         Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
+    <div id="yqCdNote">
+      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">$76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
+      <div class="yq-cdrawer__note d-none" id="yqCdShipFree"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg><div>You have unlocked free shipping.</div></div>
+    </div>
     <div class="yq-cdrawer__actions">
       <a class="yq-btn yq-btn--gold yq-btn--block yq-cdrawer__checkout" href="../checkout.html">Checkout <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
       <a class="yq-btn yq-btn--yqost yq-btn--block yq-cdrawer__viewcart" href="../cart.html">View cart</a>
@@ -494,6 +864,21 @@
   </footer>
 </aside>
 <!-- ========== /CART SIDEBAR ========== -->
+
+<!-- ========== TOAST (HTML tĩnh — thông báo nhỏ góc phải dưới) ==========
+     <template id="yqToastTpl"> là khuôn 1 thông báo (không hiển thị). YQ.toast() trong app.js clone khuôn,
+     điền .yq-toast__msg bằng .text(), link (nếu có) bằng .text() + attr("href") rồi bỏ hidden, thêm vào
+     .yq-toast-wrap và tự gỡ bản clone sau ~4s. Không có biến PHP. -->
+<div class="yq-toast-wrap" id="yqToastWrap">
+  <template id="yqToastTpl">
+    <div class="yq-toast" role="status">
+      <span class="yq-toast__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>
+      <span class="yq-toast__msg"></span>
+      <a class="yq-toast__link" href="#" hidden></a>
+    </div>
+  </template>
+</div>
+<!-- ========== /TOAST ========== -->
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

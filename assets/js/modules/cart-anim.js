@@ -9,6 +9,10 @@
                       chạm nơi (giữ số cũ trong lúc bay, không lệch nhịp).
      3) Nút bấm     : chuyển sang "Added" (tích vàng) ~1.2s, chặn spam click.
      4) Cart drawer : panel trượt từ phải, đóng bằng click nền / Esc, khoá cuộn.
+                      Dòng hàng + note free ship là HTML tĩnh trong trang; JS chỉ
+                      đổi text / class. Riêng khối ảnh bay (.yq-fly), vòng sáng
+                      (.yq-fly-ring) và lớp "Added" trên nút là hiệu ứng tạm do JS
+                      tạo rồi tự xoá.
 
    Nguyên tắc an toàn:
      - Không sửa file nào khác; chỉ gắn vào DOM + event có sẵn.
@@ -352,9 +356,6 @@
   /* Production: trang có <span id="root" data-base="…"> — giỏ nằm ở session server. */
   function isServer() { return !!D.getElementById('root'); }
 
-  function icon(name, size) { return YQ.icon ? YQ.icon(name, size) : ''; }
-  function esc(s) { return YQ.escape ? YQ.escape(s) : String(s == null ? '' : s); }
-
   /* Khung sidebar là HTML tĩnh trong mỗi trang (khối <!-- CART SIDEBAR -->, PHP đổ giỏ
      từ session). JS không dựng markup — chỉ lấy tham chiếu tới khung có sẵn. */
   function buildDrawer() {
@@ -370,56 +371,34 @@
     $('#yqCartDrawer').toggleClass('is-empty', $('#yqCdList').children().length === 0);
   }
 
-  /* Bản demo HTML (không có PHP / #root): đổ giỏ localStorage YQ.cart vào đúng khung
-     tĩnh mà PHP sẽ đổ ở production. */
+  /* Bản demo HTML (không có PHP / #root): các dòng trong #yqCdList là HTML tĩnh
+     (dòng mẫu thay cho {$contentCartHtml}). JS không dựng dòng nào — chỉ tính lại
+     text thành tiền mỗi dòng (data-price × số lượng), số món, subtotal và thanh
+     free shipping trên các phần tử đã có. Production: PHP / add-to-cart.js lo hết. */
   function renderDrawer(animate) {
     if (isServer() || !buildDrawer()) return;
     $('#yqCdBody').toggleClass('is-static', animate === false);
-    var items = YQ.cart.items || [];
-    var n = YQ.cart.count();
+
+    var n = 0, sub = 0;
+    $('#yqCdList .yq-cdrawer__row').each(function () {
+      var $r = $(this);
+      var qty = parseInt($r.find('[data-qty-val]').text(), 10) || 0;
+      var line = (parseFloat($r.attr('data-price')) || 0) * qty;
+      $r.find('.yq-cdrawer__price').text(YQ.money(line));
+      n += qty;
+      sub += line;
+    });
 
     $('#yqCdN').text(n === 1 ? '1 item' : n + ' items');
+    $('#yqCdTotal').text(YQ.money(sub));
 
-    var rows = items.map(function (i, idx) {
-      var isNew = DR.newKey && i.key === DR.newKey;
-      return '' +
-        '<li class="yq-cdrawer__row' + (isNew ? ' is-new' : '') + '" data-key="' + esc(i.key) + '"' +
-             ' style="--yqd:' + Math.min(idx, 6) * 55 + 'ms">' +
-          '<div class="yq-cdrawer__media yq-media">' + (YQ.mediaInner ? YQ.mediaInner(i) : '') + '</div>' +
-          '<div class="yq-cdrawer__info">' +
-            '<div class="yq-cdrawer__name">' + esc(i.name) + '</div>' +
-            (i.optionLabel || i.addonLabel
-              ? '<div class="yq-cdrawer__opt">' + esc(i.optionLabel || '') +
-                  (i.addonLabel ? ' · ' + esc(i.addonLabel) : '') + '</div>'
-              : '') +
-            '<div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">' +
-              '<button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity">' + icon('minus', 14) + '</button>' +
-              '<span class="yq-qty__val" data-qty-val>' + i.qty + '</span>' +
-              '<button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity">' + icon('plus', 14) + '</button>' +
-            '</div>' +
-          '</div>' +
-          '<div class="yq-cdrawer__right">' +
-            '<div class="yq-cdrawer__price">' + YQ.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
-            '<button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove ' + esc(i.name) + '">' +
-              icon('close', 14) + '</button>' +
-          '</div>' +
-        '</li>';
-    }).join('');
-
-    $('#yqCdList').html(YQ.localise(rows));
-    $('#yqCdTotal').text(YQ.money(YQ.cart.subtotal()));
-
-    /* Thanh "còn X nữa để free shipping" — chỉ bản demo (production không có dữ liệu này) */
-    var sub = YQ.cart.subtotal();
-    var toFree = YQ.cart.toFree ? YQ.cart.toFree() : 0;
+    /* Thanh "còn X nữa để free shipping": 2 note tĩnh loại trừ nhau, JS chỉ đổi text/width */
     var thr = (YQ.config && YQ.config.freeShippingThreshold) || 0;
-    var pct = thr ? Math.min(100, (sub / thr) * 100) : 100;
-    $('#yqCdNote').html(toFree > 0
-      ? '<div class="yq-cdrawer__note">' + icon('truck', 15) +
-          '<div class="w-100">Add ' + YQ.money(toFree) + ' more for free shipping' +
-            '<div class="yq-cdrawer__bar"><i style="width:' + pct + '%"></i></div>' +
-          '</div></div>'
-      : '<div class="yq-cdrawer__note">' + icon('check', 15) + '<div>You have unlocked free shipping.</div></div>');
+    var toFree = Math.max(0, thr - sub);
+    $('#yqCdToFree').text(YQ.money(toFree));
+    $('#yqCdShipBar').css('width', (thr ? Math.min(100, (sub / thr) * 100) : 100) + '%');
+    $('#yqCdShipNote').toggleClass('d-none', toFree <= 0);
+    $('#yqCdShipFree').toggleClass('d-none', toFree > 0);
 
     syncEmpty();
   }
@@ -439,7 +418,8 @@
   /**
    * Mở cart sidebar.
    *   - Production (có #root): nội dung PHP đã in sẵn / add-to-cart.js vừa cập nhật -> chỉ mở.
-   *   - Demo: vẽ lại từ YQ.cart rồi mở.
+   *   - Demo: tính lại text trên các dòng tĩnh trong #yqCdList rồi mở (dòng mẫu cố
+   *     định — không thêm dòng cho sản phẩm vừa bấm, xem renderDrawer).
    * opts.browsing: mở từ icon giỏ ở header (không phải vừa thêm hàng).
    */
   function openDrawer(newKey, opts) {
@@ -499,13 +479,16 @@
       e.preventDefault();
       closeDrawer();
     })
+    /* Demo: gỡ dòng có sẵn / đổi số rồi tính lại text. Production (#root): dòng do
+       server in ({$contentCartHtml}) — không đụng tới, giữ hành vi của backend. */
     .on('click', '#yqCartDrawer [data-yq-cd-remove]', function () {
-      var key = $(this).closest('.yq-cdrawer__row').attr('data-key');
-      if (key) YQ.cart.remove(key);
+      if (isServer()) return;
+      $(this).closest('.yq-cdrawer__row').remove();
+      renderDrawer(false);
     })
-    .on('yq:qty', '#yqCartDrawer [data-qty]', function (e, n) {
-      var key = $(this).closest('.yq-cdrawer__row').attr('data-key');
-      if (key) YQ.cart.setQty(key, n);
+    .on('yq:qty', '#yqCartDrawer [data-qty]', function () {
+      if (isServer()) return;
+      renderDrawer(false);
     })
     .on('keydown.yqCartAnim', function (e) {
       if (!DR.open) return;

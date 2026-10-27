@@ -245,17 +245,19 @@
   /* ======================================================================
      3. Toast
      ====================================================================== */
+  /* Markup là HTML tĩnh trong mỗi trang (khối TOAST: .yq-toast-wrap + <template id="yqToastTpl">).
+     JS chỉ clone khuôn, điền chữ bằng .text() và link bằng attr('href'). */
   YQ.toast = function (msg, linkText, linkHref) {
-    var $wrap = $('.yq-toast-wrap');
-    if (!$wrap.length) $wrap = $('<div class="yq-toast-wrap"></div>').appendTo('body');
+    var tpl = document.getElementById('yqToastTpl');
+    var $wrap = $('#yqToastWrap');
+    if (!tpl || !tpl.content || !$wrap.length) return;   // trang không có khối TOAST
 
-    var $t = $(
-      '<div class="yq-toast">' +
-        '<span class="yq-toast__icon">' + YQ.icon('check', 18) + '</span>' +
-        '<span>' + YQ.escape(msg) + '</span>' +
-        (linkText ? '<a href="' + YQ.url(linkHref) + '">' + YQ.escape(linkText) + '</a>' : '') +
-      '</div>'
-    ).appendTo($wrap);
+    var $t = $(tpl.content.firstElementChild.cloneNode(true));
+    $t.find('.yq-toast__msg').text(msg);
+    if (linkText) {
+      $t.find('.yq-toast__link').text(linkText).attr('href', YQ.url(linkHref)).prop('hidden', false);
+    }
+    $t.appendTo($wrap);
 
     requestAnimationFrame(function () { $t.addClass('is-on'); });
     setTimeout(function () {

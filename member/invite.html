@@ -20,6 +20,9 @@
 <body>
 
 <!-- ========== HEADER (HTML tĩnh — giống nhau mọi trang, chỉ khác mục nav .is-active) ========== -->
+<!-- Nút account #yqAccountBtn: đã đăng nhập ({if $isLoggedIn}) thì thêm class "is-signed", thêm hidden cho
+     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in {$member.initial} (chữ cái đầu của first name,
+     viết hoa); aria-label="My account — {$member.first_name}". JS (account.js) chỉ đổi class/attr/text. -->
 <header class="yq-header" id="yqHeader">
   <div class="yq-header__shell">
     <div class="yq-container">
@@ -33,7 +36,7 @@
           <a class="yq-logo" href="../index.html" aria-label="Grand Hyatt Singapore"><span class="yq-logo__mark"><span class="yq-logo__word">Grand</span><span class="yq-logo__bar" aria-hidden="true"></span><span class="yq-logo__word">Hyatt</span><span class="yq-logo__tm" aria-hidden="true">™</span></span><span class="yq-logo__sub">Singapore</span></a>
         </div>
         <div class="yq-header__tools yq-header__tools--end yq-acct-anchor">
-          <a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></a>
+          <a class="yq-iconbtn d-none d-lg-inline-flex" href="#" id="yqAccountBtn" data-yq-account aria-label="Account"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-yq-acct-icon><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg><span class="yq-acct-initial" id="yqAcctInitial" hidden></span></a>
 
 <!-- ========== AUTH POPUP (Log in / Register) ========== -->
 <div class="modal fade yq-auth" id="yqAuthModal" tabindex="-1" aria-labelledby="yqAuthTitle" aria-hidden="true">
@@ -346,6 +349,52 @@
   </div>
 </div>
 <!-- ========== /HEADER ========== -->
+<!-- ========== MEMBER PANEL "My Functions" (HTML tĩnh — offcanvas Bootstrap trượt từ phải) ==========
+     Mở từ nút Account trong menu mobile (#yqOffcanvas) và từ mục có pane con (My wallet) của
+     dropdown #yqAcctPop. Đặt ở cấp <body> (không lồng trong <header>: header có backdrop-filter
+     nên phần tử position:fixed bên trong sẽ bị neo theo header).
+     Production chỉ cần in khi đã đăng nhập ({if $isLoggedIn} … {/if}) — chưa đăng nhập thì JS mở
+     popup Log in thay vì panel.
+     Biến PHP:
+       #yqMfnName              <- {$member.first_name}            (trống thì phần trước @ của {$member.email})
+       #yqMfnMail              <- {$member.email}                 (trống thì thêm thuộc tính hidden)
+       Pane "wallet" (#yqMfnWallet):
+         #yqMfnWalletBal       <- {$member.wallet_balance_format} (VD $0.00 — store credit + gift card)
+     Danh sách mục giống #yqAcctPop trong HEADER — đổi menu thì sửa cả hai.
+     Pane con: mỗi pane là 1 div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] (hidden); nút [data-yq-view="<tên>"]
+     mở pane đó, [data-yq-view=""] quay về danh sách. Thêm pane mới = thêm 1 khối div + 1 nút.
+     JS (account.js) chỉ: điền tên/email bằng .text() (demo: từ localStorage), bật/tắt hidden giữa
+     #yqMfnMain và các pane, mở/đóng offcanvas. -->
+<aside class="offcanvas offcanvas-end yq-mfn" tabindex="-1" id="yqMemberPanel" aria-labelledby="yqMfnTitle">
+  <div class="yq-mfn__head">
+    <h2 class="yq-mfn__title" id="yqMfnTitle">My Functions</h2>
+    <button class="yq-mfn__close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="yq-mfn__body">
+    <div id="yqMfnMain">
+      <div class="yq-mfn__hello">
+        <p class="yq-mfn__hi" id="yqMfnHi">Hi, <em id="yqMfnName"></em><span class="yq-mfn__mail" id="yqMfnMail"></span></p>
+        <a class="yq-btn yq-btn--sm" href="../member/profile.html?edit=1">Edit</a>
+      </div>
+      <div class="yq-mfn__list">
+          <a class="yq-mfn__item" href="../member/profile.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My profile</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span></a>
+          <a class="yq-mfn__item" href="../member/orders.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My orders</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span></a>
+          <button class="yq-mfn__item" type="button" data-yq-view="wallet"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">My wallet</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a1.5 1.5 0 0 1 0 3H5.5"/><rect x="3" y="7.5" width="18" height="11.5" rx="2.2"/><circle cx="16.5" cy="13.2" r="1.15" fill="currentColor" stroke="none"/></svg></span></button>
+          <a class="yq-mfn__item" href="../member/password.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Change password</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg></span></a>
+          <a class="yq-mfn__item" href="../member/invite.html"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Invite friends</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c1.1-3.6 3.6-5.2 6.5-5.2 1 0 1.9.2 2.7.5"/><path d="M17.5 14v6M14.5 17h6"/></svg></span></a>
+          <button class="yq-mfn__item" type="button" data-yq-do="logout"><span class="yq-mfn__dot" aria-hidden="true"></span><span class="yq-mfn__txt">Logout</span><span class="yq-mfn__ico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.5h3.8A2.2 2.2 0 0 1 20 6.7v10.6a2.2 2.2 0 0 1-2.2 2.2H14"/><path d="M10 8.5 6.5 12l3.5 3.5M6.5 12H16"/></svg></span></button>
+      </div>
+    </div>
+    <div class="yq-mfn__pane" id="yqMfnWallet" data-yq-mfn-pane="wallet" hidden>
+      <button class="yq-auth__back" type="button" data-yq-view=""><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>My Functions</button>
+      <h3 class="yq-mfn__sub">My wallet</h3>
+      <p class="yq-mfn__lead">Store credit and gift-card balance, applied automatically at checkout.</p>
+      <div class="yq-mfn__stat"><b id="yqMfnWalletBal">$0.00</b><span>available credit</span></div>
+      <a class="yq-btn yq-btn--yqost yq-btn--block" href="../shop.html?cat=dining">Buy a dining voucher <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+    </div>
+  </div>
+</aside>
+<!-- ========== /MEMBER PANEL ========== -->
 
 <section class="yq-pagehead">
   <div class="yq-container">
@@ -358,8 +407,129 @@
 <section style="padding-bottom:clamp(56px,8vw,104px)">
   <div class="yq-container">
     <div class="yq-prof">
-      <aside id="invAside"></aside>
-      <div class="yq-prof__body" id="invBody"></div>
+      <!-- ========== INVITE ASIDE (HTML tĩnh — PHP đổ từ chương trình giới thiệu của member) ==========
+           Biến PHP:
+             .yq-prof__name / .yq-pw__lead  <- {$ref_reward_format}   (ưu đãi mỗi bên, VD "$20")
+             #invCount                      <- {$ref_total_sent}      (số lời mời đã gửi)
+             #invCode                       <- {$ref_code}            (mã giới thiệu, VD "GH-" + 6 số cuối thẻ thành viên)
+           JS chỉ cập nhật .text() của #invCount khi gửi/xoá lời mời (demo). -->
+      <aside id="invAside">
+        <div class="yq-prof__card">
+          <div class="yq-inv__gift" aria-hidden="true"><svg class="yq-i" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg></div>
+          <h2 class="yq-prof__name">Give $20, get $20</h2>
+          <p class="yq-pw__lead">Your friend gets $20 off their first order. When they check out, the same lands in your wallet.</p>
+          <dl class="yq-prof__facts">
+            <div><dt>Invitations sent</dt><dd id="invCount">3</dd></div>
+            <div><dt>Your code</dt><dd id="invCode">GH-001991</dd></div>
+          </dl>
+          <div class="yq-prof__links">
+            <a class="yq-link-arrow" href="profile.html">Back to profile <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ========== INVITE BODY (HTML tĩnh) ==========
+           Biến PHP:
+             #invLink                <- value="{$ref_link}"   ({$_BASE}/?ref={$ref_code} — link tuyệt đối)
+             nút [data-inv-ch]       <- giữ nguyên; URL chia sẻ Facebook/LINE ghép trong JS từ YQ.referral.channels + #invLink
+             #invForm                <- action="{$_BASE}/member/invite/?action=send" method="post", textarea name="emails"
+             ul#invList              <- {foreach $ref_invites as $inv} ... {/foreach}  (mỗi lời mời 1 li.yq-inv__row)
+               .yq-inv__who          <- {$inv.email}
+               .yq-inv__when         <- {$inv.date_format}    (dạng 06-February-2026)
+               .yq-inv__state        <- {$inv.status}         (Invited | Joined)
+               [data-inv-rm]         <- data-inv-rm="{$inv.id}" + aria-label="Remove {$inv.email}"
+             ul#invList / #invNone   <- {$ref_total_sent} == 0 thì thêm hidden cho #invList và bỏ hidden ở #invNone
+             template#invRowTpl      <- giữ nguyên (khung 1 dòng — JS demo clone ra khi gửi lời mời mới)
+           JS chỉ validate form, copy link, mở cửa sổ chia sẻ, thêm/bỏ dòng (clone từ template) và bật/tắt #invNone. -->
+      <div class="yq-prof__body" id="invBody">
+        <!-- --- chia sẻ link --- -->
+        <section class="yq-prof__group">
+          <header class="yq-prof__grouphead">
+            <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 13.7 9l5.5 1.7-5.5 1.7L12 18l-1.7-5.6L4.8 10.7 10.3 9 12 3.5Z"/></svg></span>
+            <h2 class="yq-prof__grouptitle">Share your invitation</h2>
+          </header>
+          <div class="yq-inv__pad">
+            <div class="yq-inv__linkbox">
+              <input class="yq-input form-control" id="invLink" readonly value="../index.html?ref=GH-001991" aria-label="Your invitation link">
+              <button class="yq-btn yq-btn--sm" type="button" data-inv-ch="copy"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11.5" height="11.5" rx="2.2"/><path d="M15 5.5A2.2 2.2 0 0 0 12.8 3.5H5.7A2.2 2.2 0 0 0 3.5 5.7v7.1A2.2 2.2 0 0 0 5.5 15"/></svg>Copy</button>
+            </div>
+            <div class="yq-inv__channels">
+              <button class="yq-inv__ch yq-inv__ch--facebook" type="button" data-inv-ch="facebook">
+                <span class="yq-inv__chico"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 320 512" fill="currentColor" aria-hidden="true"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg></span>
+                <span>Facebook</span>
+              </button>
+              <button class="yq-inv__ch yq-inv__ch--line" type="button" data-inv-ch="line">
+                <span class="yq-inv__chico"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M272.1 204.2v71.1c0 1.8-1.4 3.2-3.2 3.2h-11.4c-1.1 0-2.1-.6-2.6-1.3l-32.6-44v42.2c0 1.8-1.4 3.2-3.2 3.2h-11.4c-1.8 0-3.2-1.4-3.2-3.2v-71.1c0-1.8 1.4-3.2 3.2-3.2H219c1 0 2.1.5 2.6 1.4l32.6 44v-42.2c0-1.8 1.4-3.2 3.2-3.2h11.4c1.8-.1 3.3 1.4 3.3 3.1zm-82-3.2h-11.4c-1.8 0-3.2 1.4-3.2 3.2v71.1c0 1.8 1.4 3.2 3.2 3.2h11.4c1.8 0 3.2-1.4 3.2-3.2v-71.1c0-1.7-1.4-3.2-3.2-3.2zm-27.5 59.6h-31.1v-56.4c0-1.8-1.4-3.2-3.2-3.2h-11.4c-1.8 0-3.2 1.4-3.2 3.2v71.1c0 .9.3 1.6.9 2.2.6.5 1.3.9 2.2.9h45.7c1.8 0 3.2-1.4 3.2-3.2v-11.4c0-1.7-1.4-3.2-3.1-3.2zM332.1 201h-45.7c-1.7 0-3.2 1.4-3.2 3.2v71.1c0 1.7 1.4 3.2 3.2 3.2h45.7c1.8 0 3.2-1.4 3.2-3.2v-11.4c0-1.8-1.4-3.2-3.2-3.2H301v-12h31.1c1.8 0 3.2-1.4 3.2-3.2V234c0-1.8-1.4-3.2-3.2-3.2H301v-12h31.1c1.8 0 3.2-1.4 3.2-3.2v-11.4c-.1-1.7-1.5-3.2-3.2-3.2zM448 113.7V399c-.1 63.6-51.9 115.1-115.6 115H63c-63.6-.1-115.1-52-115-115.6V113c.1-63.6 52-115.1 115.6-115H385c63.6.1 115.1 51.9 115 115.7zm-107.4 99.9c0-70.5-70.7-127.8-157.5-127.8S25.6 143.1 25.6 213.6c0 63.2 56.1 116.1 131.8 126.1 18.5 4 16.4 10.8 12.2 35.8-.7 4-3.2 15.7 13.8 8.6s91.6-54 125-92.4c23-25.3 33.2-51 33.2-78.1z"/></svg></span>
+                <span>LINE</span>
+              </button>
+              <button class="yq-inv__ch yq-inv__ch--email" type="button" data-inv-ch="email">
+                <span class="yq-inv__chico"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="m3.8 7 8.2 6 8.2-6"/></svg></span>
+                <span>Email</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- --- mời qua email --- -->
+        <section class="yq-prof__group">
+          <header class="yq-prof__grouphead">
+            <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="m3.8 7 8.2 6 8.2-6"/></svg></span>
+            <h2 class="yq-prof__grouptitle">Invite by email</h2>
+          </header>
+          <div class="yq-inv__pad">
+            <form id="invForm" novalidate>
+              <label class="yq-auth__label" for="invMails">Email addresses</label>
+              <textarea class="yq-input form-control" id="invMails" name="emails" rows="3" placeholder="friend@example.com, another@example.com"></textarea>
+              <div class="yq-error" data-err-for="invMails"></div>
+              <p class="yq-inv__tip">Separate several addresses with a comma, a space or a new line.</p>
+              <button class="yq-btn yq-btn--block mt-1" type="submit">Send invitations</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- --- đã mời --- -->
+        <section class="yq-prof__group">
+          <header class="yq-prof__grouphead">
+            <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3 19c.9-3 3.3-4.4 6-4.4S14.1 16 15 19"/><path d="M16 6.2A3.2 3.2 0 0 1 16 13"/><path d="M17.5 14.8c2 .6 3.4 2 4 4.2"/></svg></span>
+            <h2 class="yq-prof__grouptitle">Invitations sent</h2>
+          </header>
+          <div class="yq-inv__pad">
+            <ul class="yq-inv__list" id="invList">
+              <!-- {foreach $ref_invites as $inv} -->
+              <li class="yq-inv__row">
+                <span class="yq-inv__who">mai.tran@example.com</span>
+                <span class="yq-inv__when">21-August-2026</span>
+                <span class="yq-inv__state">Joined</span>
+                <button class="yq-inv__rm" type="button" data-inv-rm="1" aria-label="Remove mai.tran@example.com"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </li>
+              <li class="yq-inv__row">
+                <span class="yq-inv__who">david.lim@example.com</span>
+                <span class="yq-inv__when">14-June-2026</span>
+                <span class="yq-inv__state">Invited</span>
+                <button class="yq-inv__rm" type="button" data-inv-rm="2" aria-label="Remove david.lim@example.com"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </li>
+              <li class="yq-inv__row">
+                <span class="yq-inv__who">sarah.ng@example.com</span>
+                <span class="yq-inv__when">06-February-2026</span>
+                <span class="yq-inv__state">Invited</span>
+                <button class="yq-inv__rm" type="button" data-inv-rm="3" aria-label="Remove sarah.ng@example.com"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </li>
+              <!-- {/foreach} -->
+            </ul>
+            <!-- Chưa mời ai (HTML tĩnh) — PHP bỏ hidden khi {$ref_total_sent} == 0 -->
+            <p class="yq-inv__none" id="invNone" hidden>No invitations sent yet. Share your link above to get started.</p>
+            <!-- Khung 1 dòng lời mời — JS demo clone rồi chỉ set .text()/attr, không ghép chuỗi HTML -->
+            <template id="invRowTpl">
+              <li class="yq-inv__row">
+                <span class="yq-inv__who"></span>
+                <span class="yq-inv__when"></span>
+                <span class="yq-inv__state">Invited</span>
+                <button class="yq-inv__rm" type="button" data-inv-rm="" aria-label="Remove"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </li>
+            </template>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 </section>
@@ -463,19 +633,60 @@
        a.yq-cdrawer__viewcart <- {$_hiddenViewShowCart} + href="{$_BASE}/cart/?action=view"
        aside#yqCartDrawer     <- thêm class "is-empty" khi {$totalItemsCart} == 0 (JS cũng tự đồng bộ)
      Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- {$totalItemsCart}
-     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart. -->
+       #yqCdNote              <- note free shipping (xem comment trong khối, biến {$toFreeShippingCart} …)
+     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart.
+     Bản demo HTML (không có #root): cart-anim.js chỉ đổi text số lượng/giá/subtotal/note trên các dòng
+     mẫu có sẵn và gỡ dòng khi bấm X — không dựng dòng mới. -->
 <div class="yq-cdrawer-back" hidden></div>
-<aside class="yq-cdrawer is-empty" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
+<aside class="yq-cdrawer" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
   <header class="yq-cdrawer__head">
     <div>
       <span class="yq-cdrawer__eyebrow" id="yqCdEyebrow">Your shopping bag</span>
-      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">0 items</small></h2>
+      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">3 items</small></h2>
     </div>
     <button class="yq-cdrawer__close" type="button" data-yq-cd-close aria-label="Close"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </header>
   <div class="yq-cdrawer__body" id="yqCdBody">
     <div class="yq-cdrawer__gift d-none"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg><div></div></div>
-    <ul class="yq-cdrawer__list" id="yqCdList"></ul>
+    <ul class="yq-cdrawer__list" id="yqCdList">
+    <!-- {$contentCartHtml} — server in sẵn các dòng giỏ (fragment cart_product_single), add-to-cart.js thay
+         lại bằng data.html sau mỗi addCart. 2 dòng dưới chỉ là MẪU cho bản demo HTML: xoá khi gắn PHP.
+         Mỗi dòng: li.yq-cdrawer__row[data-key={$item.key}][data-price={$item.unit_price}] · img {$item.image}
+         · .yq-cdrawer__name {$item.name} · .yq-cdrawer__opt {$item.option_label} · [data-qty-val] {$item.qty}
+         · .yq-cdrawer__price {$item.total_format} -->
+    <li class="yq-cdrawer__row" data-key="signature-chocolate-cake::medium" data-price="88">
+      <div class="yq-cdrawer__media yq-media"><img src="../assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Signature Chocolate Cake</div>
+        <div class="yq-cdrawer__opt">Medium · 1 kg</div>
+        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
+          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+          <span class="yq-qty__val" data-qty-val>1</span>
+          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">$88.00</div>
+        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Signature Chocolate Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </li>
+    <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68">
+      <div class="yq-cdrawer__media yq-media"><img src="../assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Pantry Hamper</div>
+        <div class="yq-cdrawer__opt">Classic · Gift message card</div>
+        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
+          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+          <span class="yq-qty__val" data-qty-val>2</span>
+          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">$136.00</div>
+        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Pantry Hamper"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </li>
+    </ul>
     <div class="yq-cdrawer__empty">
       <div class="yq-cdrawer__empty-icon"><svg class="yq-i" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
       <h3>Your bag is empty</h3>
@@ -484,8 +695,16 @@
     </div>
   </div>
   <footer class="yq-cdrawer__foot" id="yqCdFoot">
-    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$0.00</strong></div>
-    <div id="yqCdNote"></div>
+    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$224.00</strong></div>
+    <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
+           #yqCdShipNote <- còn thiếu tiền: ẩn bằng {$hidden_ship_note}
+             #yqCdToFree <- {$toFreeShippingCart}      #yqCdShipBar <- style="width:{$freeShippingPercent}%"
+           #yqCdShipFree <- đã đủ free ship: ẩn bằng {$hidden_ship_free}
+         Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
+    <div id="yqCdNote">
+      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">$76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
+      <div class="yq-cdrawer__note d-none" id="yqCdShipFree"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg><div>You have unlocked free shipping.</div></div>
+    </div>
     <div class="yq-cdrawer__actions">
       <a class="yq-btn yq-btn--gold yq-btn--block yq-cdrawer__checkout" href="../checkout.html">Checkout <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
       <a class="yq-btn yq-btn--yqost yq-btn--block yq-cdrawer__viewcart" href="../cart.html">View cart</a>
@@ -494,6 +713,21 @@
   </footer>
 </aside>
 <!-- ========== /CART SIDEBAR ========== -->
+
+<!-- ========== TOAST (HTML tĩnh — thông báo nhỏ góc phải dưới) ==========
+     <template id="yqToastTpl"> là khuôn 1 thông báo (không hiển thị). YQ.toast() trong app.js clone khuôn,
+     điền .yq-toast__msg bằng .text(), link (nếu có) bằng .text() + attr("href") rồi bỏ hidden, thêm vào
+     .yq-toast-wrap và tự gỡ bản clone sau ~4s. Không có biến PHP. -->
+<div class="yq-toast-wrap" id="yqToastWrap">
+  <template id="yqToastTpl">
+    <div class="yq-toast" role="status">
+      <span class="yq-toast__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>
+      <span class="yq-toast__msg"></span>
+      <a class="yq-toast__link" href="#" hidden></a>
+    </div>
+  </template>
+</div>
+<!-- ========== /TOAST ========== -->
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -13,10 +13,12 @@
                        Đóng khi bấm ra ngoài / Esc / header thu gọn lúc cuộn.
      4) Panel member : "My Functions" trượt từ phải (Bootstrap offcanvas) — dùng ở
                        mobile (nút Account nằm trong menu offcanvas nên không có chỗ
-                       neo dropdown) và cho các mục có `view` (pane con như My Wallet).
+                       neo dropdown) và cho các mục có pane con (My wallet). Markup là
+                       HTML tĩnh (#yqMemberPanel, khối MEMBER PANEL ngay sau HEADER):
+                       mỗi pane con là div[data-yq-mfn-pane], JS chỉ bật/tắt hidden.
 
-   Danh sách chức năng: mảng MENU ở mục 4 (mặc định); khai báo YQ.memberMenu trong
-   data.js thì thay thế được mà không sửa module.
+   Danh sách chức năng là HTML tĩnh ở 2 chỗ: #yqAcctPop (dropdown desktop) và
+   #yqMemberPanel (panel) — đổi menu thì sửa cả hai ở mọi trang.
 
    Nguyên tắc an toàn (giống các module khác):
      - Chỉ móc vào DOM + event có sẵn: nút [data-yq-account] trong header/offcanvas
@@ -34,23 +36,7 @@
   var BS = window.bootstrap;
   if (!BS || !BS.Modal || !BS.Offcanvas) return;    // cần Bootstrap 5 bundle
 
-  var esc = YQ.escape;
   var KEY = 'yq_user_v1';
-
-  /* Menu member cho panel "My Functions" (mobile). Dropdown desktop là HTML tĩnh
-     trong header — đổi menu thì sửa cả #yqAcctPop ở mọi trang.
-       href   -> điều hướng sang trang thật
-       view   -> mở pane con trong panel "My Functions" (dropdown sẽ mở panel tại pane đó)
-       action -> 'logout'
-     Có href thì view bị bỏ qua. */
-  var MENU = YQ.memberMenu || [
-    { key: 'profile',  label: 'My profile',      icon: 'user',     href: 'member/profile.html' },
-    { key: 'orders',   label: 'My orders',       icon: 'bag',      href: 'member/orders.html' },
-    { key: 'wallet',   label: 'My wallet',       icon: 'wallet',   view: 'wallet' },
-    { key: 'password', label: 'Change password', icon: 'lock',     href: 'member/password.html' },
-    { key: 'invite',   label: 'Invite friends',  icon: 'userplus', href: 'member/invite.html' },
-    { key: 'logout',   label: 'Logout',          icon: 'logout',   action: 'logout' }
-  ];
 
   function isDesktop() { return window.matchMedia('(min-width: 992px)').matches; }
 
@@ -191,93 +177,47 @@
      ====================================================================== */
   var memberOc = null;
 
-  function menuHtml() {
-    return MENU.map(function (m) {
-      var tag = m.href ? 'a' : 'button';
-      var attrs = m.href
-        ? ' href="' + m.href + '"'
-        : ' type="button"' + (m.view ? ' data-yq-view="' + m.view + '"' : '') +
-          (m.action ? ' data-yq-do="' + m.action + '"' : '');
-      return '<' + tag + ' class="yq-mfn__item"' + attrs + '>' +
-               '<span class="yq-mfn__dot" aria-hidden="true"></span>' +
-               '<span class="yq-mfn__txt">' + esc(m.label) + '</span>' +
-               '<span class="yq-mfn__ico">' + YQ.icon(m.icon, 19) + '</span>' +
-             '</' + tag + '>';
-    }).join('');
-  }
-
+  /* Panel là HTML tĩnh (#yqMemberPanel) — chỉ tạo instance Offcanvas lần đầu mở. */
   function buildMember() {
-    if (memberOc) return;
-
-    var html =
-      '<aside class="offcanvas offcanvas-end yq-mfn" tabindex="-1" id="yqMemberPanel" aria-labelledby="yqMfnTitle">' +
-        '<div class="yq-mfn__head">' +
-          '<h2 class="yq-mfn__title" id="yqMfnTitle">My Functions</h2>' +
-          '<button class="yq-mfn__close" type="button" data-bs-dismiss="offcanvas" aria-label="Close">' +
-            YQ.icon('close', 20) + '</button>' +
-        '</div>' +
-        '<div class="yq-mfn__body">' +
-          '<div id="yqMfnMain">' +
-            '<div class="yq-mfn__hello">' +
-              '<p class="yq-mfn__hi" id="yqMfnHi"></p>' +
-              '<a class="yq-btn yq-btn--sm" href="member/profile.html?edit=1">Edit</a>' +
-            '</div>' +
-            '<div class="yq-mfn__list">' + menuHtml() + '</div>' +
-          '</div>' +
-          '<div class="yq-mfn__pane" id="yqMfnPane" hidden></div>' +
-        '</div>' +
-      '</aside>';
-
-    $(YQ.localise(html)).appendTo('body');
-    memberOc = new BS.Offcanvas(document.getElementById('yqMemberPanel'));
+    if (memberOc) return true;
+    var el = document.getElementById('yqMemberPanel');
+    if (!el) return false;                          // trang không có khối MEMBER PANEL
+    memberOc = new BS.Offcanvas(el);
+    return true;
   }
 
-  /* --- nội dung các pane con --- */
-  var views = {
-    wallet: function () {
-      return {
-        title: 'My wallet',
-        lead: 'Store credit and gift-card balance, applied automatically at checkout.',
-        body: '<div class="yq-mfn__stat"><b>' + YQ.money(0) + '</b><span>available credit</span></div>' +
-              '<a class="yq-btn yq-btn--yqost yq-btn--block" href="shop.html?cat=dining">Buy a dining voucher ' + YQ.icon('arrow', 15) + '</a>'
-      };
-    }
-  };
+  /* Pane con: div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] trong panel.
+     Pane cần đổ dữ liệu lúc mở thì khai báo hàm ở đây (chỉ .text()/.val()). */
+  var fills = {};
+
+  function $panes() { return $('#yqMemberPanel [data-yq-mfn-pane]'); }
+  function hasView(name) { return !!name && $panes().filter('[data-yq-mfn-pane="' + name + '"]').length > 0; }
 
   function showMain() {
-    $('#yqMfnPane').prop('hidden', true).empty();
+    $panes().prop('hidden', true);
     $('#yqMfnMain').prop('hidden', false);
   }
 
   function showView(name) {
-    var make = views[name];
-    if (!make) return;
-    var v = make();
-
+    if (!hasView(name)) return;
     $('#yqMfnMain').prop('hidden', true);
-    $('#yqMfnPane').prop('hidden', false).html(YQ.localise(
-      '<button class="yq-auth__back" type="button" data-yq-view="">' +
-        YQ.icon('chevleft', 14) + 'My Functions</button>' +
-      '<h3 class="yq-mfn__sub">' + esc(v.title) + '</h3>' +
-      '<p class="yq-mfn__lead">' + v.lead + '</p>' +
-      v.body
-    ));
-    if (v.fill) v.fill();
+    $panes().each(function () {
+      $(this).prop('hidden', $(this).attr('data-yq-mfn-pane') !== name);
+    });
+    if (fills[name]) fills[name]();
   }
 
   function paintMember() {
-    if (!memberOc) return;
-    var n = YQ.auth.name();
     var mail = (YQ.auth.user || {}).email || '';
-    $('#yqMfnHi').html('Hi, <em>' + esc(n) + '</em>' +
-      (mail ? '<span class="yq-mfn__mail">' + esc(mail) + '</span>' : ''));
+    $('#yqMfnName').text(YQ.auth.name());
+    $('#yqMfnMail').text(mail).prop('hidden', !mail);
   }
 
   function openMember(view) {
     if (!YQ.auth.isIn()) { openAuth('login'); return; }
-    buildMember();
+    if (!buildMember()) return;
     paintMember();
-    view && views[view] ? showView(view) : showMain();
+    hasView(view) ? showView(view) : showMain();
     memberOc.show();
   }
   function closeMember() { if (memberOc) memberOc.hide(); }
@@ -366,8 +306,10 @@
           .attr('aria-label', on ? 'My account — ' + YQ.auth.name() : 'Account')
           .attr('title', on ? 'Hi, ' + YQ.auth.name() : 'Log in or register')
           .attr('aria-haspopup', on ? 'dialog' : null)
-          .attr('aria-expanded', on ? 'false' : null)
-          .html(on ? '<span class="yq-acct-initial">' + esc(YQ.auth.initial()) + '</span>' : YQ.icon('user', 19));
+          .attr('aria-expanded', on ? 'false' : null);
+      /* Icon user và #yqAcctInitial đều có sẵn trong HTML — chỉ bật/tắt + điền chữ */
+      $btn.find('[data-yq-acct-icon]').attr('hidden', on ? '' : null);   // <svg>: dùng attr, không có prop hidden
+      $('#yqAcctInitial').text(on ? YQ.auth.initial() : '').prop('hidden', !on);
     }
     $('[data-yq-account-label]').text(on ? YQ.auth.name() : 'Account');
     /* Đăng xuất / đổi tên -> đóng, lần mở sau paintPop() điền lại tên mới */

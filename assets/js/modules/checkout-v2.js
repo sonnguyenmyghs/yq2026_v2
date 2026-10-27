@@ -14,8 +14,16 @@
        cấu trúc data.lalamove.CAR / MINIVAN nên appendCustomDeliTypeLalamove giữ nguyên.
      - Promo: tra window.__demoPromoCodes thay cho /cart?action=check_promo,
        dựng data_j cùng field như server trả về.
-     - Order summary: điền từ YQ.cart (production: server render).
-     - Submit: chặn form.submit() và hiện màn hình cảm ơn (production: post lên server).
+     - Submit: chặn form.submit() và hiện khối cảm ơn #cv2Done (production: post lên server).
+
+   Markup trang (order summary, tổng tiền, icon, khung giờ, giỏ trống, khối cảm ơn,
+   nút huỷ promo) là HTML tĩnh trong checkout-v2.html — PHP in sẵn. File này chỉ
+   đổi class / .text() / .val() / thuộc tính và ẩn-hiện khối có sẵn.
+   Phần còn dựng markup bằng JS là dữ liệu có từ API lúc chạy (không in sẵn được):
+     - gợi ý địa chỉ #search_suggest (Nominatim / Google Places)
+     - báo giá Lalamove .delivery__types (CAR / MINIVAN từ API)
+     - nội dung popup bản đồ (Leaflet / Google InfoWindow)
+     - icon spinner lúc chờ AJAX
    ========================================================================== */
 
 /* ======================================================================
@@ -178,7 +186,7 @@ function setCurrentMarker(formatted_address, location, postal) {
     outputAddress.value = formatted_address;
     outputLat.value = location.lat;
     outputLng.value = location.lng;
-    if (outputAddress__show[0]) outputAddress__show[0].innerHTML = '<span>' + $('<b>').text(formatted_address).html() + '</span>';
+    $(outputAddress__show).find('span').text(formatted_address);
     document.getElementById('my_lat').value = location.lat;
     document.getElementById('my_lgn').value = location.lng;
     /* [DEMO] Nominatim có postcode -> điền sẵn ô Postal code */
@@ -217,54 +225,12 @@ $(function() {
     var type__pickup__input = $('#in__pickup');
     var type__delivery__lalamove__input = $('#in__delivery__lalamove');
 
-    /* Icon SVG cho demo (production dùng <img>) — chỉ phần tử có data-cv2-icon */
-    var __icons = {
-        store:   '<path d="M3.5 9.5 5 4.5h14l1.5 5"/><path d="M3.5 9.5a2.6 2.6 0 0 0 5.2 0 2.6 2.6 0 0 0 5.3 0 2.6 2.6 0 0 0 5.3 0 1.2 1.2 0 0 0 1.2 0"/><path d="M5 12v8h14v-8"/><path d="M9.5 20v-5h5v5"/>',
-        scooter: '<circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M6 17h5l2.5-7H16"/><path d="M14 5h2.5l1.5 12"/><rect x="3" y="7" width="5.5" height="4" rx="1"/><path d="M8.5 9H11"/>',
-        map:     '<path d="M9 4 3.5 6.5v13L9 17l6 2.5 5.5-2.5v-13L15 6.5 9 4Z"/><path d="M9 4v13M15 6.5v13"/>',
-        lock:    '<rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>'
-    };
-    $('[data-cv2-icon]').each(function() {
-        $(this).html('<svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (__icons[$(this).data('cv2-icon')] || '') + '</svg>');
-    });
-
     var formatPrice = function(price) {
         return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
     };
 
-    /* ---------------------------------------------------------------
-       [DEMO] Order summary từ YQ.cart — production do server render:
-       {$_htmlListCartCheckOut}, {$tmp_total_cost}, {$totalCost}
-       --------------------------------------------------------------- */
-    var renderCartSummary = function() {
-        var items = (window.YQ && YQ.cart) ? YQ.cart.items : [];
-        var subtotal = 0, html = '';
-        $.each(items, function(_, i) {
-            var line = (i.price + (i.addonFee || 0)) * i.qty;
-            subtotal += line;
-            html += '<p><span>' + $('<b>').text(i.name).html() +
-                    (i.optionLabel ? '<small>' + $('<b>').text(i.optionLabel).html() + '</small>' : '') +
-                    '</span><strong>X ' + i.qty + '</strong></p>';
-        });
-        subtotal = Math.round(subtotal * 100) / 100;
-        $('.summary__list--items').html(html);
-        $('.inform--money .provisional').attr('data-subtotal', subtotal).data('subtotal', subtotal).find('span').html(formatPrice(subtotal));
-        confirm__price.attr('data-price', subtotal).data('price', subtotal).html(formatPrice(subtotal));
-        $('#total-default-no-promo').val(subtotal);
-        return items.length;
-    };
-    if (!renderCartSummary()) {
-        $('#cv2Main').html(
-            '<div class="yq-panel yq-empty">' +
-                '<div class="yq-empty__icon">' + YQ.icon('bag', 26) + '</div>' +
-                '<h3 class="yq-h3 mb-2">Your cart is empty</h3>' +
-                '<p class="yq-muted mb-4">Add something lovely before checking out.</p>' +
-                '<a class="yq-btn" href="shop.html">Browse the shop ' + YQ.icon('arrow', 16) + '</a>' +
-            '</div>'
-        );
-        $('#cv2Aside').hide();
-        return;
-    }
+    /* Order summary, tổng tiền, giỏ trống: HTML tĩnh do PHP in sẵn ({$cartItems}, {$tmp_total_cost},
+       {$totalCost}, {$totalItemsCart}) — JS không render lại, chỉ đọc data-subtotal / data-price. */
 
     /* ---------------------------------------------------------------
        PICKUP / LALAMOVE CONTROL — tham số từ window.__* (giống appv6)
@@ -290,56 +256,28 @@ $(function() {
         var t = new Date();
         return date.getFullYear() === t.getFullYear() && date.getMonth() === t.getMonth() && date.getDate() === t.getDate();
     };
-    var pad2 = function(n) { return n < 10 ? '0' + n : '' + n; };
 
-    /* Khung giờ có nghỉ giữa ca (__arrayMapTimeSlot*) — dùng cho Lalamove */
-    var renderTimeSlotHaveBreak = function(date, type) {
-        var picker__hour, slots, preparingtime;
-        if (type == 'pickup') {
-            picker__hour = $('.pickup__picker__hour__second'); slots = __arrayMapTimeSlotPickup; preparingtime = __pickupPreparingtimeMins;
-        } else {
-            picker__hour = $('.delilalamove__picker__hour'); slots = __arrayMapTimeSlotLalamove; preparingtime = __lalamovePreparingtimeMins;
-        }
-        picker__hour.html('').append("<option value=''>Time</option>");
-        var nowMins = d.getHours() * 60 + d.getMinutes();
-        $.each(slots, function(_, slot) {
-            if (isToday(date) && slot.key * 60 - nowMins < preparingtime) return;   // hôm nay: bỏ khung không kịp chuẩn bị
-            picker__hour.append('<option value="' + slot.key + '">' + slot.time + '</option>');
+    /* Khung giờ: <option> in sẵn trong HTML (PHP foreach theo __arrayMapTimeSlot* / giờ open..close),
+       mỗi option có data-mins = phút bắt đầu. Chọn ngày hôm nay -> disabled + hidden các khung
+       không kịp chuẩn bị (now + preparingtime); ngày khác / chưa chọn ngày -> mở lại tất cả.
+       Thay cho renderTimeSlotHaveBreak / renderTimeSlotByHours (appv6 dựng lại <option>). */
+    var filterTimeSlots = function(date, type) {
+        var picker__hour = (type == 'pickup') ? $('.pickup__picker__hour__second') : $('.delilalamove__picker__hour');
+        var preparingtime = (type == 'pickup') ? __pickupPreparingtimeMins : __lalamovePreparingtimeMins;
+        var now = new Date(), nowMins = now.getHours() * 60 + now.getMinutes();
+        picker__hour.val('').find('option[data-mins]').each(function() {
+            var tooSoon = isToday(date) && parseInt($(this).data('mins'), 10) - nowMins < preparingtime;
+            $(this).prop('disabled', tooSoon).prop('hidden', tooSoon);
         });
     };
-    /* Khung giờ theo từng giờ open..close — dùng cho Pickup */
-    var renderTimeSlotByHours = function(date, type) {
-        var picker__hour, openH, openM, closeH, closeM, preparingtime;
-        if (type == 'pickup') {
-            picker__hour = $('.pickup__picker__hour__second'); openH = __pickupOpenHour; openM = __pickupOpenMins;
-            closeH = __pickupCloseHour; closeM = __pickupCloseMins; preparingtime = __pickupPreparingtimeMins;
-        } else {
-            picker__hour = $('.delilalamove__picker__hour'); openH = __lalamoveOpenHour; openM = __lalamoveOpenMins;
-            closeH = __lalamoveCloseHour; closeM = __lalamoveCloseMins; preparingtime = __lalamovePreparingtimeMins;
-        }
-        picker__hour.html('').append("<option value=''>Time</option>");
-        var nowMins = d.getHours() * 60 + d.getMinutes();
-        for (var m = openH * 60 + openM; m < closeH * 60 + closeM; m += 60) {
-            if (isToday(date) && m - nowMins < preparingtime) continue;
-            var label = pad2(Math.floor(m / 60)) + ':' + pad2(m % 60);
-            picker__hour.append($('<option></option>').attr('value', label).text(label));
-        }
-    };
 
-    /* PICKUP PICKER */
-    if (typeof __useTimeSlotByHourForPickup != "undefined") {
-        $('.pickup__time__zone').html('').append('<select name="redeem_detail[receive_hour_pickup]" class="form-control mr--notes pickup__picker__hour__second"><option value="">Time</option></select><div class="append__pickup__picker__hour"></div>');
-        renderTimeSlotByHours(null, "pickup");
-    } else if (typeof __useTimeSlotForPickup != "undefined" || typeof __useTimeSlot != "undefined") {
-        $('.pickup__time__zone').html('').append('<select name="redeem_detail[receive_hour_pickup]" class="form-control mr--notes pickup__picker__hour__second"><option value="">Time</option></select><div class="append__pickup__picker__hour"></div>');
-        renderTimeSlotHaveBreak(null, "pickup");
-    }
     /* [DEMO] không tải được flatpickr -> dùng <input type="date"> native */
     if (!window.flatpickr) {
         $('.pickup__picker__date__second, .delilalamove__picker__date').prop('readonly', false).attr('type', 'date')
             .on('change', function() { $(this).removeClass('error'); deli__lalamove__zone.removeClass('null__date'); });
         $.fn.flatpickr = function() { return this; };
     }
+    /* PICKUP PICKER — <select> khung giờ là HTML tĩnh (.pickup__time__zone) */
     $('.pickup__picker__date__second').on('click', function() {
         $('.append__pickup__picker__date').toggle();
     });
@@ -352,18 +290,11 @@ $(function() {
         onChange: function(selectedDates, dateStr, instance) {
             $('.append__pickup__picker__date').hide();
             instance._input.classList.remove('error');
-            renderTimeSlotByHours(selectedDates[0], "pickup");
+            filterTimeSlots(selectedDates[0], "pickup");
         }
     });
 
-    /* LALAMOVE PICKER */
-    if (typeof __useTimeSlotLalamove != "undefined") {
-        $('.lalamove__time__zone').html('').append('<select name="redeem_detail[receive_hour]" class="form-control mr--notes delilalamove__picker__hour"><option value="">Time</option></select><div class="append__delilalamove__picker__hour"></div>');
-        renderTimeSlotHaveBreak(null, "lalamove");
-    } else if (typeof __useTimeSlotByHourForLalamove != "undefined") {
-        $('.lalamove__time__zone').html('').append('<select name="redeem_detail[receive_hour]" class="form-control mr--notes delilalamove__picker__hour"><option value="">Time</option></select><div class="append__delilalamove__picker__hour"></div>');
-        renderTimeSlotByHours(null, "lalamove");
-    }
+    /* LALAMOVE PICKER — <select> khung giờ là HTML tĩnh (.lalamove__time__zone) */
     $('.delilalamove__picker__date').on('click', function() {
         $('.append__delilalamove__picker__date').toggle();
     });
@@ -377,7 +308,7 @@ $(function() {
         onChange: function(selectedDates, dateStr, instance) {
             $('.append__delilalamove__picker__date').hide();
             deli__lalamove__zone.removeClass('null__date');
-            renderTimeSlotHaveBreak(selectedDates[0], "lalamove");
+            filterTimeSlots(selectedDates[0], "lalamove");
             onChangeDateToChangeHour_Lalamove();   // đổi ngày -> báo giá lại
         }
     });
@@ -431,19 +362,19 @@ $(function() {
     });
     var resetPickup = function() {
         $('.pickup__picker__date__second').val('');
-        $('.pickup__picker__hour__second').val('');
+        filterTimeSlots(null, 'pickup');          // val('') + mở lại mọi khung giờ
     };
     var resetDelivery = function() {
-        $('.in--location--name span').html('Edit my address');
+        $('.in--location--name span').text('Edit my address');
         $('#transportdistanceMeter').val('');
         $('#transportdistanceKm').val('');
         $('#transport__fee').val(0);
-        $('#feeTrans').html('0.00');
+        $('#feeTrans').text('0.00');
     };
     var resetDeliveryLalamove = function() {
         $('.delilalamove__picker__date').val('');
-        $('.delilalamove__picker__hour').val('');
-        $('.in--location--name span').html('Edit my address');
+        filterTimeSlots(null, 'lalamove');
+        $('.in--location--name span').text('Edit my address');
         $('#output_address_show').val('');
         $('#output_address').val('');
         $('#transportdistanceMeter').val('');
@@ -452,11 +383,11 @@ $(function() {
         $('#myLat').val('');
         $('#myLng').val('');
         $('#transport__fee').val(0);
-        $('#feeTrans').html('0.00');
+        $('#feeTrans').text('0.00');
         var total__price__discount = parseFloat(String(input__totalPriceWithDiscount.val()).replace(/\,/g, ''));
         var total__price__base = parseFloat(String(confirm__price.data('price')).replace(/\,/g, ''));
         var total__price = total__price__discount > 0 ? total__price__discount : total__price__base;
-        $('.confirm--price .price').html(formatPrice(total__price));
+        $('.confirm--price .price').text(formatPrice(total__price));
         $('.lalamove__datetime__zone').removeClass('show');
     };
 
@@ -529,7 +460,7 @@ $(function() {
             /* [DEMO] thay cho $.ajax(baseUrl + '/cart/?check_transportfee=on&propertyaddress=…&myLat=…&myLng=…') */
             setTimeout(function() {
                 var data = demoQuoteLalamove(parseFloat(myLat.val()), parseFloat(myLng.val()));
-                $('.in--location--name span').html(myaddress);
+                $('.in--location--name span').text(myaddress);
                 output_address_show.val(myaddress).removeClass('findding');
                 $('.delivery__types').html('');
                 if (typeof __lalamoveCustomDeliveryType != "undefined") {
@@ -591,7 +522,7 @@ $(function() {
     var onChangeDateToChangeHour_Lalamove = function() {
         if (__replaceLalaToHotelVan == true || !output_address.val()) return;
         $('.delivery__types').html('<i class="fas fa-spinner fa-spin"></i>');
-        $('#feeTrans').html('');
+        $('#feeTrans').text('');
         setTimeout(function() {
             var data = demoQuoteLalamove(parseFloat(myLat.val()), parseFloat(myLng.val()));
             $('.delivery__types').html('');
@@ -634,16 +565,14 @@ $(function() {
         }
         setTimeout(function() {
             if (data_j.status == 1) {
-                $('#div-total-cost').html(data_j.total_cost_show);
+                $('#div-total-cost').text(data_j.total_cost_show);
                 $('#input-promo-code').attr('readonly', true);
-                if ($("#btn-cancel-promocode").length === 0) {
-                    $('<a id="btn-cancel-promocode" class="btn btn-primary">Cancel code</a>').insertAfter('#btn-check-promocode');
-                }
                 $('#btn-check-promocode').hide();
+                $('#btn-cancel-promocode').show();          // nút có sẵn trong HTML
                 $('#div-show-discount-promo').removeClass('d-none').show();
-                $('#name-show-discount-promo').html(data_j.name_discount);
-                $('#costdiscount-show-discount-promo').html(data_j.cost_discount_show + ' ' + data_j.currency).attr('data-discount', data_j.cost_discount);
-                $('#warning-promo').show().html(data_j.message).css('color', 'green');
+                $('#name-show-discount-promo').text(data_j.name_discount);
+                $('#costdiscount-show-discount-promo').text(data_j.cost_discount_show + ' ' + data_j.currency).attr('data-discount', data_j.cost_discount);
+                $('#warning-promo').show().text(data_j.message).css('color', 'green');
                 $('#checkDiscount').val(data_j.cost_discount);
                 input__totalPriceWithDiscount.val(data_j.total_cost);
                 if (type__pickup__input.is(":checked")) {
@@ -654,23 +583,23 @@ $(function() {
                     applyTotalPriceDefault(0);
                 }
             } else {
-                $('#warning-promo').show().html(data_j.message).css('color', 'red');
+                $('#warning-promo').show().text(data_j.message).css('color', 'red');
             }
-            $('#btn-check-promocode').html('Apply');
+            $('#btn-check-promocode').text('Apply');
         }, 300);
     };
 
     $(document).on('click', '#btn-cancel-promocode', function() {
-        $('#costdiscount-show-discount-promo').attr('data-discount', 0).html('');
+        $('#costdiscount-show-discount-promo').attr('data-discount', 0).text('');
         $('#btn-check-promocode').show();
         $('#input-promo-code').attr('readonly', false).val('');
-        $('#btn-cancel-promocode').remove();
+        $('#btn-cancel-promocode').hide();
         $('#div-show-discount-promo').hide();
         $('#warning-promo').hide();
         $('#checkDiscount').val('');
         input__totalPriceWithDiscount.val("");
         var subtotal = parseFloat($('.inform--money .provisional').data('subtotal'));
-        $('#div-total-cost').attr("data-price", $('#total-default-no-promo').val()).html(formatPrice(subtotal));
+        $('#div-total-cost').attr("data-price", $('#total-default-no-promo').val()).text(formatPrice(subtotal));
         if (type__delivery__lalamove__input.is(":checked") && output_address.val()) {
             onChangeDateToChangeHour_Lalamove();
         } else {
@@ -687,31 +616,31 @@ $(function() {
         var total__price = total__price__discount > 0 ? total__price__discount : total__price__base;
         var input__transport__fee = $('#transport__fee');
         fee = parseFloat(fee) || 0;
-        feeTrans.html(fee.toFixed(2));
+        feeTrans.text(fee.toFixed(2));
         feeTrans.data('fee', fee);
         input__transport__fee.val(fee);
-        confirm__price.html(formatPrice(total__price + fee));
+        confirm__price.text(formatPrice(total__price + fee));
     };
     var sumTotalPrice = function() {
         var total__price__discount = parseFloat(String(input__totalPriceWithDiscount.val()).replace(/\,/g, ''));
         var div_total_cost = parseFloat($('#div-total-cost').attr('data-price'));
-        $('#div-total-cost').html(formatPrice(total__price__discount > 0 ? total__price__discount : div_total_cost));
+        $('#div-total-cost').text(formatPrice(total__price__discount > 0 ? total__price__discount : div_total_cost));
     };
     var checkPriceDeli = function(cofirmprice) {
         var cofirmprice__base = parseFloat(String($('.confirm--price .price').attr('data-price')).replace(/\,/g, ''));
         cofirmprice = cofirmprice ? cofirmprice : cofirmprice__base;
         var fee = 0;
-        $('#feeTrans').html(formatPrice(fee));
+        $('#feeTrans').text(formatPrice(fee));
         $('#transport__fee').val(fee);
-        $('.confirm--price .price').html(formatPrice(cofirmprice + fee));
+        $('.confirm--price .price').text(formatPrice(cofirmprice + fee));
     };
     var checkPriceDeliLalamove = function(cofirmprice, fee) {
         var cofirmprice__base = parseFloat(String($('.confirm--price .price').attr('data-price')).replace(/\,/g, ''));
         cofirmprice = cofirmprice ? cofirmprice : cofirmprice__base;
-        feeTrans.html(formatPrice(fee));
+        feeTrans.text(formatPrice(fee));
         feeTrans.data('fee', fee);
         $('#transport__fee').val(fee);
-        confirm__price.html(formatPrice(cofirmprice + parseFloat(fee)));
+        confirm__price.text(formatPrice(cofirmprice + parseFloat(fee)));
     };
 
     /* Gõ lại thì bỏ trạng thái lỗi */
@@ -834,36 +763,29 @@ $(function() {
     });
 
     /* ---------------------------------------------------------------
-       [DEMO] không có backend: chặn submit, hiện màn hình cảm ơn, xoá giỏ.
+       [DEMO] không có backend: chặn submit, hiện khối cảm ơn #cv2Done (HTML tĩnh), xoá giỏ.
+       JS chỉ đổ .text() vào #cv2DoneNum / #cv2DoneTotal / #cv2DoneWhen / #cv2DoneEmail.
        Production: bỏ block này, form POST lên server như bình thường.
        --------------------------------------------------------------- */
-    var esc = function(str) { return $('<b>').text(str || '').html(); };
     var summaryLine = function() {
         if (isLalamove()) {
             return 'Delivery on ' + $('.delilalamove__picker__date').val() + ', ' +
-                   $('.delilalamove__picker__hour option:selected').text() + ' to ' + esc(output_address.val());
+                   $('.delilalamove__picker__hour option:selected').text() + ' to ' + output_address.val();
         }
         var place = ($('.pickup--location--radio:checked').val() || '').replace('Self-Collection', '');
         return 'Self-collection on ' + $('.pickup__picker__date__second').val() + ' at ' +
-               $('.pickup__picker__hour__second').val() + ' — ' + esc(place);
+               $('.pickup__picker__hour__second').val() + ' — ' + place;
     };
     $('.inform--frm').on('submit', function(e) {
         e.preventDefault();
-        var num = 'GH' + Date.now().toString().slice(-8);
-        var total = $('#div-total-cost').text();
         var email = isMember() ? $('.input__member__email').val() : $('.input__guest__email').val();
-        var when = summaryLine();
+        $('#cv2DoneNum').text('GH' + Date.now().toString().slice(-8));
+        $('#cv2DoneTotal').text($('#div-total-cost').text());
+        $('#cv2DoneWhen').text(summaryLine());
+        $('#cv2DoneEmail').text(email);
         if (window.YQ && YQ.cart) YQ.cart.clear();
-        $('#cv2Main').html(
-            '<div class="pay--part cv2-done">' +
-                '<div class="cv2-done__icon">' + YQ.icon('check', 28) + '</div>' +
-                '<h2 class="yq-h2 mb-2">Thank you for your order</h2>' +
-                '<p class="yq-muted mb-1">Order <span class="cv2-done__num">' + num + '</span> · ' + total + ' SGD</p>' +
-                '<p class="yq-muted mb-1">' + when + '.</p>' +
-                '<p class="yq-muted mb-4">A receipt has been sent to <b>' + esc(email) + '</b>.</p>' +
-                '<a class="yq-btn" href="index.html">Back to the shop ' + YQ.icon('arrow', 16) + '</a>' +
-            '</div>'
-        );
+        $('#cv2Main > .pay--part').not('#cv2Done').hide();
+        $('#cv2Done').fadeIn(220);
         $('#cv2Aside').fadeOut(200);
         $('html,body').animate({ scrollTop: $('#cv2Top').offset().top - 120 }, 350);
     });

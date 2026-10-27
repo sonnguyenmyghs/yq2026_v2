@@ -7,57 +7,9 @@
   var C = YQ.config;
 
   /* ======================================================================
-     1. Components
+     1. Components — (đã bỏ YQ.priceHtml / YQ.summaryHtml: giá và order summary
+        giờ là HTML tĩnh do PHP in sẵn trong từng trang)
      ====================================================================== */
-  /** Giá + giá gốc gạch ngang (nếu có giảm). */
-  YQ.priceHtml = function (price, compareAt) {
-    return YQ.money0(price) + (YQ.discount(price, compareAt) ? '<s>' + YQ.money0(compareAt) + '</s>' : '');
-  };
-
-  /** Order summary block (dùng ở cart + checkout) */
-  YQ.summaryHtml = function (opts) {
-    opts = opts || {};
-    var cart = YQ.cart;
-    var sub = cart.subtotal(), ship = cart.shipping(), tax = cart.tax(), total = cart.total();
-    var toFree = cart.toFree();
-    var pct = Math.min(100, (sub / C.freeShippingThreshold) * 100);
-
-    var note = '';
-    if (sub > 0 && toFree > 0) {
-      note = '<div class="yq-ship-note">' + YQ.icon('truck', 16) +
-             '<div class="w-100">Add ' + YQ.money(toFree) + ' more for free shipping' +
-               '<div class="yq-ship-bar"><i style="width:' + pct + '%"></i></div>' +
-             '</div></div>';
-    } else if (sub > 0) {
-      note = '<div class="yq-ship-note">' + YQ.icon('check', 16) + '<div>You have unlocked free shipping.</div></div>';
-    }
-
-    var lines = '';
-    if (opts.showItems) {
-      $.each(cart.items, function (_, i) {
-        lines += '<div class="d-flex gap-3 align-items-center mb-3">' +
-                   '<div class="yq-media" style="width:52px;height:52px;border-radius:8px;flex:none">' +
-                     YQ.mediaInner(i) + '</div>' +
-                   '<div class="flex-grow-1 min-width-0">' +
-                     '<div class="yq-small text-truncate" style="color:var(--yq-ink)">' + YQ.escape(i.name) + '</div>' +
-                     '<div class="yq-tiny yq-muted">Qty: ' + i.qty + '</div>' +
-                   '</div>' +
-                   '<div class="yq-sum__val yq-small">' + YQ.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
-                 '</div>';
-      });
-      if (lines) lines += '<hr style="border-color:var(--yq-line-soft);opacity:1">';
-    }
-
-    return '' +
-      '<h3 class="yq-serif mb-3" style="font-size:1.3rem">Order summary</h3>' +
-      lines +
-      '<div class="yq-sum"><span>Subtotal</span><span class="yq-sum__val">' + YQ.money(sub) + '</span></div>' +
-      '<div class="yq-sum"><span>Shipping</span><span class="yq-sum__val">' + (ship === 0 ? 'Free' : YQ.money(ship)) + '</span></div>' +
-      '<div class="yq-sum"><span>Tax (9%)</span><span class="yq-sum__val">' + YQ.money(tax) + '</span></div>' +
-      '<div class="yq-sum yq-sum--total"><span>Total</span><span class="yq-sum__val">' + YQ.money(total) + '</span></div>' +
-      (opts.cta ? '<a class="yq-btn yq-btn--block mt-4" href="' + opts.ctaHref + '">' + opts.cta + ' ' + YQ.icon('arrow', 16) + '</a>' : '') +
-      note;
-  };
 
   /* ======================================================================
      3. Shop (filters + sort + search)
@@ -172,77 +124,53 @@
      7. Cart
      ====================================================================== */
   YQ.initCart = function () {
-    function render() {
-      var items = YQ.cart.items;
+    // Toàn bộ markup (các dòng .yq-line, order summary, giỏ trống #cartEmpty) là HTML tĩnh trong cart.html
+    // — PHP in sẵn từ session. JS không dựng dòng nào: chỉ đổi text giá/tổng khi đổi số lượng,
+    // gỡ dòng có sẵn khi bấm X và bật khối giỏ trống khi hết dòng (demo, chưa gọi API).
 
-      if (!items.length) {
-        $('#cartWrap').html(
-          '<div class="col-12"><div class="yq-panel yq-empty">' +
-            '<div class="yq-empty__icon">' + YQ.icon('bag', 26) + '</div>' +
-            '<h3 class="yq-h3 mb-2">Your cart is empty</h3>' +
-            '<p class="yq-muted mb-4">Explore our cakes, hampers, and experiences.</p>' +
-            '<a class="yq-btn" href="shop.html">Continue shopping ' + YQ.icon('arrow', 16) + '</a>' +
-          '</div></div>'
-        );
-        return;
-      }
+    /* Tính lại thành tiền mỗi dòng (data-price × số lượng) + subtotal/ship/thuế/tổng,
+       rồi chỉ đổi text / width trên các phần tử đã có. */
+    function recalc() {
+      var sub = 0;
+      $('#cartLines .yq-line').each(function () {
+        var qty = parseInt($(this).find('[data-qty-val]').text(), 10) || 0;
+        var line = (parseFloat($(this).attr('data-price')) || 0) * qty;
+        $(this).find('.yq-line__price').text(YQ.money(line));
+        sub += line;
+      });
 
-      var lines = items.map(function (i) {
-        return '' +
-          '<div class="yq-line" data-key="' + i.key + '">' +
-            '<div class="yq-line__media yq-media">' + YQ.mediaInner(i) + '</div>' +
-            '<div class="flex-grow-1">' +
-              '<div class="yq-line__title">' + YQ.escape(i.name) + '</div>' +
-              '<div class="yq-line__opt">' + YQ.escape(i.optionLabel || '') +
-                (i.addonLabel ? ' · ' + YQ.escape(i.addonLabel) : '') + '</div>' +
-              '<div class="yq-qty mt-3" data-qty data-min="1">' +
-                '<button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease">' + YQ.icon('minus', 15) + '</button>' +
-                '<span class="yq-qty__val" data-qty-val>' + i.qty + '</span>' +
-                '<button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase">' + YQ.icon('plus', 15) + '</button>' +
-              '</div>' +
-            '</div>' +
-            '<div class="text-end">' +
-              '<div class="yq-line__price">' + YQ.money((i.price + (i.addonFee || 0)) * i.qty) + '</div>' +
-            '</div>' +
-            '<button class="yq-line__remove" type="button" data-remove aria-label="Remove">' + YQ.icon('close', 16) + '</button>' +
-          '</div>';
-      }).join('');
+      var ship = (sub <= 0 || sub >= C.freeShippingThreshold) ? 0 : C.shipping;
+      var tax = sub * C.taxRate;
+      var toFree = Math.max(0, C.freeShippingThreshold - sub);
 
-      $('#cartWrap').html(
-        '<div class="col-lg-7 col-xl-8 mb-4 mb-lg-0">' +
-          '<div class="yq-panel yq-panel--flush">' + lines + '</div>' +
-          '<div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">' +
-            '<a class="yq-link-arrow" href="shop.html">' + YQ.icon('chevleft', 14) + ' Continue shopping</a>' +
-            '<button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" id="cartClear">Clear cart</button>' +
-          '</div>' +
-        '</div>' +
-        '<div class="col-lg-5 col-xl-4">' +
-          '<div class="yq-panel yq-sticky">' +
-            YQ.summaryHtml({ cta: 'Proceed to checkout', ctaHref: 'checkout.html' }) +
-            '<div class="yq-trust mt-3 pt-3">' +
-              '<span>' + YQ.icon('lock', 15) + 'Secure payment</span>' +
-              '<span>' + YQ.icon('truck', 15) + 'Same-day delivery</span>' +
-            '</div>' +
-          '</div>' +
-        '</div>'
-      );
+      $('#cartSubtotal').text(YQ.money(sub));
+      $('#cartShipping').text(ship === 0 ? 'Free' : YQ.money(ship));
+      $('#cartTax').text(YQ.money(tax));
+      $('#cartTotal').text(YQ.money(sub + ship + tax));
+
+      // 2 note free ship loại trừ nhau
+      $('#cartToFree').text(YQ.money(toFree));
+      $('#cartShipBar').css('width', Math.min(100, (sub / C.freeShippingThreshold) * 100) + '%');
+      $('#cartShipNote').toggleClass('d-none', !(sub > 0 && toFree > 0));
+      $('#cartShipFree').toggleClass('d-none', !(sub > 0 && toFree === 0));
+
+      // Hết dòng -> ẩn layout, hiện khối giỏ trống
+      var empty = !$('#cartLines .yq-line').length;
+      $('#cartWrap').toggleClass('d-none', empty);
+      $('#cartEmpty').toggleClass('d-none', !empty);
     }
 
-    $(document).on('yq:cart-changed', render);
-
-    $(document).on('yq:qty', '#cartWrap [data-qty]', function (e, n) {
-      YQ.cart.setQty($(this).closest('.yq-line').data('key'), n);
-    });
+    $(document).on('yq:qty', '#cartWrap [data-qty]', recalc);   // stepper chung (app.js) đã đổi số
     $(document).on('click', '#cartWrap [data-remove]', function () {
-      YQ.cart.remove($(this).closest('.yq-line').data('key'));
+      $(this).closest('.yq-line').remove();
+      recalc();
       YQ.toast('Item removed');
     });
     $(document).on('click', '#cartClear', function () {
-      YQ.cart.clear();
+      $('#cartLines .yq-line').remove();
+      recalc();
       YQ.toast('Cart cleared');
     });
-
-    render();
   };
 
   /* ======================================================================
@@ -336,64 +264,60 @@
      9. Personalise (eCard)
      ====================================================================== */
   YQ.initPersonalise = function () {
-    var exp = YQ.experience(YQ.param('exp')) || YQ.experiences[0];
-    var design = YQ.cardDesigns[0];
-    var delivery = 'ecard';
+    // Toàn bộ markup (trải nghiệm đã chọn, mẫu thiệp, cách giao, tổng tiền) là HTML tĩnh trong personalise.html
+    // — JS chỉ đổi class is-active / theme thiệp, đổ text vào preview + tổng tiền và thêm vào giỏ.
+    var $exp = $('#peExp');
 
-    /* Selected experience summary */
-    $('#peExp').html(
-      '<div class="d-flex gap-3 align-items-center">' +
-        '<div class="yq-media" style="width:66px;height:66px;border-radius:10px;flex:none">' +
-          YQ.mediaInner(exp) + '</div>' +
-        '<div>' +
-          '<div class="yq-tiny yq-muted">Selected experience</div>' +
-          '<div class="yq-serif" style="font-size:1.1rem;color:var(--yq-ink)">' + YQ.escape(exp.name) + '</div>' +
-          '<div class="yq-small yq-muted">' + exp.duration + ' · ' + exp.place + '</div>' +
-        '</div>' +
-        '<div class="ms-auto yq-serif" style="font-size:1.1rem;color:var(--yq-ink)">' + YQ.money0(exp.price) + '</div>' +
-      '</div>'
-    );
+    /* Demo: PHP đã in đúng trải nghiệm theo ?exp=. Ở bản tĩnh, nếu ?exp= khác mẫu
+       thì chỉ đổi text/src/data-* của các phần tử có sẵn cho khớp (không dựng HTML). */
+    var demo = YQ.experience(YQ.param('exp'));
+    if (demo && demo.id !== $exp.attr('data-exp-id')) {
+      $exp.attr({ 'data-exp-id': demo.id, 'data-exp-price': demo.price, 'data-exp-tone': demo.tone });
+      $exp.find('.pe-exp__img img').attr({ src: demo.img, alt: demo.name });
+      $exp.find('.pe-exp__name').text(demo.name);
+      $exp.find('.pe-exp__meta').text(demo.duration + ' · ' + demo.place);
+      $exp.find('.pe-exp__price').text(YQ.money0(demo.price));
+      $('#peBase').text(YQ.money(demo.price));
+    }
 
-    /* Card designs */
-    $('#peDesigns').html(YQ.cardDesigns.map(function (d, i) {
-      return '<div class="col-6">' +
-               '<button class="yq-cardpick' + (i === 0 ? ' is-active' : '') + '" type="button" data-design="' + d.id + '">' +
-                 '<span class="yq-cardpick__art ' + d.art + '">' + d.glyph + '</span>' +
-                 '<span class="yq-cardpick__name">' + d.name + '</span>' +
-               '</button>' +
-             '</div>';
-    }).join(''));
+    /* Thông tin trải nghiệm đọc lại từ data-* / text của #peExp (PHP in sẵn) */
+    var exp = {
+      id: $exp.attr('data-exp-id'),
+      price: parseFloat($exp.attr('data-exp-price')) || 0,
+      tone: parseInt($exp.attr('data-exp-tone'), 10) || 3,
+      name: $.trim($exp.find('.pe-exp__name').text()),
+      label: $.trim($exp.find('.pe-exp__meta').text())
+    };
+
+    /* Mẫu thiệp + cách giao đang chọn = nút có class is-active */
+    function $design()   { return $('#peDesigns .yq-cardpick.is-active'); }
+    function $delivery() { return $('.pe-delivery.is-active'); }
 
     function paintPreview() {
       var to  = $.trim($('#peTo').val());
       var msg = $.trim($('#peMsg').val());
       var frm = $.trim($('#peFrom').val());
 
-      $('#peCard').attr('class', 'yq-ecard ' + design.theme);
+      $('#peCard').attr('class', $.trim('yq-ecard ' + ($design().attr('data-theme') || '')));
       $('#peCardTo').text(to ? 'For ' + to : '').toggle(!!to);
       $('#peCardMsg').text(msg ? '“' + msg + '”' : '“Your message will appear here.”');
       $('#peCardFrom').text(frm ? '— ' + frm : '').toggle(!!frm);
 
-      var fee = delivery === 'physical' ? C.physicalCardFee : 0;
+      var fee = parseFloat($delivery().attr('data-fee')) || 0;
       $('#peTotal').text(YQ.money(exp.price + fee));
       $('#peFeeRow').toggle(fee > 0);
-      $('#peDeliveryNote').text(delivery === 'physical'
-        ? 'Physical card will be posted to the recipient in 2–3 business days.'
-        : 'eCard will be sent to recipient’s email upon order confirmation.');
+      $('#peDeliveryNote').text($delivery().attr('data-note') || '');
     }
 
     $(document).on('click', '#peDesigns .yq-cardpick', function () {
       $('#peDesigns .yq-cardpick').removeClass('is-active');
       $(this).addClass('is-active');
-      var dId = $(this).attr('data-design');
-      design = YQ.cardDesigns.filter(function (d) { return d.id === dId; })[0] || design;
       paintPreview();
     });
 
     $(document).on('click', '.pe-delivery', function () {
       $('.pe-delivery').removeClass('is-active');
       $(this).addClass('is-active');
-      delivery = $(this).attr('data-delivery');
       paintPreview();
     });
 
@@ -405,14 +329,15 @@
     });
 
     function addToCart(personalised) {
-      var fee = (personalised && delivery === 'physical') ? C.physicalCardFee : 0;
+      var delivery = $delivery().attr('data-delivery');
+      var fee = personalised ? (parseFloat($delivery().attr('data-fee')) || 0) : 0;
       YQ.cart.add(
         { id: exp.id, name: exp.name, tone: exp.tone, price: exp.price, catLabel: 'Experience' },
-        { id: (personalised ? design.id + '-' + delivery : 'plain'), label: exp.duration + ' · ' + exp.place, price: exp.price },
+        { id: (personalised ? $design().attr('data-design') + '-' + delivery : 'plain'), label: exp.label, price: exp.price },
         1,
         personalised ? {
           addonFee: fee,
-          addonLabel: design.name + ' ' + (delivery === 'physical' ? 'physical card' : 'eCard'),
+          addonLabel: $.trim($design().find('.yq-cardpick__name').text()) + ' ' + (delivery === 'physical' ? 'physical card' : 'eCard'),
           giftTo: $.trim($('#peTo').val()),
           giftFrom: $.trim($('#peFrom').val()),
           giftMsg: $.trim($('#peMsg').val())
@@ -439,23 +364,30 @@
      10. My Orders (2 tab: Completed orders / Pending payment)
      ====================================================================== */
   YQ.initOrders = function () {
-    var TABS = [
-      { id: 'completed', label: 'Completed orders' },
-      { id: 'pending',   label: 'Pending payment'  }
-    ];
+    // Toàn bộ markup (2 tab, các thẻ đơn ở cả 2 dạng rút gọn/đầy đủ, khối rỗng) là HTML tĩnh trong member/orders.html
+    // — JS chỉ chuyển tab, mở/đóng thẻ đơn (class + hidden) và xử lý ReOrder.
+    var TABS = ['completed', 'pending'];
 
-    var current = YQ.param('tab');
-    if (!TABS.filter(function (t) { return t.id === current; }).length) current = 'completed';
-
-    var open = {};   // id đơn -> đang mở rộng?
-    var seen = {};   // tab -> đã vào lần nào chưa (để chỉ tự mở đơn mới nhất 1 lần)
-
-    /* --- tiền: mockup in số trần (88.00), tổng mới kèm mã tiền tệ --- */
-    function amt(n) {
-      return Number(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    /** Mở 1 tab: bật class/aria trên nút, hiện pane tương ứng, ẩn pane còn lại. */
+    function showTab(id) {
+      $('#ordTabs [data-ord-tab]').each(function () {
+        var on = $(this).attr('data-ord-tab') === id;
+        $(this).toggleClass('is-active', on).attr('aria-pressed', on ? 'true' : 'false');
+      });
+      $('#ordList [data-ord-pane]').each(function () {
+        $(this).prop('hidden', $(this).attr('data-ord-pane') !== id);
+      });
     }
 
-    /** Ghép 1 dòng đơn với sản phẩm thật; trả null nếu id không còn trong catalogue. */
+    /** Mở/đóng 1 thẻ đơn: đổi class is-open + aria, ẩn/hiện khối rút gọn và khối đầy đủ. */
+    function setOpen($card, on) {
+      $card.toggleClass('is-open', on);
+      $card.find('[data-ord-toggle]').attr('aria-expanded', on ? 'true' : 'false');
+      $card.find('.yq-ord__briefs').prop('hidden', on);
+      $card.find('.yq-ord__full').prop('hidden', !on);
+    }
+
+    /** Ghép 1 dòng đơn với sản phẩm thật (chỉ dùng cho ReOrder); trả null nếu id không còn trong catalogue. */
     function line(row) {
       var p = YQ.product(row.id);
       if (!p) return null;
@@ -471,118 +403,15 @@
     function linesOf(order) {
       return (order.items || []).map(line).filter(Boolean);
     }
-    function totalOf(lines) {
-      return lines.reduce(function (s, l) { return s + l.sum; }, 0);
-    }
-
-    function ordersOf(tab) {
-      return (YQ.orders || []).filter(function (o) { return o.status === tab; })
-        .slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
-    }
-
-    /* --- markup --- */
-    function tabsHtml() {
-      return TABS.map(function (t) {
-        var n = ordersOf(t.id).length;
-        return '<button class="yq-ord__tab' + (t.id === current ? ' is-active' : '') + '" type="button" ' +
-                 'data-ord-tab="' + t.id + '" aria-pressed="' + (t.id === current) + '">' +
-                 '<span>' + t.label + '</span><em>' + n + '</em>' +
-               '</button>';
-      }).join('');
-    }
-
-    function fullLines(lines) {
-      return lines.map(function (l) {
-        return '<div class="yq-ord__line">' +
-                 '<div class="yq-ord__media yq-media">' + YQ.mediaInner(l.product) + '</div>' +
-                 '<div class="yq-ord__info">' +
-                   '<div class="yq-ord__name">' + YQ.escape(l.name) + '</div>' +
-                   '<div class="yq-ord__qty">Quantity : <em>' + l.qty + '</em></div>' +
-                 '</div>' +
-                 '<div class="yq-ord__price">' + amt(l.sum) + '</div>' +
-               '</div>';
-      }).join('');
-    }
-
-    function briefLines(lines) {
-      return lines.map(function (l) {
-        return '<div class="yq-ord__brief">' +
-                 '<span class="yq-ord__x">' + l.qty + 'x</span>' +
-                 '<span class="yq-ord__briefname">' + YQ.escape(l.name) + '</span>' +
-                 '<span class="yq-ord__price">' + amt(l.sum) + '</span>' +
-               '</div>';
-      }).join('');
-    }
-
-    function cardHtml(order) {
-      var lines = linesOf(order);
-      var isOpen = !!open[order.id];
-      var pending = order.status === 'pending';
-
-      var foot = pending
-        ? '<a class="yq-btn yq-btn--gold yq-ord__action" href="checkout.html">Pay now ' + YQ.icon('arrow', 15) + '</a>'
-        : '<button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>';
-
-      return '<article class="yq-ord__card' + (isOpen ? ' is-open' : '') + '" data-ord-id="' + order.id + '">' +
-               '<button class="yq-ord__head" type="button" data-ord-toggle ' +
-                 'aria-expanded="' + isOpen + '" aria-controls="yqOrdBody' + order.id + '">' +
-                 '<span class="yq-ord__no">#' + YQ.escape(order.id) + '</span>' +
-                 (pending ? '<span class="yq-ord__flag">Awaiting payment</span>' : '') +
-                 '<span class="yq-ord__time">Order Time: ' + YQ.dateLabel(order.date) + '</span>' +
-                 '<span class="yq-ord__chev" aria-hidden="true">' + YQ.icon('chevright', 18) + '</span>' +
-               '</button>' +
-               '<div class="yq-ord__body" id="yqOrdBody' + order.id + '">' +
-                 (isOpen
-                   ? fullLines(lines) +
-                     '<div class="yq-ord__total">Total: ' + amt(totalOf(lines)) + ' ' + C.currencyCode + '</div>' +
-                     '<div class="yq-ord__foot">' + foot + '</div>'
-                   : briefLines(lines)) +
-               '</div>' +
-             '</article>';
-    }
-
-    function render() {
-      $('#ordTabs').html(tabsHtml());
-
-      var list = ordersOf(current);
-
-      /* Lần đầu vào tab: mở sẵn đơn mới nhất cho giống bản thiết kế.
-         Vào lại thì tôn trọng trạng thái người dùng đã bấm (kể cả đóng hết). */
-      if (!seen[current]) {
-        seen[current] = true;
-        if (list.length) open[list[0].id] = true;
-      }
-
-      if (!list.length) {
-        $('#ordList').html(YQ.localise(
-          '<div class="yq-panel yq-empty">' +
-            '<div class="yq-empty__icon">' + YQ.icon('box', 26) + '</div>' +
-            '<h3 class="yq-h3 mb-2">No ' + (current === 'pending' ? 'pending payments' : 'completed orders') + '</h3>' +
-            '<p class="yq-muted mb-4">' +
-              (current === 'pending'
-                ? 'Everything is paid for — nothing waiting here.'
-                : 'Your completed orders will be listed here.') + '</p>' +
-            '<a class="yq-btn" href="shop.html">Browse the shop ' + YQ.icon('arrow', 16) + '</a>' +
-          '</div>'
-        ));
-        return;
-      }
-
-      $('#ordList').html(YQ.localise(list.map(cardHtml).join('')));
-    }
 
     /* --- sự kiện --- */
     $(document).on('click', '#ordTabs [data-ord-tab]', function () {
-      var t = $(this).attr('data-ord-tab');
-      if (t === current) return;
-      current = t;
-      render();
+      showTab($(this).attr('data-ord-tab'));
     });
 
     $(document).on('click', '#ordList [data-ord-toggle]', function () {
-      var id = $(this).closest('.yq-ord__card').attr('data-ord-id');
-      open[id] = !open[id];
-      render();
+      var $card = $(this).closest('.yq-ord__card');
+      setOpen($card, !$card.hasClass('is-open'));
     });
 
     $(document).on('click', '#ordList [data-ord-reorder]', function () {
@@ -598,7 +427,9 @@
                'View cart', 'cart.html');
     });
 
-    render();
+    /* ?tab=pending -> mở sẵn tab chờ thanh toán (production: PHP in sẵn tab theo {$currentTab}). */
+    var tab = YQ.param('tab');
+    if (TABS.indexOf(tab) > -1) showTab(tab);
   };
 
   /* ======================================================================
@@ -727,12 +558,19 @@
      12. Change password (member/password.html)
      ====================================================================== */
   YQ.initPassword = function () {
-    /* 4 điều kiện; đạt bao nhiêu thì thanh sức mạnh lên bấy nhiêu. */
+    /* Markup (thẻ #pwAside, form #pwForm, thanh sức mạnh, danh sách điều kiện) là HTML tĩnh
+       trong member/password.html — JS chỉ tô thanh sức mạnh, bật is-on cho điều kiện đạt,
+       validate và đổ text "Signed in as" / "Last changed" từ phiên demo. */
+    var $form = $('#pwForm');
+    if (!$form.length) return;
+
+    /* 4 điều kiện; đạt bao nhiêu thì thanh sức mạnh lên bấy nhiêu.
+       id khớp với li[data-rule] trong #pwRules (nhãn chữ nằm trong HTML). */
     var RULES = [
-      { id: 'len',   label: 'At least 8 characters', test: function (v) { return v.length >= 8; } },
-      { id: 'case',  label: 'Upper and lower case',  test: function (v) { return /[a-z]/.test(v) && /[A-Z]/.test(v); } },
-      { id: 'digit', label: 'At least one number',   test: function (v) { return /\d/.test(v); } },
-      { id: 'sym',   label: 'At least one symbol',   test: function (v) { return /[^A-Za-z0-9]/.test(v); } }
+      { id: 'len',   test: function (v) { return v.length >= 8; } },
+      { id: 'case',  test: function (v) { return /[a-z]/.test(v) && /[A-Z]/.test(v); } },
+      { id: 'digit', test: function (v) { return /\d/.test(v); } },
+      { id: 'sym',   test: function (v) { return /[^A-Za-z0-9]/.test(v); } }
     ];
     var LEVELS = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'];
 
@@ -740,67 +578,15 @@
       return RULES.filter(function (r) { return r.test(v); });
     }
 
-    function pwField(id, label, ac) {
-      return '<div class="yq-pw__field">' +
-               '<label class="yq-auth__label" for="' + id + '">' + YQ.escape(label) + '</label>' +
-               '<div class="yq-auth__pw">' +
-                 '<input class="yq-input form-control" type="password" id="' + id + '" autocomplete="' + ac + '">' +
-                 '<button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password">' +
-                   YQ.icon('eye', 17) + '</button>' +
-               '</div>' +
-               '<div class="yq-error" data-err-for="' + id + '"></div>' +
-             '</div>';
-    }
-
-    function render() {
+    /** Demo: đổ email phiên đăng nhập + ngày đổi mật khẩu gần nhất (production PHP in sẵn). */
+    function fillFacts() {
+      var email = YQ.profile.get('email');
       var changed = YQ.profile.get('passwordChangedAt');
-
-      $('#pwAside').html(YQ.localise(
-        '<div class="yq-prof__card">' +
-          '<div class="yq-pw__shield" aria-hidden="true">' + YQ.icon('lock', 30) + '</div>' +
-          '<h2 class="yq-prof__name">Account security</h2>' +
-          '<p class="yq-pw__lead">Pick something you do not use anywhere else. ' +
-            'You stay signed in on this device after changing it.</p>' +
-          '<dl class="yq-prof__facts">' +
-            '<div><dt>Signed in as</dt><dd>' + YQ.escape(YQ.profile.get('email') || '—') + '</dd></div>' +
-            '<div><dt>Last changed</dt><dd>' + (changed ? YQ.dateLabel(changed) : 'Never') + '</dd></div>' +
-          '</dl>' +
-          '<div class="yq-prof__links">' +
-            '<a class="yq-link-arrow" href="member/profile.html">Back to profile ' + YQ.icon('chevright', 14) + '</a>' +
-          '</div>' +
-        '</div>'
-      ));
-
-      $('#pwBody').html(YQ.localise(
-        '<section class="yq-prof__group">' +
-          '<header class="yq-prof__grouphead">' +
-            '<span class="yq-prof__groupico">' + YQ.icon('lock', 17) + '</span>' +
-            '<h2 class="yq-prof__grouptitle">New password</h2>' +
-          '</header>' +
-          '<form class="yq-pw__form" id="pwForm" novalidate>' +
-            pwField('pwCurrent', 'Current password', 'current-password') +
-            pwField('pwNew', 'New password', 'new-password') +
-
-            '<div class="yq-pw__meter" id="pwMeter" data-score="0">' +
-              '<div class="yq-pw__bar"><i></i><i></i><i></i><i></i></div>' +
-              '<span class="yq-pw__level" id="pwLevel">Too short</span>' +
-            '</div>' +
-            '<ul class="yq-pw__rules" id="pwRules">' +
-              RULES.map(function (r) {
-                return '<li data-rule="' + r.id + '">' +
-                         '<span class="yq-pw__tick">' + YQ.icon('check', 12) + '</span>' +
-                         YQ.escape(r.label) +
-                       '</li>';
-              }).join('') +
-            '</ul>' +
-
-            pwField('pwConfirm', 'Repeat new password', 'new-password') +
-            '<button class="yq-btn yq-btn--block mt-2" type="submit">Update password</button>' +
-          '</form>' +
-        '</section>'
-      ));
+      if (email) $('#pwEmail').text(email);
+      $('#pwChanged').text(changed ? YQ.dateLabel(changed) : 'Never');
     }
 
+    /** Tô thanh sức mạnh + tick điều kiện theo ô "New password". */
     function paintStrength() {
       var v = $('#pwNew').val() || '';
       var hit = passed(v);
@@ -843,13 +629,18 @@
         if (cf !== nw) ok = fail('pwConfirm', 'Passwords do not match') && ok;
         if (!ok) return;
 
+        /* Demo: không có server nhận POST — lưu ngày đổi, cập nhật text, xoá trắng form.
+           Production: bỏ preventDefault, form post lên server; PHP in lại trang với ngày mới. */
         YQ.profile.set({ passwordChangedAt: new Date().toISOString().slice(0, 10) });
-        render();
+        $form[0].reset();
+        $form.find('.yq-input[type="text"]').attr('type', 'password');          // trả các ô đang "peek" về ẩn
+        $form.find('[data-yq-peek]').removeClass('is-on').attr('aria-label', 'Show password');
+        fillFacts();
         paintStrength();
         YQ.toast('Password updated');
       });
 
-    render();
+    fillFacts();
     paintStrength();
   };
 
@@ -857,116 +648,37 @@
      13. Invite friends (member/invite.html)
      ====================================================================== */
   YQ.initInvite = function () {
+    // Toàn bộ markup (thẻ ưu đãi, link mời, nút chia sẻ, form, danh sách đã mời, trạng thái trống) là HTML tĩnh
+    // trong member/invite.html — JS chỉ validate, copy link, mở cửa sổ chia sẻ, thêm/bỏ dòng và bật/tắt khối có sẵn.
     var R = YQ.referral || {};
-    var KEY = 'yq_invites_v1';
     var RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    var $list = $('#invList');
+    var $link = $('#invLink');
+    var tpl = document.getElementById('invRowTpl');
 
-    var sent = [];
-    try { sent = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { sent = []; }
-    function persist() { try { localStorage.setItem(KEY, JSON.stringify(sent)); } catch (e) {} }
+    /* Link mời PHP in sẵn ở #invLink ({$ref_link}). Bản demo in link tương đối
+       -> đổi sang tuyệt đối để dán đi đâu cũng chạy (link tuyệt đối thì giữ nguyên). */
+    function link() { return String($link.val() || ''); }
+    try { $link.val(new URL(link(), window.location.href).href); } catch (e) {}
 
-    /* Mã giới thiệu bám theo số thẻ thành viên -> mỗi người một mã. */
-    function code() {
-      var no = YQ.profile.get('memberNo') || '000000';
-      return (R.codePrefix || 'GH-') + no.slice(-6);
-    }
-    /** Link mời dạng tuyệt đối để dán đi đâu cũng chạy. */
-    function link() {
-      var rel = YQ.url(R.landing || 'index.html');
-      return new URL(rel, window.location.href).href + '?ref=' + encodeURIComponent(code());
-    }
-
-    function channelHtml(c) {
-      var glyph = YQ.brandIcon ? YQ.brandIcon(c.id, 20) : '';
-      if (!glyph) glyph = YQ.icon(c.icon || 'arrow', 19);
-      return '<button class="yq-inv__ch yq-inv__ch--' + c.id + '" type="button" data-inv-ch="' + c.id + '">' +
-               '<span class="yq-inv__chico">' + glyph + '</span>' +
-               '<span>' + YQ.escape(c.label) + '</span>' +
-             '</button>';
+    /* Đếm lại số lời mời + bật/tắt "chưa mời ai" theo số dòng đang có trong #invList. */
+    function sync() {
+      var n = $list.children('.yq-inv__row').length;
+      $('#invCount').text(n);
+      $list.prop('hidden', !n);
+      $('#invNone').prop('hidden', !!n);
     }
 
-    function listHtml() {
-      if (!sent.length) {
-        return '<p class="yq-inv__none">No invitations sent yet. Share your link above to get started.</p>';
-      }
-      return '<ul class="yq-inv__list">' + sent.map(function (i, idx) {
-        return '<li class="yq-inv__row">' +
-                 '<span class="yq-inv__who">' + YQ.escape(i.email) + '</span>' +
-                 '<span class="yq-inv__when">' + YQ.dateLabel(i.at) + '</span>' +
-                 '<span class="yq-inv__state">' + YQ.escape(i.status || 'Invited') + '</span>' +
-                 '<button class="yq-inv__rm" type="button" data-inv-rm="' + idx + '" ' +
-                   'aria-label="Remove ' + YQ.escape(i.email) + '">' + YQ.icon('close', 14) + '</button>' +
-               '</li>';
-      }).join('') + '</ul>';
+    /* Thêm 1 dòng: clone khung template#invRowTpl rồi chỉ set text/attr (không ghép chuỗi HTML). */
+    function addRow(email, iso) {
+      var $row = $(tpl.content.querySelector('.yq-inv__row').cloneNode(true));
+      $row.find('.yq-inv__who').text(email);
+      $row.find('.yq-inv__when').text(YQ.dateLabel(iso));
+      $row.find('[data-inv-rm]').attr({ 'data-inv-rm': email, 'aria-label': 'Remove ' + email });
+      $list.prepend($row);
     }
 
-    function render() {
-      var reward = YQ.money0(R.reward || 0);
-
-      $('#invAside').html(YQ.localise(
-        '<div class="yq-prof__card">' +
-          '<div class="yq-inv__gift" aria-hidden="true">' + YQ.icon('gift', 30) + '</div>' +
-          '<h2 class="yq-prof__name">Give ' + reward + ', get ' + reward + '</h2>' +
-          '<p class="yq-pw__lead">Your friend gets ' + reward + ' off their first order. ' +
-            'When they check out, the same lands in your wallet.</p>' +
-          '<dl class="yq-prof__facts">' +
-            '<div><dt>Invitations sent</dt><dd>' + sent.length + '</dd></div>' +
-            '<div><dt>Your code</dt><dd>' + YQ.escape(code()) + '</dd></div>' +
-          '</dl>' +
-          '<div class="yq-prof__links">' +
-            '<a class="yq-link-arrow" href="member/profile.html">Back to profile ' + YQ.icon('chevright', 14) + '</a>' +
-          '</div>' +
-        '</div>'
-      ));
-
-      $('#invBody').html(YQ.localise(
-        /* --- chia sẻ link --- */
-        '<section class="yq-prof__group">' +
-          '<header class="yq-prof__grouphead">' +
-            '<span class="yq-prof__groupico">' + YQ.icon('sparkle', 17) + '</span>' +
-            '<h2 class="yq-prof__grouptitle">Share your invitation</h2>' +
-          '</header>' +
-          '<div class="yq-inv__pad">' +
-            '<div class="yq-inv__linkbox">' +
-              '<input class="yq-input form-control" id="invLink" readonly value="' + YQ.escape(link()) + '" ' +
-                'aria-label="Your invitation link">' +
-              '<button class="yq-btn yq-btn--sm" type="button" data-inv-ch="copy">' +
-                YQ.icon('copy', 15) + 'Copy</button>' +
-            '</div>' +
-            '<div class="yq-inv__channels">' + (R.channels || []).map(channelHtml).join('') + '</div>' +
-          '</div>' +
-        '</section>' +
-
-        /* --- mời qua email --- */
-        '<section class="yq-prof__group">' +
-          '<header class="yq-prof__grouphead">' +
-            '<span class="yq-prof__groupico">' + YQ.icon('mail', 17) + '</span>' +
-            '<h2 class="yq-prof__grouptitle">Invite by email</h2>' +
-          '</header>' +
-          '<div class="yq-inv__pad">' +
-            '<form id="invForm" novalidate>' +
-              '<label class="yq-auth__label" for="invMails">Email addresses</label>' +
-              '<textarea class="yq-input form-control" id="invMails" rows="3" ' +
-                'placeholder="friend@example.com, another@example.com"></textarea>' +
-              '<div class="yq-error" data-err-for="invMails"></div>' +
-              '<p class="yq-inv__tip">Separate several addresses with a comma, a space or a new line.</p>' +
-              '<button class="yq-btn yq-btn--block mt-1" type="submit">Send invitations</button>' +
-            '</form>' +
-          '</div>' +
-        '</section>' +
-
-        /* --- đã mời --- */
-        '<section class="yq-prof__group">' +
-          '<header class="yq-prof__grouphead">' +
-            '<span class="yq-prof__groupico">' + YQ.icon('users', 17) + '</span>' +
-            '<h2 class="yq-prof__grouptitle">Invitations sent</h2>' +
-          '</header>' +
-          '<div class="yq-inv__pad">' + listHtml() + '</div>' +
-        '</section>'
-      ));
-    }
-
-    /* --- chia sẻ --- */
+    /* --- chia sẻ (URL Facebook/LINE ghép từ YQ.referral.channels + link đang in ở #invLink) --- */
     function shareUrl(c) {
       return String(c.url || '')
         .replace('{u}', encodeURIComponent(link()))
@@ -1022,32 +734,32 @@
           return;
         }
 
+        // Production: form POST lên server ({$_BASE}/member/invite/?action=send), PHP in lại danh sách.
+        // Bản demo: thêm dòng ngay trên trang (clone template), tải lại trang thì về dữ liệu mẫu.
         var today = new Date().toISOString().slice(0, 10);
-        var already = sent.map(function (i) { return i.email.toLowerCase(); });
+        var already = $list.find('.yq-inv__who').map(function () { return $(this).text().toLowerCase(); }).get();
         var fresh = [];
         $.each(raw, function (_, m) {
           if (already.indexOf(m.toLowerCase()) > -1) return;   // đã mời rồi thì bỏ qua
           already.push(m.toLowerCase());
-          fresh.push({ email: m, at: today, status: 'Invited' });
+          fresh.push(m);
         });
 
         if (!fresh.length) { YQ.toast('Those friends were already invited'); return; }
 
-        sent = fresh.concat(sent);
-        persist();
-        render();
+        $.each(fresh.slice().reverse(), function (_, m) { addRow(m, today); });   // giữ đúng thứ tự gõ, mới nhất lên đầu
+        $ta.val('');
+        sync();
         YQ.toast(fresh.length + (fresh.length === 1 ? ' invitation sent' : ' invitations sent'));
       })
 
+      /* Xoá lời mời — production gọi server xoá theo data-inv-rm ({$inv.id}); demo chỉ bỏ dòng khỏi trang. */
       .on('click', '[data-inv-rm]', function () {
-        var i = parseInt($(this).attr('data-inv-rm'), 10);
-        if (isNaN(i)) return;
-        sent.splice(i, 1);
-        persist();
-        render();
+        $(this).closest('.yq-inv__row').remove();
+        sync();
       });
 
-    render();
+    sync();
   };
 
 })(jQuery);
