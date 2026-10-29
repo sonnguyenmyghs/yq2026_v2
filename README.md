@@ -218,6 +218,10 @@ Backend in thẳng markup; sửa hiển thị thì sửa HTML:
   `backend-templates/cart_product_single.tpl` (dòng drawer, field `html`) và
   `backend-templates/cart_product_single_modal.tpl` (dòng có -/+ và `<input name="cart[ID]">`,
   field `htmlModal`). Backend còn template cũ thì drawer vẫn hiển thị được (CSS `li.clearfix`).
+  Lúc tải trang, PHP in `$contentCartHtml` (các dòng `cart_product_single`) vào `ul#yqCdList`,
+  thay 2 `<li>` mẫu. Mỗi dòng: `li.yq-cdrawer__row[data-key][data-price]` (key, unit_price) ·
+  `img` (image) · `.yq-cdrawer__name` (name) · `.yq-cdrawer__opt` (option_label) ·
+  `[data-qty-val]` (qty) · `.yq-cdrawer__price` (total_format).
 
 Nhãn trên ảnh (markup tĩnh):
 - Ribbon góc trên-trái `<span class="yq-ribbon"><span>Bestseller</span></span>` — thêm
