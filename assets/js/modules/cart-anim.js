@@ -371,34 +371,61 @@
     $('#yqCartDrawer').toggleClass('is-empty', $('#yqCdList').children().length === 0);
   }
 
-  /* Bản demo HTML (không có PHP / #root): các dòng trong #yqCdList là HTML tĩnh
-     (dòng mẫu thay cho {$contentCartHtml}). JS không dựng dòng nào — chỉ tính lại
-     text thành tiền mỗi dòng (data-price × số lượng), số món, subtotal và thanh
-     free shipping trên các phần tử đã có. Production: PHP / add-to-cart.js lo hết. */
+  /** Số lượng của 1 dòng: data-qty trên li (drawer không có bộ +/-); template backend
+      cũ còn in [data-qty-val] (<span> hoặc <input name="cart[ID]">, đã ẩn bằng CSS) thì đọc từ đó. */
+  function rowQty($r) {
+    var $v = $r.find('[data-qty-val]');
+    if (!$v.length) return parseInt($r.attr('data-qty'), 10) || 1;
+    return parseInt($v.is('input') ? $v.val() : $v.text(), 10) || 0;
+  }
+
+  /** Định dạng tiền giữ đúng kiểu text đang có trong phần tử: "$88.00" (demo)
+      hay "292.00 SGD" / "292 SGD" (PHP in) — giữ tiền tố/hậu tố và số chữ số thập phân. */
+  function moneyLike($el, n) {
+    var m = /^(\D*?)\s*-?[\d.,]+(\s*\D*)$/.exec($.trim($el.text()));
+    if (!m) return YQ.money(n);
+    var dec = /\.(\d+)\s*\D*$/.exec($el.text());
+    var num = Number(n || 0).toFixed(dec ? dec[1].length : 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return m[1] + num + m[2];
+  }
+
+  /* Tính lại text trên các dòng có sẵn trong #yqCdList (demo: dòng mẫu; production:
+     dòng PHP in từ {$contentCartHtml}). JS không dựng dòng nào — chỉ đổi thành tiền
+     mỗi dòng (data-price × số lượng), số món, subtotal, badge và thanh free shipping. */
   function renderDrawer(animate) {
-    if (isServer() || !buildDrawer()) return;
+    if (!buildDrawer()) return;
     $('#yqCdBody').toggleClass('is-static', animate === false);
 
-    var n = 0, sub = 0;
+    var n = 0, sub = 0, priced = true;
     $('#yqCdList .yq-cdrawer__row').each(function () {
       var $r = $(this);
-      var qty = parseInt($r.find('[data-qty-val]').text(), 10) || 0;
-      var line = (parseFloat($r.attr('data-price')) || 0) * qty;
-      $r.find('.yq-cdrawer__price').text(YQ.money(line));
+      var qty = rowQty($r);
+      var price = $r.attr('data-price');
       n += qty;
+      if (price == null) { priced = false; return; }   // không có data-price: giữ nguyên giá server in
+      var line = (parseFloat(price) || 0) * qty;
+      var $p = $r.find('.yq-cdrawer__price');
+      $p.text(moneyLike($p, line));
       sub += line;
     });
 
     $('#yqCdN').text(n === 1 ? '1 item' : n + ' items');
-    $('#yqCdTotal').text(YQ.money(sub));
+    if (priced) $('#yqCdTotal').text(moneyLike($('#yqCdTotal'), sub));
+    /* Production: badge header là số PHP in sẵn -> cập nhật theo giỏ mới.
+       Demo: badge chạy theo YQ.cart (localStorage), không đụng. */
+    if (isServer()) $('#yqCartCount, #yqCartCountM, [data-oc-count]').text(n).toggleClass('is-on', n > 0);
 
-    /* Thanh "còn X nữa để free shipping": 2 note tĩnh loại trừ nhau, JS chỉ đổi text/width */
-    var thr = (YQ.config && YQ.config.freeShippingThreshold) || 0;
-    var toFree = Math.max(0, thr - sub);
-    $('#yqCdToFree').text(YQ.money(toFree));
-    $('#yqCdShipBar').css('width', (thr ? Math.min(100, (sub / thr) * 100) : 100) + '%');
-    $('#yqCdShipNote').toggleClass('d-none', toFree <= 0);
-    $('#yqCdShipFree').toggleClass('d-none', toFree > 0);
+    /* Thanh "còn X nữa để free shipping": 2 note tĩnh loại trừ nhau, JS chỉ đổi text/width.
+       Production: ngưỡng lấy từ #yqCdNote[data-threshold] (PHP in); không có thì giữ nguyên note server in. */
+    var thr = isServer() ? parseFloat($('#yqCdNote').attr('data-threshold'))
+                         : ((YQ.config && YQ.config.freeShippingThreshold) || 0);
+    if (priced && !isNaN(thr)) {
+      var toFree = Math.max(0, thr - sub);
+      $('#yqCdToFree').text(moneyLike($('#yqCdToFree'), toFree));
+      $('#yqCdShipBar').css('width', (thr ? Math.min(100, (sub / thr) * 100) : 100) + '%');
+      $('#yqCdShipNote').toggleClass('d-none', toFree <= 0);
+      $('#yqCdShipFree').toggleClass('d-none', toFree > 0);
+    }
 
     syncEmpty();
   }
@@ -478,17 +505,6 @@
     .on('click', '.yq-cdrawer-back, [data-yq-cd-close]', function (e) {
       e.preventDefault();
       closeDrawer();
-    })
-    /* Demo: gỡ dòng có sẵn / đổi số rồi tính lại text. Production (#root): dòng do
-       server in ({$contentCartHtml}) — không đụng tới, giữ hành vi của backend. */
-    .on('click', '#yqCartDrawer [data-yq-cd-remove]', function () {
-      if (isServer()) return;
-      $(this).closest('.yq-cdrawer__row').remove();
-      renderDrawer(false);
-    })
-    .on('yq:qty', '#yqCartDrawer [data-qty]', function () {
-      if (isServer()) return;
-      renderDrawer(false);
     })
     .on('keydown.yqCartAnim', function (e) {
       if (!DR.open) return;

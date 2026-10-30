@@ -686,7 +686,7 @@
        #yqCdNote              <- note free shipping (xem comment trong khối, biến @toFreeShippingCart …)
      JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart.
      Bản demo HTML (không có #root): cart-anim.js chỉ đổi text số lượng/giá/subtotal/note trên các dòng
-     mẫu có sẵn và gỡ dòng khi bấm X — không dựng dòng mới. -->
+     mẫu có sẵn — không dựng dòng mới. Drawer không có +/- và nút xoá (làm ở trang giỏ). -->
 <div class="yq-cdrawer-back" hidden></div>
 <aside class="yq-cdrawer" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
   <header class="yq-cdrawer__head">
@@ -705,31 +705,19 @@
       <div class="yq-cdrawer__info">
         <div class="yq-cdrawer__name">Signature Chocolate Cake</div>
         <div class="yq-cdrawer__opt">Medium · 1 kg</div>
-        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
-          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
-          <span class="yq-qty__val" data-qty-val>1</span>
-          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        </div>
       </div>
       <div class="yq-cdrawer__right">
         <div class="yq-cdrawer__price">$88.00</div>
-        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Signature Chocolate Cake"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </li>
-    <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68">
+    <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68" data-qty="2">
       <div class="yq-cdrawer__media yq-media"><img src="assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
       <div class="yq-cdrawer__info">
         <div class="yq-cdrawer__name">Pantry Hamper</div>
         <div class="yq-cdrawer__opt">Classic · Gift message card</div>
-        <div class="yq-qty yq-cdrawer__qty" data-qty data-min="1">
-          <button class="yq-qty__btn" type="button" data-step="-1" aria-label="Decrease quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
-          <span class="yq-qty__val" data-qty-val>2</span>
-          <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase quantity"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        </div>
       </div>
       <div class="yq-cdrawer__right">
         <div class="yq-cdrawer__price">$136.00</div>
-        <button class="yq-cdrawer__rm" type="button" data-yq-cd-remove aria-label="Remove Pantry Hamper"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </li>
     </ul>
