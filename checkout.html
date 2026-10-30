@@ -20,9 +20,9 @@
 <body>
 
 <!-- ========== HEADER (HTML tĩnh — giống nhau mọi trang, chỉ khác mục nav .is-active) ========== -->
-<!-- Nút account #yqAccountBtn: đã đăng nhập ({if $isLoggedIn}) thì thêm class "is-signed", thêm hidden cho
-     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in {$member.initial} (chữ cái đầu của first name,
-     viết hoa); aria-label="My account — {$member.first_name}". JS (account.js) chỉ đổi class/attr/text. -->
+<!-- Nút account #yqAccountBtn: đã đăng nhập (@if(isLoggedIn)) thì thêm class "is-signed", thêm hidden cho
+     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in @member.initial (chữ cái đầu của first name,
+     viết hoa); aria-label="My account — @member.first_name". JS (account.js) chỉ đổi class/attr/text. -->
 <header class="yq-header" id="yqHeader">
   <div class="yq-header__shell">
     <div class="yq-container">
@@ -353,13 +353,13 @@
      Mở từ nút Account trong menu mobile (#yqOffcanvas) và từ mục có pane con (My wallet) của
      dropdown #yqAcctPop. Đặt ở cấp <body> (không lồng trong <header>: header có backdrop-filter
      nên phần tử position:fixed bên trong sẽ bị neo theo header).
-     Production chỉ cần in khi đã đăng nhập ({if $isLoggedIn} … {/if}) — chưa đăng nhập thì JS mở
+     Production chỉ cần in khi đã đăng nhập (@if(isLoggedIn) … @endif) — chưa đăng nhập thì JS mở
      popup Log in thay vì panel.
      Biến PHP:
-       #yqMfnName              <- {$member.first_name}            (trống thì phần trước @ của {$member.email})
-       #yqMfnMail              <- {$member.email}                 (trống thì thêm thuộc tính hidden)
+       #yqMfnName              <- @member.first_name            (trống thì phần trước @ của @member.email)
+       #yqMfnMail              <- @member.email                 (trống thì thêm thuộc tính hidden)
        Pane "wallet" (#yqMfnWallet):
-         #yqMfnWalletBal       <- {$member.wallet_balance_format} (VD $0.00 — store credit + gift card)
+         #yqMfnWalletBal       <- @member.wallet_balance_format (VD $0.00 — store credit + gift card)
      Danh sách mục giống #yqAcctPop trong HEADER — đổi menu thì sửa cả hai.
      Pane con: mỗi pane là 1 div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] (hidden); nút [data-yq-view="<tên>"]
      mở pane đó, [data-yq-view=""] quay về danh sách. Thêm pane mới = thêm 1 khối div + 1 nút.
@@ -416,7 +416,7 @@
       <span class="yq-step" data-step-idx="4"><span class="yq-step__num"><span class="yq-step__n">4</span><svg class="yq-i yq-step__ok" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>Review</span>
     </div>
 
-    <!-- Giỏ trống (HTML tĩnh) — PHP bỏ class d-none + ẩn #coSteps/.row khi {$totalItemsCart} == 0 -->
+    <!-- Giỏ trống (HTML tĩnh) — PHP bỏ class d-none + ẩn #coSteps/.row khi @totalItemsCart == 0 -->
     <div class="yq-panel yq-empty d-none" id="coEmpty">
       <div class="yq-empty__icon"><svg class="yq-i" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
       <h3 class="yq-h3 mb-2">Your cart is empty</h3>
@@ -594,7 +594,7 @@
           </p>
         </div>
 
-        <!-- Đặt hàng thành công (HTML tĩnh). Mã đơn #coOrderNo <- {$order_code} (demo: JS tạo mã giả) -->
+        <!-- Đặt hàng thành công (HTML tĩnh). Mã đơn #coOrderNo <- @order_code (demo: JS tạo mã giả) -->
         <div class="yq-panel text-center py-5" id="coDone" style="display:none">
           <div class="yq-empty__icon" style="background:var(--yq-gold-soft);color:var(--yq-gold-dark)"><svg class="yq-i" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></div>
           <h2 class="yq-h2 mt-3 mb-2">Thank you for your order</h2>
@@ -608,23 +608,23 @@
       <!-- Aside -->
       <!-- ========== ORDER SUMMARY (HTML tĩnh — PHP đổ từ session giỏ hàng) ==========
            Biến PHP:
-             .co-sum__items          <- {foreach $cartItems as $item} ... {/foreach}  (mỗi item 1 dòng .co-sum__item bên dưới)
-               img                   <- {$item.image}  /  alt {$item.name}
-               .co-sum__name         <- {$item.name}
-               .co-sum__qty          <- {$item.qty}
-               .co-sum__price        <- {$item.total_format} {$_OLD_CURRENCY_BY_CART}
-             #coSubtotal             <- {$subTotalCart}
-             #coShipping             <- {$shippingCart}   (0 => "Free")
-             #coTax                  <- {$taxCart}
-             #coTotal                <- {$totalCostCart} {$_OLD_CURRENCY_BY_CART}
-             .yq-ship-note           <- {$arlet_buy_more_yqreward} / ẩn bằng {$hidden_ship_note}
+             .co-sum__items          <- @foreach(cartItems as item) ... @endforeach  (mỗi item 1 dòng .co-sum__item bên dưới)
+               img                   <- @item.image  /  alt @item.name
+               .co-sum__name         <- @item.name
+               .co-sum__qty          <- @item.qty
+               .co-sum__price        <- @item.total_format @_OLD_CURRENCY_BY_CART
+             #coSubtotal             <- @subTotalCart
+             #coShipping             <- @shippingCart   (0 => "Free")
+             #coTax                  <- @taxCart
+             #coTotal                <- @totalCostCart @_OLD_CURRENCY_BY_CART
+             .yq-ship-note           <- @arlet_buy_more_yqreward / ẩn bằng @hidden_ship_note
            JS không render lại khối này. -->
       <div class="col-lg-5 col-xl-4" id="coAside">
         <div class="yq-panel yq-sticky" id="coSummary">
           <h3 class="yq-serif mb-3" style="font-size:1.3rem">Order summary</h3>
 
           <div class="co-sum__items">
-            <!-- {foreach $cartItems as $item} -->
+            <!-- @foreach(cartItems as item) -->
             <div class="co-sum__item d-flex gap-3 align-items-center mb-3">
               <div class="yq-media" style="width:52px;height:52px;border-radius:8px;flex:none"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
               <div class="flex-grow-1 min-width-0">
@@ -641,7 +641,7 @@
               </div>
               <div class="co-sum__price yq-sum__val yq-small">$136.00</div>
             </div>
-            <!-- {/foreach} -->
+            <!-- @endforeach -->
           </div>
           <hr style="border-color:var(--yq-line-soft);opacity:1">
 
@@ -754,14 +754,14 @@
 
 <!-- ========== CART SIDEBAR (HTML tĩnh — PHP đổ giỏ từ session, giống modal ShowCartIR cũ) ==========
      Biến PHP (theo modal cũ):
-       ul#yqCdList            <- {$contentCartHtml}      (các dòng cart_product_single)
-       #yqCdN                 <- {$totalItemsCart} items
-       #yqCdTotal             <- {$totalCostCart} {$_OLD_CURRENCY_BY_CART}
-       .yq-cdrawer__gift      <- class {$hidden_gift_yqreward} + nội dung {$arlet_buy_more_yqreward}
-       a.yq-cdrawer__viewcart <- {$_hiddenViewShowCart} + href="{$_BASE}/cart/?action=view"
-       aside#yqCartDrawer     <- thêm class "is-empty" khi {$totalItemsCart} == 0 (JS cũng tự đồng bộ)
-     Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- {$totalItemsCart}
-       #yqCdNote              <- note free shipping (xem comment trong khối, biến {$toFreeShippingCart} …)
+       ul#yqCdList            <- @contentCartHtml      (các dòng cart_product_single)
+       #yqCdN                 <- @totalItemsCart items
+       #yqCdTotal             <- @totalCostCart @_OLD_CURRENCY_BY_CART
+       .yq-cdrawer__gift      <- class @hidden_gift_yqreward + nội dung @arlet_buy_more_yqreward
+       a.yq-cdrawer__viewcart <- @_hiddenViewShowCart + href="@_BASE/cart/?action=view"
+       aside#yqCartDrawer     <- thêm class "is-empty" khi @totalItemsCart == 0 (JS cũng tự đồng bộ)
+     Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- @totalItemsCart
+       #yqCdNote              <- note free shipping (xem comment trong khối, biến @toFreeShippingCart …)
      JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart.
      Bản demo HTML (không có #root): cart-anim.js chỉ đổi text số lượng/giá/subtotal/note trên các dòng
      mẫu có sẵn và gỡ dòng khi bấm X — không dựng dòng mới. -->
@@ -777,7 +777,7 @@
   <div class="yq-cdrawer__body" id="yqCdBody">
     <div class="yq-cdrawer__gift d-none"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg><div></div></div>
     <ul class="yq-cdrawer__list" id="yqCdList">
-    <!-- PHP: in $contentCartHtml tại đây (xem README › drawer giỏ). 2 <li> dưới là MẪU, xoá khi gắn PHP -->
+    <!-- PHP: in @contentCartHtml tại đây (xem README › drawer giỏ). 2 <li> dưới là MẪU, xoá khi gắn PHP -->
     <li class="yq-cdrawer__row" data-key="signature-chocolate-cake::medium" data-price="88">
       <div class="yq-cdrawer__media yq-media"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
       <div class="yq-cdrawer__info">
@@ -821,9 +821,9 @@
   <footer class="yq-cdrawer__foot" id="yqCdFoot">
     <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$224.00</strong></div>
     <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
-           #yqCdShipNote <- còn thiếu tiền: ẩn bằng {$hidden_ship_note}
-             #yqCdToFree <- {$toFreeShippingCart}      #yqCdShipBar <- style="width:{$freeShippingPercent}%"
-           #yqCdShipFree <- đã đủ free ship: ẩn bằng {$hidden_ship_free}
+           #yqCdShipNote <- còn thiếu tiền: ẩn bằng @hidden_ship_note
+             #yqCdToFree <- @toFreeShippingCart      #yqCdShipBar <- style="width:@freeShippingPercent%"
+           #yqCdShipFree <- đã đủ free ship: ẩn bằng @hidden_ship_free
          Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
     <div id="yqCdNote">
       <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">$76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>

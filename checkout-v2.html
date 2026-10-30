@@ -28,9 +28,9 @@
 <span id="root" data-base="" hidden></span>
 
 <!-- ========== HEADER (HTML tĩnh — giống nhau mọi trang, chỉ khác mục nav .is-active) ========== -->
-<!-- Nút account #yqAccountBtn: đã đăng nhập ({if $isLoggedIn}) thì thêm class "is-signed", thêm hidden cho
-     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in {$member.initial} (chữ cái đầu của first name,
-     viết hoa); aria-label="My account — {$member.first_name}". JS (account.js) chỉ đổi class/attr/text. -->
+<!-- Nút account #yqAccountBtn: đã đăng nhập (@if(isLoggedIn)) thì thêm class "is-signed", thêm hidden cho
+     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in @member.initial (chữ cái đầu của first name,
+     viết hoa); aria-label="My account — @member.first_name". JS (account.js) chỉ đổi class/attr/text. -->
 <header class="yq-header" id="yqHeader">
   <div class="yq-header__shell">
     <div class="yq-container">
@@ -361,13 +361,13 @@
      Mở từ nút Account trong menu mobile (#yqOffcanvas) và từ mục có pane con (My wallet) của
      dropdown #yqAcctPop. Đặt ở cấp <body> (không lồng trong <header>: header có backdrop-filter
      nên phần tử position:fixed bên trong sẽ bị neo theo header).
-     Production chỉ cần in khi đã đăng nhập ({if $isLoggedIn} … {/if}) — chưa đăng nhập thì JS mở
+     Production chỉ cần in khi đã đăng nhập (@if(isLoggedIn) … @endif) — chưa đăng nhập thì JS mở
      popup Log in thay vì panel.
      Biến PHP:
-       #yqMfnName              <- {$member.first_name}            (trống thì phần trước @ của {$member.email})
-       #yqMfnMail              <- {$member.email}                 (trống thì thêm thuộc tính hidden)
+       #yqMfnName              <- @member.first_name            (trống thì phần trước @ của @member.email)
+       #yqMfnMail              <- @member.email                 (trống thì thêm thuộc tính hidden)
        Pane "wallet" (#yqMfnWallet):
-         #yqMfnWalletBal       <- {$member.wallet_balance_format} (VD $0.00 — store credit + gift card)
+         #yqMfnWalletBal       <- @member.wallet_balance_format (VD $0.00 — store credit + gift card)
      Danh sách mục giống #yqAcctPop trong HEADER — đổi menu thì sửa cả hai.
      Pane con: mỗi pane là 1 div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] (hidden); nút [data-yq-view="<tên>"]
      mở pane đó, [data-yq-view=""] quay về danh sách. Thêm pane mới = thêm 1 khối div + 1 nút.
@@ -419,7 +419,7 @@
      Markup bám theo template production select_payment_food.html:
      giữ nguyên id / class / name của input + hidden input để appv6_dev_demo.js
      và control__telinputv25.js chạy được không cần sửa. Chỗ production in
-     giá trị từ server ({$...}) thì demo in sẵn dữ liệu mẫu; JS không dựng markup,
+     giá trị từ server (@...) thì demo in sẵn dữ liệu mẫu; JS không dựng markup,
      chỉ đổi class / .text() / .val() / thuộc tính và ẩn-hiện khối có sẵn.
      ===================================================================== -->
 <form method="post" action="" class="inform--frm">
@@ -431,7 +431,7 @@
         Back to cart
       </a>
 
-      <!-- Giỏ trống (HTML tĩnh) — PHP bỏ class d-none + thêm d-none vào #cv2Layout khi {$totalItemsCart} == 0 -->
+      <!-- Giỏ trống (HTML tĩnh) — PHP bỏ class d-none + thêm d-none vào #cv2Layout khi @totalItemsCart == 0 -->
       <div class="yq-panel yq-empty d-none" id="cv2Empty">
         <div class="yq-empty__icon"><svg class="yq-i" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
         <h3 class="yq-h3 mb-2">Your cart is empty</h3>
@@ -466,7 +466,7 @@
                   <div class="row">
                     <div class="col-12 col-md-6">
                       <select id="country" name="register[country]" class="ubox_input biger_input full-width form-control mb-3">
-                        <!-- production: {$option_list_country} -->
+                        <!-- production: @option_list_country -->
                         <option value="SG" selected>Singapore</option>
                         <option value="MY">Malaysia</option>
                         <option value="ID">Indonesia</option>
@@ -493,7 +493,7 @@
                 </div>
               </div>
 
-              <!-- Khách đã đăng nhập (production bật bằng {$__htmllogined}; demo ẩn, giữ vì control__telinput cần #phone_member) -->
+              <!-- Khách đã đăng nhập (production bật bằng @__htmllogined; demo ẩn, giữ vì control__telinput cần #phone_member) -->
               <div class="memberinfo--form">
                 <div class="form-group">
                   <input type="email" name="member[email]" class="form-control full-width input__member__email" placeholder="Your email address" value="" disabled="disabled">
@@ -602,15 +602,15 @@
                       <div class="append__pickup__picker__date"></div>
                     </div>
                     <div class="col-lg-6 col-6 pickup__time__zone">
-                      <!-- HTML tĩnh — PHP in sẵn mọi khung giờ (từ {$pickup_rule}):
-                             __useTimeSlotByHourForPickup : mỗi giờ open..close  -> {foreach $pickup_hours as $h}
-                             __useTimeSlotForPickup       : khung có nghỉ giữa ca -> {foreach $pickup_time_slots as $slot}
-                           option: value <- {$h.label} / {$slot.key}, text <- {$h.label} / {$slot.time},
-                                   data-mins <- phút bắt đầu tính từ 00:00 ({$h.mins} / {$slot.key*60}).
+                      <!-- HTML tĩnh — PHP in sẵn mọi khung giờ (từ @pickup_rule):
+                             __useTimeSlotByHourForPickup : mỗi giờ open..close  -> @foreach(pickup_hours as h)
+                             __useTimeSlotForPickup       : khung có nghỉ giữa ca -> @foreach(pickup_time_slots as slot)
+                           option: value <- @h.label / @slot.key, text <- @h.label / @slot.time,
+                                   data-mins <- phút bắt đầu tính từ 00:00 (@h.mins / @slot.key*60).
                            JS chỉ disabled + hidden các option không kịp chuẩn bị khi chọn ngày hôm nay. -->
                       <select name="redeem_detail[receive_hour_pickup]" class="form-control mr--notes pickup__picker__hour__second">
                         <option value="">Time</option>
-                        <!-- {foreach $pickup_hours as $h} -->
+                        <!-- @foreach(pickup_hours as h) -->
                         <option value="10:00" data-mins="600">10:00</option>
                         <option value="11:00" data-mins="660">11:00</option>
                         <option value="12:00" data-mins="720">12:00</option>
@@ -620,7 +620,7 @@
                         <option value="16:00" data-mins="960">16:00</option>
                         <option value="17:00" data-mins="1020">17:00</option>
                         <option value="18:00" data-mins="1080">18:00</option>
-                        <!-- {/foreach} -->
+                        <!-- @endforeach -->
                       </select>
                       <div class="append__pickup__picker__hour"></div>
                     </div>
@@ -690,18 +690,18 @@
                       <div class="append__delilalamove__picker__date"></div>
                     </div>
                     <div class="col-lg-6 col-6 lalamove__time__zone">
-                      <!-- HTML tĩnh — PHP in sẵn khung giờ giao (từ {$lalamove_rule}):
-                             __useTimeSlotLalamove          : {foreach $lalamove_time_slots as $slot}
-                             __useTimeSlotByHourForLalamove : {foreach $lalamove_hours as $h}
-                           option: value <- {$slot.key}, text <- {$slot.time}, data-mins <- {$slot.key*60}.
+                      <!-- HTML tĩnh — PHP in sẵn khung giờ giao (từ @lalamove_rule):
+                             __useTimeSlotLalamove          : @foreach(lalamove_time_slots as slot)
+                             __useTimeSlotByHourForLalamove : @foreach(lalamove_hours as h)
+                           option: value <- @slot.key, text <- @slot.time, data-mins <- @slot.key*60.
                            JS chỉ disabled + hidden các khung không kịp chuẩn bị khi chọn ngày hôm nay. -->
                       <select name="redeem_detail[receive_hour]" class="form-control mr--notes delilalamove__picker__hour">
                         <option value="">Time</option>
-                        <!-- {foreach $lalamove_time_slots as $slot} -->
+                        <!-- @foreach(lalamove_time_slots as slot) -->
                         <option value="10" data-mins="600">10:00 AM to 12:00 PM</option>
                         <option value="14" data-mins="840">14:00 PM to 16:00 PM</option>
                         <option value="17" data-mins="1020">17:00 PM to 19:00 PM</option>
-                        <!-- {/foreach} -->
+                        <!-- @endforeach -->
                       </select>
                       <div class="append__delilalamove__picker__hour"></div>
                     </div>
@@ -733,10 +733,10 @@
           </div>
 
           <!-- Đặt hàng thành công (HTML tĩnh, ẩn sẵn). [DEMO] JS ẩn 2 khối form, hiện khối này và đổ .text():
-                 #cv2DoneNum   <- {$order_code}
-                 #cv2DoneTotal <- {$totalCost}
-                 #cv2DoneWhen  <- {$receive_summary}   (vd "Self-collection on 2026-10-28 at 14:00 — Pickup at The Shop, Lobby Level")
-                 #cv2DoneEmail <- {$member_email}
+                 #cv2DoneNum   <- @order_code
+                 #cv2DoneTotal <- @totalCost
+                 #cv2DoneWhen  <- @receive_summary   (vd "Self-collection on 2026-10-28 at 14:00 — Pickup at The Shop, Lobby Level")
+                 #cv2DoneEmail <- @member_email
                Production: form POST lên server, trang cảm ơn do server render. -->
           <div class="pay--part cv2-done" id="cv2Done" style="display:none">
             <div class="cv2-done__icon"><svg class="yq-i" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></div>
@@ -750,16 +750,16 @@
 
         <!-- ============ Cột phải: Order Summary ============
              HTML tĩnh — PHP đổ từ session giỏ hàng (JS không render lại khối này):
-               .summary__list--items      <- {foreach $cartItems as $item} ... {/foreach}  (mỗi item 1 thẻ <p> bên dưới)
-                                             (hoặc in thẳng {$_htmlListCartCheckOut} như template cũ — cùng markup <p>)
-                 span (text đầu)          <- {$item.name}
-                 small                    <- {$item.option_label}   (bỏ thẻ <small> nếu rỗng)
-                 strong                   <- X {$item.qty}
-               .provisional[data-subtotal]<- {$tmp_total_cost}        (số thô, không dấu phẩy — JS đọc để tính promo / phí giao)
-               .provisional > span        <- {$tmp_total_cost_show}   (đã format 2 số lẻ)
-               #div-total-cost[data-price]<- {$totalCost}             (số thô)
-               #div-total-cost            <- {$totalCost_show}
-               #total-default-no-promo    <- value="{$totalCost}"     (hidden input cuối form)
+               .summary__list--items      <- @foreach(cartItems as item) ... @endforeach  (mỗi item 1 thẻ <p> bên dưới)
+                                             (hoặc in thẳng @_htmlListCartCheckOut như template cũ — cùng markup <p>)
+                 span (text đầu)          <- @item.name
+                 small                    <- @item.option_label   (bỏ thẻ <small> nếu rỗng)
+                 strong                   <- X @item.qty
+               .provisional[data-subtotal]<- @tmp_total_cost        (số thô, không dấu phẩy — JS đọc để tính promo / phí giao)
+               .provisional > span        <- @tmp_total_cost_show   (đã format 2 số lẻ)
+               #div-total-cost[data-price]<- @totalCost             (số thô)
+               #div-total-cost            <- @totalCost_show
+               #total-default-no-promo    <- value="@totalCost"     (hidden input cuối form)
                #feeTrans                  <- 0.00 (JS cập nhật khi có báo giá giao hàng)
              JS chỉ đổi .text() / data-* của tổng tiền khi áp promo hoặc đổi phí giao. -->
         <div class="col-lg-5" id="cv2Aside">
@@ -768,10 +768,10 @@
               <h3>Order Summary</h3>
               <div class="summary__list">
                 <div class="summary__list--items">
-                  <!-- {foreach $cartItems as $item} -->
+                  <!-- @foreach(cartItems as item) -->
                   <p><span>Signature Chocolate Cake<small>1 kg · Happy Birthday plaque</small></span><strong>X 1</strong></p>
                   <p><span>Pantry Hamper</span><strong>X 2</strong></p>
-                  <!-- {/foreach} -->
+                  <!-- @endforeach -->
                 </div>
 
                 <div class="inform--money">
@@ -985,14 +985,14 @@
 
 <!-- ========== CART SIDEBAR (HTML tĩnh — PHP đổ giỏ từ session, giống modal ShowCartIR cũ) ==========
      Biến PHP (theo modal cũ):
-       ul#yqCdList            <- {$contentCartHtml}      (các dòng cart_product_single)
-       #yqCdN                 <- {$totalItemsCart} items
-       #yqCdTotal             <- {$totalCostCart} {$_OLD_CURRENCY_BY_CART}
-       .yq-cdrawer__gift      <- class {$hidden_gift_yqreward} + nội dung {$arlet_buy_more_yqreward}
-       a.yq-cdrawer__viewcart <- {$_hiddenViewShowCart} + href="{$_BASE}/cart/?action=view"
-       aside#yqCartDrawer     <- thêm class "is-empty" khi {$totalItemsCart} == 0 (JS cũng tự đồng bộ)
-     Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- {$totalItemsCart}
-       #yqCdNote              <- note free shipping (xem comment trong khối, biến {$toFreeShippingCart} …)
+       ul#yqCdList            <- @contentCartHtml      (các dòng cart_product_single)
+       #yqCdN                 <- @totalItemsCart items
+       #yqCdTotal             <- @totalCostCart @_OLD_CURRENCY_BY_CART
+       .yq-cdrawer__gift      <- class @hidden_gift_yqreward + nội dung @arlet_buy_more_yqreward
+       a.yq-cdrawer__viewcart <- @_hiddenViewShowCart + href="@_BASE/cart/?action=view"
+       aside#yqCartDrawer     <- thêm class "is-empty" khi @totalItemsCart == 0 (JS cũng tự đồng bộ)
+     Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- @totalItemsCart
+       #yqCdNote              <- note free shipping (xem comment trong khối, biến @toFreeShippingCart …)
      JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart.
      Bản demo HTML (không có #root): cart-anim.js chỉ đổi text số lượng/giá/subtotal/note trên các dòng
      mẫu có sẵn và gỡ dòng khi bấm X — không dựng dòng mới. -->
@@ -1008,7 +1008,7 @@
   <div class="yq-cdrawer__body" id="yqCdBody">
     <div class="yq-cdrawer__gift d-none"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg><div></div></div>
     <ul class="yq-cdrawer__list" id="yqCdList">
-    <!-- PHP: in $contentCartHtml tại đây (xem README › drawer giỏ). 2 <li> dưới là MẪU, xoá khi gắn PHP -->
+    <!-- PHP: in @contentCartHtml tại đây (xem README › drawer giỏ). 2 <li> dưới là MẪU, xoá khi gắn PHP -->
     <li class="yq-cdrawer__row" data-key="signature-chocolate-cake::medium" data-price="88">
       <div class="yq-cdrawer__media yq-media"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
       <div class="yq-cdrawer__info">
@@ -1052,9 +1052,9 @@
   <footer class="yq-cdrawer__foot" id="yqCdFoot">
     <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$224.00</strong></div>
     <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
-           #yqCdShipNote <- còn thiếu tiền: ẩn bằng {$hidden_ship_note}
-             #yqCdToFree <- {$toFreeShippingCart}      #yqCdShipBar <- style="width:{$freeShippingPercent}%"
-           #yqCdShipFree <- đã đủ free ship: ẩn bằng {$hidden_ship_free}
+           #yqCdShipNote <- còn thiếu tiền: ẩn bằng @hidden_ship_note
+             #yqCdToFree <- @toFreeShippingCart      #yqCdShipBar <- style="width:@freeShippingPercent%"
+           #yqCdShipFree <- đã đủ free ship: ẩn bằng @hidden_ship_free
          Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
     <div id="yqCdNote">
       <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">$76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>

@@ -93,6 +93,13 @@ $(document).on('yq:auth-changed', fn);    // đăng nhập / đăng xuất
 $(document).on('yq:profile-changed', fn); // hồ sơ thành viên đổi
 ```
 
+### Ghi chú biến PHP trong comment HTML
+
+Comment trong `.html` ghi tên biến dạng **`@tenBien`** (`@item.name`, `@foreach(cartItems as item) … @endforeach`,
+`@if(isLoggedIn)`), không viết `{$tenBien}` / `$tenBien`: Smarty vẫn chạy `{…}` nằm trong `<!-- -->`, biến không có
+trên production sẽ gây lỗi, còn HTML in ra có thể làm comment đóng sớm. Khi gắn PHP, đổi `@x` → `{$x}`
+ở **markup**, không đưa vào comment.
+
 ### Quy ước đặt tên
 
 Mọi thứ do project này viết ra đều mang tiền tố **`yq`**, để không đụng tên với
