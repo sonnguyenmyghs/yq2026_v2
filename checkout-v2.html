@@ -352,7 +352,7 @@
     </nav>
     <div class="yq-oc__foot">
       <a class="yq-btn yq-btn--gold yq-btn--block" href="cart.html">View cart</a>
-      <div class="yq-oc__note"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><span>Complimentary delivery above $300</span></div>
+      <div class="yq-oc__note"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><span>Complimentary delivery above SGD 300</span></div>
     </div>
   </div>
 </div>
@@ -367,7 +367,7 @@
        #yqMfnName              <- @member.first_name            (trống thì phần trước @ của @member.email)
        #yqMfnMail              <- @member.email                 (trống thì thêm thuộc tính hidden)
        Pane "wallet" (#yqMfnWallet):
-         #yqMfnWalletBal       <- @member.wallet_balance_format (VD $0.00 — store credit + gift card)
+         #yqMfnWalletBal       <- @member.wallet_balance_format (VD SGD 0.00 — store credit + gift card)
      Danh sách mục giống #yqAcctPop trong HEADER — đổi menu thì sửa cả hai.
      Pane con: mỗi pane là 1 div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] (hidden); nút [data-yq-view="<tên>"]
      mở pane đó, [data-yq-view=""] quay về danh sách. Thêm pane mới = thêm 1 khối div + 1 nút.
@@ -397,7 +397,7 @@
       <button class="yq-auth__back" type="button" data-yq-view=""><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>My Functions</button>
       <h3 class="yq-mfn__sub">My wallet</h3>
       <p class="yq-mfn__lead">Store credit and gift-card balance, applied automatically at checkout.</p>
-      <div class="yq-mfn__stat"><b id="yqMfnWalletBal">$0.00</b><span>available credit</span></div>
+      <div class="yq-mfn__stat"><b id="yqMfnWalletBal">SGD 0.00</b><span>available credit</span></div>
       <a class="yq-btn yq-btn--yqost yq-btn--block" href="shop.html?cat=dining">Buy a dining voucher <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
     </div>
   </div>
@@ -670,7 +670,7 @@
                   </p>
                   <p class="text-warning">
                     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                    <span>Minimum order of $300 and above to enjoy complimentary delivery.</span>
+                    <span>Minimum order of SGD 300 and above to enjoy complimentary delivery.</span>
                   </p>
                   <h5 class="in--sec--title">Delivery to</h5>
                   <div class="row getlocation--label d-none">
@@ -1016,7 +1016,7 @@
         <div class="yq-cdrawer__opt">Medium · 1 kg</div>
       </div>
       <div class="yq-cdrawer__right">
-        <div class="yq-cdrawer__price">$88.00</div>
+        <div class="yq-cdrawer__price">SGD 88.00</div>
       </div>
     </li>
     <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68" data-qty="2">
@@ -1026,7 +1026,7 @@
         <div class="yq-cdrawer__opt">Classic · Gift message card</div>
       </div>
       <div class="yq-cdrawer__right">
-        <div class="yq-cdrawer__price">$136.00</div>
+        <div class="yq-cdrawer__price">SGD 136.00</div>
       </div>
     </li>
     </ul>
@@ -1038,14 +1038,14 @@
     </div>
   </div>
   <footer class="yq-cdrawer__foot" id="yqCdFoot">
-    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$224.00</strong></div>
+    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">SGD 224.00</strong></div>
     <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
            #yqCdShipNote <- còn thiếu tiền: ẩn bằng @hidden_ship_note
              #yqCdToFree <- @toFreeShippingCart      #yqCdShipBar <- style="width:@freeShippingPercent%"
            #yqCdShipFree <- đã đủ free ship: ẩn bằng @hidden_ship_free
          Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
     <div id="yqCdNote">
-      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">$76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
+      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">SGD 76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
       <div class="yq-cdrawer__note d-none" id="yqCdShipFree"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg><div>You have unlocked free shipping.</div></div>
     </div>
     <div class="yq-cdrawer__actions">
@@ -1132,8 +1132,8 @@
   window.__demoLalamoveRates = { CAR: { base: 18, perKm: 2.5 }, MINIVAN: { base: 35, perKm: 3.7 } };
   window.__demoPromoCodes = {
     WELCOME10: { type: 'pct', value: 10, name: 'Discount (WELCOME10):', message: 'Applied: 10% off your order.' },
-    HYATT20:   { type: 'pct', value: 20, min: 200, name: 'Discount (HYATT20):', message: 'Applied: 20% off orders above $200.' },
-    SAVE30:    { type: 'amt', value: 30, name: 'Discount (SAVE30):', message: 'Applied: $30 off your order.' }
+    HYATT20:   { type: 'pct', value: 20, min: 200, name: 'Discount (HYATT20):', message: 'Applied: 20% off orders above SGD 200.' },
+    SAVE30:    { type: 'amt', value: 30, name: 'Discount (SAVE30):', message: 'Applied: SGD 30 off your order.' }
   };
 </script>
 <!-- Demo stand-in cho appv6_dev_demo.js — cùng tên hàm / DOM hook; production: thay bằng file thật -->

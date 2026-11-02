@@ -191,9 +191,9 @@ YQ.products = [
     short: 'A dining credit valid at all Grand Hyatt Singapore restaurants and bars.',
     optionLabel: 'Value',
     options: [
-      { id: '100', label: '$100', price: 100 },
-      { id: '200', label: '$200', price: 200 },
-      { id: '500', label: '$500', price: 500 }
+      { id: '100', label: 'SGD 100', price: 100 },
+      { id: '200', label: 'SGD 200', price: 200 },
+      { id: '500', label: 'SGD 500', price: 500 }
     ]
   },
   {
@@ -694,7 +694,7 @@ YQ.products = [
 YQ.experiences = [
   { id:'grand-dining', img:'assets/img/e-dining.jpg', name:'Grand Dining Experience', tone:2, price:200, rating:4.8, reviews:128,
     duration:'Flexible', place:'All Restaurants',
-    desc:'A $200 dining voucher valid at all Grand Hyatt Singapore restaurants. Perfect for food lovers.' },
+    desc:'A SGD 200 dining voucher valid at all Grand Hyatt Singapore restaurants. Perfect for food lovers.' },
   { id:'spa-retreat', img:'assets/img/e-spa.jpg', name:'Spa Wellness Retreat', tone:6, price:280, rating:4.9, reviews:96,
     duration:'90 minutes', place:'Damai Spa',
     desc:'A 90-minute signature massage plus access to our spa facilities. Pure relaxation and renewal.' },
@@ -723,7 +723,7 @@ YQ.referral = {
   reward: 20,                 // ưu đãi cho cả người mời lẫn người được mời
   landing: 'index.html',      // trang link mời trỏ tới
   codePrefix: 'GH-',
-  message: 'I shop for gifts at Grand Hyatt Singapore — here is $20 off your first order.',
+  message: 'I shop for gifts at Grand Hyatt Singapore — here is SGD 20 off your first order.',
   channels: [
     { id: 'facebook', label: 'Facebook', kind: 'share',
       url: 'https://www.facebook.com/sharer/sharer.php?u={u}' },
@@ -792,7 +792,7 @@ YQ.cardDesigns = [
 /* ---------- Store config ---------- */
 YQ.config = {
   currency: 'S$',
-  currencySymbol: '$',
+  currencySymbol: 'SGD ',
   currencyCode: 'SGD',
   shipping: 15,
   freeShippingThreshold: 300,  // T&C The Shop: free 1 lần giao cho đơn từ SGD 300

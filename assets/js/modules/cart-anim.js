@@ -379,10 +379,10 @@
     return parseInt($v.is('input') ? $v.val() : $v.text(), 10) || 0;
   }
 
-  /** Định dạng tiền giữ đúng kiểu text đang có trong phần tử: "$88.00" (demo)
-      hay "292.00 SGD" / "292 SGD" (PHP in) — giữ tiền tố/hậu tố và số chữ số thập phân. */
+  /** Định dạng tiền giữ đúng kiểu text đang có trong phần tử: "SGD 88.00" (demo)
+      hay "292.00 SGD" / "292 SGD" (PHP in) — giữ tiền tố/hậu tố (kể cả khoảng trắng) và số chữ số thập phân. */
   function moneyLike($el, n) {
-    var m = /^(\D*?)\s*-?[\d.,]+(\s*\D*)$/.exec($.trim($el.text()));
+    var m = /^(\D*?\s*)-?[\d.,]+(\s*\D*)$/.exec($.trim($el.text()));
     if (!m) return YQ.money(n);
     var dec = /\.(\d+)\s*\D*$/.exec($el.text());
     var num = Number(n || 0).toFixed(dec ? dec[1].length : 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');

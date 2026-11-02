@@ -362,7 +362,15 @@ img{ max-width: 100%; display: block; }
 .yq-card__foot{ margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .yq-card__price{ font-family: var(--yq-serif); font-size: 1rem; color: var(--yq-ink); }
 .yq-card__price small{ font-family: var(--yq-sans); font-size: 11.5px; color: var(--yq-muted); margin-right: 4px; }
-.yq-card__price s{ font-family: var(--yq-sans); font-size: 12px; color: var(--yq-muted); margin-left: 7px; }
+.yq-card__price s{ font-family: var(--yq-sans); font-size: 12px; color: var(--yq-was); margin-left: 7px; text-decoration-thickness: 1px; }
+/* Card đang sale (có giá gốc <s>): giá bán đỏ rượu vang, to + đậm hơn — đồng bộ với PDP */
+.yq-card__price:has(s){ color: var(--yq-sale); font-size: 1.15rem; font-weight: 600; }
+.yq-card__price:has(s) s{ font-weight: 400; }
+/* Card chưa đủ rộng cho "From SGD 168 SGD 210" + link View: giá gốc xuống dòng riêng */
+@container (max-width: 319px){
+  .yq-card__price s{ display: block; margin: 2px 0 0; }
+  .yq-card__foot:has(s){ align-items: baseline; }   /* View thẳng hàng giá sale (dòng đầu), không lơ lửng giữa 2 dòng */
+}
 
 .yq-badge{
   position: absolute; top: 12px; left: 12px; z-index: 2;
@@ -413,7 +421,7 @@ img{ max-width: 100%; display: block; }
   position: absolute; top: 0; right: 14px; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
   min-width: 46px; padding: 10px 7px 15px;
-  background: var(--yq-brand-dark); color: #fff;
+  background: var(--yq-sale); color: #fff;
   font-size: 9.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%);
 }
@@ -430,7 +438,9 @@ img{ max-width: 100%; display: block; }
   .yq-ribbon > span + span{ display: none; }
   .yq-off{ right: 10px; min-width: 40px; padding: 8px 6px 13px; }
   .yq-off b{ font-size: 14px; }
-  .yq-card__price s{ display: block; margin: 2px 0 0; }   /* giá gốc xuống dòng riêng, không đẩy link View tràn ra ngoài */
+  .yq-card__price small{ display: block; margin: 0 0 2px; }   /* "From" lên dòng riêng để "SGD 168" + View vừa 1 hàng */
+  .yq-card__foot{ align-items: last baseline; }                 /* View thẳng hàng giá (dòng cuối) */
+  .yq-card__foot:has(s){ align-items: center; }                 /* From / giá / giá gạch: dòng giữa là giá */
 }
 
 .yq-quickadd{

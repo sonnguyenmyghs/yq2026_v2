@@ -344,7 +344,7 @@
     </nav>
     <div class="yq-oc__foot">
       <a class="yq-btn yq-btn--gold yq-btn--block" href="cart.html">View cart</a>
-      <div class="yq-oc__note"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><span>Complimentary delivery above $300</span></div>
+      <div class="yq-oc__note"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><span>Complimentary delivery above SGD 300</span></div>
     </div>
   </div>
 </div>
@@ -359,7 +359,7 @@
        #yqMfnName              <- @member.first_name            (trống thì phần trước @ của @member.email)
        #yqMfnMail              <- @member.email                 (trống thì thêm thuộc tính hidden)
        Pane "wallet" (#yqMfnWallet):
-         #yqMfnWalletBal       <- @member.wallet_balance_format (VD $0.00 — store credit + gift card)
+         #yqMfnWalletBal       <- @member.wallet_balance_format (VD SGD 0.00 — store credit + gift card)
      Danh sách mục giống #yqAcctPop trong HEADER — đổi menu thì sửa cả hai.
      Pane con: mỗi pane là 1 div.yq-mfn__pane[data-yq-mfn-pane="<tên>"] (hidden); nút [data-yq-view="<tên>"]
      mở pane đó, [data-yq-view=""] quay về danh sách. Thêm pane mới = thêm 1 khối div + 1 nút.
@@ -389,7 +389,7 @@
       <button class="yq-auth__back" type="button" data-yq-view=""><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>My Functions</button>
       <h3 class="yq-mfn__sub">My wallet</h3>
       <p class="yq-mfn__lead">Store credit and gift-card balance, applied automatically at checkout.</p>
-      <div class="yq-mfn__stat"><b id="yqMfnWalletBal">$0.00</b><span>available credit</span></div>
+      <div class="yq-mfn__stat"><b id="yqMfnWalletBal">SGD 0.00</b><span>available credit</span></div>
       <a class="yq-btn yq-btn--yqost yq-btn--block" href="shop.html?cat=dining">Buy a dining voucher <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
     </div>
   </div>
@@ -475,7 +475,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=signature-chocolate-cake">Signature Chocolate Cake</a></h3>
             <p class="yq-card__desc">A modern classic—layers of velvety chocolate sponge, silky ganache, and refined finishes.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$78</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;78</span>
               <a class="yq-link-arrow" href="product.html?id=signature-chocolate-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -499,7 +499,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=grand-pralines">Grand Pralines Collection</a></h3>
             <p class="yq-card__desc">24 handcrafted pralines in an elegant gold gift box. Dark, milk, and white chocolate.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$58</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;58</span>
               <a class="yq-link-arrow" href="product.html?id=grand-pralines">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -523,7 +523,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=the-grand-hamper">The Grand Hamper</a></h3>
             <p class="yq-card__desc">Our signature seasonal selection featuring artisan treats, preserves, and fine teas.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$218</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;218</span>
               <a class="yq-link-arrow" href="product.html?id=the-grand-hamper">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -547,7 +547,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=gh-champagne-brut">Grand Hyatt Champagne Brut</a></h3>
             <p class="yq-card__desc">Our house champagne—crisp, elegant, with fine bubbles and notes of white peach.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$128</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;128</span>
               <a class="yq-link-arrow" href="product.html?id=gh-champagne-brut">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -572,7 +572,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=the-pantry-hamper">The Pantry Hamper</a></h3>
             <p class="yq-card__desc">A collection of gourmet pantry essentials—artisan honey, preserves, and crackers.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$168<s>$210</s></span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;168<s>SGD&nbsp;210</s></span>
               <a class="yq-link-arrow" href="product.html?id=the-pantry-hamper">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -597,7 +597,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=cellar-selection-trio">Cellar Selection Trio</a></h3>
             <p class="yq-card__desc">Three bottles of our finest wines—one red, one white, one sparkling.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$288<s>$480</s></span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;288<s>SGD&nbsp;480</s></span>
               <a class="yq-link-arrow" href="product.html?id=cellar-selection-trio">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -621,7 +621,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=artisan-cookie-box">Artisan Cookie Box</a></h3>
             <p class="yq-card__desc">Sixteen hand-baked cookies in four flavours, packed in a keepsake tin.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$48</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;48</span>
               <a class="yq-link-arrow" href="product.html?id=artisan-cookie-box">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -645,7 +645,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=damai-wellness-set">Damai Spa Wellness Set</a></h3>
             <p class="yq-card__desc">Signature bath oils, a hand-poured candle, and a plush towel set from Damai Spa.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$188</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;188</span>
               <a class="yq-link-arrow" href="product.html?id=damai-wellness-set">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -668,7 +668,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=brix-tote">Brix Signature Tote</a></h3>
             <p class="yq-card__desc">Heavyweight canvas tote with embroidered Brix insignia and leather trim.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$68</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;68</span>
               <a class="yq-link-arrow" href="product.html?id=brix-tote">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -691,7 +691,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=grand-dining-voucher">Grand Dining Voucher</a></h3>
             <p class="yq-card__desc">A dining credit valid at all Grand Hyatt Singapore restaurants and bars.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$200</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;200</span>
               <a class="yq-link-arrow" href="product.html?id=grand-dining-voucher">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -714,7 +714,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=afternoon-tea-two">Afternoon Tea for Two</a></h3>
             <p class="yq-card__desc">Premium teas, warm scones, and delicate pastries at The Lounge, for two.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$68</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;68</span>
               <a class="yq-link-arrow" href="product.html?id=afternoon-tea-two">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -739,7 +739,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=festive-yule-log">Festive Yule Log</a></h3>
             <p class="yq-card__desc">A chestnut and dark chocolate bûche, finished with meringue and snow sugar.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$88<s>$98</s></span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;88<s>SGD&nbsp;98</s></span>
               <a class="yq-link-arrow" href="product.html?id=festive-yule-log">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -763,7 +763,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=prosperity-yusheng">Prosperity Yu Sheng Set</a></h3>
             <p class="yq-card__desc">Salmon, shredded vegetables, and house-made plum dressing on a golden platter.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$128</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;128</span>
               <a class="yq-link-arrow" href="product.html?id=prosperity-yusheng">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -786,7 +786,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=dark-chocolate-cherry-cake">Dark Chocolate Cherry Cake</a></h3>
             <p class="yq-card__desc">Dark chocolate mousse and Chantilly, crowned with cherries and chocolate curls.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$11</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;11</span>
               <a class="yq-link-arrow" href="product.html?id=dark-chocolate-cherry-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -809,7 +809,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=peach-chantilly-cake">Peach Chantilly Cake</a></h3>
             <p class="yq-card__desc">Vanilla sponge, whipped Chantilly cream and fresh stone fruit.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$11</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;11</span>
               <a class="yq-link-arrow" href="product.html?id=peach-chantilly-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -832,7 +832,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=caramel-coconut-cake">Caramel Coconut Cake</a></h3>
             <p class="yq-card__desc">Coconut mousse and golden caramel glaze on a crisp dacquoise base.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$11</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;11</span>
               <a class="yq-link-arrow" href="product.html?id=caramel-coconut-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -855,7 +855,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=lavender-blossom-cake">Lavender Blossom Cake</a></h3>
             <p class="yq-card__desc">A delicate blush mousse cake scattered with lavender blossoms.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$11</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;11</span>
               <a class="yq-link-arrow" href="product.html?id=lavender-blossom-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -878,7 +878,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=matcha-strawberry-cake">Matcha Strawberry Cake</a></h3>
             <p class="yq-card__desc">Matcha mousse, vanilla cream and fresh strawberries.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$11</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;11</span>
               <a class="yq-link-arrow" href="product.html?id=matcha-strawberry-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -901,7 +901,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=citrus-meringue-tart">Citrus Meringue Tart</a></h3>
             <p class="yq-card__desc">Tangy citrus curd under torched Italian meringue petals.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$10</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;10</span>
               <a class="yq-link-arrow" href="product.html?id=citrus-meringue-tart">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -924,7 +924,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=strawberry-mango-tart">Strawberry Mango Tart</a></h3>
             <p class="yq-card__desc">Vanilla custard piled high with fresh strawberries and mango.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$10</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;10</span>
               <a class="yq-link-arrow" href="product.html?id=strawberry-mango-tart">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -947,7 +947,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=caramel-coffee-tart">Caramel Coffee Tart</a></h3>
             <p class="yq-card__desc">Coffee caramel ganache petals with crunchy chocolate pearls.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$10</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;10</span>
               <a class="yq-link-arrow" href="product.html?id=caramel-coffee-tart">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -970,7 +970,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=cherry-vanilla-tart">Cherry Vanilla Tart</a></h3>
             <p class="yq-card__desc">Vanilla cream and glossy fresh cherries on an almond tart base.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$10</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;10</span>
               <a class="yq-link-arrow" href="product.html?id=cherry-vanilla-tart">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -993,7 +993,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=pink-grapefruit-tart">Pink Grapefruit Tart</a></h3>
             <p class="yq-card__desc">Pink grapefruit and berries over citrus cream, with fresh mint.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$62</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;62</span>
               <a class="yq-link-arrow" href="product.html?id=pink-grapefruit-tart">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1016,7 +1016,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=lemon-meringue-tart">Lemon Meringue Tart</a></h3>
             <p class="yq-card__desc">Sharp lemon curd beneath a crown of torched meringue kisses.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$62</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;62</span>
               <a class="yq-link-arrow" href="product.html?id=lemon-meringue-tart">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1039,7 +1039,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=mango-rose-tart">Mango Rose Tart</a></h3>
             <p class="yq-card__desc">Ripe mango roses over passion fruit cream, with edible flowers.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$68</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;68</span>
               <a class="yq-link-arrow" href="product.html?id=mango-rose-tart">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1062,7 +1062,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=signature-truffles">Signature Truffle Collection</a></h3>
             <p class="yq-card__desc">Hand-rolled truffles in seasonal flavours, in a signature gift box.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$38</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;38</span>
               <a class="yq-link-arrow" href="product.html?id=signature-truffles">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1085,7 +1085,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=dark-raspberry-bar">Dark Chocolate Raspberry Bar</a></h3>
             <p class="yq-card__desc">Dark chocolate with freeze-dried raspberries.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$18</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;18</span>
               <a class="yq-link-arrow" href="product.html?id=dark-raspberry-bar">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1108,7 +1108,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=white-cranberry-bar">White Chocolate Cranberry Bar</a></h3>
             <p class="yq-card__desc">Creamy white chocolate with dried cranberries.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$18</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;18</span>
               <a class="yq-link-arrow" href="product.html?id=white-cranberry-bar">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1131,7 +1131,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=milk-hazelnut-bar">Milk Chocolate Hazelnut Bar</a></h3>
             <p class="yq-card__desc">Milk chocolate with whole roasted hazelnuts.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$18</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;18</span>
               <a class="yq-link-arrow" href="product.html?id=milk-hazelnut-bar">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1154,7 +1154,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=assorted-rocher">Assorted Rocher</a></h3>
             <p class="yq-card__desc">Roasted nut clusters bound in fine chocolate.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$32</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;32</span>
               <a class="yq-link-arrow" href="product.html?id=assorted-rocher">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1177,7 +1177,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=chocolate-bark">Chocolate Bark</a></h3>
             <p class="yq-card__desc">Dark and milk chocolate bark with nuts and dried fruit.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$32</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;32</span>
               <a class="yq-link-arrow" href="product.html?id=chocolate-bark">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1200,7 +1200,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=cocoa-almonds">Cocoa Almonds</a></h3>
             <p class="yq-card__desc">Roasted almonds in dark chocolate, dusted with cocoa.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$30</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;30</span>
               <a class="yq-link-arrow" href="product.html?id=cocoa-almonds">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1223,7 +1223,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=milk-coated-hazelnuts">Milk Chocolate Coated Hazelnuts</a></h3>
             <p class="yq-card__desc">Whole roasted hazelnuts in smooth milk chocolate.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$30</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;30</span>
               <a class="yq-link-arrow" href="product.html?id=milk-coated-hazelnuts">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1246,7 +1246,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=chocolate-gourmand-almonds">Chocolate Gourmand Mix Almonds</a></h3>
             <p class="yq-card__desc">Almonds coated in dark, milk and caramelised chocolate.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$32</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;32</span>
               <a class="yq-link-arrow" href="product.html?id=chocolate-gourmand-almonds">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1269,7 +1269,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=cashew-nut-cookies">Cashew Nut Cookies</a></h3>
             <p class="yq-card__desc">Crisp, buttery cookies baked with roasted cashews.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$28</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;28</span>
               <a class="yq-link-arrow" href="product.html?id=cashew-nut-cookies">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1292,7 +1292,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=choco-dipped-butter-cookies">Chocolate Dipped Butter Cookies</a></h3>
             <p class="yq-card__desc">Viennese butter cookies half-dipped in dark chocolate.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$28</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;28</span>
               <a class="yq-link-arrow" href="product.html?id=choco-dipped-butter-cookies">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1315,7 +1315,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=chocolate-fudge-cookies">Chocolate Fudge Cookies</a></h3>
             <p class="yq-card__desc">Rich, chewy double-chocolate fudge cookies.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$28</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;28</span>
               <a class="yq-link-arrow" href="product.html?id=chocolate-fudge-cookies">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1338,7 +1338,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=chocolate-chip-cookies">Chocolate Chip Cookies</a></h3>
             <p class="yq-card__desc">Brown-butter cookies loaded with dark chocolate chips.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$28</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;28</span>
               <a class="yq-link-arrow" href="product.html?id=chocolate-chip-cookies">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1361,7 +1361,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=oatmeal-cranberry-cookies">Oatmeal Cranberry Cookies</a></h3>
             <p class="yq-card__desc">Rolled-oat cookies with tart dried cranberries.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$28</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;28</span>
               <a class="yq-link-arrow" href="product.html?id=oatmeal-cranberry-cookies">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1384,7 +1384,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=golden-moscato-oolong">Golden Moscato Oolong</a></h3>
             <p class="yq-card__desc">Loose-leaf oolong blended for Grand Hyatt Singapore by Monogram Tea.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$38</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;38</span>
               <a class="yq-link-arrow" href="product.html?id=golden-moscato-oolong">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1407,7 +1407,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=yuzu-raw-honey">Yuzu Infused Raw Honey</a></h3>
             <p class="yq-card__desc">Hives Keeper raw honey infused with fragrant yuzu.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$26</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;26</span>
               <a class="yq-link-arrow" href="product.html?id=yuzu-raw-honey">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1430,7 +1430,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=ginger-raw-honey">Ginger Infused Raw Honey</a></h3>
             <p class="yq-card__desc">Hives Keeper raw honey infused with warming ginger.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$26</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;26</span>
               <a class="yq-link-arrow" href="product.html?id=ginger-raw-honey">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1453,7 +1453,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=signature-fruit-cake">Signature Fruit Cake</a></h3>
             <p class="yq-card__desc">Macerated dried fruit and nuts, wrapped for gifting.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$42</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;42</span>
               <a class="yq-link-arrow" href="product.html?id=signature-fruit-cake">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1476,7 +1476,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=grissini-cristal">Grissini Cristal</a></h3>
             <p class="yq-card__desc">Thin, crisp Italian breadsticks for the aperitif hour.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$12</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;12</span>
               <a class="yq-link-arrow" href="product.html?id=grissini-cristal">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1499,7 +1499,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=butter-croissant">Butter Croissant</a></h3>
             <p class="yq-card__desc">Laminated with French butter and baked daily.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$5</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;5</span>
               <a class="yq-link-arrow" href="product.html?id=butter-croissant">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1522,7 +1522,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=pain-au-chocolat">Pain au Chocolat</a></h3>
             <p class="yq-card__desc">Buttery croissant dough wrapped around dark chocolate.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$6</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;6</span>
               <a class="yq-link-arrow" href="product.html?id=pain-au-chocolat">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1545,7 +1545,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=ham-cheese-croissant">Ham &amp; Cheese Croissant</a></h3>
             <p class="yq-card__desc">Butter croissant baked with smoked ham and melted cheese.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$8</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;8</span>
               <a class="yq-link-arrow" href="product.html?id=ham-cheese-croissant">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1568,7 +1568,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=sausage-roll">Sausage Roll</a></h3>
             <p class="yq-card__desc">Glazed brioche spiral wrapped around a juicy sausage.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$6</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;6</span>
               <a class="yq-link-arrow" href="product.html?id=sausage-roll">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1591,7 +1591,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=streusel-muffin">Streusel Muffin</a></h3>
             <p class="yq-card__desc">Tender muffin under a crunchy cinnamon streusel.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$6</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;6</span>
               <a class="yq-link-arrow" href="product.html?id=streusel-muffin">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1614,7 +1614,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=chicken-pie">Chicken Pie</a></h3>
             <p class="yq-card__desc">Golden puff pastry filled with creamy braised chicken.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$9</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;9</span>
               <a class="yq-link-arrow" href="product.html?id=chicken-pie">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1637,7 +1637,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=spinach-quiche">Spinach &amp; Cheese Quiche</a></h3>
             <p class="yq-card__desc">Silky egg custard with spinach and cheese.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$8</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;8</span>
               <a class="yq-link-arrow" href="product.html?id=spinach-quiche">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1660,7 +1660,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=apple-turnover">Apple Turnover</a></h3>
             <p class="yq-card__desc">Flaky puff pastry with cinnamon-spiced apple.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$6</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;6</span>
               <a class="yq-link-arrow" href="product.html?id=apple-turnover">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1683,7 +1683,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=scones-jam-cream">Scones with Jam &amp; Clotted Cream</a></h3>
             <p class="yq-card__desc">Raisin scones with berry jam and clotted cream.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$12</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;12</span>
               <a class="yq-link-arrow" href="product.html?id=scones-jam-cream">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1706,7 +1706,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=chocolate-danish">Chocolate Danish</a></h3>
             <p class="yq-card__desc">Finely laminated Danish folded around dark chocolate.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$6</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;6</span>
               <a class="yq-link-arrow" href="product.html?id=chocolate-danish">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1729,7 +1729,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=apricot-custard-danish">Apricot Custard Danish</a></h3>
             <p class="yq-card__desc">Vanilla custard and glazed apricot on crisp Danish pastry.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$6</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;6</span>
               <a class="yq-link-arrow" href="product.html?id=apricot-custard-danish">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1752,7 +1752,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=cube-croissant">Cube Croissant</a></h3>
             <p class="yq-card__desc">Croissant dough baked as a cube, dusted with icing sugar.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$7</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;7</span>
               <a class="yq-link-arrow" href="product.html?id=cube-croissant">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1775,7 +1775,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=mixed-berry-danish">Mixed Berry Danish</a></h3>
             <p class="yq-card__desc">Spiralled Danish with cream and fresh berries.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$7</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;7</span>
               <a class="yq-link-arrow" href="product.html?id=mixed-berry-danish">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1798,7 +1798,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=country-sourdough">Country Sourdough</a></h3>
             <p class="yq-card__desc">Slow-fermented, with a blistered crust and tangy crumb.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$12</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;12</span>
               <a class="yq-link-arrow" href="product.html?id=country-sourdough">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1821,7 +1821,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=multigrain-oat-loaf">Multigrain Oat Loaf</a></h3>
             <p class="yq-card__desc">Hearty multigrain loaf rolled in oats.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$13</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;13</span>
               <a class="yq-link-arrow" href="product.html?id=multigrain-oat-loaf">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1844,7 +1844,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=rye-seed-loaf">Rye &amp; Seed Loaf</a></h3>
             <p class="yq-card__desc">Dark rye crusted with seeds.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$13</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;13</span>
               <a class="yq-link-arrow" href="product.html?id=rye-seed-loaf">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1867,7 +1867,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=pumpkin-seed-loaf">Pumpkin Seed Loaf</a></h3>
             <p class="yq-card__desc">Wholegrain tin loaf topped with pumpkin seeds.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$13</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;13</span>
               <a class="yq-link-arrow" href="product.html?id=pumpkin-seed-loaf">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1890,7 +1890,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=twisted-country-loaf">Twisted Country Loaf</a></h3>
             <p class="yq-card__desc">Rustic twisted loaf with a crackling crust.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$11</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;11</span>
               <a class="yq-link-arrow" href="product.html?id=twisted-country-loaf">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1913,7 +1913,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=traditional-baguette">Traditional Baguette</a></h3>
             <p class="yq-card__desc">Classic French baguette, baked every morning.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$6</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;6</span>
               <a class="yq-link-arrow" href="product.html?id=traditional-baguette">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1936,7 +1936,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=olive-focaccia">Olive Focaccia</a></h3>
             <p class="yq-card__desc">Olive oil focaccia with olives and rosemary.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$10</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;10</span>
               <a class="yq-link-arrow" href="product.html?id=olive-focaccia">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1959,7 +1959,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=smoked-ham-croissant">Smoked Ham Croissant</a></h3>
             <p class="yq-card__desc">Butter croissant filled with shaved smoked ham.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$12</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;12</span>
               <a class="yq-link-arrow" href="product.html?id=smoked-ham-croissant">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -1982,7 +1982,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=scrambled-egg-croissant">Scrambled Egg Croissant</a></h3>
             <p class="yq-card__desc">Soft scrambled eggs, Parmesan and chives.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$12</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;12</span>
               <a class="yq-link-arrow" href="product.html?id=scrambled-egg-croissant">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -2005,7 +2005,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=roast-beef-rye">Roast Beef &amp; Rocket on Rye</a></h3>
             <p class="yq-card__desc">Roast beef and rocket on a seeded rye baguette.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$16</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;16</span>
               <a class="yq-link-arrow" href="product.html?id=roast-beef-rye">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -2028,7 +2028,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=tuna-melt-baguette">Tuna Melt Baguette</a></h3>
             <p class="yq-card__desc">Tuna, melted cheese, tomato and rocket.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$14</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;14</span>
               <a class="yq-link-arrow" href="product.html?id=tuna-melt-baguette">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -2051,7 +2051,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=prawn-brioche">Prawn Brioche Bun</a></h3>
             <p class="yq-card__desc">Spiced prawns and greens in a sesame brioche.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$16</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;16</span>
               <a class="yq-link-arrow" href="product.html?id=prawn-brioche">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -2074,7 +2074,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=bacon-egg-brioche">Bacon &amp; Egg Brioche</a></h3>
             <p class="yq-card__desc">Crisp bacon and a sunny-side egg in toasted brioche.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$14</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;14</span>
               <a class="yq-link-arrow" href="product.html?id=bacon-egg-brioche">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -2097,7 +2097,7 @@
             <h3 class="yq-card__title"><a href="product.html?id=sourdough-melt">Toasted Sourdough Melt</a></h3>
             <p class="yq-card__desc">Smoked chicken, mozzarella and sun-dried tomato on sourdough.</p>
             <div class="yq-card__foot">
-              <span class="yq-card__price"><small>From</small>$14</span>
+              <span class="yq-card__price"><small>From</small>SGD&nbsp;14</span>
               <a class="yq-link-arrow" href="product.html?id=sourdough-melt">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
@@ -2237,7 +2237,7 @@
         <div class="yq-cdrawer__opt">Medium · 1 kg</div>
       </div>
       <div class="yq-cdrawer__right">
-        <div class="yq-cdrawer__price">$88.00</div>
+        <div class="yq-cdrawer__price">SGD 88.00</div>
       </div>
     </li>
     <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68" data-qty="2">
@@ -2247,7 +2247,7 @@
         <div class="yq-cdrawer__opt">Classic · Gift message card</div>
       </div>
       <div class="yq-cdrawer__right">
-        <div class="yq-cdrawer__price">$136.00</div>
+        <div class="yq-cdrawer__price">SGD 136.00</div>
       </div>
     </li>
     </ul>
@@ -2259,14 +2259,14 @@
     </div>
   </div>
   <footer class="yq-cdrawer__foot" id="yqCdFoot">
-    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">$224.00</strong></div>
+    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">SGD 224.00</strong></div>
     <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
            #yqCdShipNote <- còn thiếu tiền: ẩn bằng @hidden_ship_note
              #yqCdToFree <- @toFreeShippingCart      #yqCdShipBar <- style="width:@freeShippingPercent%"
            #yqCdShipFree <- đã đủ free ship: ẩn bằng @hidden_ship_free
          Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
     <div id="yqCdNote">
-      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">$76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
+      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">SGD 76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
       <div class="yq-cdrawer__note d-none" id="yqCdShipFree"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg><div>You have unlocked free shipping.</div></div>
     </div>
     <div class="yq-cdrawer__actions">
