@@ -447,9 +447,14 @@
         <h1 id="pdpTitle">Signature Chocolate Cake</h1>
         <p class="yq-lead" id="pdpDesc">A modern classic—layers of velvety chocolate sponge, silky ganache, and refined finishes. Available in three sizes to suit any celebration.</p>
 
-        <!-- Giá do PHP in như template cũ: @discount__price__detail (giá gốc gạch, nếu có) +
-             @currencyProperty <span>@product_cost_format</span>. JS không tính giá. -->
-        <div class="yq-pdp__price pd--price my-4" id="pdpPrice">SGD <span>78.00</span></div>
+        <!-- Giá do PHP in như template cũ: @currencyProperty <span>@product_cost_format</span>. JS không tính giá.
+             Có giảm giá thì in thêm @discount__price__detail = .pd--old--price (giá gốc gạch) + .yq-pdp__save (% giảm, tuỳ chọn);
+             không giảm thì bỏ 2 phần tử này. Giá gốc phải nằm NGOÀI .pd--price (quantity.js ghi đè mọi ".pd--price span"). -->
+        <div class="yq-pdp__pricing my-4">
+          <div class="yq-pdp__price pd--price" id="pdpPrice">SGD <span>78.00</span></div>
+          <s class="pd--old--price" data-price="98.00">SGD <span>98.00</span></s><!-- @currencyProperty <span>@product_oldcost_format</span> -->
+          <em class="yq-pdp__save yq-pdp__save--hot"><svg class="yq-flame" width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path class="yq-flame__out" d="M6 .5C6.6 3 9.5 4.6 10.6 7.4 11.9 10.8 9.4 13.5 6 13.5S.1 10.8 1.4 7.6c.6-1.5 1.7-2.2 2.1-3.6.4 1.3.2 2.5.9 3.1C4.6 4.6 5.4 2.6 6 .5Z"/><path class="yq-flame__in" d="M6 6.6c.4 1.4 2.3 2.3 2.3 4.2 0 1.5-1 2.5-2.3 2.5s-2.3-1-2.3-2.4c0-1 .6-1.5.9-2.3.3.6.4 1 .8 1.2.1-1.2.3-2.1.6-3.2Z"/></svg>Save 20%</em>
+        </div>
 
         <!-- "Your choices": giá trị đã chọn + giá nhóm / giá combo (JS: attributes.js điền nội dung) -->
         <div class="your--choices--single">Your choices: <span class="your--choices"></span> <span class="your--choices--single--price"></span></div>
@@ -761,6 +766,7 @@
     <span class="yq-buybar__name" id="pdpBarName">Signature Chocolate Cake</span>
     <span class="yq-buybar__meta">
       <span class="yq-buybar__price pd--price" id="pdpBarPrice">SGD <span>78.00</span></span>
+      <s class="yq-buybar__old">SGD 98.00</s><!-- chỉ in khi có giảm giá: @currencyProperty @product_oldcost_format -->
     </span>
   </div>
   <button class="yq-btn yq-btn--gold addToCart" type="button" id="pdpBarBuy" data-buynow="1" data-productid="signature-chocolate-cake" data-quantity="1" data-attribute="1">

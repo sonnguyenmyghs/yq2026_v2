@@ -535,10 +535,40 @@ img{ max-width: 100%; display: block; }
 .yq-pdp__price{ font-family: var(--yq-serif); font-size: 1.9rem; color: var(--yq-ink); }
 .yq-pdp__price small{ font-family: var(--yq-sans); font-size: 13px; color: var(--yq-muted); margin-left: 8px; }
 .yq-pdp__price s{ font-size: 1.15rem; color: var(--yq-muted); margin-left: 10px; }
+/* Hàng giá: giá bán + giá gốc gạch + nhãn % giảm (2 phần tử sau chỉ có khi giảm giá) */
+.yq-pdp__pricing{ display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.yq-pdp__pricing:has(.pd--old--price) .yq-pdp__price{ color: var(--yq-sale); }
+.yq-pdp__pricing .pd--old--price{
+  font-family: var(--yq-serif); font-size: 1.2rem; color: var(--yq-was);
+  text-decoration-thickness: 1px; font-variant-numeric: tabular-nums;
+}
+.yq-pdp__pricing .yq-pdp__save{ align-self: center; margin-left: 0; }
 .yq-pdp__save{
   display: inline-block; vertical-align: middle; margin-left: 12px; padding: 5px 10px;
   border-radius: var(--yq-radius-pill); background: var(--yq-brand); color: #fff;
   font: 600 10.5px/1 var(--yq-sans); letter-spacing: .1em; text-transform: uppercase; font-style: normal;
+}
+/* Nhãn sale có đốm lửa đang cháy: lửa lay động + nhãn toả sáng nhẹ */
+.yq-pdp__save--hot{
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 9px;
+  background: var(--yq-sale);
+  animation: yqSaveGlow 2.4s ease-in-out infinite;
+}
+.yq-flame{ flex: none; overflow: visible; margin-top: -2px; transform-origin: 50% 100%; animation: yqFlame 1.1s ease-in-out infinite alternate; }
+.yq-flame__out{ fill: #FFB547; }
+.yq-flame__in{ fill: #FFF1B8; transform-box: fill-box; transform-origin: 50% 100%; animation: yqFlameCore .7s ease-in-out infinite alternate; }
+@keyframes yqFlame{
+  0%  { transform: scale(1, 1)      rotate(-3deg); filter: drop-shadow(0 0 1px rgba(255,181,71,.6)); }
+  50% { transform: scale(.94, 1.08) rotate(2deg);  filter: drop-shadow(0 0 3px rgba(255,181,71,.9)); }
+  100%{ transform: scale(1.04, .95) rotate(-1deg); filter: drop-shadow(0 0 2px rgba(255,181,71,.7)); }
+}
+@keyframes yqFlameCore{ 0%{ transform: scale(1, .9); } 100%{ transform: scale(.9, 1.12); } }
+@keyframes yqSaveGlow{
+  0%, 100%{ box-shadow: 0 0 0 0 rgba(122,46,42,0); }
+  50%     { box-shadow: 0 0 0 4px rgba(122,46,42,.12), 0 4px 14px rgba(255,140,60,.22); }
+}
+@media (prefers-reduced-motion: reduce){
+  .yq-pdp__save--hot, .yq-flame, .yq-flame__in{ animation: none; }
 }
 .yq-field-label{ font-size: 12.5px; font-weight: 600; color: var(--yq-ink); margin-bottom: 10px; display: block; }
 
@@ -903,6 +933,8 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
 :root{
   --yq-brand:      #94835D;   /* The Shop Brass: ribbon promo, chip Save */
   --yq-brand-dark: #736649;   /* brass đậm: tag % giảm */
+  --yq-sale:       #7A2E2A;   /* đỏ rượu vang: giá sale + nhãn Save ở PDP (8.4:1 trên nền ivory) */
+  --yq-was:        #6F6B64;   /* xám giá gốc gạch (đạt AA 4.78:1) */
   --yq-brand-sub:  #58575B;   /* xám của chữ SINGAPORE */
   --yq-brand-logo: #171613;   /* đen của logo THE SHOP */
 }

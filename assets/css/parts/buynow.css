@@ -144,6 +144,12 @@
   color: var(--yq-ink);
   font-variant-numeric: tabular-nums;
 }
+.yq-buybar__meta:has(.yq-buybar__old) .yq-buybar__price{ color: var(--yq-sale); }
+.yq-buybar__old{
+  font-size: 12px;
+  color: var(--yq-was);
+  font-variant-numeric: tabular-nums;
+}
 .yq-buybar__opt{
   overflow: hidden;
   text-overflow: ellipsis;
