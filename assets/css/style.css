@@ -480,15 +480,22 @@ img{ max-width: 100%; display: block; }
 .yq-chip--gold.is-active{ background: var(--yq-gold); border-color: var(--yq-gold); color: var(--yq-ink); }
 .yq-chip__count{ font-size: 11px; opacity: .6; }
 
-/* Hàng 1: chips bên trái, số kết quả + sort bên phải (rớt xuống hàng riêng khi hẹp) */
+/* Hàng 1: chips bên trái (1 dòng, cuộn ngang khi nhiều category), số kết quả + sort ghim bên phải */
 .yq-filterbar{
-  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px;
+  display: flex; align-items: center; flex-wrap: nowrap; gap: 12px 20px;
   padding-bottom: 16px;
 }
 .yq-filterbar__chips{
-  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center; flex-wrap: nowrap; gap: 8px;
+  flex: 1 1 0; min-width: 0;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px; margin-bottom: -6px; /* chừa chỗ cho scrollbar mảnh, không đẩy lệch hàng */
+  scrollbar-width: thin; scrollbar-color: var(--yq-line) transparent;
 }
+.yq-filterbar__chips::-webkit-scrollbar{ height: 4px; }
+.yq-filterbar__chips::-webkit-scrollbar-thumb{ background: var(--yq-line); border-radius: 4px; }
+.yq-filterbar__chips .yq-chip{ flex: 0 0 auto; scroll-snap-align: start; }
 .yq-filterbar__tools{
   display: flex; align-items: center; gap: 14px;
   flex: none; margin-left: auto;
@@ -882,7 +889,8 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
   .yq-seasonal > .d-flex::-webkit-scrollbar{ display: none; }
   .yq-filterbar .yq-chip,
   .yq-seasonal .yq-chip{ scroll-snap-align: start; flex: 0 0 auto; }
-  .yq-filterbar__chips{ flex-basis: 100%; }
+  .yq-filterbar{ flex-wrap: wrap; }
+  .yq-filterbar__chips{ flex-basis: 100%; padding-bottom: 0; margin-bottom: 0; }
   .yq-filterbar__tools{ width: 100%; justify-content: space-between; }
   .yq-seasonal{ align-items: flex-start; flex-direction: column; gap: 10px; }
   .yq-seasonal > .d-flex{ width: 100%; }
