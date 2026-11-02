@@ -417,7 +417,7 @@ img{ max-width: 100%; display: block; }
 .yq-ribbon--promo{ --rb: var(--yq-brand); }
 
 /* Tag % giảm (góc trên-phải): bookmark treo từ mép trên, khấc chữ V ở đáy */
-.yq-off{
+.product--discount--percent{
   position: absolute; top: 0; right: 14px; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
   min-width: 46px; padding: 10px 7px 15px;
@@ -425,7 +425,7 @@ img{ max-width: 100%; display: block; }
   font-size: 9.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%);
 }
-.yq-off b{ font-family: var(--yq-serif); font-size: 16px; font-weight: 600; letter-spacing: 0; margin-bottom: 4px; }
+.product--discount--percent .percent{ font-family: var(--yq-serif); font-size: 16px; font-weight: 600; letter-spacing: 0; margin-bottom: 4px; }
 
 /* Card hẹp (4 cột ở ~992px, 2 cột trên mobile): ribbon xuống góc dưới-trái để không
    đè lên tag % giảm; hẹp nữa thì chỉ giữ nhãn đầu (promo) và thu nhỏ chữ. */
@@ -436,8 +436,8 @@ img{ max-width: 100%; display: block; }
 @container (max-width: 199px){
   .yq-ribbon{ height: 22px; font-size: 9px; padding: 0 14px 0 calc(var(--rb-over) + 9px); }
   .yq-ribbon > span + span{ display: none; }
-  .yq-off{ right: 10px; min-width: 40px; padding: 8px 6px 13px; }
-  .yq-off b{ font-size: 14px; }
+  .product--discount--percent{ right: 10px; min-width: 40px; padding: 8px 6px 13px; }
+  .product--discount--percent .percent{ font-size: 14px; }
   .yq-card__price small{ display: block; margin: 0 0 2px; }   /* "From" lên dòng riêng để "SGD 168" + View vừa 1 hàng */
   .yq-card__foot{ align-items: last baseline; }                 /* View thẳng hàng giá (dòng cuối) */
   .yq-card__foot:has(s){ align-items: center; }                 /* From / giá / giá gạch: dòng giữa là giá */
