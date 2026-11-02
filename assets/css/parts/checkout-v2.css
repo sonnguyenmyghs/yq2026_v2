@@ -87,7 +87,7 @@
 .sec--payment .mb-3.form-control{ margin-bottom: 0 !important; }   /* bỏ mb-3 inline của production, dùng gap của .row */
 .sec--payment .row > [class*="col"]{ position: relative; }   /* neo lịch flatpickr (.append__*) theo cột */
 .sec--payment .form-group .row > .col-6, .sec--payment .form-group .row > .col-12{ margin-bottom: 0; }
-.sec--payment .form-group.mb-0 .row > [class*="col"] .form-control{ margin-bottom: 14px; }
+.sec--payment .form-group.mb-0 .row > [class*="col"]{ margin-bottom: 14px; }   /* .form-group.mb-0: khoảng cách đặt ở cột (form-control bị !important = 0 ở trên) */
 
 /* Input group: prefix (#) hoặc nút dính bên phải (Apply / map) */
 .sec--payment .input-group-prepend .input-group-text{
@@ -118,7 +118,7 @@
 
 /* Phone: intl-tel-input */
 .sec--payment .iti{ width: 100%; }
-.sec--payment .iti .form-control{ padding-left: 52px; }
+.sec--payment .iti .form-control{ padding-left: 52px; margin-bottom: 0 !important; }
 .sec--payment .iti__country-container{ padding: 0; }
 .sec--payment .iti__selected-country{ border-radius: var(--yq-radius-sm) 0 0 var(--yq-radius-sm); }
 .sec--payment .iti__selected-country-primary{ padding: 0 8px 0 14px; }
@@ -126,7 +126,7 @@
 .sec--payment .iti__search-input{ font-family: var(--yq-sans); }
 .phone--tip{ display: block; font-size: 12px; font-style: normal; margin: 0; }
 .phone--tip span:empty{ display: none; }
-.phone--tip span:not(:empty){ display: block; margin-top: -8px; padding-bottom: 6px; }
+.phone--tip span:not(:empty){ display: block; margin-top: 6px; line-height: 1.4; }
 
 /* Checkbox (.checkbox--animated) */
 .checkbox--animated{ display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 8px; border-radius: var(--yq-radius-sm); }
