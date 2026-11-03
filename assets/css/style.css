@@ -478,15 +478,17 @@ img{ max-width: 100%; display: block; }
 .yq-exp__meta span{ display: inline-flex; align-items: center; gap: 5px; }
 
 /* ---------- 9. Chips / filters ---------- */
-.yq-chip{
+.yq-chip,
+.product--type{
   display: inline-flex; align-items: center; gap: 7px;
   padding: 9px 17px; border-radius: var(--yq-radius-pill);
   border: 1px solid var(--yq-line); background: var(--yq-paper);
-  font-size: 13px; color: var(--yq-ink-soft); cursor: pointer; white-space: nowrap;
-  transition: all .25s var(--yq-ease);
+  font-size: 13px; color: var(--yq-ink-soft); cursor: pointer; white-space: nowrap;  transition: all .25s var(--yq-ease);
 }
-.yq-chip:hover{ border-color: var(--yq-ink); color: var(--yq-ink); }
-.yq-chip.is-active{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+.yq-chip:hover,
+.product--type:hover{ border-color: var(--yq-ink); color: var(--yq-ink); }
+.yq-chip.is-active,
+.product--type.active{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
 .yq-chip--gold.is-active{ background: var(--yq-gold); border-color: var(--yq-gold); color: var(--yq-ink); }
 .yq-chip__count{ font-size: 11px; opacity: .6; }
 
@@ -505,7 +507,8 @@ img{ max-width: 100%; display: block; }
 }
 .yq-filterbar__chips::-webkit-scrollbar{ height: 4px; }
 .yq-filterbar__chips::-webkit-scrollbar-thumb{ background: var(--yq-line); border-radius: 4px; }
-.yq-filterbar__chips .yq-chip{ flex: 0 0 auto; scroll-snap-align: start; }
+.yq-filterbar__chips .yq-chip,
+.yq-filterbar__chips .product--type{ flex: 0 0 auto; scroll-snap-align: start; }
 .yq-filterbar__tools{
   display: flex; align-items: center; gap: 14px;
   flex: none; margin-left: auto;
@@ -946,6 +949,7 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
   .yq-filterbar__chips::-webkit-scrollbar,
   .yq-seasonal > .d-flex::-webkit-scrollbar{ display: none; }
   .yq-filterbar .yq-chip,
+  .yq-filterbar .product--type,
   .yq-seasonal .yq-chip{ scroll-snap-align: start; flex: 0 0 auto; }
   .yq-filterbar{ flex-wrap: wrap; }
   .yq-filterbar__chips{ flex-basis: 100%; padding-bottom: 0; margin-bottom: 0; }

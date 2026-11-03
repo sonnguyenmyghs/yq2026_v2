@@ -422,16 +422,19 @@
 
     <div class="yq-panel mb-4" style="padding:20px 22px">
       <div class="yq-filterbar">
+        <!-- Danh mục (giống .product--type cũ): bấm -> JS (pages.js) chuyển tới @base/reward/?redeem_category=@data-cat&redeem_awarded=@data-awarded
+             @foreach(categories as cat): data-cat = @cat.id, data-awarded = @awarded, text = @cat.name @endforeach · chip "All": data-cat="" ·
+             href giữ link thật (mở tab mới) hoặc để trống như cũ · giữ class product--type như cũ, chip đang xem: thêm class active -->
         <div class="yq-filterbar__chips" id="shopCats">
-          <button class="yq-chip is-active" type="button" data-cat="all">All Products</button>
-          <button class="yq-chip" type="button" data-cat="cakes">Cakes, Cookies &amp; Pralines</button>
-          <button class="yq-chip" type="button" data-cat="bakery">Breads &amp; Pastries</button>
-          <button class="yq-chip" type="button" data-cat="pantry">Pantry &amp; Tea</button>
-          <button class="yq-chip" type="button" data-cat="dining">Dining</button>
-          <button class="yq-chip" type="button" data-cat="beverages">Beverages</button>
-          <button class="yq-chip" type="button" data-cat="wellness">Wellness</button>
-          <button class="yq-chip" type="button" data-cat="brix">Brix Merchandise</button>
-          <button class="yq-chip" type="button" data-cat="celebration">Celebration</button>
+          <a href="shop.html" class="product--type active" data-awarded="3" data-cat="all">All Products</a>
+          <a href="shop.html?cat=cakes" class="product--type " data-awarded="3" data-cat="cakes">Cakes, Cookies &amp; Pralines</a>
+          <a href="shop.html?cat=bakery" class="product--type " data-awarded="3" data-cat="bakery">Breads &amp; Pastries</a>
+          <a href="shop.html?cat=pantry" class="product--type " data-awarded="3" data-cat="pantry">Pantry &amp; Tea</a>
+          <a href="shop.html?cat=dining" class="product--type " data-awarded="3" data-cat="dining">Dining</a>
+          <a href="shop.html?cat=beverages" class="product--type " data-awarded="3" data-cat="beverages">Beverages</a>
+          <a href="shop.html?cat=wellness" class="product--type " data-awarded="3" data-cat="wellness">Wellness</a>
+          <a href="shop.html?cat=brix" class="product--type " data-awarded="3" data-cat="brix">Brix Merchandise</a>
+          <a href="shop.html?cat=celebration" class="product--type " data-awarded="3" data-cat="celebration">Celebration</a>
         </div>
         <div class="yq-filterbar__tools">
           <span class="yq-results-count" id="shopCount">71 products</span>

@@ -161,7 +161,7 @@ nên cả hai hàm là no-op.
 | Trang | Tính năng |
 |---|---|
 | Toàn site | Sticky header, mega menu (hover), search panel, offcanvas mobile, toast, reveal-on-scroll, tôn trọng `prefers-reduced-motion` |
-| Shop | Lọc 7 category + 5 seasonal, 5 kiểu sort, deep-link `?cat=`, `?season=`, `?q=` |
+| Shop | Category là link `<a>` (bấm tải lại trang, PHP lọc — giống `.product--type` cũ), lọc 7 category + 5 seasonal, 5 kiểu sort, deep-link `?cat=`, `?season=`, `?q=` |
 | Product | Đổi option → giá cập nhật, stepper số lượng, accordion thông tin, sản phẩm liên quan |
 | Personalise | 4 mẫu eCard, eCard/Physical (+$5), live preview, đếm ký tự 200 |
 | Cart | Sửa số lượng, xoá, subtotal/shipping/tax 9%/total, free-ship từ $300 |

@@ -22,9 +22,13 @@
       sort: 'featured'
     };
 
-    /* Chip danh mục (#shopCats [data-cat]), chip mùa (#shopSeasons [data-season]) và
+    /* Chip danh mục (#shopCats .product--type[data-cat]), chip mùa (#shopSeasons [data-season]) và
        #shopGrid đều là HTML tĩnh trong shop.html — JS không dựng gì, chỉ ẩn/hiện,
-       đánh dấu chip đang chọn và sắp lại thứ tự các cột theo data-* của chúng. */
+       đánh dấu chip đang chọn và sắp lại thứ tự các cột theo data-* của chúng.
+       Chip danh mục (giống .product--type cũ): bấm là chuyển trang theo data-cat +
+       data-awarded, PHP lọc sản phẩm và in sẵn is-active. Bản demo (không có #root)
+       đi theo href (shop.html?cat=) rồi JS lọc + đánh dấu theo ?cat=. */
+    var isDemo = !document.getElementById('root');
     var $grid = $('#shopGrid');
     var $items = $grid.children();
 
@@ -50,9 +54,13 @@
     }
 
     function render() {
-      $('#shopCats .yq-chip').each(function () {
-        $(this).toggleClass('is-active', $(this).attr('data-cat') === state.cat);
-      });
+      if (isDemo) {
+        $('#shopCats .product--type').each(function () {
+          $(this).toggleClass('active', $(this).attr('data-cat') === state.cat).removeAttr('aria-current');
+        });
+      }
+      // backend chỉ in class active -> JS gắn aria-current cho trình đọc màn hình
+      $('#shopCats .product--type.active').attr('aria-current', 'page');
       $('#shopSeasons .yq-chip').each(function () {
         $(this).toggleClass('is-active', $(this).attr('data-season') === state.season);
       });
@@ -75,8 +83,16 @@
     }
 
     /* Events */
-    $(document).on('click', '#shopCats .yq-chip', function () {
-      state.cat = $(this).attr('data-cat'); render();
+    // Theo JS cũ: ghép URL reward từ data-cat + data-awarded (demo: dùng href)
+    function catUrl(_this) {
+      if (isDemo) return _this.attr('href');
+      var awarded = _this.data('awarded');
+      var id = _this.data('cat');
+      return $('#root').data('base') + '/reward/?redeem_category=' + id + '&redeem_awarded=' + awarded;
+    }
+    $(document).on('click', '.product--type', function (e) {
+      e.preventDefault();
+      window.location.href = catUrl($(this));
     });
     $(document).on('click', '#shopSeasons .yq-chip', function () {
       var s = $(this).attr('data-season');
@@ -85,12 +101,22 @@
     });
     $(document).on('change', '#shopSort', function () { state.sort = this.value; render(); });
     $(document).on('click', '#shopReset, #shopClearQuery', function () {
+      // Đang xem 1 danh mục -> về link "All" (danh mục do URL quyết định)
+      var $all = $('#shopCats [data-cat="all"]');
+      if (this.id === 'shopReset' && $all.length && !$all.hasClass('active')) {
+        window.location.href = catUrl($all);
+        return;
+      }
       state = { cat: 'all', season: null, q: '', sort: 'featured' };
       $('#shopSort').val('featured');
       render();
     });
 
     render();
+
+    // Trang tải lại theo danh mục: cuộn hàng chip ngang để chip đang chọn nằm trong tầm nhìn
+    var $cats = $('#shopCats'), $on = $cats.find('.product--type.active');
+    if ($on.length) $cats.scrollLeft($on.offset().left - $cats.offset().left + $cats.scrollLeft() - 8);
   };
 
   /* ======================================================================
