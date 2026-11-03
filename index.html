@@ -253,6 +253,19 @@
           <button class="yq-search__clear" type="button" data-search-clear aria-label="Clear search"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
           <button class="yq-search__go" type="submit">Search<svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></button>
         </form>
+        <!-- Live search (search.js): gõ phím -> POST @base/search/?product_name=@keyword, response HTML thay nội dung #yqSearchResults (mẫu: backend-templates/search_results.html) -->
+        <div class="yq-search__results" id="yqSearchResults" aria-live="polite" hidden>
+          <div class="yq-sres__head"><span class="yq-search__label">Products</span><a class="yq-link-arrow" href="shop.html?q=cake" data-sres-all>View all <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a></div>
+          <ul class="yq-sres__list">
+            <li class="yq-sres__item"><a class="yq-sres__link" href="product.html?id=signature-chocolate-cake"><span class="yq-sres__img"><img src="assets/img/shop/cake-chocolate-gold.jpg" alt="" loading="lazy" decoding="async"></span><span class="yq-sres__body"><span class="yq-sres__cat">Cakes &amp; Pastries</span><span class="yq-sres__name">Signature Chocolate Cake</span></span><span class="yq-sres__price">SGD&nbsp;78</span></a></li>
+            <li class="yq-sres__item"><a class="yq-sres__link" href="product.html?id=the-grand-hamper"><span class="yq-sres__img"><img src="assets/img/shop/hamper-grand.jpg" alt="" loading="lazy" decoding="async"></span><span class="yq-sres__body"><span class="yq-sres__cat">Hampers</span><span class="yq-sres__name">The Grand Hamper</span></span><span class="yq-sres__price">SGD&nbsp;218</span></a></li>
+            <li class="yq-sres__item"><a class="yq-sres__link" href="product.html?id=the-pantry-hamper"><span class="yq-sres__img"><img src="assets/img/shop/hamper-pantry.jpg" alt="" loading="lazy" decoding="async"></span><span class="yq-sres__body"><span class="yq-sres__cat">Hampers</span><span class="yq-sres__name">The Pantry Hamper</span></span><span class="yq-sres__price">SGD&nbsp;168<s>SGD&nbsp;210</s></span></a></li>
+            <li class="yq-sres__item"><a class="yq-sres__link" href="product.html?id=gh-champagne-brut"><span class="yq-sres__img"><img src="assets/img/p-champagne.jpg" alt="" loading="lazy" decoding="async"></span><span class="yq-sres__body"><span class="yq-sres__cat">Wine &amp; Champagne</span><span class="yq-sres__name">Grand Hyatt Champagne Brut</span></span><span class="yq-sres__price">SGD&nbsp;128</span></a></li>
+            <li class="yq-sres__item"><a class="yq-sres__link" href="product.html?id=damai-wellness-set"><span class="yq-sres__img"><img src="assets/img/p-spa-set.jpg" alt="" loading="lazy" decoding="async"></span><span class="yq-sres__body"><span class="yq-sres__cat">Wellness &amp; Spa</span><span class="yq-sres__name">Damai Spa Wellness Set</span></span><span class="yq-sres__price">SGD&nbsp;188</span></a></li>
+            <li class="yq-sres__item"><a class="yq-sres__link" href="product.html?id=dark-chocolate-cherry-cake"><span class="yq-sres__img"><img src="assets/img/shop/cake-chocolate-cherry.jpg" alt="" loading="lazy" decoding="async"></span><span class="yq-sres__body"><span class="yq-sres__cat">Cakes</span><span class="yq-sres__name">Dark Chocolate Cherry Cake</span></span><span class="yq-sres__price">SGD&nbsp;11</span></a></li>
+          </ul>
+          <p class="yq-sres__empty" hidden>No products found for “<b data-sres-q>cake</b>”. Try another keyword.</p>
+        </div>
         <div class="yq-search__meta"><span class="yq-search__label">Popular searches</span>
           <div class="yq-search__suggest">
             <button class="yq-chip" type="button" data-suggest="Hampers">Hampers</button>
@@ -933,6 +946,7 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/pages.js"></script>
 <script src="assets/js/modules/nav.js"></script>
+<script src="assets/js/modules/search.js"></script>
 <script src="assets/js/modules/banner.js"></script>
 <script src="assets/js/modules/buynow.js"></script>
 <script src="assets/js/modules/cart-anim.js"></script>

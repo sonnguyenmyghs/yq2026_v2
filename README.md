@@ -54,6 +54,8 @@ python3 -m http.server 8000
         └── modules/      Tính năng rời, mỗi file một việc:
             ├── nav.js        Sticky/thu gọn khi cuộn, mega menu, panel Seasonal,
             │                 ô tìm kiếm (phím tắt "/"), offcanvas mobile
+            ├── search.js     Live search sản phẩm khi gõ (POST search/?product_name=,
+            │                 response HTML theo backend-templates/search_results.html)
             ├── banner.js     Hero slider 3 slide (autoplay, swipe, dot, progress)
             ├── buynow.js     Buy Now ở PDP + card, sticky buy bar mobile
             ├── cart-anim.js  Fly-to-cart, badge đếm, nút "Added", cart drawer
@@ -165,6 +167,7 @@ nên cả hai hàm là no-op.
 | Cart | Sửa số lượng, xoá, subtotal/shipping/tax 9%/total, free-ship từ $300 |
 | Checkout | 4 bước có validate, auto-format số thẻ & expiry, màn hình xác nhận đơn |
 | Header | 5 mục chính + panel Seasonal, thu gọn khi cuộn xuống / hiện lại khi cuộn lên, phím tắt `/` mở tìm kiếm |
+| Tìm kiếm | Gõ là hiện kết quả ngay (chờ 250ms, huỷ request cũ): ẩn Popular searches, POST `@base/search/?product_name=@keyword`, HTML trả về thay nội dung `#yqSearchResults`; bản demo lọc 6 sản phẩm mẫu trong markup |
 | Banner | Hero slider 3 slide (autoplay, prev/next, dot, progress, swipe) + promo strip 2 cột |
 | Mua nhanh | Buy Now ở PDP và trên card, sticky buy bar mobile, chặn bấm trùng |
 | Thêm giỏ | Ảnh bay theo đường cong vào icon giỏ, badge đếm tăng dần, cart drawer trượt từ phải |
