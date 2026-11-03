@@ -558,6 +558,24 @@ img{ max-width: 100%; display: block; }
   border-radius: var(--yq-radius-pill); background: var(--yq-brand); color: #fff;
   font: 600 10.5px/1 var(--yq-sans); letter-spacing: .1em; text-transform: uppercase; font-style: normal;
 }
+/* Link "gửi kèm thiệp" -> personalise.html (PDP dưới nút mua + cart dưới nút checkout) */
+.yq-giftcta{
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border: 1px dashed rgba(148,131,93,.55); border-radius: var(--yq-radius-sm);
+  background: rgba(148,131,93,.06); color: var(--yq-ink); text-decoration: none;
+  transition: background-color .25s var(--yq-ease), border-color .25s var(--yq-ease);
+}
+.yq-giftcta:hover{ background: rgba(148,131,93,.12); border-color: var(--yq-brand); color: var(--yq-ink); }
+.yq-giftcta__icon{
+  flex: none; display: grid; place-items: center; width: 38px; height: 38px;
+  border-radius: 50%; background: #fff; color: var(--yq-brand-dark);
+}
+.yq-giftcta__text{ flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.yq-giftcta__t{ font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.yq-giftcta__s{ font-size: 12px; color: var(--yq-muted); line-height: 1.35; }
+.yq-giftcta__arrow{ flex: none; color: var(--yq-brand-dark); transition: transform .25s var(--yq-ease); }
+.yq-giftcta:hover .yq-giftcta__arrow{ transform: translateX(3px); }
+
 /* Nhãn sale có đốm lửa đang cháy: lửa lay động + nhãn toả sáng nhẹ */
 .yq-pdp__save--hot{
   display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 9px;
