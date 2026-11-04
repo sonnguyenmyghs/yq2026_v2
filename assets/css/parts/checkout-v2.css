@@ -376,6 +376,8 @@ body.spage-open{ overflow: hidden; }
   border-radius: var(--yq-radius-sm); background: rgba(255,255,255,.97); color: var(--yq-ink);
   font-family: var(--yq-sans); font-size: 15px; box-shadow: var(--yq-shadow-sm);
 }
+/* Gợi ý Google Places gắn vào body, mặc định z-index 1000 sẽ nằm dưới .slide--page (1060) */
+.pac-container{ z-index: 1100; }
 #search_input:focus{ outline: none; border-color: var(--yq-gold); box-shadow: 0 0 0 3px rgba(148,131,93,.18); }
 #clearable_search{ position: absolute; right: 6px; top: 6px; cursor: pointer; }
 #clearable_search .input-group-text{

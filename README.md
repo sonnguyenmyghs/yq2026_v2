@@ -101,8 +101,8 @@ $(document).on('yq:profile-changed', fn); // hồ sơ thành viên đổi
 ### Ghi chú biến PHP trong comment HTML
 
 Comment trong `.html` ghi tên biến dạng **`@tenBien`** (`@item.name`, `@foreach(cartItems as item) … @endforeach`,
-`@if(isLoggedIn)`), không viết `{$tenBien}` / `$tenBien`: Smarty vẫn chạy `{…}` nằm trong `<!-- -->`, biến không có
-trên production sẽ gây lỗi, còn HTML in ra có thể làm comment đóng sớm. Khi gắn PHP, đổi `@x` → `{$x}`
+`@if(isLoggedIn)`), không viết `{$tenBien}` / `$tenBien`: template engine vẫn xử lý biến `$…` nằm trong `<!-- -->`
+(kể cả `$x` không có ngoặc), biến không có trên production sẽ gây lỗi, còn HTML in ra có thể làm comment đóng sớm. Khi gắn PHP, đổi `@x` → `{$x}`
 ở **markup**, không đưa vào comment.
 
 ### Quy ước đặt tên
@@ -261,10 +261,15 @@ và class trạng thái do JS gắn (`.in--receivings.active`, `.in--pickup.acti
 |---|---|---|
 | `checkout-v2.html` | Markup + block `window.__*` | Đổi giá trị cứng thành `{$pickup_rule…}`, `{$_htmlListCartCheckOut}`…; bỏ 2 dòng Leaflet, mở dòng `maps.googleapis` |
 | `assets/css/parts/checkout-v2.css` | Style theo class production (kể cả markup JS inject `.delivery__type`, `#btn-cancel-promocode`, select giờ) | Dùng nguyên |
-| `assets/js/modules/checkout-v2.js` | **Demo stand-in cho `appv6_dev_demo.js`**: cùng tên hàm (`initMap`, `setCurrentMarker`, `checkDistanceMap`, `appendCustomDeliTypeLalamove`, `applyTotalPriceDefault`, `checkDiscountPromo`…), cùng luồng, cùng chuỗi validate | **Thay bằng `appv6_dev_demo.js` thật** |
+| `assets/js/modules/checkout-v2.js` | **Chỉ dùng cho demo**: cùng tên hàm với `appv6_dev_demo.js` (`initMap`, `setCurrentMarker`, `checkDistanceMap`, `appendCustomDeliTypeLalamove`, `applyTotalPriceDefault`, `checkDiscountPromo`…), cùng luồng, cùng chuỗi validate | **Thay bằng `checkout-v2-production.js`** |
+| `assets/js/modules/checkout-v2-production.js` | Bản production: Google Maps, API báo giá `/cart/?check_transportfee=on`, promo `/cart?action=check_promo`, huỷ mã `/reward/?act=delete_gift`, form POST thật | Dùng nguyên; `.delivery__types`, validate, tính tiền giống bản demo |
 | `assets/js/modules/control__telinputv25.js` | Copy nguyên bản production (intl-tel-input cho `#phone_register` / `#phone_member`) | Dùng nguyên |
 
-Chỗ khác production trong JS đều đánh dấu `[DEMO]`:
+Khi deploy, trong `checkout-v2.html` cần: bỏ 2 dòng Leaflet, mở dòng `maps.googleapis`, xoá `__demoLalamoveRates` +
+`__demoPromoCodes`, đổi `checkout-v2.js` thành `checkout-v2-production.js`, và giữ lại inline script của
+`select_payment_food.html` (`_tmp_action_gift`, `#input__disableLalamove`, `#input__disablePickup`) vì JS không xử lý các phần này.
+
+Chỗ khác production trong `checkout-v2.js` (bản demo) đều đánh dấu `[DEMO]`:
 - Bản đồ: Leaflet + OpenStreetMap thay Google Maps; tìm địa chỉ qua Nominatim thay Places
   SearchBox; vẽ đường thẳng thay Directions. Vẫn ghi vào `#output_address`, `#myLat`, `#myLng`.
 - Báo giá Lalamove: tính tại chỗ theo km từ khách sạn (`window.__demoLalamoveRates`) thay cho
