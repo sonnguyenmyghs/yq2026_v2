@@ -38,6 +38,8 @@ python3 -m http.server 8000
 ├── privacy.html          Privacy Policy (link Hyatt + OneTrust)
 │                         4 trang trên lấy nguyên văn từ "Grand Hyatt Singapore-new online shop.pdf",
 │                         dùng chung assets/css/parts/info.css
+├── admin/
+│   └── delivery-rules.html  Admin setup rule giao nhận: Pickup / Hotel Van / Lalamove / Room Service
 ├── member/               Khu vực thành viên (xem mục "Trang trong thư mục con")
 │   ├── profile.html      Member Profile — HTML tĩnh: thẻ tóm tắt + 4 nhóm thông tin, sửa tại chỗ
 │   ├── orders.html       My Orders — 2 tab Completed orders / Pending payment, ReOrder
@@ -60,7 +62,8 @@ python3 -m http.server 8000
             ├── buynow.js     Buy Now ở PDP + card, sticky buy bar mobile
             ├── cart-anim.js  Fly-to-cart, badge đếm, nút "Added", cart drawer
             ├── account.js    Popup Log in / Register + panel member "My Functions"
-            └── checkout-v2.js Controller trang checkout-v2 (form, promo, map, báo giá, summary)
+            ├── checkout-v2.js Controller trang checkout-v2 (form, promo, map, báo giá, summary)
+            └── delivery-rules.js Admin rule giao nhận: đọc/ghi form, validate, test đơn, xuất window.__*
 ```
 
 **Header là HTML tĩnh** (khối `<!-- HEADER -->` … `<!-- /HEADER -->` đầu `<body>` mỗi trang:
@@ -279,6 +282,97 @@ Hành vi: ban đầu 2 ô lớn Self-Collection / Delivery (chưa chọn sẵn);
 The Shop / Drive-Through (chọn Drive-Through hiện ô biển số). Delivery: địa chỉ qua trang trượt
 **My Location** (`.slide--page[data-spage=mylocation]`), sau Okay mới hiện ngày/giờ
 (`__arrayMapTimeSlotLalamove`) + bảng xe, unit number + postal code 6 số bắt buộc.
+
+### Admin rule giao nhận (`admin/delivery-rules.html`)
+
+Trang admin cấu hình 4 hình thức nhận hàng, mỗi hình thức có danh sách category riêng, cho **hotel 267**. Đầu ra đối chiếu với
+`backend-templates/select_payment_food.html` và `backend-templates/appv6_dev_demo.js`: block `window.__*` và biến PHP (tab *Developer*). Giờ và lead mẫu cho ra đúng giá trị block ở `checkout-v2.html`, chỉ khác
+nhãn khung giờ: `2:00 PM to 4:00 PM` thay cho `14:00 PM to 16:00 PM`. Hotel Van và Room Service để tắt sẵn.
+
+| File | Vai trò |
+|---|---|
+| `admin/delivery-rules.html` | HTML tĩnh + giá trị mẫu, PHP in từ `@delivery_rules`. Dòng lặp có khuôn `<template id="yqDrTpl…">` |
+| `assets/css/parts/delivery-rules.css` | Style, tiền tố `.yq-drule` |
+| `assets/js/modules/delivery-rules.js` | Đọc/ghi form, validate, *Test an order*, sinh config, nhật ký |
+
+**Lưu:** form gửi 1 field `delivery_rules` (JSON). Trang có `<span id="root">` thì POST thật; không có thì
+`[DEMO]` lưu localStorage `yq_delivery_rules_v2`. Production phải chặn đăng nhập ở server, kiểm tra lại toàn
+bộ validate ở server và tự ghi nhật ký (`@delivery_rules_audit`), vì JS chỉ là lớp nhắc lỗi cho admin.
+
+```js
+{
+  pickup:   { enabled, label, note, pausedUntil, open:'10:00', close:'19:00', prepHours, maxDays,
+              mon_on, mon_open, mon_close, mon_prep, …, sun_prep,   // trống = dùng giờ / lead chuẩn
+              slotMode:'hour'|'fixed', slots:[{start,end}], minOrder, rules:[…],
+              closed:[{from,to,mode:'closed'|'hours',open,close,prep,reason}],
+              locations:[{name,on,plate}], arrivalTip },
+  hotelvan: { /* chung */, replaceLala, slots:[{start,end,seats}], postal:'22, 23', flatFee, freeOver },
+  lalamove: { /* chung */, vehicles:'both'|'car', freeOver, outOfAreaMsg },
+  roomservice: { /* chung, không có slots */, lastOrderMins, verify:'room_surname'|'room', payment:['room_charge','online'], fee, serviceCharge },
+  products: { hotelId, legacyRules:[{ name, on, cats, products, minQty, legacy:['flagCatXmax',…] }] }
+}
+// mọi phương thức: catRules:[{ name, cats:'2638', products, minQty, offered, lead:''|'1'|'2'|'5'|'7'|'24'|'48'|'72'|'custom', leadCustom, from, to }]
+// rules[i] = { name, on, match:'all'|'any', conds:[{field,op,value}], action:'hide'|'free'|'fee'|'surcharge', value }
+// Chạy từ trên xuống, rule đầu tiên khớp thắng. Field: subtotal, items, category, postal, guest. Value cách nhau dấu phẩy = OR.
+```
+
+**Ánh xạ sang biến checkout:**
+
+| Rule | Biến |
+|---|---|
+| `pickup.open/close/prepHours` | `__pickupOpen*`, `__pickupClose*`, `__pickupPreparingtime*` |
+| `lalamove.open/close/prepHours` | `__lalamoveOpen*`, `__lalamoveClose*`, `__lalamovePreparingtime*` |
+| `slots` | `__arrayMapTimeSlotPickup/Lalamove`: `key` = giờ bắt đầu, nên khung giờ phải tròn giờ |
+| `closed` với `mode:'closed'` | `__useDisableDatesPickup/Lalamove`: bung thành từng ngày |
+| `lalamove.freeOver` | `__minimumPriceForDeli` |
+| `lalamove.vehicles` | `both` -> `__lalamoveCustomDeliveryType = true`; `car` -> **bỏ dòng này** vì JS kiểm bằng `typeof` |
+| `hotelvan.replaceLala` | `__replaceLalaToHotelVan`. Bật thì tab Delivery chạy van trên bộ `__lalamove*`, nên giờ, khung giờ, ngày nghỉ và `__minimumPriceForDeli` lấy từ rule van; thêm `__fixedFeeBelowLowestPrice` |
+
+Khung giờ `<option>` ở checkout do PHP in, nên backend in từ cùng rule này (không lấy từ block JS).
+
+**Thứ tự giờ của 1 ngày:** ngày đặc biệt > rule theo thứ > giờ chuẩn. Ngày đặc biệt `mode:'hours'` mở được cả thứ đang tắt.
+
+**Category theo từng phương thức:** mỗi phương thức có danh sách `catRules` riêng (hiện đang là **dữ liệu mẫu**, team admin nhập lại). Mỗi dòng:
+có bán với phương thức này không, lead time, ngày bán, và tuỳ chọn product / số lượng. Category không có trong danh sách thì dùng rule chuẩn.
+
+**File config:** tab *Developer* tải xuống / nhập `delivery_rules.json`. File mẫu `backend-templates/delivery_rules.sample.json`. `backend-templates/delivery_rules.php` đọc file này, thay cho các khối `if` hardcode:
+
+```php
+require_once 'delivery_rules.php';
+$drConfig = deliveryRulesLoad($duongDanFileJson);
+$drFlags = deliveryRulesDefaults();                  // mọi hotel, trước vòng lặp giỏ
+$isDrHotel = $drConfig && $hotel_id == $drConfig['products']['hotelId'];
+if ($isDrHotel) extract(deliveryRulesProperty($drConfig));   // $pickup_rule, $lalamove_rule, $dataDatelockJson
+
+// trong vòng lặp dòng hàng:
+if ($isDrHotel) $drFlags = deliveryRulesItemFlags($drConfig, $productEachInfoCart['cat_id'], $productIDCart, $quantityCart, $drFlags);
+
+extract($drFlags);                                   // sau vòng lặp
+```
+
+| Rule theo phương thức | Biến PHP | Input template | Đọc ở |
+|---|---|---|---|
+| Không bán category | `$flagHidePickup` / `$flagHideLalamove` | `#input__disablePickup` / `#input__disableLalamove` | Inline cuối template: bỏ tab đó |
+| Lead time (giờ) | `$flagLeadHoursPickup` / `Lalamove` | `#category__leadHoursPickup` / `Lalamove` | `appv6`: từ 24h -> `specialDays*`; dưới 24h -> lấy lớn hơn so với lead chuẩn |
+| Ngày bán | `$flagMinDate*`, `$flagMaxDate*` | `#category__minDate*`, `#category__maxDate*` | `appv6`, ưu tiên hơn `#category__specialMinDate` / `MaxDate` |
+
+Giỏ nhiều món: lead dài nhất, ngày bắt đầu muộn nhất, ngày kết thúc sớm nhất, method bị ẩn thì ẩn. Input trống thì `appv6` chạy theo flag cũ (`$flagCatSpecial24h`…), nên hotel chưa dùng config không đổi.
+Van thay Lalamove thì rule van đi vào nhóm biến Lalamove. Hotel Van riêng và Room Service mới lưu trong config, chưa có biến riêng.
+
+**Biến property:**
+
+| Rule | Biến PHP | Vào template ở |
+|---|---|---|
+| `pickup.open/close/prepHours` | `$pickup_rule['open_time' / 'close_time' / 'preparing_time']` | `__pickupOpenHour`… (phút đang cứng `= 0`, nên chỉ nhận giờ tròn) |
+| `lalamove.*` (hoặc van khi thay Lalamove) | `$lalamove_rule[…]` | `__lalamoveOpenHour`… |
+| `closed` với `mode:'closed'` | `$dataDatelockJson` = `data.pick_up/delivery.{status,date}` | `__useDisableDates*` lúc tải trang. Khi khách chọn ngày hoặc đổi tháng, `appv6` cộng thêm ngày từ `POST /cart/?date_lock=true` |
+| `roomservice.*` | `__inroomSwitch`, `__inroomOpen*`, `__inroomClose*`, `__inroomPreparingtime*`, `__useTimeSlotByHourForInroom` | `appv6` có sẵn luồng này (`data-recei=4`), template còn thiếu `#in__room`, `.in--room`, `.inroom__number` |
+
+**Advanced > Backend flags** giữ các flag cũ không thuộc lead / ngày / ẩn method: `flagCatXmax`, `flagFoods`, `flagBeverages`, `flagCartMoreQuanity2`… Không có lựa chọn `flagCatMinDate = 1` / `flagCatMaxDate = 1`: `new Date("1")` ra năm 2001 nên Lalamove hết ngày chọn.
+
+*Test order* mô phỏng theo `appv6`: lead dưới 24h chỉ xét khi chọn hôm nay; từ 24h đẩy ngày sớm nhất, thêm 1 ngày nếu đã qua giờ đóng (pickup: giờ đóng trừ 60 phút), và khung giờ phải sau `now + N*24h`.
+
+**Chưa có hiệu lực ở checkout:** giờ riêng theo thứ, ngày đặc biệt có giờ riêng, số ngày đặt trước, min order, điểm nhận, vùng và số đơn mỗi chuyến của van, rule điều kiện, category riêng của Hotel Van và Room Service.
 
 ### Giỏ hàng mẫu
 

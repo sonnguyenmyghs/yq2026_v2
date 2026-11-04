@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en" data-root="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delivery Rules — Admin — Grand Hyatt Singapore</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="../assets/css/style.css" rel="stylesheet">
+<link href="../assets/css/parts/delivery-rules.css" rel="stylesheet">
+</head>
+<body class="yq-drule-page">
+<!-- Trang admin: production phải chặn đăng nhập ở server. Có span#root thì form POST thật; không có thì [DEMO] lưu localStorage. -->
+
+<!-- ========== TOPBAR + THANH LƯU (nút Save / Discard gắn form#yqDrForm bằng attribute form) ========== -->
+<header class="yq-drule__top">
+  <div class="yq-container yq-drule__topin">
+    <a class="yq-logo" href="../index.html" aria-label="Grand Hyatt Singapore"><span class="yq-logo__mark"><span class="yq-logo__word">Grand</span><span class="yq-logo__bar" aria-hidden="true"></span><span class="yq-logo__word">Hyatt</span><span class="yq-logo__tm" aria-hidden="true">™</span></span><span class="yq-logo__sub">Singapore</span></a>
+    <div class="yq-drule__crumb"><small>Admin</small><h1>Delivery rules</h1></div>
+    <div class="yq-drule__savestate" id="yqDrState" role="status">All changes saved</div>
+    <div class="yq-drule__actions">
+      <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" id="yqDrDiscard" disabled>Discard</button>
+      <button class="yq-btn yq-btn--sm" type="submit" form="yqDrForm" id="yqDrSave" disabled>Save</button>
+    </div>
+  </div>
+</header>
+
+<main class="yq-drule">
+  <div class="yq-container">
+    <div class="yq-drule__grid">
+
+      <!-- ========== DANH SÁCH METHOD ========== -->
+      <nav class="yq-drule__nav" id="yqDrNav" role="tablist" aria-label="Delivery methods" aria-orientation="vertical">
+          <button class="yq-drule__method is-active" type="button" role="tab" data-yq-method="pickup" id="yqDrTabpickup" aria-controls="yqDrPanelpickup" aria-selected="true">
+            <span class="yq-drule__mhead"><span class="yq-drule__mname">Self-Collection</span><span class="yq-drule__pill is-live">Live</span></span>
+            <span class="yq-drule__msum">10:00 to 19:00 · 8 categories</span>
+          </button>
+          <button class="yq-drule__method" type="button" role="tab" data-yq-method="hotelvan" id="yqDrTabhotelvan" aria-controls="yqDrPanelhotelvan" aria-selected="false" tabindex="-1">
+            <span class="yq-drule__mhead"><span class="yq-drule__mname">Hotel Van</span><span class="yq-drule__pill ">Off</span></span>
+            <span class="yq-drule__msum">2 trips a day</span>
+          </button>
+          <button class="yq-drule__method" type="button" role="tab" data-yq-method="lalamove" id="yqDrTablalamove" aria-controls="yqDrPanellalamove" aria-selected="false" tabindex="-1">
+            <span class="yq-drule__mhead"><span class="yq-drule__mname">Lalamove</span><span class="yq-drule__pill is-live">Live</span></span>
+            <span class="yq-drule__msum">10:00 to 19:00 · 9 categories</span>
+          </button>
+          <button class="yq-drule__method" type="button" role="tab" data-yq-method="roomservice" id="yqDrTabroomservice" aria-controls="yqDrPanelroomservice" aria-selected="false" tabindex="-1">
+            <span class="yq-drule__mhead"><span class="yq-drule__mname">Room Service</span><span class="yq-drule__pill ">Off</span></span>
+            <span class="yq-drule__msum">06:30 to 23:30</span>
+          </button>
+          <button class="yq-drule__method" type="button" role="tab" data-yq-method="products" id="yqDrTabproducts" aria-controls="yqDrPanelproducts" aria-selected="false" tabindex="-1">
+            <span class="yq-drule__mhead"><span class="yq-drule__mname">Advanced</span><span class="yq-drule__pill ">Dev</span></span>
+            <span class="yq-drule__msum">Backend flags</span>
+          </button>
+      </nav>
+
+      <!-- ========== EDITOR: giá trị mẫu trong markup, PHP in từ @delivery_rules.pickup / .hotelvan / .lalamove / .roomservice ========== -->
+      <form class="yq-drule__main" id="yqDrForm" method="post" action="#" novalidate>
+        <!-- Toàn bộ rule gửi lên server dạng JSON trong 1 field; cấu trúc xem README -->
+        <input type="hidden" name="delivery_rules" id="yqDrJson" value="">
+
+          <!-- ===== Self-Collection ===== -->
+          <section class="yq-drule__panel" data-yq-panel="pickup" data-yq-scope id="yqDrPanelpickup" role="tabpanel" aria-labelledby="yqDrTabpickup">
+            <ul class="yq-drule__issues" data-yq-issues aria-live="polite"></ul>
+            <details class="yq-drule__notes" data-yq-notes hidden><summary data-yq-notecount></summary><ul class="yq-drule__noteslist" data-yq-noteslist></ul></details>
+            <div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h2>Self-Collection</h2><p class="yq-drule__sub">Guests collect their order from the hotel.</p></div><label class="yq-drule__switch"><input type="checkbox" data-yq-f="enabled" checked><i></i><span>Offered at checkout</span></label></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout label</span><input class="yq-input" type="text" data-yq-f="label" value="Self-Collection"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout note</span><input class="yq-input" type="text" data-yq-f="note" value="Free · Lobby Level"><small>Small line under the label.</small><span class="yq-error"></span></label>
+  </div>
+  <hr class="yq-drule__divider">
+  <span class="yq-drule__groupttl">Pause new orders</span>
+  <div class="yq-drule__pause">
+    <input type="hidden" data-yq-f="pausedUntil" value="">
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="20">20 minutes</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="60">1 hour</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="today">Rest of today</button>
+    <span class="yq-drule__pausetxt" data-yq-pausetxt></span>
+    <button class="yq-drule__link" type="button" data-yq-resume hidden>Resume now</button>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Hours and lead time</h3></div></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard opens</span><input class="yq-input" type="time" data-yq-f="open" value="10:00"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard closes</span><input class="yq-input" type="time" data-yq-f="close" value="19:00"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="prepHours" value="2" min="0" step="0.25"><em>hours</em></span><small>Time needed to prepare an order.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Bookable days ahead</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="maxDays" value="" min="1" step="1"><em>days</em></span><small>Blank means no limit.</small><span class="yq-error"></span></label>
+    <details class="yq-drule__field--wide yq-drule__section"><summary>Different hours by day <small>Optional</small></summary>
+      <div class="yq-drule__rowhead yq-drule__row--day"><span>Day</span><span>Opens</span><span>Closes</span><span>Lead (h)</span></div>
+      <div class="yq-drule__days"><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="mon_on" checked><span>Mon</span></label><input class="yq-input" type="time" data-yq-f="mon_open" value="" aria-label="Mon opens"><input class="yq-input" type="time" data-yq-f="mon_close" value="" aria-label="Mon closes"><input class="yq-input" type="number" data-yq-f="mon_prep" value="" aria-label="Mon lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="tue_on" checked><span>Tue</span></label><input class="yq-input" type="time" data-yq-f="tue_open" value="" aria-label="Tue opens"><input class="yq-input" type="time" data-yq-f="tue_close" value="" aria-label="Tue closes"><input class="yq-input" type="number" data-yq-f="tue_prep" value="" aria-label="Tue lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="wed_on" checked><span>Wed</span></label><input class="yq-input" type="time" data-yq-f="wed_open" value="" aria-label="Wed opens"><input class="yq-input" type="time" data-yq-f="wed_close" value="" aria-label="Wed closes"><input class="yq-input" type="number" data-yq-f="wed_prep" value="" aria-label="Wed lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="thu_on" checked><span>Thu</span></label><input class="yq-input" type="time" data-yq-f="thu_open" value="" aria-label="Thu opens"><input class="yq-input" type="time" data-yq-f="thu_close" value="" aria-label="Thu closes"><input class="yq-input" type="number" data-yq-f="thu_prep" value="" aria-label="Thu lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="fri_on" checked><span>Fri</span></label><input class="yq-input" type="time" data-yq-f="fri_open" value="" aria-label="Fri opens"><input class="yq-input" type="time" data-yq-f="fri_close" value="" aria-label="Fri closes"><input class="yq-input" type="number" data-yq-f="fri_prep" value="" aria-label="Fri lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sat_on" checked><span>Sat</span></label><input class="yq-input" type="time" data-yq-f="sat_open" value="" aria-label="Sat opens"><input class="yq-input" type="time" data-yq-f="sat_close" value="" aria-label="Sat closes"><input class="yq-input" type="number" data-yq-f="sat_prep" value="" aria-label="Sat lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sun_on" checked><span>Sun</span></label><input class="yq-input" type="time" data-yq-f="sun_open" value="" aria-label="Sun opens"><input class="yq-input" type="time" data-yq-f="sun_close" value="" aria-label="Sun closes"><input class="yq-input" type="number" data-yq-f="sun_prep" value="" aria-label="Sun lead time, hours" placeholder="Std" min="0" step="0.25"></div></div>
+      <small class="yq-drule__help">Blank uses the standard hours and lead time. Turn a day off to close it every week.</small>
+    </details>
+  </div>
+  <hr class="yq-drule__divider">
+  <span class="yq-drule__groupttl">Time choice at checkout</span>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="radio" name="pickup_slotMode" data-yq-f="slotMode" value="hour" checked><span>Every hour, open to close</span></label><label class="yq-drule__chip"><input type="radio" name="pickup_slotMode" data-yq-f="slotMode" value="fixed"><span>Fixed windows</span></label></div>
+  <div class="mt-3" data-yq-when="slotMode:fixed">
+    <div class="yq-drule__rowhead yq-drule__row--slot"><span>Start</span><span>End</span><span></span></div>
+    <!-- @foreach(rule.time_slots as slot) -->
+    <div class="yq-drule__list" data-yq-list="slots" data-yq-tpl="yqDrTplSlot"><div class="yq-drule__row yq-drule__row--slot" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="10:00" aria-label="Window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="12:00" aria-label="Window end" step="3600"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove window"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="yq-drule__row yq-drule__row--slot" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="14:00" aria-label="Window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="16:00" aria-label="Window end" step="3600"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove window"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="yq-drule__row yq-drule__row--slot" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="17:00" aria-label="Window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="19:00" aria-label="Window end" step="3600"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove window"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div><p class="yq-drule__empty">No time windows.</p>
+    <!-- @endforeach -->
+    <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="slots">+ Add window</button>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Pickup points</h3><p class="yq-drule__sub">"Ask car plate" shows the plate field for that point.</p></div></div>
+  <!-- @foreach(rule.locations as loc) -->
+  <div class="yq-drule__list" data-yq-list="locations" data-yq-tpl="yqDrTplLoc"><div class="yq-drule__row yq-drule__row--loc" data-yq-scope><input class="yq-input" type="text" data-yq-f="name" value="Pickup at The Shop, Lobby Level Self-Collection" aria-label="Pickup point name"><span class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="on" checked><span>Active</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="plate"><span>Ask car plate</span></label></span><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove pickup point"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="yq-drule__row yq-drule__row--loc" data-yq-scope><input class="yq-input" type="text" data-yq-f="name" value="Pickup at Grand Salon, Level 2 Self-Collection" aria-label="Pickup point name"><span class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="on" checked><span>Active</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="plate"><span>Ask car plate</span></label></span><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove pickup point"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="yq-drule__row yq-drule__row--loc" data-yq-scope><input class="yq-input" type="text" data-yq-f="name" value="Drive-Through Collection, Hotel Driveway" aria-label="Pickup point name"><span class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="on" checked><span>Active</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="plate" checked><span>Ask car plate</span></label></span><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove pickup point"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div><p class="yq-drule__empty">No pickup points.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="locations">+ Add pickup point</button>
+  <hr class="yq-drule__divider">
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field yq-drule__field--wide"><span class="yq-drule__lbl">Drive-through tip</span><input class="yq-input" type="text" data-yq-f="arrivalTip" value="Upon arrival, call 6416 7117 and provide your order number"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Minimum order</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="minOrder" value="" min="0" step="0.01"></span><small>Blank means no minimum.</small><span class="yq-error"></span></label>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Categories</h3><p class="yq-drule__sub">Categories not listed here use the standard hours and lead time above.</p></div>
+    <select class="form-select yq-input yq-drule__copyfrom" data-yq-copyfrom aria-label="Copy categories from another method"><option value="">Copy from…</option><option value="hotelvan">Hotel Van</option><option value="lalamove">Lalamove</option><option value="roomservice">Room Service</option></select></div>
+  <!-- @foreach(rule.catRules as cat) -->
+  <div class="yq-drule__list" data-yq-list="catRules" data-yq-tpl="yqDrTplCat"><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: buying 2 or more</span><span class="yq-drule__catsum">48h ahead</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: buying 2 or more" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2821" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore" open><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="25904, 25896, 25897, 25899, 25900, 25901, 28049, 28050" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="2" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2638</span><span class="yq-drule__catsum">48h ahead</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2638" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2638" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2683</span><span class="yq-drule__catsum">48h ahead · 2026-12-01 to 2027-01-05</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2683" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2683" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2026-12-01"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2027-01-05"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: Xmas, category 2510</span><span class="yq-drule__catsum">48h ahead · 2026-11-22 to 2026-12-26</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: Xmas, category 2510" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2510" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2026-11-22"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2026-12-26"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2785</span><span class="yq-drule__catsum">48h ahead · 2027-02-01 to 2027-03-15</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2785" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2785" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2027-02-01"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2027-03-15"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: New Year, category 2564</span><span class="yq-drule__catsum">48h ahead · from 2026-01-21</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: New Year, category 2564" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2564" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2026-01-21"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2630</span><span class="yq-drule__catsum">48h ahead · 2027-03-20 to 2027-04-05</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2630" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2630" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2027-03-20"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2027-04-05"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2475</span><span class="yq-drule__catsum">48h ahead</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2475" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2475" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details></div><p class="yq-drule__empty">All categories use the standard rules.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="catRules">+ Add category</button>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Special dates</h3><p class="yq-drule__sub">Close a date or give it its own hours. This beats the rules for each day. Leave the end date blank for a single day.</p></div></div>
+  <!-- @foreach(rule.closed as c) -->
+  <div class="yq-drule__list" data-yq-list="closed" data-yq-tpl="yqDrTplClosed"><div class="yq-drule__row yq-drule__row--closed" data-yq-scope><input class="yq-input" type="date" data-yq-f="from" value="2026-12-31" aria-label="From"><input class="yq-input" type="date" data-yq-f="to" value="" aria-label="Until, blank for one day"><select class="form-select yq-input" data-yq-f="mode" aria-label="Date rule"><option value="closed" selected>Closed all day</option><option value="hours">Custom hours</option></select><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove special date"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="yq-drule__dayhours" data-yq-when="mode:hours"><input class="yq-input" type="time" data-yq-f="open" value="" aria-label="Opens on this date"><input class="yq-input" type="time" data-yq-f="close" value="" aria-label="Closes on this date"><input class="yq-input" type="number" data-yq-f="prep" value="" aria-label="Lead time on this date, hours" placeholder="Lead time (h)" min="0" step="0.25"></div><input class="yq-input" type="text" data-yq-f="reason" value="New Year's Eve" aria-label="Reason" placeholder="Reason (staff only)"><span class="yq-error"></span></div></div><p class="yq-drule__empty">No special dates.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="closed">+ Add special date</button>
+</div>
+<div class="yq-drule__card">
+  <details class="yq-drule__section"><summary>Other conditions <small>Order value, postal code, guest type</small></summary>
+  <p class="yq-drule__sub mb-3">Hide Self-Collection for certain orders. Rules run from the top, and the first match wins.</p>
+  <!-- @foreach(rule.rules as r) -->
+  <div class="yq-drule__rules"><div class="yq-drule__list is-empty" data-yq-list="rules" data-yq-tpl="yqDrTplRule"></div><p class="yq-drule__empty">No rules yet.</p></div>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="rules">+ Add rule</button>
+  </details>
+</div>
+          </section>
+          <!-- ===== Hotel Van ===== -->
+          <section class="yq-drule__panel" data-yq-panel="hotelvan" data-yq-scope id="yqDrPanelhotelvan" role="tabpanel" aria-labelledby="yqDrTabhotelvan" hidden>
+            <ul class="yq-drule__issues" data-yq-issues aria-live="polite"></ul>
+            <details class="yq-drule__notes" data-yq-notes hidden><summary data-yq-notecount></summary><ul class="yq-drule__noteslist" data-yq-noteslist></ul></details>
+            <div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h2>Hotel Van</h2><p class="yq-drule__sub">Orders delivered by the hotel's own van on set trips.</p></div><label class="yq-drule__switch"><input type="checkbox" data-yq-f="enabled"><i></i><span>Offered at checkout</span></label></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout label</span><input class="yq-input" type="text" data-yq-f="label" value="Hotel Van"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout note</span><input class="yq-input" type="text" data-yq-f="note" value="Selected postal areas"><small>Small line under the label.</small><span class="yq-error"></span></label>
+  </div>
+  <hr class="yq-drule__divider">
+  <span class="yq-drule__groupttl">Pause new orders</span>
+  <div class="yq-drule__pause">
+    <input type="hidden" data-yq-f="pausedUntil" value="">
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="20">20 minutes</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="60">1 hour</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="today">Rest of today</button>
+    <span class="yq-drule__pausetxt" data-yq-pausetxt></span>
+    <button class="yq-drule__link" type="button" data-yq-resume hidden>Resume now</button>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Delivery tab</h3></div></div>
+  <label class="yq-drule__switch"><input type="checkbox" data-yq-f="replaceLala"><i></i><span>Replace Lalamove with the van</span></label>
+  <p class="yq-drule__help">When on, the checkout Delivery tab runs on the van rules below and Lalamove is not shown.</p>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Trips and booking cut-off</h3></div></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard opens</span><input class="yq-input" type="time" data-yq-f="open" value="10:00"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard closes</span><input class="yq-input" type="time" data-yq-f="close" value="18:00"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Book at least</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="prepHours" value="24" min="0" step="0.25"><em>hours</em></span><small>Before the trip window starts.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Bookable days ahead</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="maxDays" value="14" min="1" step="1"><em>days</em></span><small>Blank means no limit.</small><span class="yq-error"></span></label>
+    <details class="yq-drule__field--wide yq-drule__section"><summary>Different hours by day <small>Optional</small></summary>
+      <div class="yq-drule__rowhead yq-drule__row--day"><span>Day</span><span>Opens</span><span>Closes</span><span>Lead (h)</span></div>
+      <div class="yq-drule__days"><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="mon_on" checked><span>Mon</span></label><input class="yq-input" type="time" data-yq-f="mon_open" value="" aria-label="Mon opens"><input class="yq-input" type="time" data-yq-f="mon_close" value="" aria-label="Mon closes"><input class="yq-input" type="number" data-yq-f="mon_prep" value="" aria-label="Mon lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="tue_on" checked><span>Tue</span></label><input class="yq-input" type="time" data-yq-f="tue_open" value="" aria-label="Tue opens"><input class="yq-input" type="time" data-yq-f="tue_close" value="" aria-label="Tue closes"><input class="yq-input" type="number" data-yq-f="tue_prep" value="" aria-label="Tue lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="wed_on" checked><span>Wed</span></label><input class="yq-input" type="time" data-yq-f="wed_open" value="" aria-label="Wed opens"><input class="yq-input" type="time" data-yq-f="wed_close" value="" aria-label="Wed closes"><input class="yq-input" type="number" data-yq-f="wed_prep" value="" aria-label="Wed lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="thu_on" checked><span>Thu</span></label><input class="yq-input" type="time" data-yq-f="thu_open" value="" aria-label="Thu opens"><input class="yq-input" type="time" data-yq-f="thu_close" value="" aria-label="Thu closes"><input class="yq-input" type="number" data-yq-f="thu_prep" value="" aria-label="Thu lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="fri_on" checked><span>Fri</span></label><input class="yq-input" type="time" data-yq-f="fri_open" value="" aria-label="Fri opens"><input class="yq-input" type="time" data-yq-f="fri_close" value="" aria-label="Fri closes"><input class="yq-input" type="number" data-yq-f="fri_prep" value="" aria-label="Fri lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sat_on"><span>Sat</span></label><input class="yq-input" type="time" data-yq-f="sat_open" value="" aria-label="Sat opens"><input class="yq-input" type="time" data-yq-f="sat_close" value="" aria-label="Sat closes"><input class="yq-input" type="number" data-yq-f="sat_prep" value="" aria-label="Sat lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sun_on"><span>Sun</span></label><input class="yq-input" type="time" data-yq-f="sun_open" value="" aria-label="Sun opens"><input class="yq-input" type="time" data-yq-f="sun_close" value="" aria-label="Sun closes"><input class="yq-input" type="number" data-yq-f="sun_prep" value="" aria-label="Sun lead time, hours" placeholder="Std" min="0" step="0.25"></div></div>
+      <small class="yq-drule__help">Blank uses the standard hours and lead time. Turn a day off to close it every week.</small>
+    </details>
+  </div>
+  <hr class="yq-drule__divider">
+  <div class="yq-drule__rowhead yq-drule__row--slotcap"><span>Start</span><span>End</span><span>Orders per trip</span><span></span></div>
+  <!-- @foreach(rule.time_slots as slot) -->
+  <div class="yq-drule__list" data-yq-list="slots" data-yq-tpl="yqDrTplTrip"><div class="yq-drule__row yq-drule__row--slotcap" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="10:00" aria-label="Trip window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="12:00" aria-label="Trip window end" step="3600"><input class="yq-input" type="number" data-yq-f="seats" value="6" aria-label="Orders per trip" min="1" step="1"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove trip"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="yq-drule__row yq-drule__row--slotcap" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="14:00" aria-label="Trip window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="16:00" aria-label="Trip window end" step="3600"><input class="yq-input" type="number" data-yq-f="seats" value="6" aria-label="Orders per trip" min="1" step="1"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove trip"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div><p class="yq-drule__empty">No trips.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="slots">+ Add trip</button>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Area and fees</h3></div></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field yq-drule__field--wide"><span class="yq-drule__lbl">Postal areas served</span><input class="yq-input" type="text" data-yq-f="postal" value="22, 23, 24, 25"><small>First digits of the postal code, separated by commas.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Flat fee</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="flatFee" value="15" min="0" step="0.01"></span><small>Charged below the free delivery amount.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Free delivery over</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="freeOver" value="300" min="0" step="0.01"></span><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Minimum order</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="minOrder" value="" min="0" step="0.01"></span><small>Blank means no minimum.</small><span class="yq-error"></span></label>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Categories</h3><p class="yq-drule__sub">Categories not listed here use the standard hours and lead time above.</p></div>
+    <select class="form-select yq-input yq-drule__copyfrom" data-yq-copyfrom aria-label="Copy categories from another method"><option value="">Copy from…</option><option value="pickup">Self-Collection</option><option value="lalamove">Lalamove</option><option value="roomservice">Room Service</option></select></div>
+  <!-- @foreach(rule.catRules as cat) -->
+  <div class="yq-drule__list is-empty" data-yq-list="catRules" data-yq-tpl="yqDrTplCat"></div><p class="yq-drule__empty">All categories use the standard rules.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="catRules">+ Add category</button>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Special dates</h3><p class="yq-drule__sub">Close a date or give it its own hours. This beats the rules for each day. Leave the end date blank for a single day.</p></div></div>
+  <!-- @foreach(rule.closed as c) -->
+  <div class="yq-drule__list" data-yq-list="closed" data-yq-tpl="yqDrTplClosed"><div class="yq-drule__row yq-drule__row--closed" data-yq-scope><input class="yq-input" type="date" data-yq-f="from" value="2026-12-25" aria-label="From"><input class="yq-input" type="date" data-yq-f="to" value="" aria-label="Until, blank for one day"><select class="form-select yq-input" data-yq-f="mode" aria-label="Date rule"><option value="closed" selected>Closed all day</option><option value="hours">Custom hours</option></select><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove special date"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="yq-drule__dayhours" data-yq-when="mode:hours"><input class="yq-input" type="time" data-yq-f="open" value="" aria-label="Opens on this date"><input class="yq-input" type="time" data-yq-f="close" value="" aria-label="Closes on this date"><input class="yq-input" type="number" data-yq-f="prep" value="" aria-label="Lead time on this date, hours" placeholder="Lead time (h)" min="0" step="0.25"></div><input class="yq-input" type="text" data-yq-f="reason" value="Christmas Day" aria-label="Reason" placeholder="Reason (staff only)"><span class="yq-error"></span></div><div class="yq-drule__row yq-drule__row--closed" data-yq-scope><input class="yq-input" type="date" data-yq-f="from" value="2026-12-31" aria-label="From"><input class="yq-input" type="date" data-yq-f="to" value="2027-01-01" aria-label="Until, blank for one day"><select class="form-select yq-input" data-yq-f="mode" aria-label="Date rule"><option value="closed" selected>Closed all day</option><option value="hours">Custom hours</option></select><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove special date"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="yq-drule__dayhours" data-yq-when="mode:hours"><input class="yq-input" type="time" data-yq-f="open" value="" aria-label="Opens on this date"><input class="yq-input" type="time" data-yq-f="close" value="" aria-label="Closes on this date"><input class="yq-input" type="number" data-yq-f="prep" value="" aria-label="Lead time on this date, hours" placeholder="Lead time (h)" min="0" step="0.25"></div><input class="yq-input" type="text" data-yq-f="reason" value="New Year" aria-label="Reason" placeholder="Reason (staff only)"><span class="yq-error"></span></div></div><p class="yq-drule__empty">No special dates.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="closed">+ Add special date</button>
+</div>
+<div class="yq-drule__card">
+  <details class="yq-drule__section"><summary>Other conditions <small>Order value, postal code, guest type</small></summary>
+  <p class="yq-drule__sub mb-3">Hide the van or change its fee for certain orders. Rules run from the top, and the first match wins.</p>
+  <!-- @foreach(rule.rules as r) -->
+  <div class="yq-drule__rules"><div class="yq-drule__list is-empty" data-yq-list="rules" data-yq-tpl="yqDrTplRule"></div><p class="yq-drule__empty">No rules yet.</p></div>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="rules">+ Add rule</button>
+  </details>
+</div>
+          </section>
+          <!-- ===== Lalamove ===== -->
+          <section class="yq-drule__panel" data-yq-panel="lalamove" data-yq-scope id="yqDrPanellalamove" role="tabpanel" aria-labelledby="yqDrTablalamove" hidden>
+            <ul class="yq-drule__issues" data-yq-issues aria-live="polite"></ul>
+            <details class="yq-drule__notes" data-yq-notes hidden><summary data-yq-notecount></summary><ul class="yq-drule__noteslist" data-yq-noteslist></ul></details>
+            <div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h2>Lalamove</h2><p class="yq-drule__sub">Islandwide delivery by Lalamove drivers, priced by live quote.</p></div><label class="yq-drule__switch"><input type="checkbox" data-yq-f="enabled" checked><i></i><span>Offered at checkout</span></label></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout label</span><input class="yq-input" type="text" data-yq-f="label" value="Delivery"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout note</span><input class="yq-input" type="text" data-yq-f="note" value="Islandwide · Lalamove"><small>Small line under the label.</small><span class="yq-error"></span></label>
+  </div>
+  <hr class="yq-drule__divider">
+  <span class="yq-drule__groupttl">Pause new orders</span>
+  <div class="yq-drule__pause">
+    <input type="hidden" data-yq-f="pausedUntil" value="">
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="20">20 minutes</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="60">1 hour</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="today">Rest of today</button>
+    <span class="yq-drule__pausetxt" data-yq-pausetxt></span>
+    <button class="yq-drule__link" type="button" data-yq-resume hidden>Resume now</button>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Hours and lead time</h3></div></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard opens</span><input class="yq-input" type="time" data-yq-f="open" value="10:00"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard closes</span><input class="yq-input" type="time" data-yq-f="close" value="19:00"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="prepHours" value="3" min="0" step="0.25"><em>hours</em></span><small>Time needed to prepare an order.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Bookable days ahead</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="maxDays" value="30" min="1" step="1"><em>days</em></span><small>Lalamove allows up to 30 days.</small><span class="yq-error"></span></label>
+    <details class="yq-drule__field--wide yq-drule__section"><summary>Different hours by day <small>Optional</small></summary>
+      <div class="yq-drule__rowhead yq-drule__row--day"><span>Day</span><span>Opens</span><span>Closes</span><span>Lead (h)</span></div>
+      <div class="yq-drule__days"><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="mon_on" checked><span>Mon</span></label><input class="yq-input" type="time" data-yq-f="mon_open" value="" aria-label="Mon opens"><input class="yq-input" type="time" data-yq-f="mon_close" value="" aria-label="Mon closes"><input class="yq-input" type="number" data-yq-f="mon_prep" value="" aria-label="Mon lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="tue_on" checked><span>Tue</span></label><input class="yq-input" type="time" data-yq-f="tue_open" value="" aria-label="Tue opens"><input class="yq-input" type="time" data-yq-f="tue_close" value="" aria-label="Tue closes"><input class="yq-input" type="number" data-yq-f="tue_prep" value="" aria-label="Tue lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="wed_on" checked><span>Wed</span></label><input class="yq-input" type="time" data-yq-f="wed_open" value="" aria-label="Wed opens"><input class="yq-input" type="time" data-yq-f="wed_close" value="" aria-label="Wed closes"><input class="yq-input" type="number" data-yq-f="wed_prep" value="" aria-label="Wed lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="thu_on" checked><span>Thu</span></label><input class="yq-input" type="time" data-yq-f="thu_open" value="" aria-label="Thu opens"><input class="yq-input" type="time" data-yq-f="thu_close" value="" aria-label="Thu closes"><input class="yq-input" type="number" data-yq-f="thu_prep" value="" aria-label="Thu lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="fri_on" checked><span>Fri</span></label><input class="yq-input" type="time" data-yq-f="fri_open" value="" aria-label="Fri opens"><input class="yq-input" type="time" data-yq-f="fri_close" value="" aria-label="Fri closes"><input class="yq-input" type="number" data-yq-f="fri_prep" value="" aria-label="Fri lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sat_on" checked><span>Sat</span></label><input class="yq-input" type="time" data-yq-f="sat_open" value="" aria-label="Sat opens"><input class="yq-input" type="time" data-yq-f="sat_close" value="" aria-label="Sat closes"><input class="yq-input" type="number" data-yq-f="sat_prep" value="" aria-label="Sat lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sun_on" checked><span>Sun</span></label><input class="yq-input" type="time" data-yq-f="sun_open" value="" aria-label="Sun opens"><input class="yq-input" type="time" data-yq-f="sun_close" value="" aria-label="Sun closes"><input class="yq-input" type="number" data-yq-f="sun_prep" value="" aria-label="Sun lead time, hours" placeholder="Std" min="0" step="0.25"></div></div>
+      <small class="yq-drule__help">Blank uses the standard hours and lead time. Turn a day off to close it every week.</small>
+    </details>
+  </div>
+  <hr class="yq-drule__divider">
+  <span class="yq-drule__groupttl">Time choice at checkout</span>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="radio" name="lalamove_slotMode" data-yq-f="slotMode" value="hour"><span>Every hour, open to close</span></label><label class="yq-drule__chip"><input type="radio" name="lalamove_slotMode" data-yq-f="slotMode" value="fixed" checked><span>Fixed windows</span></label></div>
+  <div class="mt-3" data-yq-when="slotMode:fixed">
+    <div class="yq-drule__rowhead yq-drule__row--slot"><span>Start</span><span>End</span><span></span></div>
+    <!-- @foreach(rule.time_slots as slot) -->
+    <div class="yq-drule__list" data-yq-list="slots" data-yq-tpl="yqDrTplSlot"><div class="yq-drule__row yq-drule__row--slot" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="10:00" aria-label="Window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="12:00" aria-label="Window end" step="3600"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove window"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="yq-drule__row yq-drule__row--slot" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="14:00" aria-label="Window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="16:00" aria-label="Window end" step="3600"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove window"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="yq-drule__row yq-drule__row--slot" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="17:00" aria-label="Window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="19:00" aria-label="Window end" step="3600"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove window"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div><p class="yq-drule__empty">No time windows.</p>
+    <!-- @endforeach -->
+    <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="slots">+ Add window</button>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Vehicles and fees</h3></div></div>
+  <span class="yq-drule__groupttl">Vehicles offered</span>
+  <div class="yq-drule__chips mb-3">
+    <label class="yq-drule__chip"><input type="radio" name="lalamove_vehicles" data-yq-f="vehicles" value="both" checked><span>Car and Minivan</span></label>
+    <label class="yq-drule__chip"><input type="radio" name="lalamove_vehicles" data-yq-f="vehicles" value="car"><span>Car only</span></label>
+  </div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Free delivery over</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="freeOver" value="300" min="0" step="0.01"></span><small>At or above this amount, the guest pays nothing.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Minimum order</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="minOrder" value="" min="0" step="0.01"></span><small>Blank means no minimum.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field yq-drule__field--wide"><span class="yq-drule__lbl">Message when no driver can reach the address</span><input class="yq-input" type="text" data-yq-f="outOfAreaMsg" value="Sorry, we do not deliver to your location"><span class="yq-error"></span></label>
+  </div>
+  <hr class="yq-drule__divider">
+  <div class="yq-drule__readonly"><b>Set by Lalamove on each order:</b> price, service area and vehicle limits. They come from the live quote, so they are not edited here.</div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Categories</h3><p class="yq-drule__sub">Categories not listed here use the standard hours and lead time above.</p></div>
+    <select class="form-select yq-input yq-drule__copyfrom" data-yq-copyfrom aria-label="Copy categories from another method"><option value="">Copy from…</option><option value="pickup">Self-Collection</option><option value="hotelvan">Hotel Van</option><option value="roomservice">Room Service</option></select></div>
+  <!-- @foreach(rule.catRules as cat) -->
+  <div class="yq-drule__list" data-yq-list="catRules" data-yq-tpl="yqDrTplCat"><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: buying 2 or more</span><span class="yq-drule__catsum">48h ahead</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: buying 2 or more" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2821" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore" open><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="25904, 25896, 25897, 25899, 25900, 25901, 28049, 28050" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="2" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2638</span><span class="yq-drule__catsum">48h ahead</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2638" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2638" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2683</span><span class="yq-drule__catsum">48h ahead · 2026-12-01 to 2027-01-05</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2683" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2683" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2026-12-01"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2027-01-05"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: Xmas, category 2510</span><span class="yq-drule__catsum">48h ahead · 2026-11-22 to 2026-12-26</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: Xmas, category 2510" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2510" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2026-11-22"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2026-12-26"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2785</span><span class="yq-drule__catsum">48h ahead · 2027-02-01 to 2027-03-15</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2785" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2785" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2027-02-01"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2027-03-15"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: New Year, category 2564</span><span class="yq-drule__catsum">48h ahead · from 2026-01-21</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: New Year, category 2564" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2564" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2026-01-21"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2630</span><span class="yq-drule__catsum">48h ahead · 2027-03-20 to 2027-04-05</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2630" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2630" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="">Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value="2027-03-20"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value="2027-04-05"><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow is-off" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 2475</span><span class="yq-drule__catsum">Not offered</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 2475" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2475" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered"><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="" selected>Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48">48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details><details class="yq-drule__catrow is-off" data-yq-scope>
+  <summary><span class="yq-drule__catname">Sample: category 1189</span><span class="yq-drule__catsum">Not offered</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="Sample: category 1189" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="1189" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered"><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="" selected>Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48">48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details></div><p class="yq-drule__empty">All categories use the standard rules.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="catRules">+ Add category</button>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Special dates</h3><p class="yq-drule__sub">Close a date or give it its own hours. This beats the rules for each day. Leave the end date blank for a single day.</p></div></div>
+  <!-- @foreach(rule.closed as c) -->
+  <div class="yq-drule__list" data-yq-list="closed" data-yq-tpl="yqDrTplClosed"><div class="yq-drule__row yq-drule__row--closed" data-yq-scope><input class="yq-input" type="date" data-yq-f="from" value="2026-12-31" aria-label="From"><input class="yq-input" type="date" data-yq-f="to" value="" aria-label="Until, blank for one day"><select class="form-select yq-input" data-yq-f="mode" aria-label="Date rule"><option value="closed" selected>Closed all day</option><option value="hours">Custom hours</option></select><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove special date"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="yq-drule__dayhours" data-yq-when="mode:hours"><input class="yq-input" type="time" data-yq-f="open" value="" aria-label="Opens on this date"><input class="yq-input" type="time" data-yq-f="close" value="" aria-label="Closes on this date"><input class="yq-input" type="number" data-yq-f="prep" value="" aria-label="Lead time on this date, hours" placeholder="Lead time (h)" min="0" step="0.25"></div><input class="yq-input" type="text" data-yq-f="reason" value="New Year's Eve" aria-label="Reason" placeholder="Reason (staff only)"><span class="yq-error"></span></div></div><p class="yq-drule__empty">No special dates.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="closed">+ Add special date</button>
+</div>
+<div class="yq-drule__card">
+  <details class="yq-drule__section" open><summary>Other conditions <small>Order value, postal code, guest type</small></summary>
+  <p class="yq-drule__sub mb-3">Hide Lalamove or change its fee for certain orders. Rules run from the top, and the first match wins.</p>
+  <!-- @foreach(rule.rules as r) -->
+  <div class="yq-drule__rules"><div class="yq-drule__list" data-yq-list="rules" data-yq-tpl="yqDrTplRule"><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="Large orders do not go by Lalamove" aria-label="Rule name" placeholder="Rule name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__mv" type="button" data-yq-move="-1" aria-label="Move rule up"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><button class="yq-drule__mv" type="button" data-yq-move="1" aria-label="Move rule down"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove rule"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__sentence">If <select class="form-select yq-input" data-yq-f="match" aria-label="Match mode"><option value="all" selected>ALL</option><option value="any">ANY</option></select> of these match</div>
+  <div class="yq-drule__list" data-yq-list="conds" data-yq-tpl="yqDrTplCond"><div class="yq-drule__row yq-drule__row--cond" data-yq-scope><select class="form-select yq-input" data-yq-f="field" aria-label="Condition field"><option value="subtotal">Order subtotal</option><option value="items" selected>Item count</option><option value="category">Product category</option><option value="postal">Postal code</option><option value="guest">Guest type</option></select><select class="form-select yq-input" data-yq-f="op" aria-label="Condition operator"><option value="gte" selected>is at least</option><option value="lte">is at most</option><option value="is">is</option><option value="not">is not</option><option value="starts">starts with</option></select><input class="yq-input" type="text" data-yq-f="value" value="20" aria-label="Condition value"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove condition"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+  <p class="yq-drule__empty">No conditions: this rule applies to every order.</p>
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="conds">+ Add condition</button>
+  <div class="yq-drule__sentence yq-drule__then">Then <select class="form-select yq-input" data-yq-f="action" aria-label="Rule action"><option value="hide" selected>Hide this method</option><option value="free">Make delivery free</option><option value="fee">Set the fee to</option><option value="surcharge">Add a surcharge of</option></select><span class="yq-drule__unit" data-yq-when="action:fee|surcharge"><em>SGD</em><input class="yq-input" type="number" data-yq-f="value" value="" aria-label="Fee amount" min="0" step="0.01"></span></div>
+</div></div><p class="yq-drule__empty">No rules yet.</p></div>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="rules">+ Add rule</button>
+  </details>
+</div>
+          </section>
+          <!-- ===== Room Service ===== -->
+          <section class="yq-drule__panel" data-yq-panel="roomservice" data-yq-scope id="yqDrPanelroomservice" role="tabpanel" aria-labelledby="yqDrTabroomservice" hidden>
+            <ul class="yq-drule__issues" data-yq-issues aria-live="polite"></ul>
+            <details class="yq-drule__notes" data-yq-notes hidden><summary data-yq-notecount></summary><ul class="yq-drule__noteslist" data-yq-noteslist></ul></details>
+            <div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h2>Room Service</h2><p class="yq-drule__sub">Orders brought to the guest's room during their stay.</p></div><label class="yq-drule__switch"><input type="checkbox" data-yq-f="enabled"><i></i><span>Offered at checkout</span></label></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout label</span><input class="yq-input" type="text" data-yq-f="label" value="Room Service"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Checkout note</span><input class="yq-input" type="text" data-yq-f="note" value="In-house guests · Charged to room"><small>Small line under the label.</small><span class="yq-error"></span></label>
+  </div>
+  <hr class="yq-drule__divider">
+  <span class="yq-drule__groupttl">Pause new orders</span>
+  <div class="yq-drule__pause">
+    <input type="hidden" data-yq-f="pausedUntil" value="">
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="20">20 minutes</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="60">1 hour</button>
+    <button class="yq-btn yq-btn--yqost yq-btn--sm" type="button" data-yq-pause="today">Rest of today</button>
+    <span class="yq-drule__pausetxt" data-yq-pausetxt></span>
+    <button class="yq-drule__link" type="button" data-yq-resume hidden>Resume now</button>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Hours and lead time</h3></div></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard opens</span><input class="yq-input" type="time" data-yq-f="open" value="06:30"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Standard closes</span><input class="yq-input" type="time" data-yq-f="close" value="23:30"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="prepHours" value="0.75" min="0" step="0.25"><em>hours</em></span><small>0.75 hours is 45 minutes.</small><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Bookable days ahead</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="maxDays" value="2" min="1" step="1"><em>days</em></span><small>Today counts as day 1.</small><span class="yq-error"></span></label>
+    <details class="yq-drule__field--wide yq-drule__section"><summary>Different hours by day <small>Optional</small></summary>
+      <div class="yq-drule__rowhead yq-drule__row--day"><span>Day</span><span>Opens</span><span>Closes</span><span>Lead (h)</span></div>
+      <div class="yq-drule__days"><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="mon_on" checked><span>Mon</span></label><input class="yq-input" type="time" data-yq-f="mon_open" value="" aria-label="Mon opens"><input class="yq-input" type="time" data-yq-f="mon_close" value="" aria-label="Mon closes"><input class="yq-input" type="number" data-yq-f="mon_prep" value="" aria-label="Mon lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="tue_on" checked><span>Tue</span></label><input class="yq-input" type="time" data-yq-f="tue_open" value="" aria-label="Tue opens"><input class="yq-input" type="time" data-yq-f="tue_close" value="" aria-label="Tue closes"><input class="yq-input" type="number" data-yq-f="tue_prep" value="" aria-label="Tue lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="wed_on" checked><span>Wed</span></label><input class="yq-input" type="time" data-yq-f="wed_open" value="" aria-label="Wed opens"><input class="yq-input" type="time" data-yq-f="wed_close" value="" aria-label="Wed closes"><input class="yq-input" type="number" data-yq-f="wed_prep" value="" aria-label="Wed lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="thu_on" checked><span>Thu</span></label><input class="yq-input" type="time" data-yq-f="thu_open" value="" aria-label="Thu opens"><input class="yq-input" type="time" data-yq-f="thu_close" value="" aria-label="Thu closes"><input class="yq-input" type="number" data-yq-f="thu_prep" value="" aria-label="Thu lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="fri_on" checked><span>Fri</span></label><input class="yq-input" type="time" data-yq-f="fri_open" value="" aria-label="Fri opens"><input class="yq-input" type="time" data-yq-f="fri_close" value="" aria-label="Fri closes"><input class="yq-input" type="number" data-yq-f="fri_prep" value="" aria-label="Fri lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sat_on" checked><span>Sat</span></label><input class="yq-input" type="time" data-yq-f="sat_open" value="" aria-label="Sat opens"><input class="yq-input" type="time" data-yq-f="sat_close" value="" aria-label="Sat closes"><input class="yq-input" type="number" data-yq-f="sat_prep" value="" aria-label="Sat lead time, hours" placeholder="Std" min="0" step="0.25"></div><div class="yq-drule__row yq-drule__row--day"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="sun_on" checked><span>Sun</span></label><input class="yq-input" type="time" data-yq-f="sun_open" value="" aria-label="Sun opens"><input class="yq-input" type="time" data-yq-f="sun_close" value="" aria-label="Sun closes"><input class="yq-input" type="number" data-yq-f="sun_prep" value="" aria-label="Sun lead time, hours" placeholder="Std" min="0" step="0.25"></div></div>
+      <small class="yq-drule__help">Blank uses the standard hours and lead time. Turn a day off to close it every week.</small>
+    </details>
+    <label class="yq-drule__field yq-drule__field--wide"><span class="yq-drule__lbl">Last order</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="lastOrderMins" value="30" min="0" step="5"><em>minutes before closing</em></span><span class="yq-error"></span></label>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Guest check and payment</h3></div></div>
+  <span class="yq-drule__groupttl">Guest check</span>
+  <div class="yq-drule__chips mb-3">
+    <label class="yq-drule__chip"><input type="radio" name="roomservice_verify" data-yq-f="verify" value="room_surname" checked><span>Room number + first 3 letters of surname</span></label>
+    <label class="yq-drule__chip"><input type="radio" name="roomservice_verify" data-yq-f="verify" value="room"><span>Room number only</span></label>
+  </div>
+  <span class="yq-drule__groupttl">Payment options</span>
+  <div class="yq-drule__chips">
+    <label class="yq-drule__chip"><input type="checkbox" data-yq-f="payment" data-yq-multi value="room_charge" checked><span>Charge to room</span></label>
+    <label class="yq-drule__chip"><input type="checkbox" data-yq-f="payment" data-yq-multi value="online" checked><span>Pay online</span></label>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Fees</h3></div></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Delivery fee</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="fee" value="5" min="0" step="0.01"></span><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Service charge</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="serviceCharge" value="10" min="0" step="0.5"><em>%</em></span><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Minimum order</span><span class="yq-drule__unit"><em>SGD</em><input class="yq-input" type="number" data-yq-f="minOrder" value="20" min="0" step="0.01"></span><small>Blank means no minimum.</small><span class="yq-error"></span></label>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Categories</h3><p class="yq-drule__sub">Categories not listed here use the standard hours and lead time above.</p></div>
+    <select class="form-select yq-input yq-drule__copyfrom" data-yq-copyfrom aria-label="Copy categories from another method"><option value="">Copy from…</option><option value="pickup">Self-Collection</option><option value="hotelvan">Hotel Van</option><option value="lalamove">Lalamove</option></select></div>
+  <!-- @foreach(rule.catRules as cat) -->
+  <div class="yq-drule__list is-empty" data-yq-list="catRules" data-yq-tpl="yqDrTplCat"></div><p class="yq-drule__empty">All categories use the standard rules.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="catRules">+ Add category</button>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Special dates</h3><p class="yq-drule__sub">Close a date or give it its own hours. This beats the rules for each day. Leave the end date blank for a single day.</p></div></div>
+  <!-- @foreach(rule.closed as c) -->
+  <div class="yq-drule__list is-empty" data-yq-list="closed" data-yq-tpl="yqDrTplClosed"></div><p class="yq-drule__empty">No special dates.</p>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="closed">+ Add special date</button>
+</div>
+<div class="yq-drule__card">
+  <details class="yq-drule__section" open><summary>Other conditions <small>Order value, postal code, guest type</small></summary>
+  <p class="yq-drule__sub mb-3">Hide Room Service or change its fee for certain orders. Rules run from the top, and the first match wins.</p>
+  <!-- @foreach(rule.rules as r) -->
+  <div class="yq-drule__rules"><div class="yq-drule__list" data-yq-list="rules" data-yq-tpl="yqDrTplRule"><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="Waive the delivery fee on larger orders" aria-label="Rule name" placeholder="Rule name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__mv" type="button" data-yq-move="-1" aria-label="Move rule up"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><button class="yq-drule__mv" type="button" data-yq-move="1" aria-label="Move rule down"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove rule"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__sentence">If <select class="form-select yq-input" data-yq-f="match" aria-label="Match mode"><option value="all" selected>ALL</option><option value="any">ANY</option></select> of these match</div>
+  <div class="yq-drule__list" data-yq-list="conds" data-yq-tpl="yqDrTplCond"><div class="yq-drule__row yq-drule__row--cond" data-yq-scope><select class="form-select yq-input" data-yq-f="field" aria-label="Condition field"><option value="subtotal" selected>Order subtotal</option><option value="items">Item count</option><option value="category">Product category</option><option value="postal">Postal code</option><option value="guest">Guest type</option></select><select class="form-select yq-input" data-yq-f="op" aria-label="Condition operator"><option value="gte" selected>is at least</option><option value="lte">is at most</option><option value="is">is</option><option value="not">is not</option><option value="starts">starts with</option></select><input class="yq-input" type="text" data-yq-f="value" value="200" aria-label="Condition value"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove condition"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+  <p class="yq-drule__empty">No conditions: this rule applies to every order.</p>
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="conds">+ Add condition</button>
+  <div class="yq-drule__sentence yq-drule__then">Then <select class="form-select yq-input" data-yq-f="action" aria-label="Rule action"><option value="hide">Hide this method</option><option value="free" selected>Make delivery free</option><option value="fee">Set the fee to</option><option value="surcharge">Add a surcharge of</option></select><span class="yq-drule__unit" data-yq-when="action:fee|surcharge"><em>SGD</em><input class="yq-input" type="number" data-yq-f="value" value="" aria-label="Fee amount" min="0" step="0.01"></span></div>
+</div></div><p class="yq-drule__empty">No rules yet.</p></div>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="rules">+ Add rule</button>
+  </details>
+</div>
+          </section>
+          <!-- ===== Advanced ===== -->
+          <section class="yq-drule__panel" data-yq-panel="products" data-yq-scope id="yqDrPanelproducts" role="tabpanel" aria-labelledby="yqDrTabproducts" hidden>
+            <ul class="yq-drule__issues" data-yq-issues aria-live="polite"></ul>
+            <details class="yq-drule__notes" data-yq-notes hidden><summary data-yq-notecount></summary><ul class="yq-drule__noteslist" data-yq-noteslist></ul></details>
+            <div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h2>Advanced</h2><p class="yq-drule__sub">For developers. Category lead times and dates are set inside each delivery method.</p></div></div>
+  <div class="yq-drule__fields">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Property ID</span><input class="yq-input" type="text" data-yq-f="hotelId" value="267" inputmode="numeric"><small>Grand Hyatt Singapore</small><span class="yq-error"></span></label>
+  </div>
+</div>
+<div class="yq-drule__card">
+  <div class="yq-drule__cardhead"><div><h3>Backend flags</h3><p class="yq-drule__sub">Sets existing backend flags for a category or product.</p></div></div>
+  <!-- @foreach(delivery_rules.products.legacyRules as rule) -->
+  <div class="yq-drule__rules"><div class="yq-drule__list" data-yq-list="legacyRules" data-yq-tpl="yqDrTplLegacy"><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="Buying 2 or more" aria-label="Name" placeholder="Name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__fields mb-3">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2821" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="25904, 25896, 25897, 25899, 25900, 25901, 28049, 28050" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="2" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+  </div>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagMoonCake"><span>flagMoonCake</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatXmax"><span>flagCatXmax</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNewYear"><span>flagCatNewYear</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfSupermarket"><span>flagProductOfSupermarket</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatEndOfShifts"><span>flagCatEndOfShifts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFreeShipProducts"><span>flagFreeShipProducts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDate"><span>disableDate</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDays"><span>disableDays</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCartMoreQuanity2" checked><span>flagCartMoreQuanity2</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfWine"><span>flagProductOfWine</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductSpecial"><span>flagProductSpecial</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNeedHide"><span>flagCatNeedHide</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagBeverages"><span>flagBeverages</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFoods"><span>flagFoods</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagAddons"><span>flagAddons</span></label></div>
+  <span class="yq-error"></span>
+</div><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="Beverage categories" aria-label="Name" placeholder="Name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__fields mb-3">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="1182, 1187, 1179, 1181" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+  </div>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagMoonCake"><span>flagMoonCake</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatXmax"><span>flagCatXmax</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNewYear"><span>flagCatNewYear</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfSupermarket"><span>flagProductOfSupermarket</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatEndOfShifts"><span>flagCatEndOfShifts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFreeShipProducts"><span>flagFreeShipProducts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDate"><span>disableDate</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDays"><span>disableDays</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCartMoreQuanity2"><span>flagCartMoreQuanity2</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfWine"><span>flagProductOfWine</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductSpecial"><span>flagProductSpecial</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNeedHide"><span>flagCatNeedHide</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagBeverages" checked><span>flagBeverages</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFoods"><span>flagFoods</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagAddons"><span>flagAddons</span></label></div>
+  <span class="yq-error"></span>
+</div><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="Food categories" aria-label="Name" placeholder="Name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__fields mb-3">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="1333, 1180, 1189, 1178" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+  </div>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagMoonCake"><span>flagMoonCake</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatXmax"><span>flagCatXmax</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNewYear"><span>flagCatNewYear</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfSupermarket"><span>flagProductOfSupermarket</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatEndOfShifts"><span>flagCatEndOfShifts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFreeShipProducts"><span>flagFreeShipProducts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDate"><span>disableDate</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDays"><span>disableDays</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCartMoreQuanity2"><span>flagCartMoreQuanity2</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfWine"><span>flagProductOfWine</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductSpecial"><span>flagProductSpecial</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNeedHide"><span>flagCatNeedHide</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagBeverages"><span>flagBeverages</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFoods" checked><span>flagFoods</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagAddons"><span>flagAddons</span></label></div>
+  <span class="yq-error"></span>
+</div><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="Xmas" aria-label="Name" placeholder="Name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__fields mb-3">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2510" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+  </div>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagMoonCake"><span>flagMoonCake</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatXmax" checked><span>flagCatXmax</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNewYear"><span>flagCatNewYear</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfSupermarket"><span>flagProductOfSupermarket</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatEndOfShifts"><span>flagCatEndOfShifts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFreeShipProducts"><span>flagFreeShipProducts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDate"><span>disableDate</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDays"><span>disableDays</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCartMoreQuanity2"><span>flagCartMoreQuanity2</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfWine"><span>flagProductOfWine</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductSpecial"><span>flagProductSpecial</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNeedHide"><span>flagCatNeedHide</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagBeverages"><span>flagBeverages</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFoods"><span>flagFoods</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagAddons"><span>flagAddons</span></label></div>
+  <span class="yq-error"></span>
+</div><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="New Year" aria-label="Name" placeholder="Name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__fields mb-3">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="2564" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+  </div>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagMoonCake"><span>flagMoonCake</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatXmax"><span>flagCatXmax</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNewYear" checked><span>flagCatNewYear</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfSupermarket"><span>flagProductOfSupermarket</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatEndOfShifts"><span>flagCatEndOfShifts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFreeShipProducts"><span>flagFreeShipProducts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDate"><span>disableDate</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDays"><span>disableDays</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCartMoreQuanity2"><span>flagCartMoreQuanity2</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfWine"><span>flagProductOfWine</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductSpecial"><span>flagProductSpecial</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNeedHide"><span>flagCatNeedHide</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagBeverages"><span>flagBeverages</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFoods"><span>flagFoods</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagAddons"><span>flagAddons</span></label></div>
+  <span class="yq-error"></span>
+</div></div><p class="yq-drule__empty">No backend flags.</p></div>
+  <!-- @endforeach -->
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="legacyRules">+ Add backend flag</button>
+</div>
+          </section>
+      </form>
+
+      <!-- ========== CỘT PHẢI ========== -->
+      <aside class="yq-drule__aside" aria-label="Tools">
+        <div class="yq-drule__side">
+          <div class="yq-drule__sidetabs" role="tablist">
+            <button class="yq-drule__sidetab is-active" type="button" role="tab" aria-selected="true" data-yq-side="test">Test order</button>
+            <button class="yq-drule__sidetab" type="button" role="tab" aria-selected="false" data-yq-side="log">Activity</button>
+            <button class="yq-drule__sidetab" type="button" role="tab" aria-selected="false" data-yq-side="dev">Developer</button>
+          </div>
+
+          <div class="yq-drule__sidepane" data-yq-sidepane="test">
+            <p class="yq-drule__sub mt-0 mb-3">See which methods a guest would get, using your unsaved edits. Nothing is saved or sent.</p>
+            <div class="yq-drule__testform" id="yqDrTest">
+              <label class="yq-drule__field"><span class="yq-drule__lbl">Subtotal (SGD)</span><input class="yq-input" id="yqDrTSubtotal" type="number" min="0" step="0.01" value="120"></label>
+              <div class="yq-drule__testlines"><span class="yq-drule__lbl">Cart lines</span><div class="yq-drule__rowhead yq-drule__row--line"><span>Category</span><span>Product</span><span>Qty</span><span></span></div><div id="yqDrTLines"><div class="yq-drule__row yq-drule__row--line"><input class="yq-input" type="text" inputmode="numeric" data-yq-t="cat" aria-label="Category ID" placeholder="Cat ID" value="1333"><input class="yq-input" type="text" inputmode="numeric" data-yq-t="product" aria-label="Product ID" placeholder="Product" value=""><input class="yq-input" type="number" min="1" step="1" data-yq-t="qty" aria-label="Quantity" value="2"><button class="yq-drule__x" type="button" data-yq-line-remove aria-label="Remove cart line"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div><button class="yq-drule__link" type="button" id="yqDrTAddLine">+ Add cart line</button></div>
+              <label class="yq-drule__field"><span class="yq-drule__lbl">Postal code</span><input class="yq-input" id="yqDrTPostal" type="text" inputmode="numeric" maxlength="6" value="238883"></label>
+              <label class="yq-drule__field"><span class="yq-drule__lbl">Guest</span><select class="form-select yq-input" id="yqDrTGuest"><option value="outside" selected>Not staying</option><option value="in-house">In-house</option></select></label>
+              <label class="yq-drule__field"><span class="yq-drule__lbl">Time</span><input class="yq-input" id="yqDrTTime" type="time" value="14:00"></label>
+              <label class="yq-drule__field" style="grid-column:1/-1"><span class="yq-drule__lbl">Date</span><input class="yq-input" id="yqDrTDate" type="date" value="2026-11-05"></label>
+            </div>
+            <div class="yq-drule__results" aria-live="polite">
+                <div class="yq-drule__res" data-yq-res="pickup">
+                  <div class="yq-drule__reshead"><span class="yq-drule__resname">Self-Collection</span><span class="yq-drule__resfee"></span></div>
+                  <ul class="yq-drule__checks"></ul>
+                </div>
+                <div class="yq-drule__res" data-yq-res="hotelvan">
+                  <div class="yq-drule__reshead"><span class="yq-drule__resname">Hotel Van</span><span class="yq-drule__resfee"></span></div>
+                  <ul class="yq-drule__checks"></ul>
+                </div>
+                <div class="yq-drule__res" data-yq-res="lalamove">
+                  <div class="yq-drule__reshead"><span class="yq-drule__resname">Lalamove</span><span class="yq-drule__resfee"></span></div>
+                  <ul class="yq-drule__checks"></ul>
+                </div>
+                <div class="yq-drule__res" data-yq-res="roomservice">
+                  <div class="yq-drule__reshead"><span class="yq-drule__resname">Room Service</span><span class="yq-drule__resfee"></span></div>
+                  <ul class="yq-drule__checks"></ul>
+                </div>
+            </div>
+          </div>
+
+          <div class="yq-drule__sidepane" data-yq-sidepane="log" hidden>
+            <!-- @foreach(delivery_rules_audit as a): .yq-drule__log b <- @a.summary, time <- @a.created_at · @a.admin_name -->
+            <ul class="yq-drule__log" id="yqDrLog">
+              <li><b>Lalamove: Lead time (hours) 2 → 3</b><time>28/10/2026, 16:42 · Sample Admin</time></li>
+              <li><b>Self-Collection: Closed dates changed</b><time>12/10/2026, 09:15 · Sample Admin</time></li>
+            </ul>
+            <button class="yq-drule__link yq-drule__link--danger" type="button" id="yqDrReset">Restore sample data</button>
+            <p class="yq-drule__help">Demo only: clears what this browser saved.</p>
+          </div>
+
+          <div class="yq-drule__sidepane" data-yq-sidepane="dev" hidden>
+            <p class="yq-drule__sub mt-0">Download delivery_rules.json for delivery_rules.php to read, or use the code below.</p>
+            <div class="yq-drule__filebtns mt-3"><button class="yq-btn yq-btn--sm" type="button" id="yqDrExport">Download config</button><label class="yq-btn yq-btn--yqost yq-btn--sm mb-0">Import config<input type="file" id="yqDrImport" accept=".json,application/json" hidden></label></div>
+            <h3 class="yq-drule__devttl">PHP variables <button class="yq-drule__link" type="button" data-yq-copy="#yqDrPhp">Copy</button></h3>
+            <pre class="yq-drule__code" id="yqDrPhp" tabindex="0"></pre>
+            <h3 class="yq-drule__devttl">Checkout config <button class="yq-drule__link" type="button" data-yq-copy="#yqDrCode">Copy</button></h3>
+            <pre class="yq-drule__code" id="yqDrCode" tabindex="0"></pre>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- ========== /CỘT PHẢI ========== -->
+<!-- ========== KHUÔN DÒNG LẶP (JS clone khi bấm Add, không dựng HTML bằng chuỗi) ========== -->
+<!-- @foreach(categories as cat): option value <- @cat.id, label <- @cat.name -->
+<datalist id="yqDrCats"><option value="2638" label="Sample category 2638"><option value="2475" label="Sample category 2475"><option value="2510" label="Sample category 2510"><option value="2564" label="Sample category 2564"></datalist>
+<template id="yqDrTplSlot"><div class="yq-drule__row yq-drule__row--slot" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="" aria-label="Window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="" aria-label="Window end" step="3600"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove window"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></template>
+<template id="yqDrTplTrip"><div class="yq-drule__row yq-drule__row--slotcap" data-yq-scope><input class="yq-input" type="time" data-yq-f="start" value="" aria-label="Trip window start" step="3600"><input class="yq-input" type="time" data-yq-f="end" value="" aria-label="Trip window end" step="3600"><input class="yq-input" type="number" data-yq-f="seats" value="6" aria-label="Orders per trip" min="1" step="1"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove trip"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></template>
+<template id="yqDrTplClosed"><div class="yq-drule__row yq-drule__row--closed" data-yq-scope><input class="yq-input" type="date" data-yq-f="from" value="" aria-label="From"><input class="yq-input" type="date" data-yq-f="to" value="" aria-label="Until, blank for one day"><select class="form-select yq-input" data-yq-f="mode" aria-label="Date rule"><option value="closed" selected>Closed all day</option><option value="hours">Custom hours</option></select><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove special date"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="yq-drule__dayhours" data-yq-when="mode:hours"><input class="yq-input" type="time" data-yq-f="open" value="" aria-label="Opens on this date"><input class="yq-input" type="time" data-yq-f="close" value="" aria-label="Closes on this date"><input class="yq-input" type="number" data-yq-f="prep" value="" aria-label="Lead time on this date, hours" placeholder="Lead time (h)" min="0" step="0.25"></div><input class="yq-input" type="text" data-yq-f="reason" value="" aria-label="Reason" placeholder="Reason (staff only)"><span class="yq-error"></span></div></template>
+<template id="yqDrTplLoc"><div class="yq-drule__row yq-drule__row--loc" data-yq-scope><input class="yq-input" type="text" data-yq-f="name" value="" aria-label="Pickup point name"><span class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="on" checked><span>Active</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="plate"><span>Ask car plate</span></label></span><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove pickup point"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></template>
+<template id="yqDrTplCond"><div class="yq-drule__row yq-drule__row--cond" data-yq-scope><select class="form-select yq-input" data-yq-f="field" aria-label="Condition field"><option value="subtotal" selected>Order subtotal</option><option value="items">Item count</option><option value="category">Product category</option><option value="postal">Postal code</option><option value="guest">Guest type</option></select><select class="form-select yq-input" data-yq-f="op" aria-label="Condition operator"><option value="gte" selected>is at least</option><option value="lte">is at most</option><option value="is">is</option><option value="not">is not</option><option value="starts">starts with</option></select><input class="yq-input" type="text" data-yq-f="value" value="" aria-label="Condition value"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove condition"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></template>
+<template id="yqDrTplRule"><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="" aria-label="Rule name" placeholder="Rule name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__mv" type="button" data-yq-move="-1" aria-label="Move rule up"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><button class="yq-drule__mv" type="button" data-yq-move="1" aria-label="Move rule down"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove rule"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__sentence">If <select class="form-select yq-input" data-yq-f="match" aria-label="Match mode"><option value="all" selected>ALL</option><option value="any">ANY</option></select> of these match</div>
+  <div class="yq-drule__list" data-yq-list="conds" data-yq-tpl="yqDrTplCond"><div class="yq-drule__row yq-drule__row--cond" data-yq-scope><select class="form-select yq-input" data-yq-f="field" aria-label="Condition field"><option value="subtotal" selected>Order subtotal</option><option value="items">Item count</option><option value="category">Product category</option><option value="postal">Postal code</option><option value="guest">Guest type</option></select><select class="form-select yq-input" data-yq-f="op" aria-label="Condition operator"><option value="gte" selected>is at least</option><option value="lte">is at most</option><option value="is">is</option><option value="not">is not</option><option value="starts">starts with</option></select><input class="yq-input" type="text" data-yq-f="value" value="" aria-label="Condition value"><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove condition"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+  <p class="yq-drule__empty">No conditions: this rule applies to every order.</p>
+  <button class="yq-drule__link yq-drule__add" type="button" data-yq-add="conds">+ Add condition</button>
+  <div class="yq-drule__sentence yq-drule__then">Then <select class="form-select yq-input" data-yq-f="action" aria-label="Rule action"><option value="hide" selected>Hide this method</option><option value="free">Make delivery free</option><option value="fee">Set the fee to</option><option value="surcharge">Add a surcharge of</option></select><span class="yq-drule__unit" data-yq-when="action:fee|surcharge"><em>SGD</em><input class="yq-input" type="number" data-yq-f="value" value="" aria-label="Fee amount" min="0" step="0.01"></span></div>
+</div></template>
+<template id="yqDrTplCat"><details class="yq-drule__catrow" data-yq-scope>
+  <summary><span class="yq-drule__catname">New category</span><span class="yq-drule__catsum">Standard lead time</span></summary>
+  <div class="yq-drule__catbody">
+    <div class="yq-drule__fields">
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Name</span><input class="yq-input" type="text" data-yq-f="name" value="" placeholder="e.g. Christmas cakes"><span class="yq-error"></span></label>
+      <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="" inputmode="numeric" list="yqDrCats" placeholder="2638"><span class="yq-error"></span></label>
+    </div>
+    <div class="yq-drule__catoffer"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="offered" checked><i></i><span>Offer this category with this method</span></label></div>
+    <div class="yq-drule__catfields">
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Lead time</span><select class="form-select yq-input" data-yq-f="lead"><option value="" selected>Standard</option><option value="1">1 hour</option><option value="2">2 hours</option><option value="5">5 hours</option><option value="7">7 hours</option><option value="24">24 hours</option><option value="48">48 hours</option><option value="72">72 hours</option><option value="custom">Custom</option></select><span class="yq-error"></span></label>
+        <label class="yq-drule__field" data-yq-when="lead:custom"><span class="yq-drule__lbl">Custom lead time</span><span class="yq-drule__unit"><input class="yq-input" type="number" data-yq-f="leadCustom" value="" min="0" step="0.25"><em>hours</em></span><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available from</span><input class="yq-input" type="date" data-yq-f="from" value=""><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Available until</span><input class="yq-input" type="date" data-yq-f="to" value=""><span class="yq-error"></span></label>
+      </div>
+    </div>
+    <details class="yq-drule__catmore"><summary>Only some products or quantities</summary>
+      <div class="yq-drule__fields">
+        <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric" placeholder="29929, 29928"><span class="yq-error"></span></label>
+        <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+      </div>
+    </details>
+    <button class="yq-drule__link yq-drule__link--danger" type="button" data-yq-remove>Remove this category</button>
+    <span class="yq-error"></span>
+  </div>
+</details></template>
+<template id="yqDrTplLegacy"><div class="yq-drule__rule" data-yq-scope>
+  <div class="yq-drule__rulehead"><input class="yq-input" type="text" data-yq-f="name" value="" aria-label="Name" placeholder="Name"><label class="yq-drule__switch"><input type="checkbox" data-yq-f="on" checked><i></i><span>On</span></label><button class="yq-drule__x" type="button" data-yq-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="yq-drule__fields mb-3">
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Category IDs</span><input class="yq-input" type="text" data-yq-f="cats" value="" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">Product IDs</span><input class="yq-input" type="text" data-yq-f="products" value="" inputmode="numeric"><span class="yq-error"></span></label>
+    <label class="yq-drule__field"><span class="yq-drule__lbl">From quantity</span><input class="yq-input" type="number" data-yq-f="minQty" value="" min="2" step="1" placeholder="Any"><span class="yq-error"></span></label>
+  </div>
+  <div class="yq-drule__chips"><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagMoonCake"><span>flagMoonCake</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatXmax"><span>flagCatXmax</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNewYear"><span>flagCatNewYear</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfSupermarket"><span>flagProductOfSupermarket</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatEndOfShifts"><span>flagCatEndOfShifts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFreeShipProducts"><span>flagFreeShipProducts</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDate"><span>disableDate</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="disableDays"><span>disableDays</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCartMoreQuanity2"><span>flagCartMoreQuanity2</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductOfWine"><span>flagProductOfWine</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagProductSpecial"><span>flagProductSpecial</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagCatNeedHide"><span>flagCatNeedHide</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagBeverages"><span>flagBeverages</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagFoods"><span>flagFoods</span></label><label class="yq-drule__chip"><input type="checkbox" data-yq-f="legacy" data-yq-multi value="flagAddons"><span>flagAddons</span></label></div>
+  <span class="yq-error"></span>
+</div></template>
+<template id="yqDrTplLine"><div class="yq-drule__row yq-drule__row--line"><input class="yq-input" type="text" inputmode="numeric" data-yq-t="cat" aria-label="Category ID" placeholder="Cat ID" value=""><input class="yq-input" type="text" inputmode="numeric" data-yq-t="product" aria-label="Product ID" placeholder="Product" value=""><input class="yq-input" type="number" min="1" step="1" data-yq-t="qty" aria-label="Quantity" value="1"><button class="yq-drule__x" type="button" data-yq-line-remove aria-label="Remove cart line"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></template>
+<template id="yqDrTplIssue"><li class="yq-drule__issue"></li></template>
+<template id="yqDrTplCheck"><li></li></template>
+<template id="yqDrTplLog"><li><b></b><time></time></li></template>
+
+<!-- ========== TOAST ========== -->
+<div class="yq-toast-wrap" id="yqToastWrap">
+  <template id="yqToastTpl">
+    <div class="yq-toast" role="status">
+      <span class="yq-toast__msg"></span>
+      <a class="yq-toast__link" href="#" hidden></a>
+    </div>
+  </template>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/modules/delivery-rules.js"></script>
+</body>
+</html>
