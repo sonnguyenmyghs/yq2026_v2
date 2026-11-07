@@ -27,7 +27,11 @@ python3 -m http.server 8000
 │                         backend-templates/attribute_type_*.html (JS: modules/attributes.js)
 ├── experiences.html      Unforgettable Experiences — grid có rating, duration, địa điểm, "From $X"
 ├── celebrations.html     Seasonal Highlights — occasion tiles, guest favorites, corporate gifting
-├── personalise.html      Personalise Your Gift — chọn eCard, viết lời nhắn, LIVE PREVIEW (3 bước)
+├── personalise.html      Personalise (tuỳ chọn, trước thanh toán): số voucher 1–10, gửi To me / 1 người /
+│                         mỗi voucher 1 người; thiệp cá nhân banner ảnh hoặc video (mẫu / tự tải lên),
+│                         4 màu The Shop, lời nhắn; xem trước thiệp + email voucher có đính kèm thiệp.
+│                         Form #yqPeForm: send_mode, add_card, qty + cards[1..10][rcp_name|rcp_email|banner|
+│                         banner_type|banner_file|colour|message|from_name] (JS: modules/personalise.js)
 ├── cart.html             Giỏ hàng — line items, order summary, thanh free-shipping
 ├── checkout.html         Checkout 4 bước: Information → Shipping → Payment → Review
 ├── checkout-v2.html      Checkout v2 một màn: banner ảnh, form + Self-Collection / Delivery
@@ -49,6 +53,7 @@ python3 -m http.server 8000
     ├── css/style.css     Design tokens + toàn bộ component
     ├── css/parts/        CSS theo module: nav, banner, buynow, cart-anim, account, checkout-v2
     ├── img/favicon.svg
+    ├── video/            Banner video mẫu cho thiệp (card-celebrate.mp4, card-festive.mp4)
     └── js/
         ├── data.js       Nav, icon, logo, 13 sản phẩm, 6 experiences, đơn hàng, hồ sơ, config
         ├── app.js        Helper, cart + profile (localStorage), init header/footer, toast, reveal
@@ -62,6 +67,7 @@ python3 -m http.server 8000
             ├── buynow.js     Buy Now ở PDP + card, sticky buy bar mobile
             ├── cart-anim.js  Fly-to-cart, badge đếm, nút "Added", cart drawer
             ├── account.js    Popup Log in / Register + panel member "My Functions"
+            ├── personalise.js Trang Personalise: người nhận, thiệp, upload banner, xem trước, validate
             ├── checkout-v2.js Controller trang checkout-v2 (form, promo, map, báo giá, summary)
             └── delivery-rules.js Admin rule giao nhận: đọc/ghi form, validate, test đơn, xuất window.__*
 ```

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Personalise Your Gift — Grand Hyatt Singapore</title>
-<meta name="description" content="Select an eCard design, write a personal message, and preview the gift — all before checkout.">
+<meta name="description" content="Send vouchers to one or many recipients and attach a personalised card with your message — optional, before payment.">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,6 +16,7 @@
 <link href="assets/css/parts/buynow.css" rel="stylesheet">
 <link href="assets/css/parts/cart-anim.css" rel="stylesheet">
 <link href="assets/css/parts/account.css" rel="stylesheet">
+<link href="assets/css/parts/personalise.css" rel="stylesheet">
 </head>
 <body>
 
@@ -451,184 +452,312 @@
 </aside>
 <!-- ========== /MEMBER PANEL ========== -->
 
-<section style="padding:34px 0 clamp(56px,7vw,90px)">
+<!-- ========== PERSONALISE (HTML tĩnh — PHP đổ theo ?exp=) ==========
+     Thứ tự: chọn số voucher → cách gửi (cho tôi / 1 người nhận / mỗi voucher 1 người) → thiệp cá nhân (tuỳ chọn)
+     → từng người nhận (tối đa 10 thiệp / đơn) → xem trước thiệp + email → Continue to payment.
+     Dữ liệu gửi đi nằm trong form #yqPeForm: input chung + 10 fieldset [data-pe-slot] (mỗi người nhận 1 fieldset).
+     JS (modules/personalise.js) chỉ đổi class/hidden/value/text, không dựng HTML. -->
+<section class="yq-pe" style="padding:34px 0 clamp(56px,7vw,90px)">
   <div class="yq-container">
 
     <!-- Progress -->
     <div class="yq-steps">
       <span class="yq-step is-done"><span class="yq-step__num"><svg class="yq-i" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>Select Experience</span>
       <span class="yq-step__bar"></span>
-      <span class="yq-step is-active"><span class="yq-step__num">2</span>Personalise Gift</span>
+      <span class="yq-step is-active"><span class="yq-step__num">2</span>Personalise <span class="yq-pe-step-opt">(optional)</span></span>
       <span class="yq-step__bar"></span>
       <span class="yq-step"><span class="yq-step__num">3</span>Review &amp; Pay</span>
     </div>
 
-    <!-- ========== TRẢI NGHIỆM ĐÃ CHỌN (HTML tĩnh — PHP đổ theo ?exp=) ==========
-         Biến PHP:
-           #peExp[data-exp-id]       <- @exp.id
-           #peExp[data-exp-price]    <- @exp.price      (số thô, JS dùng để cộng phí thiệp giấy)
-           #peExp[data-exp-tone]     <- @exp.tone
-           .pe-exp__img img          <- @exp.image  /  alt @exp.name
-           .pe-exp__name             <- @exp.name
-           .pe-exp__meta             <- @exp.duration · @exp.place
-           .pe-exp__price            <- @exp.price_format   (vd: SGD 200)
-         JS không render lại khối này (demo: nếu ?exp= khác mẫu thì JS chỉ đổi text/src cho khớp). -->
-    <div class="yq-panel mb-4" id="peExp" data-exp-id="grand-dining" data-exp-price="200" data-exp-tone="2">
-      <div class="d-flex gap-3 align-items-center">
-        <div class="yq-media pe-exp__img" style="width:66px;height:66px;border-radius:10px;flex:none"><img src="assets/img/e-dining.jpg" alt="Grand Dining Experience" loading="lazy" decoding="async"></div>
-        <div>
-          <div class="yq-tiny yq-muted">Selected experience</div>
-          <div class="yq-serif pe-exp__name" style="font-size:1.1rem;color:var(--yq-ink)">Grand Dining Experience</div>
-          <div class="yq-small yq-muted pe-exp__meta">Flexible · All Restaurants</div>
-        </div>
-        <div class="ms-auto yq-serif pe-exp__price" style="font-size:1.1rem;color:var(--yq-ink)">SGD 200</div>
-      </div>
+    <div class="yq-pe-head">
+      <span class="yq-eyebrow yq-eyebrow--gold">The Shop · Grand Hyatt Singapore</span>
+      <h1 class="yq-h2 mb-2">Make it personal</h1>
+      <p class="yq-lead mb-0">Send each voucher to its own recipient and attach a personalised card with your message. Prefer to keep it simple? You can skip this step.</p>
     </div>
+
+    <!-- action/method: production trỏ về route lưu thông tin quà rồi chuyển sang trang thanh toán -->
+    <!-- data-yq-demo: bản tĩnh lưu giỏ localStorage rồi chuyển trang — production bỏ thuộc tính này -->
+    <form id="yqPeForm" action="checkout.html" method="post" enctype="multipart/form-data" novalidate data-yq-demo>
 
     <div class="row g-4">
-      <!-- Card design -->
-      <div class="col-lg-4">
-        <div class="yq-panel h-100">
-          <span class="yq-field-label">Choose a card design</span>
-          <!-- Mẫu thiệp (HTML tĩnh). Biến PHP:
-                 @foreach(cardDesigns as d) ... @endforeach  (mỗi mẫu 1 .col-6 bên dưới; mẫu đầu thêm class is-active)
-                 [data-design]          <- @d.id
-                 [data-theme]           <- @d.theme   (class đổi giao diện #peCard, mẫu Classic Gold để trống)
-                 .yq-cardpick__art      <- class @d.art  /  nội dung @d.glyph
-                 .yq-cardpick__name     <- @d.name
-               JS chỉ đổi class is-active và class theme của #peCard. -->
-          <div class="row g-3" id="peDesigns">
-            <!-- @foreach(cardDesigns as d) -->
-            <div class="col-6">
-              <button class="yq-cardpick is-active" type="button" data-design="gold" data-theme="">
-                <span class="yq-cardpick__art art-gold">✦</span>
-                <span class="yq-cardpick__name">Classic Gold</span>
-              </button>
-            </div>
-            <div class="col-6">
-              <button class="yq-cardpick" type="button" data-design="floral" data-theme="yq-ecard--floral">
-                <span class="yq-cardpick__art art-floral">❀</span>
-                <span class="yq-cardpick__name">Floral Bloom</span>
-              </button>
-            </div>
-            <div class="col-6">
-              <button class="yq-cardpick" type="button" data-design="red" data-theme="yq-ecard--red">
-                <span class="yq-cardpick__art art-red">✦</span>
-                <span class="yq-cardpick__name">Festive Red</span>
-              </button>
-            </div>
-            <div class="col-6">
-              <button class="yq-cardpick" type="button" data-design="min" data-theme="yq-ecard--min">
-                <span class="yq-cardpick__art art-min">◇</span>
-                <span class="yq-cardpick__name">Minimalist</span>
-              </button>
-            </div>
-            <!-- @endforeach -->
-          </div>
+      <div class="col-lg-7">
 
-          <span class="yq-field-label mt-4">Delivery method</span>
-          <!-- Cách giao (HTML tĩnh). [data-fee] <- phí cộng thêm (@physicalCardFee cho thiệp giấy),
-               [data-note] <- dòng ghi chú hiện ở #peDeliveryNote khi chọn. -->
-          <div class="d-flex flex-column gap-2">
-            <button class="yq-delivery pe-delivery is-active" type="button" data-delivery="ecard" data-fee="0"
-              data-note="eCard will be sent to recipient’s email upon order confirmation.">
+        <!-- ========== VOUCHER ĐÃ CHỌN ==========
+             #yqPeExp[data-exp-id] <- @exp.id   [data-exp-price] <- @exp.price (số thô)   [data-exp-tone] <- @exp.tone
+             img <- @exp.image / alt @exp.name   .yq-pe-exp__name <- @exp.name   .yq-pe-exp__meta <- @exp.duration · @exp.place
+             .yq-pe-exp__price <- @exp.price_format   #yqPeQty value <- @qty (1–10, max = @maxCardsPerOrder) -->
+        <div class="yq-panel yq-pe-exp" id="yqPeExp" data-exp-id="grand-dining" data-exp-price="200" data-exp-tone="2">
+          <div class="yq-media yq-pe-exp__img"><img src="assets/img/e-dining.jpg" alt="Grand Dining Experience" loading="lazy" decoding="async"></div>
+          <div class="yq-pe-exp__info">
+            <div class="yq-tiny yq-muted">Selected voucher</div>
+            <div class="yq-serif yq-pe-exp__name">Grand Dining Experience</div>
+            <div class="yq-small yq-muted yq-pe-exp__meta">Flexible · All Restaurants</div>
+          </div>
+          <div class="yq-pe-exp__end">
+            <div class="yq-serif yq-pe-exp__price">SGD 200</div>
+            <div class="yq-qty" aria-label="Number of vouchers">
+              <button class="yq-qty__btn" type="button" data-pe-qty="-1" aria-label="Fewer vouchers">−</button>
+              <input class="yq-qty__val" type="number" id="yqPeQty" name="qty" value="1" min="1" max="10" inputmode="numeric" aria-label="Vouchers">
+              <button class="yq-qty__btn" type="button" data-pe-qty="1" aria-label="More vouchers">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 1. CÁCH GỬI VOUCHER (Voucher Distribution) ==========
+             name="send_mode": me = gửi về email người mua · one = tất cả cho 1 người · many = mỗi voucher 1 người.
+             Nút "many" bị khoá khi qty = 1 (JS bật/tắt disabled). -->
+        <div class="yq-panel yq-pe-block">
+          <div class="yq-pe-block__head">
+            <span class="yq-pe-block__num">1</span>
+            <div>
+              <h2 class="yq-pe-block__title">Who should receive the vouchers?</h2>
+              <p class="yq-pe-block__sub">Each voucher is emailed to its recipient on order confirmation.</p>
+            </div>
+          </div>
+          <input type="hidden" name="send_mode" id="yqPeMode" value="one">
+          <div class="yq-pe-opts yq-pe-opts--3" role="radiogroup" aria-label="Send vouchers to">
+            <button class="yq-delivery yq-pe-opt" type="button" role="radio" aria-checked="false" data-pe-mode="me">
+              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span>
+              <span><span class="yq-delivery__t d-block">To me</span><span class="yq-delivery__s">I’ll hand them out</span></span>
+            </button>
+            <button class="yq-delivery yq-pe-opt is-active" type="button" role="radio" aria-checked="true" data-pe-mode="one">
               <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="m3.8 7 8.2 6 8.2-6"/></svg></span>
-              <span>
-                <span class="yq-delivery__t d-block">eCard</span>
-                <span class="yq-delivery__s">Instant delivery</span>
-              </span>
+              <span><span class="yq-delivery__t d-block">One recipient</span><span class="yq-delivery__s">All vouchers to one person</span></span>
             </button>
-            <button class="yq-delivery pe-delivery" type="button" data-delivery="physical" data-fee="5"
-              data-note="Physical card will be posted to the recipient in 2–3 business days.">
-              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20.5 7.5v9L12 21 3.5 16.5v-9L12 3Z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></span>
-              <span>
-                <span class="yq-delivery__t d-block">Physical Card</span>
-                <span class="yq-delivery__s">+SGD 5, 2–3 days</span>
-              </span>
+            <button class="yq-delivery yq-pe-opt" type="button" role="radio" aria-checked="false" data-pe-mode="many" disabled>
+              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8.5" r="2.8"/><circle cx="16.5" cy="8.5" r="2.8"/><path d="M3 19c.8-2.8 2.8-4.2 5-4.2s4.2 1.4 5 4.2M12.5 15.4c1-.4 2.2-.6 4-.6 2.2 0 4.2 1.4 5 4.2"/></svg></span>
+              <span><span class="yq-delivery__t d-block">Different recipients</span><span class="yq-delivery__s" id="yqPeManyHint">Buy 2+ vouchers to split</span></span>
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Message -->
-      <div class="col-lg-4">
-        <div class="yq-panel h-100">
-          <span class="yq-field-label">Your personal message</span>
-
-          <label class="yq-form-label yq-tiny d-block" for="peTo">To (recipient name)</label>
-          <input type="text" class="form-control yq-input mb-3" id="peTo" placeholder="e.g. Sarah" maxlength="60">
-
-          <label class="yq-form-label yq-tiny d-block" for="peMsg">Your message</label>
-          <textarea class="form-control yq-input" id="peMsg" rows="5" maxlength="200"
-            placeholder="Wishing you a truly special experience. Enjoy every moment — you deserve it."></textarea>
-          <div class="yq-counter" id="peCounter">0 / 200 characters</div>
-
-          <label class="yq-form-label yq-tiny d-block mt-3" for="peFrom">From</label>
-          <input type="text" class="form-control yq-input" id="peFrom" placeholder="e.g. James &amp; The Team" maxlength="60">
-
-          <div class="d-flex align-items-center gap-3 flex-wrap mt-4">
-            <button class="yq-btn" type="button" id="peContinue">Continue to Review
-              <svg class="yq-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+        <!-- ========== 2. THIỆP CÁ NHÂN (tuỳ chọn) ==========
+             name="add_card": 1 = có thiệp, 0 = bỏ qua. Tối đa 10 thiệp / đơn — 1 thiệp cho mỗi người nhận. -->
+        <div class="yq-panel yq-pe-block">
+          <div class="yq-pe-block__head">
+            <span class="yq-pe-block__num">2</span>
+            <div>
+              <h2 class="yq-pe-block__title">Add a personalised card? <span class="yq-pe-tag">Optional · Complimentary</span></h2>
+              <p class="yq-pe-block__sub">Your card is attached automatically to the voucher email. One design per recipient, up to 10 per order.</p>
+            </div>
+          </div>
+          <input type="hidden" name="add_card" id="yqPeAddCard" value="1">
+          <div class="yq-pe-opts" role="radiogroup" aria-label="Personalised card">
+            <button class="yq-delivery yq-pe-card-opt is-active" type="button" role="radio" aria-checked="true" data-pe-card="1">
+              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></span>
+              <span><span class="yq-delivery__t d-block">Yes, personalise a card</span><span class="yq-delivery__s">Choose a banner, colour &amp; message</span></span>
             </button>
-            <a href="checkout.html" id="peSkip" class="yq-small" style="text-decoration:underline;color:var(--yq-muted)">Skip personalisation</a>
+            <button class="yq-delivery yq-pe-card-opt" type="button" role="radio" aria-checked="false" data-pe-card="0">
+              <span class="yq-delivery__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><polyline points="13 6 19 12 13 18"/></svg></span>
+              <span><span class="yq-delivery__t d-block">No thanks, skip</span><span class="yq-delivery__s">Send the voucher only</span></span>
+            </button>
           </div>
         </div>
+
+        <!-- ========== 3. NGƯỜI NHẬN & THIỆP ==========
+             Ẩn cả khối khi send_mode = me và add_card = 0 (không còn gì để điền).
+             Chip [data-pe-rcp="n"]: hiện n = 1..số thiệp (one/me: 1 · many: = qty). JS đổi text .yq-pe-rcp__name,
+             class is-active / is-done / is-error. Ô nhập bên dưới là 1 bộ dùng chung — JS nạp/ghi giá trị vào fieldset của chip đang chọn. -->
+        <div class="yq-panel yq-pe-block" id="yqPeEditor">
+          <div class="yq-pe-block__head">
+            <span class="yq-pe-block__num">3</span>
+            <div>
+              <h2 class="yq-pe-block__title" id="yqPeEditorTitle">Recipient &amp; card</h2>
+              <p class="yq-pe-block__sub" id="yqPeEditorSub">Fill in each card — the preview updates as you type.</p>
+            </div>
+          </div>
+
+          <div class="yq-pe-rcps" id="yqPeRcps" role="tablist" aria-label="Recipients">
+            <!-- @for(n = 1 to 10) -->
+            <button class="yq-pe-rcp is-active" type="button" role="tab" aria-selected="true" data-pe-rcp="1"><span class="yq-pe-rcp__no">Card 1</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="2" hidden><span class="yq-pe-rcp__no">Card 2</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="3" hidden><span class="yq-pe-rcp__no">Card 3</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="4" hidden><span class="yq-pe-rcp__no">Card 4</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="5" hidden><span class="yq-pe-rcp__no">Card 5</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="6" hidden><span class="yq-pe-rcp__no">Card 6</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="7" hidden><span class="yq-pe-rcp__no">Card 7</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="8" hidden><span class="yq-pe-rcp__no">Card 8</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="9" hidden><span class="yq-pe-rcp__no">Card 9</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <button class="yq-pe-rcp" type="button" role="tab" aria-selected="false" data-pe-rcp="10" hidden><span class="yq-pe-rcp__no">Card 10</span><span class="yq-pe-rcp__name">Recipient</span></button>
+            <!-- @endfor -->
+          </div>
+
+          <!-- Người nhận (ẩn khi send_mode = me) -->
+          <div class="row g-3" id="yqPeRcpFields">
+            <div class="col-sm-6">
+              <label class="yq-form-label yq-tiny d-block" for="yqPeName" id="yqPeNameLbl">Recipient name <span class="yq-pe-req">*</span></label>
+              <input type="text" class="form-control yq-input" id="yqPeName" data-pe-field="rcp_name" placeholder="e.g. Sarah Tan" maxlength="60" autocomplete="off">
+              <div class="yq-error" data-pe-err="rcp_name">Please enter the recipient’s name.</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="yq-form-label yq-tiny d-block" for="yqPeEmail">Recipient email <span class="yq-pe-req">*</span></label>
+              <input type="email" class="form-control yq-input" id="yqPeEmail" data-pe-field="rcp_email" placeholder="sarah@example.com" maxlength="120" autocomplete="off">
+              <div class="yq-error" data-pe-err="rcp_email">Please enter a valid email address.</div>
+            </div>
+          </div>
+
+          <!-- Thiệp (ẩn khi add_card = 0) -->
+          <div id="yqPeCardFields">
+            <span class="yq-field-label mt-4">Card banner <span class="yq-pe-hint">Photo or video</span></span>
+            <!-- Mẫu banner. Biến PHP: @foreach(cardBanners as b) ... @endforeach
+                   [data-banner] <- @b.id   [data-type] <- @b.type (image | video)   [data-src] <- @b.src (jpg/png hoặc mp4)
+                   [data-poster] <- @b.poster (ảnh khung đầu, cho video)   img src <- @b.thumb   .yq-pe-banner__name <- @b.name
+                 Nút cuối "Upload your own" mở input file của fieldset đang chọn (JPG/PNG/WebP/MP4/MOV, tối đa 20MB). -->
+            <div class="yq-pe-banners" id="yqPeBanners">
+              <!-- @foreach(cardBanners as b) -->
+              <button class="yq-pe-banner is-active" type="button" data-banner="celebrate" data-type="video" data-src="assets/video/card-celebrate.mp4" data-poster="assets/img/e-afternoon-tea.jpg">
+                <span class="yq-pe-banner__art"><img src="assets/img/e-afternoon-tea.jpg" alt="" loading="lazy"><span class="yq-pe-banner__badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5L7 4.5Z"/></svg>Video</span></span>
+                <span class="yq-pe-banner__name">Celebrate</span>
+              </button>
+              <button class="yq-pe-banner" type="button" data-banner="festive" data-type="video" data-src="assets/video/card-festive.mp4" data-poster="assets/img/hero-festive.jpg">
+                <span class="yq-pe-banner__art"><img src="assets/img/hero-festive.jpg" alt="" loading="lazy"><span class="yq-pe-banner__badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5L7 4.5Z"/></svg>Video</span></span>
+                <span class="yq-pe-banner__name">Festive Lights</span>
+              </button>
+              <button class="yq-pe-banner" type="button" data-banner="birthday" data-type="image" data-src="assets/img/o-birthdays.jpg" data-poster="">
+                <span class="yq-pe-banner__art"><img src="assets/img/o-birthdays.jpg" alt="" loading="lazy"></span>
+                <span class="yq-pe-banner__name">Birthday</span>
+              </button>
+              <button class="yq-pe-banner" type="button" data-banner="anniversary" data-type="image" data-src="assets/img/o-anniversaries.jpg" data-poster="">
+                <span class="yq-pe-banner__art"><img src="assets/img/o-anniversaries.jpg" alt="" loading="lazy"></span>
+                <span class="yq-pe-banner__name">Anniversary</span>
+              </button>
+              <button class="yq-pe-banner" type="button" data-banner="sweet" data-type="image" data-src="assets/img/editorial-cake.jpg" data-poster="">
+                <span class="yq-pe-banner__art"><img src="assets/img/editorial-cake.jpg" alt="" loading="lazy"></span>
+                <span class="yq-pe-banner__name">Sweet Moments</span>
+              </button>
+              <!-- @endforeach -->
+              <button class="yq-pe-banner yq-pe-banner--upload" type="button" data-banner="upload" data-type="" data-src="" data-poster="" id="yqPeUploadBtn">
+                <span class="yq-pe-banner__art">
+                  <img src="" alt="" hidden>
+                  <span class="yq-pe-banner__up"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><polyline points="7 9 12 4 17 9"/><path d="M4 16v3a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-3"/></svg>Photo / video</span>
+                </span>
+                <span class="yq-pe-banner__name">Upload your own</span>
+              </button>
+            </div>
+            <div class="yq-error" id="yqPeUploadErr">Please choose a JPG, PNG, WebP, MP4 or MOV file up to 20MB.</div>
+            <p class="yq-pe-note" id="yqPeVideoNote" hidden>Video banners play in the online card. The copy attached to the email uses the first frame.</p>
+
+            <span class="yq-field-label mt-4">Card colour</span>
+            <!-- Màu thương hiệu The Shop. [data-colour] <- mã màu lưu vào cards[n][colour] -->
+            <div class="yq-pe-swatches" id="yqPeSwatches" role="radiogroup" aria-label="Card colour">
+              <button class="yq-pe-swatch is-active" type="button" role="radio" aria-checked="true" data-colour="gold" style="--sw:#8C7145"><span class="yq-pe-swatch__dot"></span>Burnished Gold</button>
+              <button class="yq-pe-swatch" type="button" role="radio" aria-checked="false" data-colour="terracotta" style="--sw:#6F2613"><span class="yq-pe-swatch__dot"></span>Deep Terracotta</button>
+              <button class="yq-pe-swatch" type="button" role="radio" aria-checked="false" data-colour="crimson" style="--sw:#B9353F"><span class="yq-pe-swatch__dot"></span>Warm Crimson</button>
+              <button class="yq-pe-swatch" type="button" role="radio" aria-checked="false" data-colour="black" style="--sw:#000000"><span class="yq-pe-swatch__dot"></span>Standard Black</button>
+            </div>
+
+            <label class="yq-form-label yq-tiny d-block mt-4" for="yqPeMsg">Your message</label>
+            <textarea class="form-control yq-input" id="yqPeMsg" data-pe-field="message" rows="4" maxlength="200"
+              placeholder="Wishing you a truly special experience. Enjoy every moment — you deserve it."></textarea>
+            <div class="yq-counter" id="yqPeCounter">0 / 200 characters</div>
+
+            <label class="yq-form-label yq-tiny d-block mt-2" for="yqPeFrom">From</label>
+            <input type="text" class="form-control yq-input" id="yqPeFrom" data-pe-field="from_name" placeholder="e.g. James &amp; The Team" maxlength="60">
+
+            <button class="yq-pe-applyall" type="button" id="yqPeApplyAll" hidden>
+              <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>
+              Use this banner, colour, message &amp; sender for all cards
+            </button>
+          </div>
+        </div>
+
+        <!-- ========== DỮ LIỆU TỪNG NGƯỜI NHẬN (gửi về server) ==========
+             @for(n = 1 to 10): fieldset [data-pe-slot="n"]; fieldset ngoài số thiệp đang dùng có disabled (không gửi đi).
+             cards[n][banner] = id mẫu hoặc "upload" · cards[n][banner_type] = image | video · cards[n][banner_file] = file tự tải lên.
+             Server: đính kèm thiệp (render ảnh/PDF) vào email voucher gửi cards[n][rcp_email]. -->
+        <div hidden>
+          <!-- @for(n = 1 to 10) -->
+          <fieldset data-pe-slot="1"><input type="hidden" name="cards[1][rcp_name]" value=""><input type="hidden" name="cards[1][rcp_email]" value=""><input type="hidden" name="cards[1][banner]" value="celebrate"><input type="hidden" name="cards[1][banner_type]" value="video"><input type="hidden" name="cards[1][colour]" value="gold"><input type="hidden" name="cards[1][message]" value=""><input type="hidden" name="cards[1][from_name]" value=""><input type="file" name="cards[1][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="2" disabled><input type="hidden" name="cards[2][rcp_name]" value=""><input type="hidden" name="cards[2][rcp_email]" value=""><input type="hidden" name="cards[2][banner]" value="celebrate"><input type="hidden" name="cards[2][banner_type]" value="video"><input type="hidden" name="cards[2][colour]" value="gold"><input type="hidden" name="cards[2][message]" value=""><input type="hidden" name="cards[2][from_name]" value=""><input type="file" name="cards[2][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="3" disabled><input type="hidden" name="cards[3][rcp_name]" value=""><input type="hidden" name="cards[3][rcp_email]" value=""><input type="hidden" name="cards[3][banner]" value="celebrate"><input type="hidden" name="cards[3][banner_type]" value="video"><input type="hidden" name="cards[3][colour]" value="gold"><input type="hidden" name="cards[3][message]" value=""><input type="hidden" name="cards[3][from_name]" value=""><input type="file" name="cards[3][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="4" disabled><input type="hidden" name="cards[4][rcp_name]" value=""><input type="hidden" name="cards[4][rcp_email]" value=""><input type="hidden" name="cards[4][banner]" value="celebrate"><input type="hidden" name="cards[4][banner_type]" value="video"><input type="hidden" name="cards[4][colour]" value="gold"><input type="hidden" name="cards[4][message]" value=""><input type="hidden" name="cards[4][from_name]" value=""><input type="file" name="cards[4][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="5" disabled><input type="hidden" name="cards[5][rcp_name]" value=""><input type="hidden" name="cards[5][rcp_email]" value=""><input type="hidden" name="cards[5][banner]" value="celebrate"><input type="hidden" name="cards[5][banner_type]" value="video"><input type="hidden" name="cards[5][colour]" value="gold"><input type="hidden" name="cards[5][message]" value=""><input type="hidden" name="cards[5][from_name]" value=""><input type="file" name="cards[5][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="6" disabled><input type="hidden" name="cards[6][rcp_name]" value=""><input type="hidden" name="cards[6][rcp_email]" value=""><input type="hidden" name="cards[6][banner]" value="celebrate"><input type="hidden" name="cards[6][banner_type]" value="video"><input type="hidden" name="cards[6][colour]" value="gold"><input type="hidden" name="cards[6][message]" value=""><input type="hidden" name="cards[6][from_name]" value=""><input type="file" name="cards[6][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="7" disabled><input type="hidden" name="cards[7][rcp_name]" value=""><input type="hidden" name="cards[7][rcp_email]" value=""><input type="hidden" name="cards[7][banner]" value="celebrate"><input type="hidden" name="cards[7][banner_type]" value="video"><input type="hidden" name="cards[7][colour]" value="gold"><input type="hidden" name="cards[7][message]" value=""><input type="hidden" name="cards[7][from_name]" value=""><input type="file" name="cards[7][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="8" disabled><input type="hidden" name="cards[8][rcp_name]" value=""><input type="hidden" name="cards[8][rcp_email]" value=""><input type="hidden" name="cards[8][banner]" value="celebrate"><input type="hidden" name="cards[8][banner_type]" value="video"><input type="hidden" name="cards[8][colour]" value="gold"><input type="hidden" name="cards[8][message]" value=""><input type="hidden" name="cards[8][from_name]" value=""><input type="file" name="cards[8][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="9" disabled><input type="hidden" name="cards[9][rcp_name]" value=""><input type="hidden" name="cards[9][rcp_email]" value=""><input type="hidden" name="cards[9][banner]" value="celebrate"><input type="hidden" name="cards[9][banner_type]" value="video"><input type="hidden" name="cards[9][colour]" value="gold"><input type="hidden" name="cards[9][message]" value=""><input type="hidden" name="cards[9][from_name]" value=""><input type="file" name="cards[9][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <fieldset data-pe-slot="10" disabled><input type="hidden" name="cards[10][rcp_name]" value=""><input type="hidden" name="cards[10][rcp_email]" value=""><input type="hidden" name="cards[10][banner]" value="celebrate"><input type="hidden" name="cards[10][banner_type]" value="video"><input type="hidden" name="cards[10][colour]" value="gold"><input type="hidden" name="cards[10][message]" value=""><input type="hidden" name="cards[10][from_name]" value=""><input type="file" name="cards[10][banner_file]" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></fieldset>
+          <!-- @endfor -->
+        </div>
+
       </div>
 
-      <!-- Live preview -->
-      <div class="col-lg-4">
+      <!-- ========== XEM TRƯỚC + TỔNG TIỀN ========== -->
+      <div class="col-lg-5">
         <div class="yq-sticky">
-          <span class="yq-field-label">Live preview</span>
-          <div class="yq-ecard" id="peCard">
-            <div class="yq-ecard__brand">Grand Hyatt Singapore</div>
-            <div class="yq-ecard__to" id="peCardTo" style="display:none"></div>
-            <div class="yq-ecard__msg" id="peCardMsg">“Your message will appear here.”</div>
-            <div class="yq-ecard__from" id="peCardFrom" style="display:none"></div>
+          <div class="yq-pe-tabs" role="tablist" aria-label="Preview">
+            <button class="yq-pe-tab is-active" type="button" role="tab" aria-selected="true" data-pe-view="card" id="yqPeTabCard">Card</button>
+            <button class="yq-pe-tab" type="button" role="tab" aria-selected="false" data-pe-view="mail">Voucher email</button>
+            <span class="yq-pe-tabs__for yq-tiny yq-muted" id="yqPeViewFor">Card 1 of 1</span>
           </div>
-          <p class="yq-small yq-muted mt-3" id="peDeliveryNote">eCard will be sent to recipient’s email upon order confirmation.</p>
 
-          <!-- Tổng tiền (HTML tĩnh). Biến PHP:
-                 #peBase      <- @exp.price_format2   (vd: SGD 200.00)
-                 #peFeeRow    <- @physicalCardFee_format (ẩn mặc định, JS bật khi chọn thiệp giấy)
-                 #peTotal     <- @exp.price_format2   (JS cộng thêm [data-fee] của cách giao đang chọn) -->
-          <div class="yq-panel mt-3" style="padding:18px 20px">
-            <div class="yq-sum"><span>Experience</span><span class="yq-sum__val" id="peBase">SGD 200.00</span></div>
-            <div class="yq-sum" id="peFeeRow" style="display:none"><span>Physical card</span><span class="yq-sum__val">SGD 5.00</span></div>
-            <div class="yq-sum yq-sum--total"><span>Total</span><span class="yq-sum__val" id="peTotal">SGD 200.00</span></div>
+          <!-- Thiệp xem trước: JS đổi class yq-pe-card--{colour}, src ảnh/video banner và text -->
+          <div class="yq-pe-view" data-pe-pane="card">
+            <div class="yq-pe-card yq-pe-card--gold" id="yqPeCard">
+              <div class="yq-pe-card__media">
+                <video id="yqPeCardVideo" src="assets/video/card-celebrate.mp4" poster="assets/img/e-afternoon-tea.jpg" autoplay muted loop playsinline aria-hidden="true"></video>
+                <img id="yqPeCardImg" src="" alt="" hidden>
+              </div>
+              <div class="yq-pe-card__body">
+                <div class="yq-pe-card__brand">
+                  <svg class="yq-pe-logo" viewBox="0 0 100 100" aria-hidden="true"><rect x="17" y="17" width="66" height="66" transform="rotate(45 50 50)" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="50" y="40" text-anchor="middle" font-size="6" letter-spacing="1.5" fill="currentColor">THE</text><text x="50" y="55" text-anchor="middle" font-size="14" letter-spacing="2" fill="currentColor" font-weight="600">SHOP</text><text x="50" y="64" text-anchor="middle" font-size="4" letter-spacing="1.2" fill="currentColor">GRAND HYATT</text><text x="50" y="69" text-anchor="middle" font-size="4" letter-spacing="1.2" fill="currentColor">SINGAPORE</text></svg>
+                  <span>A gift for you</span>
+                </div>
+                <div class="yq-pe-card__to" id="yqPeCardTo">Dear Recipient,</div>
+                <div class="yq-pe-card__msg" id="yqPeCardMsg">Your message will appear here.</div>
+                <div class="yq-pe-card__from" id="yqPeCardFrom">With love, —</div>
+                <div class="yq-pe-card__gift"><span id="yqPeCardGift">Grand Dining Experience</span><span id="yqPeCardCount">1 voucher</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email voucher xem trước — server gửi tới từng người nhận, thiệp đính kèm tự động -->
+          <div class="yq-pe-view" data-pe-pane="mail" hidden>
+            <div class="yq-pe-mail">
+              <div class="yq-pe-mail__hdr">
+                <div><span>From</span>The Shop at Grand Hyatt Singapore</div>
+                <div><span>To</span><b id="yqPeMailTo">sarah@example.com</b></div>
+                <div><span>Subject</span><b id="yqPeMailSubj">You’ve received a gift from The Shop</b></div>
+              </div>
+              <div class="yq-pe-mail__body">
+                <p id="yqPeMailHi">Hi Sarah,</p>
+                <p id="yqPeMailLead">James has sent you a gift from The Shop at Grand Hyatt Singapore.</p>
+                <div class="yq-pe-mail__voucher">
+                  <div class="yq-tiny yq-muted">eVoucher</div>
+                  <div class="yq-serif" id="yqPeMailExp">Grand Dining Experience</div>
+                  <div class="yq-pe-mail__code"><span id="yqPeMailQty">1 × voucher</span><span>GHS-7F3K-2026</span></div>
+                  <div class="yq-tiny yq-muted">Valid for 12 months from date of issue.</div>
+                </div>
+                <div class="yq-pe-mail__att" id="yqPeMailAtt">
+                  <span class="yq-pe-mail__thumb"><img id="yqPeMailThumb" src="assets/img/e-afternoon-tea.jpg" alt=""></span>
+                  <span><b id="yqPeMailFile">Personalised-card-Sarah.pdf</b><span class="yq-tiny yq-muted d-block">Personalised card · attached</span></span>
+                  <svg class="yq-i ms-auto" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 11.5-8.2 8.2a5 5 0 0 1-7.1-7.1L13 4.4a3.4 3.4 0 0 1 4.8 4.8l-8.3 8.3a1.7 1.7 0 0 1-2.4-2.4L14.7 7.5"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tổng tiền. #yqPeLineLbl <- @qty × @exp.price_format   #yqPeLineVal / #yqPeTotal <- @order.total_format
+               JS tính lại khi đổi số lượng. Thiệp cá nhân miễn phí. -->
+          <div class="yq-panel mt-3 yq-pe-sum">
+            <div class="yq-sum"><span id="yqPeLineLbl">1 × Grand Dining Experience</span><span class="yq-sum__val" id="yqPeLineVal">SGD 200.00</span></div>
+            <div class="yq-sum" id="yqPeCardsRow"><span id="yqPeCardsLbl">1 personalised card</span><span class="yq-sum__val">Complimentary</span></div>
+            <div class="yq-sum"><span>Delivery</span><span class="yq-sum__val" id="yqPeSendLbl">Email to 1 recipient</span></div>
+            <div class="yq-sum yq-sum--total"><span>Total</span><span class="yq-sum__val" id="yqPeTotal">SGD 200.00</span></div>
+            <div class="yq-error mt-2" id="yqPeFormErr">Some cards are missing details — check the highlighted recipients.</div>
+            <button class="yq-btn yq-btn--block mt-3" type="submit" id="yqPeContinue">Continue to payment
+              <svg class="yq-arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg>
+            </button>
+            <p class="yq-tiny yq-muted text-center mt-2 mb-0">Vouchers and cards are sent once payment is confirmed.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Why it matters -->
-    <div class="yq-feature mt-5">
-      <div class="row g-4">
-        <div class="col-lg-5">
-          <span class="lbl">New feature</span>
-          <h3 class="yq-h3">Personalise Your Gift</h3>
-          <p class="mb-0">Buyers can select an eCard design, write a personal message, and preview the gift — all before checkout.</p>
-        </div>
-        <div class="col-lg-7">
-          <div class="row g-4">
-            <div class="col-md-6">
-              <dl class="m-0">
-                <dt>Why it matters</dt>
-                <dd>Transforms a transaction into a meaningful gifting moment, increasing emotional value and reducing purchase hesitation.</dd>
-              </dl>
-            </div>
-            <div class="col-md-6">
-              <dl class="m-0">
-                <dt>Revenue impact</dt>
-                <dd>Physical card upsell (+SGD 5) adds a low-friction revenue stream on top of every experience sold.</dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    </form>
   </div>
 </section>
+<!-- ========== /PERSONALISE ========== -->
 
 <!-- ========== FOOTER (HTML tĩnh — giống nhau mọi trang) ========== -->
 <section class="yq-newsletter">
@@ -821,6 +950,7 @@
 <script src="assets/js/modules/cart-anim.js"></script>
 <script src="assets/js/modules/add-to-cart.js"></script>
 <script src="assets/js/modules/account.js"></script>
+<script src="assets/js/modules/personalise.js"></script>
 <script>
   jQuery(function ($) {
     YQ.initHeader();

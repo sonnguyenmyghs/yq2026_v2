@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Personalise — thiệp cá nhân + gửi voucher cho nhiều người nhận (personalise.html)
+   Màu thương hiệu The Shop theo brief khách:
+     Burnished Gold  #8C7145 · Deep Terracotta #6F2613 · Warm Crimson #B9353F · Standard Black #000000
+   Font: Neutraface Demi (tiêu đề, --yq-serif) + Neutraface Text Book (nội dung, --yq-sans) — khai báo ở style.css.
+   ========================================================================== */
+.yq-pe{
+  --yq-pe-gold:       #8C7145;
+  --yq-pe-terracotta: #6F2613;
+  --yq-pe-crimson:    #B9353F;
+  --yq-pe-black:      #000000;
+}
+
+.yq-pe-step-opt{ opacity: .7; font-size: .92em; }
+
+.yq-pe-head{ max-width: 680px; margin-bottom: 28px; }
+.yq-pe-head .yq-eyebrow{ display: block; margin-bottom: 8px; }
+
+/* ---------- Voucher đã chọn ---------- */
+.yq-pe-exp{ display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.yq-pe-exp__img{ width: 72px; height: 72px; border-radius: 10px; flex: none; overflow: hidden; }
+.yq-pe-exp__img img{ width: 100%; height: 100%; object-fit: cover; }
+.yq-pe-exp__info{ min-width: 0; flex: 1; }
+.yq-pe-exp__name{ font-size: 1.1rem; color: var(--yq-ink); }
+.yq-pe-exp__end{ display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.yq-pe-exp__price{ font-size: 1.1rem; color: var(--yq-ink); }
+@media (max-width: 575.98px){
+  .yq-pe-exp{ flex-wrap: wrap; }
+  .yq-pe-exp__end{ width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
+}
+
+/* ---------- Khối bước ---------- */
+.yq-pe-block{ margin-bottom: 18px; }
+.yq-pe-block[hidden]{ display: none; }
+.yq-pe-block__head{ display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+.yq-pe-block__num{
+  width: 28px; height: 28px; border-radius: 50%; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--yq-ink); color: #fff; font-size: 12.5px; font-weight: 600;
+}
+.yq-pe-block__title{ font-size: 1.15rem; margin: 2px 0 4px; }
+.yq-pe-block__sub{ font-size: 13px; color: var(--yq-muted); margin: 0; }
+.yq-pe-tag{
+  display: inline-block; vertical-align: middle; margin-left: 6px;
+  font-family: var(--yq-sans); font-size: 11px; font-weight: 500; letter-spacing: .02em;
+  padding: 3px 9px; border-radius: var(--yq-radius-pill);
+  background: var(--yq-gold-soft); color: var(--yq-pe-gold);
+}
+.yq-pe-req{ color: var(--yq-pe-crimson); }
+.yq-pe-hint{ font-weight: 400; color: var(--yq-muted); margin-left: 6px; }
+.yq-pe-note{ font-size: 12px; color: var(--yq-muted); margin: 8px 0 0; }
+
+/* Ô lựa chọn (dùng lại .yq-delivery) */
+.yq-pe-opts{ display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+.yq-pe-opts--3{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+.yq-pe-opts .yq-delivery{ height: 100%; }
+.yq-pe-opts .yq-delivery.is-active{ border-color: var(--yq-pe-gold); box-shadow: 0 0 0 3px rgba(140,113,69,.16); }
+.yq-pe-opts .yq-delivery:disabled{ opacity: .5; cursor: not-allowed; }
+.yq-pe-opts .yq-delivery:disabled:hover{ border-color: var(--yq-line); }
+@media (max-width: 767.98px){
+  .yq-pe-opts--3{ grid-template-columns: 1fr; }
+}
+@media (max-width: 479.98px){
+  .yq-pe-opts{ grid-template-columns: 1fr; }
+}
+
+/* ---------- Chip người nhận ---------- */
+.yq-pe-rcps{ display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px; margin: 0 0 14px; scrollbar-width: thin; }
+.yq-pe-rcps[hidden]{ display: none; }
+.yq-pe-rcp{
+  flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  min-width: 104px; max-width: 150px; padding: 8px 14px 8px 12px; border-radius: var(--yq-radius-sm);
+  border: 1px solid var(--yq-line); background: var(--yq-paper); text-align: left; cursor: pointer;
+  position: relative; transition: all .2s var(--yq-ease);
+}
+.yq-pe-rcp[hidden]{ display: none; }
+.yq-pe-rcp:hover{ border-color: var(--yq-ink); }
+.yq-pe-rcp__no{ font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--yq-muted); }
+.yq-pe-rcp__name{ font-size: 13px; color: var(--yq-ink); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yq-pe-rcp.is-active{ background: var(--yq-ink); border-color: var(--yq-ink); }
+.yq-pe-rcp.is-active .yq-pe-rcp__no{ color: rgba(255,255,255,.6); }
+.yq-pe-rcp.is-active .yq-pe-rcp__name{ color: #fff; }
+.yq-pe-rcp::after{
+  content: ""; position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 50%;
+  background: transparent;
+}
+.yq-pe-rcp.is-done::after{ background: #5B8A5A; }
+.yq-pe-rcp.is-error{ border-color: var(--yq-pe-crimson); }
+.yq-pe-rcp.is-error::after{ background: var(--yq-pe-crimson); }
+
+.yq-input.is-invalid{ border-color: var(--yq-pe-crimson) !important; }
+
+/* ---------- Banner ---------- */
+.yq-pe-banners{ display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; }
+@media (max-width: 991.98px){ .yq-pe-banners{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
+.yq-pe-banner{ border: 0; background: none; padding: 0; text-align: center; cursor: pointer; min-width: 0; }
+.yq-pe-banner__art{
+  position: relative; display: block; aspect-ratio: 4/3; border-radius: var(--yq-radius-sm); overflow: hidden;
+  border: 2px solid transparent; background: var(--yq-cream-2); transition: all .22s var(--yq-ease);
+}
+.yq-pe-banner__art img{ width: 100%; height: 100%; object-fit: cover; }
+.yq-pe-banner:hover .yq-pe-banner__art{ transform: translateY(-2px); box-shadow: var(--yq-shadow-md); }
+.yq-pe-banner.is-active .yq-pe-banner__art{ border-color: var(--yq-pe-gold); box-shadow: 0 0 0 3px rgba(140,113,69,.18); }
+.yq-pe-banner__badge{
+  position: absolute; left: 5px; bottom: 5px; display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 6px; border-radius: var(--yq-radius-pill); background: rgba(0,0,0,.62); color: #fff;
+  font-size: 9.5px; letter-spacing: .04em;
+}
+.yq-pe-banner__name{ display: block; font-size: 11.5px; color: var(--yq-body); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yq-pe-banner.is-active .yq-pe-banner__name{ color: var(--yq-ink); font-weight: 600; }
+.yq-pe-banner--upload .yq-pe-banner__art{ border: 1.5px dashed var(--yq-line); background: var(--yq-paper); }
+.yq-pe-banner--upload.is-active .yq-pe-banner__art{ border-style: solid; }
+.yq-pe-banner__up{
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; font-size: 10.5px; color: var(--yq-muted);
+}
+.yq-pe-banner--upload.has-file .yq-pe-banner__up{ background: rgba(0,0,0,.35); color: #fff; opacity: 0; transition: opacity .2s; }
+.yq-pe-banner--upload.has-file:hover .yq-pe-banner__up{ opacity: 1; }
+
+/* ---------- Màu thiệp ---------- */
+.yq-pe-swatches{ display: flex; flex-wrap: wrap; gap: 8px; }
+.yq-pe-swatch{
+  display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px;
+  border-radius: var(--yq-radius-pill); border: 1px solid var(--yq-line); background: var(--yq-paper);
+  font-size: 12.5px; color: var(--yq-ink); cursor: pointer; transition: all .2s var(--yq-ease);
+}
+.yq-pe-swatch:hover{ border-color: var(--yq-ink); }
+.yq-pe-swatch__dot{ width: 20px; height: 20px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.yq-pe-swatch.is-active{ border-color: var(--sw); box-shadow: 0 0 0 2px var(--sw); }
+
+.yq-pe-applyall{
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 0; border: 0; background: none;
+  font-size: 13px; color: var(--yq-pe-gold); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+.yq-pe-applyall:hover{ color: var(--yq-ink); }
+.yq-pe-applyall[hidden]{ display: none; }
+
+/* ---------- Tab xem trước ---------- */
+.yq-pe-tabs{ display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+.yq-pe-tab{
+  border: 1px solid var(--yq-line); background: var(--yq-paper); color: var(--yq-body);
+  padding: 7px 16px; border-radius: var(--yq-radius-pill); font-size: 12.5px; cursor: pointer; transition: all .2s;
+}
+.yq-pe-tab:hover{ border-color: var(--yq-ink); }
+.yq-pe-tab.is-active{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+.yq-pe-tab[hidden]{ display: none; }
+.yq-pe-tabs__for{ margin-left: auto; }
+
+/* ---------- Thiệp ---------- */
+.yq-pe-card{
+  --c-bg: var(--yq-pe-gold); --c-fg: #fff; --c-soft: rgba(255,255,255,.72); --c-line: rgba(255,255,255,.35);
+  background: var(--c-bg); color: var(--c-fg); border-radius: var(--yq-radius); overflow: hidden;
+  box-shadow: var(--yq-shadow-lg); transition: background .35s var(--yq-ease);
+}
+.yq-pe-card--terracotta{ --c-bg: var(--yq-pe-terracotta); }
+.yq-pe-card--crimson{ --c-bg: var(--yq-pe-crimson); }
+.yq-pe-card--black{ --c-bg: var(--yq-pe-black); --c-line: rgba(140,113,69,.6); --c-soft: rgba(255,255,255,.66); }
+.yq-pe-card__media{ aspect-ratio: 2/1; background: rgba(0,0,0,.2); position: relative; }
+.yq-pe-card__media video,
+.yq-pe-card__media img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+.yq-pe-card__media [hidden]{ display: none; }
+.yq-pe-card__body{ position: relative; padding: 22px 26px 22px; }
+.yq-pe-card__body::before{
+  content: ""; position: absolute; inset: 10px; border: 1px solid var(--c-line); border-radius: 8px; pointer-events: none;
+}
+.yq-pe-card__brand{
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  font-family: var(--yq-serif); font-weight: 600; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--c-soft);
+}
+.yq-pe-card--black .yq-pe-card__brand{ color: var(--yq-pe-gold); }
+.yq-pe-logo{ width: 46px; height: 46px; flex: none; margin: -4px 0; }
+.yq-pe-card__to{ font-family: var(--yq-serif); font-weight: 600; font-size: 1.05rem; margin-bottom: 8px; word-break: break-word; }
+.yq-pe-card__msg{ font-family: var(--yq-sans); font-size: 15px; line-height: 1.65; min-height: 50px; word-break: break-word; white-space: pre-line; }
+.yq-pe-card__msg.is-empty{ color: var(--c-soft); }
+.yq-pe-card__from{ text-align: right; font-size: 13.5px; color: var(--c-soft); margin-top: 14px; word-break: break-word; }
+.yq-pe-card__gift{
+  display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid var(--c-line); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--c-soft);
+}
+
+/* ---------- Email voucher ---------- */
+.yq-pe-mail{ background: var(--yq-paper); border: 1px solid var(--yq-line); border-radius: var(--yq-radius); overflow: hidden; box-shadow: var(--yq-shadow-md); }
+.yq-pe-mail__hdr{ padding: 14px 18px; background: var(--yq-cream); border-bottom: 1px solid var(--yq-line); font-size: 12.5px; color: var(--yq-body); }
+.yq-pe-mail__hdr > div{ display: flex; gap: 10px; padding: 2px 0; min-width: 0; }
+.yq-pe-mail__hdr span{ width: 52px; flex: none; color: var(--yq-muted); }
+.yq-pe-mail__hdr b{ font-weight: 500; color: var(--yq-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.yq-pe-mail__body{ padding: 18px; font-size: 13.5px; }
+.yq-pe-mail__body p{ margin-bottom: 10px; }
+.yq-pe-mail__voucher{
+  border: 1px solid var(--yq-pe-gold); border-radius: var(--yq-radius-sm); padding: 14px 16px; margin: 14px 0;
+  background: linear-gradient(135deg, #FBF8F2, #F3EDE1);
+}
+.yq-pe-mail__voucher .yq-serif{ font-size: 1.05rem; color: var(--yq-ink); margin: 2px 0 8px; }
+.yq-pe-mail__code{
+  display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; margin-bottom: 6px;
+  border: 1px dashed rgba(140,113,69,.5); border-radius: 6px; font-size: 12.5px; color: var(--yq-ink);
+  font-variant-numeric: tabular-nums; letter-spacing: .04em;
+}
+.yq-pe-mail__att{
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--yq-line);
+  border-radius: var(--yq-radius-sm); color: var(--yq-muted);
+}
+.yq-pe-mail__att[hidden]{ display: none; }
+.yq-pe-mail__att b{ font-weight: 500; color: var(--yq-ink); font-size: 13px; word-break: break-all; }
+.yq-pe-mail__thumb{ width: 46px; height: 46px; border-radius: 6px; overflow: hidden; flex: none; background: var(--yq-cream-2); }
+.yq-pe-mail__thumb img{ width: 100%; height: 100%; object-fit: cover; }
+
+.yq-pe-sum{ padding: 18px 20px; }
+.yq-pe-sum .yq-sum span:first-child{ min-width: 0; }
