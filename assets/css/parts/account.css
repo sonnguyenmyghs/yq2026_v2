@@ -169,6 +169,21 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 .yq-auth__grid .yq-auth__stack{ display: grid; gap: 12px; }
 .yq-auth__grid .yq-auth__duo{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .yq-auth__box .yq-input{ width: 100%; background: var(--yq-paper); }
+.yq-auth__grid > .yq-auth__side label{ font: inherit; color: inherit; margin: 0; }
+/* .yq-input dùng shorthand background -> trả lại mũi tên của .form-select */
+.yq-auth__box .form-select.yq-input{
+  background-image: var(--bs-form-select-bg-img);
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 14px 10px;
+  padding-right: 40px; cursor: pointer;
+}
+/* nhóm radio / checkbox: xếp ngang, tự xuống dòng; cao bằng 1 ô input để thẳng nhãn bên trái */
+.yq-auth__opts{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; min-height: 46px; }
+.yq-auth__check input[type="radio"]{ border-radius: 50%; }
+/* 2 checkbox đồng ý dưới khối xám */
+.yq-auth__agree{ display: grid; gap: 10px; }
+.yq-auth__agree a{ color: var(--yq-ink); text-decoration: underline; text-underline-offset: 2px; }
+.yq-auth__agree a:hover{ color: var(--yq-gold-dark); }
+.yq-auth__agree .yq-error{ margin-top: -4px; }
 @media (max-width: 575.98px){
   .yq-auth__grid{ grid-template-columns: 1fr; gap: 6px; }
   .yq-auth__grid > .yq-auth__side{ text-align: left; padding-top: 8px; }

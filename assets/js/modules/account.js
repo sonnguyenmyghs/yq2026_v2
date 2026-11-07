@@ -398,6 +398,16 @@
       ok = check('yqRegPass2', { required: true, same: val('yqRegPass'), label: 'Repeated password' }) && ok;
       ok = check('yqRegFirst', { required: true, label: 'First name' }) && ok;
       ok = check('yqRegLast', { required: true, label: 'Last name' }) && ok;
+      ok = check('yqRegCountry', { required: true, label: 'Country' }) && ok;
+      /* radio + checkbox: không có .val() để check() đọc -> kiểm tra riêng */
+      if (!$f.find('[name="gender"]:checked').length) {
+        $('[data-err-for="yqRegGender"]').text('Please choose an option').addClass('is-on');
+        ok = false;
+      }
+      if (!$('#yqRegTerms').is(':checked')) {
+        $('[data-err-for="yqRegTerms"]').text('Please accept the Terms and Privacy Policy').addClass('is-on');
+        ok = false;
+      }
       if (!ok) return;
 
       apiRegister({
@@ -450,6 +460,10 @@
     .on('input', '#yqAuthModal .yq-input, #yqMemberPanel .yq-input', function () {
       $(this).removeClass('is-invalid');
       $('[data-err-for="' + this.id + '"]').removeClass('is-on').text('');
+    })
+    .on('change', '#yqRegForm [name="gender"], #yqRegTerms', function () {
+      var id = this.name === 'gender' ? 'yqRegGender' : 'yqRegTerms';
+      $('[data-err-for="' + id + '"]').removeClass('is-on').text('');
     })
 
     /* Mở lại popup thì luôn về tab Log in, xoá dữ liệu cũ */

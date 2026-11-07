@@ -576,6 +576,14 @@ trạng thái đăng nhập vào header.
 > không còn giả lập đăng nhập. Chạy local bằng `python3 -m http.server` thì POST sẽ báo
 > lỗi 501 — bình thường, vì không có backend.
 >
+> **Form Register** (`#yqRegForm`) có sẵn mẫu đủ loại input để copy: text, password,
+> `select` (Title — không bắt buộc; Country* — option đầu `value=""` để bắt chọn),
+> `radio` (Gender*), `date` (Date of birth), nhóm `checkbox` (Interests, `name="interests[]"`)
+> và checkbox bắt buộc (Terms*). `name` các ô: `email`, `password`, `password_confirm`,
+> `first_name`, `last_name`, `title`, `gender`, `dob`, `country`, `interests[]`, `promo`,
+> `terms`. Radio/checkbox dùng chung class `.yq-auth__check`, nhóm xếp ngang bằng
+> `.yq-auth__opts`. JS validate các ô có dấu `*`.
+>
 > Register và social login **vẫn là demo**: localStorage (`yq_user_v1`) chỉ giữ email,
 > tên và tuỳ chọn nhận khuyến mãi, mật khẩu không lưu ở đâu cả. Phần `6. Chỗ nối API`
 > trong `account.js` là 2 hàm `apiRegister` / `apiSocial`, thay bằng lệnh gọi server thật.
