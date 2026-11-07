@@ -294,15 +294,23 @@ Trang admin cấu hình 4 hình thức nhận hàng, mỗi hình thức có danh
 `backend-templates/select_payment_food.html` và `backend-templates/appv6_dev_demo.js`: block `window.__*` và biến PHP (tab *Developer*). Giờ và lead mẫu cho ra đúng giá trị block ở `checkout-v2.html`, chỉ khác
 nhãn khung giờ: `2:00 PM to 4:00 PM` thay cho `14:00 PM to 16:00 PM`. Hotel Van và Room Service để tắt sẵn.
 
-| File | Vai trò |
-|---|---|
-| `admin/delivery-rules.html` | HTML tĩnh + giá trị mẫu, PHP in từ `@delivery_rules`. Dòng lặp có khuôn `<template id="yqDrTpl…">` |
-| `assets/css/parts/delivery-rules.css` | Style, tiền tố `.yq-drule` |
-| `assets/js/modules/delivery-rules.js` | Đọc/ghi form, validate, *Test an order*, sinh config, nhật ký |
+Dựng cùng cách với `checkout-v2.html` và dùng lại component của `checkout-v2.css` (`.sec--payment`, `.pay--part`, `.form-control`, `.in-receiving`, `.slide--page`).
 
-**Lưu:** form gửi 1 field `delivery_rules` (JSON). Trang có `<span id="root">` thì POST thật; không có thì
-`[DEMO]` lưu localStorage `yq_delivery_rules_v2`. Production phải chặn đăng nhập ở server, kiểm tra lại toàn
-bộ validate ở server và tự ghi nhật ký (`@delivery_rules_audit`), vì JS chỉ là lớp nhắc lỗi cho admin.
+Ô giờ và ô ngày dùng popup riêng trong trang (`#yqDrTimePop`, `#yqDrDatePop`), không cần thư viện. Ô giờ giữ `HH:MM`. Ô ngày (`data-yq-date`) hiện `dd/mm/yyyy` nhưng config vẫn lưu `yyyy-mm-dd`; PHP in `value` theo định dạng nào trong hai định dạng này cũng được, JS tự đổi khi tải trang.
+
+| File | Vai trò | Lên production |
+|---|---|---|
+| `admin/delivery-rules.html` | HTML tĩnh + giá trị mẫu, PHP in từ `@delivery_rules`. Dòng lặp có khuôn `<template id="yqDrTpl…">` | Đổi giá trị mẫu thành biến PHP, bỏ script demo |
+| `assets/css/parts/delivery-rules.css` | Phần riêng của admin, tiền tố `.yq-drule`. Cần nạp sau `checkout-v2.css` + `status.css` | Dùng nguyên |
+| `assets/js/modules/delivery-rules.js` | Đọc/ghi form, validate, Preview, sinh config. Không có store demo thì form POST thật | Dùng nguyên |
+| `assets/js/modules/delivery-rules-demo.js` | **Chỉ dùng cho demo**: lưu localStorage `yq_delivery_rules_v3` | Không deploy |
+| `backend-templates/delivery_rules.php` | Đọc / lưu `delivery_rules.json`, trả về biến cho template | Dùng nguyên |
+
+**Khi deploy `admin/delivery-rules.html`:**
+1. Chặn đăng nhập + quyền admin ở server (trang có `noindex` nhưng không tự bảo vệ).
+2. Xoá dòng `delivery-rules-demo.js` và nút `#yqDrReset` (`[DEMO]` trong HTML).
+3. In giá trị từ `delivery_rules.json` vào markup (`@foreach` có ghi trong comment), `@categories` vào `#yqDrCats`, nhật ký vào `#yqDrLog`, thông báo `@status` vào `.yq-status-zone`.
+4. Xử lý POST: `action=save_delivery_rules`, validate lại ở server, gọi `deliveryRulesSave($duongDanFileJson, $_POST['delivery_rules'])`, ghi nhật ký. Đặt file JSON ngoài thư mục web.
 
 ```js
 {
@@ -340,7 +348,7 @@ Khung giờ `<option>` ở checkout do PHP in, nên backend in từ cùng rule n
 **Category theo từng phương thức:** mỗi phương thức có danh sách `catRules` riêng (hiện đang là **dữ liệu mẫu**, team admin nhập lại). Mỗi dòng:
 có bán với phương thức này không, lead time, ngày bán, và tuỳ chọn product / số lượng. Category không có trong danh sách thì dùng rule chuẩn.
 
-**File config:** tab *Developer* tải xuống / nhập `delivery_rules.json`. File mẫu `backend-templates/delivery_rules.sample.json`. `backend-templates/delivery_rules.php` đọc file này, thay cho các khối `if` hardcode:
+**File config:** trang trượt *Developer* tải xuống / nhập `delivery_rules.json`. File mẫu `backend-templates/delivery_rules.sample.json`. `backend-templates/delivery_rules.php` đọc file này, thay cho các khối `if` hardcode:
 
 ```php
 require_once 'delivery_rules.php';
@@ -375,7 +383,7 @@ Van thay Lalamove thì rule van đi vào nhóm biến Lalamove. Hotel Van riêng
 
 **Advanced > Backend flags** giữ các flag cũ không thuộc lead / ngày / ẩn method: `flagCatXmax`, `flagFoods`, `flagBeverages`, `flagCartMoreQuanity2`… Không có lựa chọn `flagCatMinDate = 1` / `flagCatMaxDate = 1`: `new Date("1")` ra năm 2001 nên Lalamove hết ngày chọn.
 
-*Test order* mô phỏng theo `appv6`: lead dưới 24h chỉ xét khi chọn hôm nay; từ 24h đẩy ngày sớm nhất, thêm 1 ngày nếu đã qua giờ đóng (pickup: giờ đóng trừ 60 phút), và khung giờ phải sau `now + N*24h`.
+*Preview* mô phỏng theo `appv6`: lead dưới 24h chỉ xét khi chọn hôm nay; từ 24h đẩy ngày sớm nhất, thêm 1 ngày nếu đã qua giờ đóng (pickup: giờ đóng trừ 60 phút), và khung giờ phải sau `now + N*24h`.
 
 **Chưa có hiệu lực ở checkout:** giờ riêng theo thứ, ngày đặc biệt có giờ riêng, số ngày đặt trước, min order, điểm nhận, vùng và số đơn mỗi chuyến của van, rule điều kiện, category riêng của Hotel Van và Room Service.
 

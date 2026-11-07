@@ -15,14 +15,14 @@
      - buildPhp()    : biến backend theo backend-templates/select_payment_food.html:
                        $pickup_rule, $lalamove_rule, $dataDatelockJson + flag category theo từng phương thức
 
-   Khác production (đánh dấu [DEMO]): không có #root -> lưu localStorage thay vì POST form.
+   Dùng cho cả demo lẫn production. Bản demo nạp thêm delivery-rules-demo.js (YQ.deliveryRulesStore)
+   để lưu localStorage; không có file đó thì form POST thật lên server, giống checkout-v2-production.js.
    ========================================================================== */
 $(function () {
 
     var $form = $('#yqDrForm');
     if (!$form.length) return;
 
-    var STORE_KEY = 'yq_delivery_rules_v3';
     var METHODS = ['pickup', 'hotelvan', 'lalamove', 'roomservice'];
     var TABS = METHODS.concat('products');
     var NAMES = { pickup: 'Self-Collection', hotelvan: 'Hotel Van', lalamove: 'Lalamove', roomservice: 'Room Service', products: 'Advanced' };
@@ -56,6 +56,8 @@ $(function () {
                 out[f] = this.checked;
             } else if (this.type === 'radio') {
                 if (this.checked) out[f] = this.value;
+            } else if (this.hasAttribute('data-yq-date')) {
+                out[f] = dateIso(this.value);                // ô hiện dd/mm/yyyy, cấu hình vẫn lưu yyyy-mm-dd
             } else {
                 out[f] = $.trim(this.value);
             }
@@ -83,6 +85,7 @@ $(function () {
             if (this.hasAttribute('data-yq-multi')) this.checked = $.inArray(this.value, v) > -1;
             else if (this.type === 'checkbox') this.checked = !!v;
             else if (this.type === 'radio') this.checked = this.value === v;
+            else if (this.hasAttribute('data-yq-date')) this.value = dateShow(v);
             else this.value = v;
         });
         $scope.find('[data-yq-list]').each(function () {
@@ -90,7 +93,11 @@ $(function () {
             var rows = data[this.getAttribute('data-yq-list')];
             if (!rows) return;
             var $list = $(this).empty();
-            rows.forEach(function (row) { writeScope(cloneRow($list), row); });
+            rows.forEach(function (row) {
+                var $row = cloneRow($list);
+                writeScope($row, row);
+                $row.find('.yq-drule__catmore').prop('open', !(row.cats || row.products));   // khuôn mở sẵn cho dòng mới, dòng đã có ID thì gập lại
+            });
         });
     }
 
@@ -116,6 +123,20 @@ $(function () {
     }
     function pad(n) { return (n < 10 ? '0' : '') + n; }
     function isoDate(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+    /* Đổi chữ trong ô ngày sang yyyy-mm-dd. Nhận 8/12/2026, 08-12-2026, 08122026, 8/12 (năm nay), 2026-12-08. Sai trả về ''. */
+    function dateIso(text) {
+        var t = $.trim(text), m, y, mo, d;
+        if ((m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(t))) { y = +m[1]; mo = +m[2]; d = +m[3]; }
+        else if ((m = /^(\d{1,2})[\/.\-](\d{1,2})(?:[\/.\-](\d{4}))?$/.exec(t))) { d = +m[1]; mo = +m[2]; y = m[3] ? +m[3] : new Date().getFullYear(); }
+        else if ((m = /^(\d{2})(\d{2})(\d{4})$/.exec(t))) { d = +m[1]; mo = +m[2]; y = +m[3]; }
+        else return '';
+        var o = new Date(y, mo - 1, d);
+        return o.getFullYear() === y && o.getMonth() === mo - 1 && o.getDate() === d ? isoDate(o) : '';
+    }
+    function dateShow(iso) {
+        var v = dateIso(iso);
+        return v ? v.split('-').reverse().join('/') : '';
+    }
     function parseDate(iso) {
         var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
         return p ? new Date(+p[1], +p[2] - 1, +p[3]) : null;
@@ -628,7 +649,7 @@ $(function () {
             subtotal: $('#yqDrTSubtotal').val(), lines: lines,
             items: lines.reduce(function (n, l) { return n + (num(l.qty) || 0); }, 0),
             postal: $.trim($('#yqDrTPostal').val()), guest: $('#yqDrTGuest').val(),
-            date: $('#yqDrTDate').val(), time: $('#yqDrTTime').val()
+            date: dateIso($('#yqDrTDate').val()), time: $('#yqDrTTime').val()
         };
     }
 
@@ -650,17 +671,9 @@ $(function () {
        Vẽ lại trạng thái sau mỗi thay đổi
        --------------------------------------------------------------- */
     function summary(key, r) {
-        if (key === 'products') return 'Backend flags';
         var cats = r.catRules.length;
         var base = key === 'hotelvan' ? r.slots.length + ' trips a day' : r.open + ' to ' + r.close;
         return base + (cats ? ' · ' + cats + (cats === 1 ? ' category' : ' categories') : '');
-    }
-
-    function catSummary(c) {
-        if (!c.offered) return 'Not offered';
-        var lead = leadHours(c), text = lead ? lead + 'h ahead' : 'Standard lead time';
-        if (c.from || c.to) text += ' · ' + (c.from && c.to ? c.from + ' to ' + c.to : (c.from ? 'from ' + c.from : 'until ' + c.to));
-        return text;
     }
 
     function paintConditionals($scope) {
@@ -696,29 +709,54 @@ $(function () {
         $scope.find('[data-yq-list]').each(function () {
             $(this).toggleClass('is-empty', !$(this).children().length);
         });
-        /* Dòng category: tóm tắt thành một câu */
+        /* Dòng category: chữ Sold / Not sold + tóm tắt ID */
         $scope.find('.yq-drule__catrow').each(function () {
             var c = readScope($(this));
             $(this).toggleClass('is-off', !c.offered);
-            $(this).find('> summary .yq-drule__catname').text(c.name || 'New category');
-            $(this).find('> summary .yq-drule__catsum').text(catSummary(c));
+            $(this).find('[data-yq-soldtxt]').text(c.offered ? 'Sold' : 'Not sold');
+            var ids = c.cats ? 'IDs: ' + c.cats : (c.products ? 'Products only' : 'Add IDs');
+            if (c.cats && c.products) ids += ' · products';
+            if (c.minQty) ids += ' · from ' + c.minQty;
+            $(this).find('[data-yq-catids]').text(ids);
+        });
+        /* Lọc dòng category theo ô tìm */
+        $scope.find('[data-yq-panel]').each(function () {
+            var $f = $(this).find('[data-yq-catfind]');
+            if (!$f.length) return;
+            var q = $.trim($f.val()).toLowerCase(), shown = 0;
+            $(this).find('[data-yq-list="catRules"]').children().each(function () {
+                var c = readScope($(this));
+                var hit = !q || (c.name + ' ' + c.cats + ' ' + c.products).toLowerCase().indexOf(q) > -1;
+                this.hidden = !hit;
+                if (hit) shown++;
+            });
+            $(this).find('[data-yq-catnone]').prop('hidden', !q || shown > 0);
+        });
+        METHODS.forEach(function (k) {
+            panel(k).toggleClass('is-off', !panel(k).find('[data-yq-f="enabled"]').prop('checked'));
         });
     }
 
-    /* Lỗi hiện to ở đầu panel và mở sẵn dòng bị lỗi; ghi chú thu gọn thành 1 dòng */
+    /* Lỗi: tóm tắt đầu panel (bấm để tới ô lỗi) + báo ngay dưới ô; ghi chú thu gọn thành 1 dòng */
     function paintIssues(issues) {
-        var tpl = document.getElementById('yqDrTplIssue');
-        $form.find('.is-invalid').removeClass('is-invalid');
+        var errTpl = document.getElementById('yqDrTplIssue'), noteTpl = document.getElementById('yqDrTplNote');
+        $(document).find('.is-invalid').removeClass('is-invalid');
         $form.find('.yq-error').removeClass('is-on').text('');
         $form.find('[data-yq-issues], [data-yq-noteslist]').empty();
         issues.forEach(function (x) {
-            var isErr = x.lvl === 'err', $p = panel(x.key);
-            var $li = $(tpl.content.firstElementChild.cloneNode(true)).text(x.msg);
-            if (isErr) $li.addClass('is-err').appendTo($p.find('[data-yq-issues]'));
-            else $li.removeClass('yq-drule__issue').appendTo($p.find('[data-yq-noteslist]'));
-            if (isErr && x.$el && x.$el.length) {
-                x.$el.addClass('is-invalid').parents('details').prop('open', true);
+            var $p = panel(x.key);
+            if (x.lvl !== 'err') {
+                $(noteTpl.content.firstElementChild.cloneNode(true)).text(x.msg).appendTo($p.find('[data-yq-noteslist]'));
+                return;
             }
+            var $li = $(errTpl.content.firstElementChild.cloneNode(true));
+            $li.find('button').text(x.msg).data('yqEl', x.$el);
+            $li.appendTo($p.find('[data-yq-issues]'));
+            if (!x.$el || !x.$el.length) return;
+            x.$el.addClass('is-invalid').parents('details').prop('open', true);
+            var $err = x.$el.closest('.yq-drule__field').find('.yq-error');
+            if (!$err.length) $err = x.$el.closest('[data-yq-scope]').children('.yq-error');
+            if ($err.length && !$err.hasClass('is-on')) $err.text(x.msg).addClass('is-on');
         });
         TABS.forEach(function (k) {
             var $p = panel(k), n = $p.find('[data-yq-noteslist]').children().length;
@@ -731,8 +769,7 @@ $(function () {
         TABS.forEach(function (key) {
             var r = s[key], errs = issues.filter(function (x) { return x.key === key && x.lvl === 'err'; }).length;
             if (key === 'products') {
-                $('[data-yq-method="products"] .yq-drule__pill').text(errs ? errs + (errs > 1 ? ' errors' : ' error') : 'Dev').toggleClass('has-error', !!errs);
-                $('[data-yq-method="products"] .yq-drule__msum').text(summary(key, r));
+                $('#yqDrDevErr').text(errs ? errs + (errs > 1 ? ' errors' : ' error') : '').prop('hidden', !errs);
                 return;
             }
             var $m = $('[data-yq-method="' + key + '"]'), paused = pausedUntil(r);
@@ -748,13 +785,14 @@ $(function () {
         });
     }
 
-    var saved = null, log = [];
+    var saved = null, log = [], store = YQ.deliveryRulesStore || null;
 
     function paintSave(dirty, issues) {
         var errs = issues.filter(function (x) { return x.lvl === 'err'; }).length;
         var $state = $('#yqDrState');
         $state.toggleClass('is-dirty', dirty).toggleClass('has-error', dirty && errs > 0);
         $state.text(!dirty ? 'All changes saved' : (errs ? errs + (errs > 1 ? ' errors to fix' : ' error to fix') : 'Unsaved changes'));
+        $('#yqDrSavebar').toggleClass('is-on', dirty);
         $('#yqDrSave, #yqDrDiscard').prop('disabled', !dirty);
     }
 
@@ -795,19 +833,32 @@ $(function () {
         $('#yqDrLog').prepend($li);
     }
 
-    function storeDemo() {
-        try { localStorage.setItem(STORE_KEY, JSON.stringify({ rules: JSON.parse(saved), log: log })); } catch (e) {}
+    /* Trang trượt: cùng class + hành vi với .slide--page của checkout */
+    var spageOpener = null;
+    function openSpage(name, opener) {
+        var $page = $('.slide--page[data-spage="' + name + '"]');
+        spageOpener = opener || null;
+        $page.addClass('active');
+        $('body').addClass('spage-open');
+        $page.find('.close--spage').trigger('focus');
+    }
+    function closeSpage() {
+        $('.slide--page').removeClass('active');
+        $('body').removeClass('spage-open');
+        if (spageOpener) spageOpener.focus();
+        spageOpener = null;
     }
 
+    /* Mở đúng chỗ chứa rule: 4 phương thức là thẻ chọn, Backend flags nằm trong trang Developer */
     function goTo(key) {
+        if (key === 'products') { openSpage('developer', document.getElementById('yqDrDevBtn')); return; }
+        closeSpage();
         $('[data-yq-method]').each(function () {
             var on = this.getAttribute('data-yq-method') === key;
-            $(this).toggleClass('is-active', on).attr('aria-selected', on ? 'true' : 'false').attr('tabindex', on ? '0' : '-1');
+            $(this).toggleClass('active', on).find('input').prop('checked', on);
         });
-        TABS.forEach(function (k) { panel(k).prop('hidden', k !== key); });
-        /* Mobile: danh sách method cuộn ngang -> kéo tab đang chọn vào khung nhìn, không cuộn trang */
-        var nav = document.getElementById('yqDrNav'), tab = $('[data-yq-method="' + key + '"]')[0];
-        if (nav.scrollWidth > nav.clientWidth) nav.scrollLeft = tab.offsetLeft - nav.offsetLeft - 16;
+        METHODS.forEach(function (k) { panel(k).prop('hidden', k !== key); });
+        try { history.replaceState(null, '', '?method=' + key); } catch (e) {}
     }
 
     $form.on('submit', function (e) {
@@ -817,22 +868,20 @@ $(function () {
             goTo(errs[0].key);
             if (errs[0].$el && errs[0].$el.length) errs[0].$el.trigger('focus');
             else panel(errs[0].key).find('[data-yq-issues]')[0].scrollIntoView({ block: 'center' });
-            YQ.toast('Fix the highlighted rules before saving.');
+            YQ.toast('Fix the errors shown before saving.');
             return;
         }
         $('#yqDrJson').val(JSON.stringify(res.state));
-        allowLeave = true;
-        if ($('#root').length) return;                     // production: POST form, server trả lại trang
+        if (!store) { allowLeave = true; return; }         // production: form POST thật, server trả lại trang
 
-        /* [DEMO] không có backend: lưu localStorage + ghi nhật ký tại chỗ */
+        /* [DEMO] delivery-rules-demo.js: lưu localStorage + ghi nhật ký tại chỗ */
         e.preventDefault();
-        allowLeave = false;
         var changes = diff(JSON.parse(saved), res.state);
         var entry = { text: changes.join(' · ') || 'No field changes', when: new Date().toLocaleString('en-SG'), who: 'You' };
         saved = JSON.stringify(res.state);
         log.push(entry);
         addLogRow(entry);
-        storeDemo();
+        store.save(res.state, log);
         refresh();
         YQ.toast('Delivery rules saved.');
     });
@@ -853,8 +902,17 @@ $(function () {
     /* ---------------------------------------------------------------
        Tương tác trong form
        --------------------------------------------------------------- */
-    $form.on('input change', refresh);
-    $('#yqDrTest').on('input change', function () { paintResults(readAll()); });
+    $form.on('input change', function (e) {
+        if ($(e.target).closest('#yqDrTest').length) paintResults(readAll());
+        else refresh();
+    });
+    /* Enter trong ô nhập không tự lưu, chỉ nút Save mới lưu */
+    $form.on('keydown', 'input', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+    /* Bấm lỗi trong tóm tắt -> tới ô lỗi */
+    $form.on('click', '.yq-drule__issue button', function () {
+        var $el = $(this).data('yqEl');
+        if ($el && $el.length) $el.trigger('focus');
+    });
     $('#yqDrTAddLine').on('click', function () {
         var tpl = document.getElementById('yqDrTplLine');
         $(tpl.content.firstElementChild.cloneNode(true)).appendTo('#yqDrTLines').find('input').first().trigger('focus');
@@ -870,9 +928,9 @@ $(function () {
         var $scope = $(this).closest('[data-yq-scope]');
         var $list = $scope.find('[data-yq-list="' + name + '"]').filter(function () { return ownedBy(this, $scope[0]); });
         var $row = cloneRow($list);
-        if ($row.is('details')) $row.prop('open', true);
+        $(this).closest('[data-yq-panel]').find('[data-yq-catfind]').val('');
         refresh();
-        $row.find('input, select').first().trigger('focus');
+        $row.find('input:not([type=checkbox]), select').first().trigger('focus');
     });
     $form.on('click', '[data-yq-remove]', function () {
         $(this).closest('[data-yq-scope]').remove();
@@ -892,6 +950,8 @@ $(function () {
         this.value = '';
         if (!from) return;
         var rows = readScope(panel(from)).catRules;
+        var current = readScope($p).catRules.length;
+        if (current && !window.confirm('Replace ' + current + (current === 1 ? ' category' : ' categories') + ' with the list from ' + NAMES[from] + '?')) return;
         writeScope($p, { catRules: rows });
         refresh();
         YQ.toast(rows.length + (rows.length === 1 ? ' category' : ' categories') + ' copied from ' + NAMES[from] + '.');
@@ -909,23 +969,218 @@ $(function () {
         refresh();
     });
 
-    /* Tab method + tab cột phải: phím mũi tên chuyển tab */
-    $('[data-yq-method]').on('click', function () { goTo(this.getAttribute('data-yq-method')); });
-    $('#yqDrNav').on('keydown', function (e) {
-        var i = TABS.indexOf($(e.target).attr('data-yq-method'));
-        if (i < 0 || (e.key !== 'ArrowDown' && e.key !== 'ArrowUp')) return;
-        e.preventDefault();
-        var next = TABS[(i + (e.key === 'ArrowDown' ? 1 : TABS.length - 1)) % TABS.length];
-        goTo(next);
-        $('[data-yq-method="' + next + '"]').trigger('focus');
-    });
-    $('[data-yq-side]').on('click', function () {
-        var id = this.getAttribute('data-yq-side');
-        $('[data-yq-side]').each(function () {
-            var on = this.getAttribute('data-yq-side') === id;
-            $(this).toggleClass('is-active', on).attr('aria-selected', on ? 'true' : 'false');
+    /* ---------------------------------------------------------------
+       Popup chọn giờ + ngày: dùng chung một khung, thay popup mặc định của trình duyệt.
+       Mọi ô vẫn gõ tay được; gõ sai thì trả lại giá trị cũ.
+       Ô giờ : giá trị HH:MM.
+         data-yq-time="hour": chỉ nhận giờ tròn, chọn giờ xong đóng luôn.
+         data-yq-time="min" : hiện thêm hàng phút, chọn phút xong mới đóng.
+         data-yq-clear      : ô không bắt buộc, có nút xoá.
+       Ô ngày: data-yq-date, hiện dd/mm/yyyy, readScope đổi sang yyyy-mm-dd.
+       --------------------------------------------------------------- */
+    var PICK_FIELDS = '[data-yq-time], [data-yq-date]', PICK_AREA = '#yqDrTimePop, #yqDrDatePop, ' + PICK_FIELDS;
+    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var $timePop = $('#yqDrTimePop'), $datePop = $('#yqDrDatePop');
+    var $pick = null, $pickPop = null, pickKeepClosed = false, pickMonth = null;
+
+    function parseTime(text) {
+        var t = $.trim(text), m = /^(\d{1,2})(?::?(\d{2}))?$/.exec(t);
+        if (t.indexOf(':') > -1 && !m) m = /^(\d{1,2}):(\d{1,2})$/.exec(t);
+        if (!m) return null;
+        var h = parseInt(m[1], 10), min = parseInt(m[2] || '0', 10);
+        return h < 24 && min < 60 ? pad(h) + ':' + pad(min) : null;
+    }
+    function isDateField($input) { return $input.is('[data-yq-date]'); }
+    function pickTitle($input) {
+        return $.trim($input.closest('label').find('.yq-drule__lbl').first().text()) || $input.attr('aria-label') || 'Time';
+    }
+
+    function paintTimePop() {
+        var parts = ($pick.val() || '').split(':');
+        $timePop.find('[data-yq-hour]').each(function () {
+            var on = this.getAttribute('data-yq-hour') === parts[0];
+            $(this).toggleClass('is-on', on).attr('aria-pressed', on ? 'true' : 'false');
         });
-        $('[data-yq-sidepane]').each(function () { this.hidden = this.getAttribute('data-yq-sidepane') !== id; });
+        $timePop.find('[data-yq-min]').each(function () {
+            var on = this.getAttribute('data-yq-min') === parts[1];
+            $(this).toggleClass('is-on', on).attr('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+    /* Ô "đến ngày": không chọn được ngày trước ô "từ ngày" cùng dòng */
+    function pickMinDate() {
+        if ($pick.attr('data-yq-f') !== 'to') return '';
+        return dateIso($pick.closest('[data-yq-scope]').find('[data-yq-f="from"]').first().val());
+    }
+    function paintDatePop() {
+        var value = dateIso($pick.val()), today = isoDate(new Date()), min = pickMinDate();
+        var month = pickMonth.getMonth(), first = new Date(pickMonth.getFullYear(), month, 1);
+        var offset = (first.getDay() + 6) % 7;                 // tuần bắt đầu từ thứ Hai
+        $datePop.find('[data-yq-datettl]').text(MONTHS[month] + ' ' + pickMonth.getFullYear());
+        $datePop.find('[data-yq-day]').each(function (i) {
+            var d = new Date(first.getFullYear(), month, 1 - offset + i), iso = isoDate(d);
+            this.textContent = d.getDate();
+            this.setAttribute('data-yq-day', iso);
+            this.setAttribute('aria-label', d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear());
+            this.setAttribute('aria-pressed', iso === value ? 'true' : 'false');
+            this.disabled = !!min && iso < min;
+            $(this).toggleClass('is-on', iso === value).toggleClass('is-today', iso === today).toggleClass('is-out', d.getMonth() !== month);
+        });
+        $datePop.find('[data-yq-datetoday]').prop('disabled', !!min && today < min);
+    }
+    function paintPick() {
+        if (!$pick) return;
+        if (isDateField($pick)) {
+            var iso = dateIso($pick.val());
+            if (iso) { var p = iso.split('-'); pickMonth = new Date(+p[0], +p[1] - 1, 1); }
+            paintDatePop();
+        } else paintTimePop();
+    }
+    function placePick() {
+        var r = $pick[0].getBoundingClientRect(), pop = $pickPop[0];
+        var below = window.innerHeight - r.bottom - 8, h = pop.offsetHeight, w = pop.offsetWidth;
+        var top = below >= h + 64 || r.top < h + 8 ? r.bottom + 4 : r.top - h - 4;
+        pop.style.left = Math.max(8, Math.min(r.left, document.documentElement.clientWidth - w - 8)) + 'px';
+        pop.style.top = Math.max(8, Math.min(top, window.innerHeight - h - 8)) + 'px';
+    }
+    function openPick($input) {
+        if ($pick && $pick[0] === $input[0]) return;
+        closePick();
+        $pick = $input;
+        $input.data('yqBefore', $input.val()).attr('aria-haspopup', 'dialog');
+        if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) $input.attr('inputmode', 'none');   // cảm ứng: chỉ dùng popup, không bật bàn phím
+        var canClear = $input.is('[data-yq-clear]');
+        if (isDateField($input)) {
+            $pickPop = $datePop;
+            var iso = dateIso($input.val()) || pickMinDate() || isoDate(new Date()), p = iso.split('-');
+            pickMonth = new Date(+p[0], +p[1] - 1, 1);
+            $datePop.find('[data-yq-dateclear]').prop('hidden', !canClear);
+        } else {
+            $pickPop = $timePop;
+            var hourOnly = $input.attr('data-yq-time') === 'hour';
+            $timePop.find('[data-yq-popttl]').text(pickTitle($input));
+            $timePop.find('[data-yq-hourlbl]').prop('hidden', hourOnly);
+            $timePop.find('[data-yq-minsrow], [data-yq-timedone]').prop('hidden', hourOnly);
+            $timePop.find('[data-yq-timeclear]').prop('hidden', !canClear);
+            $timePop.find('[data-yq-popfoot]').prop('hidden', hourOnly && !canClear);
+        }
+        $pickPop.prop('hidden', false);
+        $input.attr('aria-expanded', 'true');
+        paintPick();
+        placePick();
+    }
+    function closePick() {
+        if (!$pick) return;
+        $pickPop.prop('hidden', true);
+        $pick.attr('aria-expanded', 'false');
+        $pick = $pickPop = null;
+    }
+    /* Đóng popup + trả focus về ô nhập, không để sự kiện focus mở lại popup */
+    function closePickToInput() {
+        var $i = $pick;
+        closePick();
+        $i.data('yqBefore', $i.val());
+        pickKeepClosed = true;
+        $i.trigger('focus');
+        pickKeepClosed = false;
+    }
+    function setPick(value) {
+        $pick.val(value).trigger('input');
+    }
+    function normalize(input) {
+        return input.hasAttribute('data-yq-date') ? dateShow(input.value) : parseTime(input.value);
+    }
+
+    /* Ô nhập */
+    $(document).on('focusin click', PICK_FIELDS, function () { if (!pickKeepClosed) openPick($(this)); });
+    $(document).on('input', PICK_FIELDS, function () { if ($pick && $pick[0] === this) paintPick(); });
+    $(document).on('focusout', PICK_FIELDS, function () {
+        var v = $.trim(this.value);
+        if (!v) return;
+        var ok = normalize(this);
+        if (ok) { if (ok !== this.value) $(this).val(ok).trigger('input'); return; }
+        $(this).val($(this).data('yqBefore') || '').trigger('input');   // gõ sai -> trả lại giá trị cũ
+    });
+    $(document).on('keydown', PICK_FIELDS, function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();                             // Enter trong ô không gửi form
+            var v = normalize(this);
+            if (v) $(this).val(v).trigger('input');
+            if (v || !$.trim(this.value)) $(this).data('yqBefore', this.value);
+            closePick();
+        } else if (e.key === 'ArrowDown' && $pick) {
+            e.preventDefault();
+            var $on = $pickPop.find('button.is-on').first();
+            if (!$on.length) $on = $pickPop.find('button.is-today:not(.is-out)').first();
+            ($on.length ? $on : $pickPop.find('[data-yq-hour], [data-yq-day]:not(.is-out):not(:disabled)').first()).trigger('focus');
+        }
+    });
+
+    /* mousedown giữ focus ở ô nhập, nên bấm trong popup không làm ô bị blur */
+    $timePop.add($datePop).on('mousedown', function (e) { e.preventDefault(); });
+
+    /* Popup giờ */
+    $timePop.on('click', '[data-yq-hour]', function () {
+        var parts = ($pick.val() || '').split(':');
+        var hourOnly = $pick.attr('data-yq-time') === 'hour';
+        setPick(this.getAttribute('data-yq-hour') + ':' + (!hourOnly && parts[1] ? parts[1] : '00'));
+        if (hourOnly) closePickToInput();
+    });
+    $timePop.on('click', '[data-yq-min]', function () {
+        var hour = ($pick.val() || '').split(':')[0];
+        if (!/^\d{2}$/.test(hour)) return;                 // chưa chọn giờ
+        setPick(hour + ':' + this.getAttribute('data-yq-min'));
+        closePickToInput();
+    });
+    $timePop.on('click', '[data-yq-timeclear]', function () { setPick(''); closePickToInput(); });
+    $timePop.on('click', '[data-yq-timedone]', closePickToInput);
+    $timePop.on('keydown', '[data-yq-hour]', function (e) {   // mũi tên trong bảng giờ: 6 cột
+        var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -6, ArrowDown: 6 }[e.key];
+        if (!step) return;
+        e.preventDefault();
+        var $all = $timePop.find('[data-yq-hour]'), next = $all.index(this) + step;
+        if (next >= 0 && next < $all.length) $all.eq(next).trigger('focus');
+    });
+
+    /* Popup ngày */
+    $datePop.on('click', '[data-yq-day]', function () {
+        setPick(dateShow(this.getAttribute('data-yq-day')));
+        closePickToInput();
+    });
+    $datePop.on('click', '[data-yq-datenav]', function () {
+        pickMonth = new Date(pickMonth.getFullYear(), pickMonth.getMonth() + (+this.getAttribute('data-yq-datenav')), 1);
+        paintDatePop();
+    });
+    $datePop.on('click', '[data-yq-datetoday]', function () { setPick(dateShow(isoDate(new Date()))); closePickToInput(); });
+    $datePop.on('click', '[data-yq-dateclear]', function () { setPick(''); closePickToInput(); });
+    $datePop.on('keydown', '[data-yq-day]', function (e) {   // mũi tên: ngày/tuần, PageUp/PageDown: tháng
+        var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key], months = { PageUp: -1, PageDown: 1 }[e.key];
+        if (!step && !months) return;
+        e.preventDefault();
+        var p = this.getAttribute('data-yq-day').split('-');
+        var d = months ? new Date(+p[0], +p[1] - 1 + months, 1) : new Date(+p[0], +p[1] - 1, +p[2] + step);
+        pickMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+        paintDatePop();
+        $datePop.find('[data-yq-day="' + isoDate(d) + '"]:not(:disabled)').trigger('focus');
+    });
+
+    /* Đóng khi bấm hoặc focus ra ngoài, Esc; popup đi theo ô nhập khi cuộn (kể cả cuộn trong khung Preview) */
+    $(document).on('mousedown focusin', function (e) {
+        if ($pick && !$(e.target).closest(PICK_AREA).length) closePick();
+    });
+    $(document).on('keydown', function (e) {
+        if (e.key !== 'Escape' || !$pick) return;
+        closePickToInput();
+        e.stopImmediatePropagation();
+    });
+    window.addEventListener('scroll', function () { if ($pick) placePick(); }, true);
+    $(window).on('resize', function () { if ($pick) placePick(); });
+
+    /* Chọn phương thức + trang trượt */
+    $('[data-yq-method] input').on('change', function () { goTo(this.value); });
+    $('.open__slide__page').on('click', function () { openSpage($(this).data('spage'), this); });
+    $('.close--spage').on('click', closeSpage);
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && $('.slide--page.active').length) closeSpage();
     });
 
     $('[data-yq-copy]').on('click', function () {
@@ -937,7 +1192,7 @@ $(function () {
     /* File config: delivery_rules.json, cùng cấu trúc field delivery_rules, backend-templates/delivery_rules.php đọc file này */
     $('#yqDrExport').on('click', function () {
         var res = refresh(), errs = res.issues.filter(function (x) { return x.lvl === 'err'; });
-        if (errs.length) { goTo(errs[0].key); YQ.toast('Fix the highlighted rules before downloading.'); return; }
+        if (errs.length) { goTo(errs[0].key); YQ.toast('Fix the errors shown before downloading.'); return; }
         var url = URL.createObjectURL(new Blob([JSON.stringify(res.state, null, 2)], { type: 'application/json' }));
         var link = document.createElement('a');
         link.href = url;
@@ -964,7 +1219,7 @@ $(function () {
 
     /* [DEMO] xoá bản lưu trong trình duyệt, quay về dữ liệu mẫu trong HTML */
     $('#yqDrReset').on('click', function () {
-        try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+        if (store) store.clear();
         allowLeave = true;
         window.location.reload();
     });
@@ -974,23 +1229,24 @@ $(function () {
        --------------------------------------------------------------- */
     var tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    $('#yqDrTDate').val(isoDate(tomorrow));          // ngày mẫu trong HTML có thể đã qua
+    $form.find('[data-yq-date]').each(function () { if (this.value) this.value = dateShow(this.value); });   // PHP có thể in yyyy-mm-dd
+    $('#yqDrTDate').val(dateShow(isoDate(tomorrow)));          // ngày mẫu trong HTML có thể đã qua
 
     saved = JSON.stringify(readAll());
-    if (!$('#root').length) {                        // [DEMO] nạp bản đã lưu trong trình duyệt
-        try {
-            var stored = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
-            if (stored && stored.rules) {
+    if (store) {                                     // [DEMO] nạp bản đã lưu trong trình duyệt
+        var stored = store.load();
+        if (stored && stored.rules) {
+            try {
                 writeAll(stored.rules);
                 saved = JSON.stringify(readAll());
                 log = stored.log || [];
                 log.forEach(addLogRow);
-            }
-        } catch (e) {}
+            } catch (e) {}
+        }
     }
 
     var first = YQ.param('method');
-    goTo($.inArray(first, TABS) > -1 ? first : 'pickup');
+    goTo($.inArray(first, METHODS) > -1 ? first : 'pickup');
     refresh();
 
     /* Phục vụ nối checkout sau này + kiểm thử */
