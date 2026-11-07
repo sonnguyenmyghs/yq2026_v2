@@ -76,6 +76,10 @@ a:hover{ color: var(--yq-gold-dark); }
 
 img{ max-width: 100%; display: block; }
 
+/* Bootstrap reboot bật :root{scroll-behavior:smooth}: khi load/reload trình duyệt khôi phục chỗ cuộn
+   thành hiệu ứng trôi từ trên xuống, và chồng lên $('html,body').animate. Cuộn mượt đã do JS lo. */
+:root{ scroll-behavior: auto; }
+
 ::selection{ background: var(--yq-gold-soft); color: var(--yq-ink); }
 
 :focus-visible{ outline: 2px solid var(--yq-gold); outline-offset: 3px; border-radius: 4px; }
