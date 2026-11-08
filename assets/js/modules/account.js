@@ -26,8 +26,8 @@
      - Xoá file này thì mất đúng popup account, phần còn lại của site vẫn chạy.
 
    Log in: form #yqLoginForm POST thẳng lên server (email, password, remember), JS
-   chỉ chặn khi email thiếu @ hoặc mật khẩu trống. Register / social vẫn là demo —
-   thay 2 hàm trong phần "6. Chỗ nối API" bằng lệnh gọi thật khi có server.
+   chỉ chặn khi email thiếu @ hoặc mật khẩu trống. Nút social là link thường (không
+   có JS). Register vẫn là demo — thay hàm trong phần "6. Chỗ nối API" khi có server.
    ========================================================================== */
 (function ($) {
   'use strict';
@@ -133,11 +133,6 @@
      3. Popup Log in / Register
      ====================================================================== */
   var authModal = null;
-
-  /** Tên hiển thị của nút social, lấy từ data-yq-label trong HTML. */
-  function socialLabel(id) {
-    return $('[data-yq-social="' + id + '"]').attr('data-yq-label') || id;
-  }
 
   function buildAuth() {
     if (authModal) return true;
@@ -337,19 +332,11 @@
   });
 
   /* ======================================================================
-     6. Chỗ nối API — thay 2 hàm này bằng lệnh gọi backend thật
-     (Log in không qua đây: form #yqLoginForm POST thẳng lên server)
+     6. Chỗ nối API — thay hàm này bằng lệnh gọi backend thật
+     (Log in + social không qua đây: form #yqLoginForm POST thẳng lên server,
+     nút social là link <a href> tới trang OAuth do server gắn)
      ====================================================================== */
   function apiRegister(data) { return YQ.auth.signIn(data); }
-  function apiSocial(id) {
-    var prev = YQ.auth.user || {};
-    return YQ.auth.signIn({
-      email: prev.email || (id + '@example.com'),
-      first: prev.first || socialLabel(id),
-      last:  prev.last  || '',
-      promo: !!prev.promo
-    });
-  }
 
   /* ======================================================================
      7. Sự kiện
@@ -368,14 +355,6 @@
       $in.attr('type', show ? 'text' : 'password');
       $btn.toggleClass('is-on', show)               // CSS đổi icon mắt / mắt gạch
           .attr('aria-label', show ? 'Hide password' : 'Show password');
-    })
-
-    /* --- popup: social --- */
-    .on('click', '#yqAuthModal [data-yq-social]', function () {
-      var id = $(this).attr('data-yq-social');
-      apiSocial(id);
-      closeAuth();
-      YQ.toast('Signed in with ' + socialLabel(id));
     })
 
     /* --- popup: Log in ---

@@ -441,9 +441,9 @@ production, nơi template `portal_login` in cả nút avatar lẫn modal vào ch
 có một đoạn CSS riêng cho trường hợp này: trong lúc modal mở thì tắt filter/transform, nâng
 header lên trên, và để modal tự vẽ lớp nền mờ. Khối gồm nút social, 2 tab và
 3 form Log in / Register / quên mật khẩu. JS chỉ chuyển pane, kiểm tra form, hiện/ẩn mật
-khẩu. Thêm/bớt nút social: sửa `<button data-yq-social="id" data-yq-label="Tên">` trong
-khối này ở **mọi** trang (`id` phải có trong `YQ.brandIcon`, `data-yq-label` dùng cho
-toast "Signed in with …").
+khẩu. Nút social là link thường `<a class="yq-auth__soc" href="#">` (không có JS):
+production thay `href="#"` bằng link OAuth của từng mạng. Thêm/bớt nút thì sửa khối này
+ở **mọi** trang (icon SVG lấy từ `YQ.brandIcon` trong `data.js`).
 
 Menu của panel "My Functions" (`MENU`) có sẵn mặc định ngay đầu `account.js`. Muốn đổi
 mà không sửa module thì khai báo `YQ.memberMenu` trong `data.js` — có thì module dùng thay
@@ -584,9 +584,9 @@ trạng thái đăng nhập vào header.
 > `terms`. Radio/checkbox dùng chung class `.yq-auth__check`, nhóm xếp ngang bằng
 > `.yq-auth__opts`. JS validate các ô có dấu `*`.
 >
-> Register và social login **vẫn là demo**: localStorage (`yq_user_v1`) chỉ giữ email,
-> tên và tuỳ chọn nhận khuyến mãi, mật khẩu không lưu ở đâu cả. Phần `6. Chỗ nối API`
-> trong `account.js` là 2 hàm `apiRegister` / `apiSocial`, thay bằng lệnh gọi server thật.
+> Register **vẫn là demo**: localStorage (`yq_user_v1`) chỉ giữ email, tên và tuỳ chọn
+> nhận khuyến mãi, mật khẩu không lưu ở đâu cả. Phần `6. Chỗ nối API` trong `account.js`
+> là hàm `apiRegister`, thay bằng lệnh gọi server thật.
 
 **Logo** — lockup dựng bằng HTML/CSS (`<a class="yq-logo">…</a>`), viết thẳng ở 3 chỗ trong
 mỗi trang: header, menu mobile (`.yq-logo--sm`) và footer (`.yq-logo--light .yq-logo--footer`).

@@ -66,7 +66,7 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
   width: 54px; height: 54px; border-radius: 50%; flex: none;
   display: inline-flex; align-items: center; justify-content: center;
   border: 1px solid var(--yq-line); background: var(--yq-paper); color: var(--yq-ink);
-  cursor: pointer;
+  cursor: pointer; text-decoration: none;   /* <a>: bỏ gạch chân của link */
   transition: transform .25s var(--yq-ease), background .25s var(--yq-ease),
               border-color .25s var(--yq-ease), color .25s var(--yq-ease),
               box-shadow .25s var(--yq-ease);
