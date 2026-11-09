@@ -1,0 +1,50 @@
+/* =====================================================================
+   checkout-voucher.css — phần riêng của checkout-voucher.html
+   Nạp SAU checkout-v2.css (dùng lại .sec--payment, .pay--part, .form-control,
+   .checkbox--animated, .summary__list, .cv2-hero, .cv2-done).
+   Tiền tố .cvv-
+   ===================================================================== */
+
+.cvv-hint{ font-size: 13.5px; color: var(--yq-body); margin: -6px 0 14px; }
+
+/* Chọn "For myself" / "Send as a gift" */
+.cvv-for{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cvv-for__opt{
+  position: relative; display: flex; align-items: center; gap: 12px; margin: 0;
+  padding: 14px 16px; border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm);
+  background: var(--yq-paper); color: var(--yq-ink); cursor: pointer;
+  transition: border-color .22s var(--yq-ease), box-shadow .22s var(--yq-ease), background .22s var(--yq-ease);
+}
+.cvv-for__opt:hover{ border-color: var(--yq-ink); }
+.cvv-for__opt input{ position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.cvv-for__opt:has(input:checked){ border-color: var(--yq-ink); box-shadow: 0 0 0 1px var(--yq-ink); background: var(--yq-cream-2); }
+.cvv-for__opt:has(input:focus-visible){ outline: 2px solid var(--yq-gold); outline-offset: 2px; }
+.cvv-for__ico{
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--yq-gold-soft); color: var(--yq-gold-dark);
+}
+.cvv-for__txt{ display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
+.cvv-for__txt b{ font-size: 14px; font-weight: 600; }
+.cvv-for__txt small{ font-size: 12px; color: var(--yq-muted); }
+
+/* Form người nhận */
+.cvv-receive{ margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--yq-line-soft); }
+.cvv-receive textarea.form-control{ min-height: 92px; resize: vertical; }
+.cvv-count{ display: block; text-align: right; font-size: 11.5px; color: var(--yq-muted); margin-top: 4px; }
+
+/* Promo trong cột Order Summary */
+.cvv-promo{ margin: 4px 0 14px; }
+.cvv-promo #warning-promo{ margin-top: 6px; }
+
+/* Lợi ích voucher dưới nút Pay */
+.cvv-perks{ list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; font-size: 13px; color: var(--yq-body); }
+.cvv-perks li{ display: flex; align-items: center; gap: 8px; }
+.cvv-perks svg{ flex: none; color: var(--yq-gold-dark); }
+
+.sec--payment textarea.form-control.error,
+.sec--payment textarea.form-control.null{ border-color: #C0564C; }
+
+@media (max-width: 575.98px){
+  .cvv-for{ grid-template-columns: 1fr; }
+}

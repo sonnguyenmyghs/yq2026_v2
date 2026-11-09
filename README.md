@@ -36,6 +36,9 @@ python3 -m http.server 8000
 ├── checkout.html         Checkout 4 bước: Information → Shipping → Payment → Review
 ├── checkout-v2.html      Checkout v2 một màn: banner ảnh, form + Self-Collection / Delivery
 │                         (chọn địa chỉ trên bản đồ, báo giá xe), Order Summary cột phải
+├── checkout-voucher-production.html  Bản deploy của checkout-voucher (partial, biến PHP thật)
+├── checkout-voucher.html Checkout cho sản phẩm loại voucher: thông tin khách, For myself / Send as a gift,
+│                         điều khoản; không có Shipping; promo + Pay Now ở Order Summary
 ├── faq.html              FAQs (accordion theo nhóm: ordering, self-collection, delivery…)
 ├── returns.html          Returns Policy
 ├── terms.html            Terms & Conditions (+ Self-Collection, Delivery)
@@ -293,6 +296,35 @@ Hành vi: ban đầu 2 ô lớn Self-Collection / Delivery (chưa chọn sẵn);
 The Shop / Drive-Through (chọn Drive-Through hiện ô biển số). Delivery: địa chỉ qua trang trượt
 **My Location** (`.slide--page[data-spage=mylocation]`), sau Okay mới hiện ngày/giờ
 (`__arrayMapTimeSlotLalamove`) + bảng xe, unit number + postal code 6 số bắt buộc.
+
+### Checkout voucher (`checkout-voucher.html`)
+
+Dùng khi giỏ **chỉ có sản phẩm loại voucher** (không giao/nhận hàng). Thay cho template cũ
+`old/select_payment.html`, dựng lại theo giao diện `checkout-v2.html` (dùng chung `checkout-v2.css`).
+Backend chọn template này thay vì `select_payment_food.html` khi mọi item trong giỏ là voucher.
+
+Bố cục: `1. Your Details` (email, xác nhận email, tên, quốc gia, điện thoại — không có ngày sinh) ·
+`2. Who is it for?` (For myself / Send as a gift → hiện `name_receive`, `email_receive`, `note_receive`) ·
+`3. Confirm` (`agree`, `register[subscribed]`) · cột phải Order Summary + ô promo + Pay Now.
+
+Giữ nguyên `name` / id của template cũ: `register[...]`, `member[...]`, `name_receive`, `email_receive`,
+`note_receive`, `agree`, hidden `promotion_code_yq` (`#input-hidden-promo-code`), `action=payment`,
+`pay_with=checkout`, `#input-promo-code`, `#btn-check-promocode`, `#warning-promo`, `#div-total-cost`,
+`#div-show-discount-promo`, `#total-default-no-promo`, `#checkDiscount`, `.btn-show-form-receive`, `.div-receive-form`.
+
+| File | Vai trò | Lên production |
+|---|---|---|
+| `checkout-voucher.html` | Markup tĩnh + giá trị mẫu (biến PHP ghi trong comment `@...`) + inline script số điện thoại | Đổi giá trị mẫu thành `@_htmlListCartCheckOut`, `@totalCost`, `@option_list_country`, `@status`… |
+| `assets/css/parts/checkout-voucher.css` | Phần riêng (tiền tố `.cvv-`), nạp sau `checkout-v2.css` | Dùng nguyên |
+| `assets/js/modules/checkout-voucher.js` | **Demo** thay `app_voucher.js`: bật/tắt form người nhận, promo, validate, màn cảm ơn | Thay bằng `checkout-voucher-production.js` |
+| `checkout-voucher-production.html` | **Bản deploy**: partial (không header/footer), đã thay biến `{$...}`, bỏ phần demo | Copy thẳng lên server thay `select_payment.html` bản voucher |
+| `assets/js/modules/checkout-voucher-production.js` | Promo thật `/cart?action=check_promo`, huỷ mã `/reward/?act=delete_gift`, phone `register[phone]`, validate rồi POST | Dùng nguyên |
+
+Số điện thoại: inline script trong trang khởi tạo intl-tel-input cho `#phone_register` với hidden `register[phone]`
+(giống template cũ) — **không** dùng `control__telinputv25.js` (file đó gửi `redeem_detail[phone]` cho checkout food).
+Form thành viên chỉ có `member[email|firstname|lastname]` như bản cũ. Không có `register[birthday]` (bản đang chạy không hiện).
+Radio "For myself / Send as a gift" có `form="cvvNoSubmit"` nên không POST field thừa. Ở chế độ "For myself", JS xoá 3 ô người nhận trước khi gửi.
+`[DEMO]`: promo tra `window.__demoPromoCodes` thay cho `/cart?action=check_promo`; submit bị chặn để hiện `#cv2Done`.
 
 ### Admin rule giao nhận (`admin/delivery-rules.html`)
 
