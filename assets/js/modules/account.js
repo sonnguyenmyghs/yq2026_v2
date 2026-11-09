@@ -40,6 +40,21 @@
 
   function isDesktop() { return window.matchMedia('(min-width: 992px)').matches; }
 
+  /* Nút account ở header — server in 1 trong 2 (xem index.html / index-logined.html):
+       #yqAccountBtn [data-yq-account] : CHƯA đăng nhập (kèm khối AUTH POPUP)
+       #yqMemberBtn  [data-yq-member]  : ĐÃ đăng nhập (in sẵn chữ cái đầu, kèm #yqAcctPop)
+     Trang có #yqMemberBtn = server khẳng định đã đăng nhập. */
+  var BTN = '#yqAccountBtn, #yqMemberBtn';
+  function $btn() { return $(BTN).first(); }
+  var SERVER_IN = !!document.getElementById('yqMemberBtn');
+
+  /* Chữ cái đầu: server chỉ in tên đầy đủ vào data-name (VD <span class="yq-acct-initial" data-name="Son">),
+     JS lấy ký tự đầu, viết hoa, điền vào. Dùng cho nút #yqMemberBtn và avatar #yqAcctAvatar. */
+  function initialOf(name) { return ($.trim(name || '').charAt(0) || '?').toUpperCase(); }
+  $('.yq-acct-initial[data-name], .yq-acct__avatar[data-name]').each(function () {
+    $(this).text(initialOf($(this).attr('data-name')));
+  });
+
   /* ======================================================================
      1. Auth store
      ====================================================================== */
@@ -66,9 +81,7 @@
       if (!u) return '';
       return u.first || (u.email || '').split('@')[0] || 'there';
     },
-    initial: function () {
-      return (this.name().charAt(0) || '?').toUpperCase();
-    },
+    initial: function () { return initialOf(this.name()); },
 
     signIn: function (data) {
       this.user = $.extend({ email: '', first: '', last: '', promo: false }, data || {});
@@ -88,9 +101,10 @@
 
   /* Khu member (<html data-member-area>: các trang trong member/) chỉ vào được khi
      đã đăng nhập — production server chặn ở cổng và in sẵn trạng thái đăng nhập.
+     Trang có #yqMemberBtn (server in bản đã đăng nhập, VD index-logined.html) cũng vậy.
      Bản demo: chưa đăng nhập thì tự đăng nhập bằng hồ sơ mẫu (YQ.profile, cùng dữ liệu
      trang profile hiển thị) để avatar ở header mở được menu user thay vì popup Log in. */
-  if (!YQ.auth.isIn() && document.documentElement.hasAttribute('data-member-area')) {
+  if (!YQ.auth.isIn() && (SERVER_IN || document.documentElement.hasAttribute('data-member-area'))) {
     var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
     var P = YQ.profile;
     YQ.auth.signIn({
@@ -203,6 +217,7 @@
   }
 
   function paintMember() {
+    if (SERVER_IN) return;                          // server đã in sẵn tên/email
     var mail = (YQ.auth.user || {}).email || '';
     $('#yqMfnName').text(YQ.auth.name());
     $('#yqMfnMail').text(mail).prop('hidden', !mail);
@@ -231,6 +246,7 @@
   }
 
   function paintPop() {
+    if (SERVER_IN) return;                          // server đã in sẵn avatar/tên/email
     var u = YQ.auth.user || {};
     $('#yqAcctAvatar').text(YQ.auth.initial());
     $('#yqAcctName').text('Hi, ' + YQ.auth.name());
@@ -245,15 +261,15 @@
     paintPop();
     /* Mũi tên chỉ đúng giữa avatar: đo khoảng cách từ mép phải khối neo tới tâm nút */
     var a = $pop.parent()[0].getBoundingClientRect();
-    var b = $('#yqAccountBtn')[0].getBoundingClientRect();
+    var b = $btn()[0].getBoundingClientRect();
     $pop[0].style.setProperty('--yq-acct-caret', Math.round(a.right - (b.left + b.width / 2)) + 'px');
     $pop.prop('hidden', false);
     /* force reflow để transition chạy từ trạng thái ẩn */
     void $pop[0].offsetWidth;
     $pop.addClass('is-open');
-    $('#yqAccountBtn').attr('aria-expanded', 'true');
+    $btn().attr('aria-expanded', 'true');
     $(document).on('keydown.yqAcct', function (e) {
-      if (e.key === 'Escape') { closePop(); $('#yqAccountBtn').trigger('focus'); }
+      if (e.key === 'Escape') { closePop(); $btn().trigger('focus'); }
     });
   }
 
@@ -261,7 +277,7 @@
     var $pop = $(POP);
     if (!$pop.length || !popOpen()) return;
     $pop.removeClass('is-open');
-    $('#yqAccountBtn').attr('aria-expanded', 'false');
+    $btn().attr('aria-expanded', 'false');
     $(document).off('keydown.yqAcct');
     var done = function () { if (!popOpen()) $pop.prop('hidden', true); };
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) done();
@@ -273,7 +289,7 @@
   /* Bấm ra ngoài / header thu gọn / đổi breakpoint -> đóng */
   $(document).on('pointerdown', function (e) {
     if (!popOpen()) return;
-    if ($(e.target).closest(POP + ', #yqAccountBtn').length) return;
+    if ($(e.target).closest(POP + ', ' + BTN).length) return;
     closePop();
   });
   $(window).on('resize.yqAcct', function () { if (popOpen() && !isDesktop()) closePop(); });
@@ -283,7 +299,7 @@
   /* Tab ra khỏi popup (sang icon giỏ chẳng hạn) -> đóng để không bỏ sót popup mở lơ lửng */
   $(document).on('focusin', function (e) {
     if (!popOpen()) return;
-    if ($(e.target).closest(POP + ', #yqAccountBtn').length) return;
+    if ($(e.target).closest(POP + ', ' + BTN).length) return;
     closePop();
   });
   /* Rê chuột mở mega menu / Seasonal hoặc mở ô tìm kiếm -> nhường chỗ */
@@ -294,6 +310,9 @@
      5. Nút account ở header
      ====================================================================== */
   function paintHeader() {
+    /* #yqMemberBtn: server đã in đúng trạng thái đăng nhập — không đụng vào.
+       Chỉ #yqAccountBtn (demo Register ngay trên trang chưa đăng nhập) mới đổi qua lại. */
+    if (SERVER_IN) { closePop(); return; }
     var on = YQ.auth.isIn();
     var $btn = $('#yqAccountBtn');
     if ($btn.length) {
@@ -313,7 +332,7 @@
 
   $(document).on('yq:header-ready yq:auth-changed', paintHeader);
 
-  $(document).on('click', '[data-yq-account]', function (e) {
+  $(document).on('click', '[data-yq-account], [data-yq-member]', function (e) {
     e.preventDefault();
     /* Trên mobile nút nằm trong offcanvas menu — đóng nó trước cho khỏi chồng lớp. */
     var oc = document.getElementById('yqOffcanvas');
@@ -327,7 +346,7 @@
     }
     if (!YQ.auth.isIn()) { openAuth('login'); return; }
     /* Desktop: avatar ở header -> dropdown. Còn lại -> panel trượt. */
-    if (this.id === 'yqAccountBtn' && isDesktop()) togglePop();
+    if ((this.id === 'yqAccountBtn' || this.id === 'yqMemberBtn') && isDesktop()) togglePop();
     else openMember();
   });
 
@@ -427,8 +446,9 @@
       closeMember();
       YQ.auth.signOut();
       YQ.toast('You have been logged out');
-      /* Đang ở khu member thì rời đi — trang này chỉ dành cho người đã đăng nhập */
-      if (document.documentElement.hasAttribute('data-member-area')) {
+      /* Đang ở khu member, hoặc trang server in bản đã đăng nhập (#yqMemberBtn), thì rời đi —
+         production: Logout là link tới URL đăng xuất của server, server trả về bản chưa đăng nhập */
+      if (SERVER_IN || document.documentElement.hasAttribute('data-member-area')) {
         setTimeout(function () { window.location.href = YQ.url('index.html'); }, 900);
       }
     })

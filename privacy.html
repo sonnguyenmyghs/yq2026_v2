@@ -21,9 +21,12 @@
 <body>
 
 <!-- ========== HEADER (HTML tĩnh — giống nhau mọi trang, chỉ khác mục nav .is-active) ========== -->
-<!-- Nút account #yqAccountBtn: đã đăng nhập (@if(isLoggedIn)) thì thêm class "is-signed", thêm hidden cho
-     svg[data-yq-acct-icon], bỏ hidden ở #yqAcctInitial và in @member.initial (chữ cái đầu của first name,
-     viết hoa); aria-label="My account — @member.first_name". JS (account.js) chỉ đổi class/attr/text. -->
+<!-- Nút account: server in 1 trong 2 component (@if(isLoggedIn) … @else … @endif):
+       - CHƯA đăng nhập: <a id="yqAccountBtn" data-yq-account> (icon người) + khối AUTH POPUP (#yqAuthModal).
+         Trang này (bản demo) đang in component này.
+       - ĐÃ đăng nhập: <button id="yqMemberBtn" data-yq-member class="… is-signed"> in sẵn @member.initial
+         + dropdown #yqAcctPop in sẵn tên/email, KHÔNG in AUTH POPUP. Xem mẫu đầy đủ ở index-logined.html.
+     #yqAcctPop ở trang chưa đăng nhập chỉ để demo Register (localStorage) chạy — production không cần in. -->
 <header class="yq-header" id="yqHeader">
   <div class="yq-header__shell">
     <div class="yq-container">
