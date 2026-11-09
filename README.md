@@ -318,12 +318,17 @@ Giữ nguyên `name` / id của template cũ: `register[...]`, `member[...]`, `n
 | `assets/css/parts/checkout-voucher.css` | Phần riêng (tiền tố `.cvv-`), nạp sau `checkout-v2.css` | Dùng nguyên |
 | `assets/js/modules/checkout-voucher.js` | **Demo** thay `app_voucher.js`: bật/tắt form người nhận, promo, validate, màn cảm ơn | Thay bằng `checkout-voucher-production.js` |
 | `checkout-voucher-production.html` | **Bản deploy**: partial (không header/footer), đã thay biến `{$...}`, bỏ phần demo | Copy thẳng lên server thay `select_payment.html` bản voucher |
+| `assets/js/modules/checkout-voucher-gift.js` | Panel "Send as a gift": mở/lưu/huỷ, xem trước thiệp, thẻ tóm tắt (demo + production dùng chung) | Dùng nguyên |
 | `assets/js/modules/checkout-voucher-production.js` | Promo thật `/cart?action=check_promo`, huỷ mã `/reward/?act=delete_gift`, phone `register[phone]`, validate rồi POST | Dùng nguyên |
 
 Số điện thoại: inline script trong trang khởi tạo intl-tel-input cho `#phone_register` với hidden `register[phone]`
 (giống template cũ) — **không** dùng `control__telinputv25.js` (file đó gửi `redeem_detail[phone]` cho checkout food).
 Form thành viên chỉ có `member[email|firstname|lastname]` như bản cũ. Không có `register[birthday]` (bản đang chạy không hiện).
-Radio "For myself / Send as a gift" có `form="cvvNoSubmit"` nên không POST field thừa. Ở chế độ "For myself", JS xoá 3 ô người nhận trước khi gửi.
+Radio "For myself / Send as a gift" có `form="cvvNoSubmit"` nên không POST field thừa.
+"Send as a gift" mở panel trượt `#cvvGiftPanel` trong cùng trang: người nhận (3 input cũ) + thiệp cá nhân tuỳ chọn
+(banner ảnh/video hoặc tự tải, 4 màu The Shop, xem trước). Thiệp gửi qua input mới `card_add`, `card_banner`, `card_banner_type`,
+`card_banner_file`, `card_colour` (form multipart) — backend cần đọc để đính kèm thiệp. Trang nạp thêm `personalise.css`.
+JS dùng chung: `assets/js/modules/checkout-voucher-gift.js`. Chi tiết: `.claude/production-templates.md`. Ở chế độ "For myself", JS xoá 3 ô người nhận trước khi gửi.
 `[DEMO]`: promo tra `window.__demoPromoCodes` thay cho `/cart?action=check_promo`; submit bị chặn để hiện `#cv2Done`.
 
 ### Admin rule giao nhận (`admin/delivery-rules.html`)

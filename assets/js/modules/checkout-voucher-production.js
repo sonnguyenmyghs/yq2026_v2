@@ -36,27 +36,9 @@ jQuery(function ($) {
         });
     }
 
-    /* ---------------------------------------------------------------
-       For myself / Send as a gift -> ẩn hiện .div-receive-form
-       --------------------------------------------------------------- */
-    var isGift = function () { return $('input[name="cvv_for"]:checked').val() === 'gift'; };
-    var $receive = $('.div-receive-form');
-    if (isGift() || $.trim($receive.find('.input__receive__name').val())) {   // server trả lại form có sẵn người nhận
-        $('input[name="cvv_for"][value="gift"]').prop('checked', true);
-        $receive.prop('hidden', false);
-    }
-    $('input[name="cvv_for"]').on('change', function () {
-        if (isGift()) {
-            $receive.prop('hidden', false).hide().slideDown(200);
-        } else {
-            $receive.slideUp(200, function () { $receive.prop('hidden', true); });
-            $receive.find('.form-control').removeClass('error null');
-        }
-    });
-    var $note = $('.input__receive__note');
-    var updateCount = function () { $('#cvvNoteCount').text(($note.val() || '').length); };
-    $note.on('input', updateCount);
-    updateCount();
+    /* For myself / Send as a gift: xử lý trong checkout-voucher-gift.js (nạp trước file này) */
+    var gift = window.cvvGift || { isGift: function () { return false; }, saved: function () { return false; }, open: function () {} };
+    var isGift = gift.isGift;
 
     /* ---------------------------------------------------------------
        Promo code
@@ -135,8 +117,9 @@ jQuery(function ($) {
         { when: isGuest, field: '.input__guest__firstname', ok: filled },
         { when: isGuest, field: '.input__guest__lastname', ok: filled },
         { when: isGuest, field: '#phone_register', ok: phoneOk },
-        { when: isGift, field: '.input__receive__name', ok: filled, focus: true },
-        { when: isGift, field: '.input__receive__email', ok: emailOk, focus: true },
+        /* Send as a gift nhưng chưa Save người nhận -> mở lại panel */
+        { when: isGift, field: '.input__receive__name', scroll: '.cvv-gift', ok: function () { return gift.saved(); },
+          mark: function () { gift.open(); } },
         { field: '#becomeamember', ok: function ($el) { return $el.is(':checked'); }, scroll: '.agree--zone',
           mark: function () { $('.agree--zone').addClass('null'); } }
     ];
@@ -170,7 +153,6 @@ jQuery(function ($) {
         $('.agree--zone').removeClass('null');
         var bad = firstInvalid();
         if (bad) { showError(bad); return; }
-        if (!isGift()) $receive.find('.form-control').val('');   // mua cho mình: không gửi thông tin người nhận
         if (iti && isGuest()) $('input[type="hidden"][name="register[phone]"]').val(iti.getNumber());
         submitting = true;
         $(this).prop('disabled', true).val('Processing…');

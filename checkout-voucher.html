@@ -19,6 +19,7 @@
 <link href="assets/css/parts/cart-anim.css" rel="stylesheet">
 <link href="assets/css/parts/account.css" rel="stylesheet">
 <link href="assets/css/parts/checkout-v2.css" rel="stylesheet">
+<link href="assets/css/parts/personalise.css" rel="stylesheet">
 <link href="assets/css/parts/checkout-voucher.css" rel="stylesheet">
 </head>
 <body>
@@ -539,7 +540,7 @@
      .div-receive-form, #total-default-no-promo, #checkDiscount, #input-hidden-promo-code).
      Không có phần Shipping: voucher gửi qua email + lưu vào ví.
      ===================================================================== -->
-<form method="post" action="" class="inform--frm cvv-form">
+<form method="post" action="" class="inform--frm cvv-form" enctype="multipart/form-data">
   <section class="sec--payment">
     <div class="yq-container" id="cv2Top">
 
@@ -615,7 +616,9 @@
             </div>
           </div>
 
-          <!-- 2. Send as a gift (tuỳ chọn) — bật thì hiện .div-receive-form -->
+          <!-- 2. Who is it for? — "Send as a gift" mở panel #cvvGiftPanel (personalise rút gọn, cùng trang).
+               Radio cvv_for chỉ để chọn trên giao diện: form="cvvNoSubmit" nên không POST lên server.
+               Dữ liệu quà nằm trong 3 input cũ name_receive / email_receive / note_receive (trong panel). -->
           <div class="pay--part cvv-gift">
             <div class="container">
               <h3>2. Who is it for?</h3>
@@ -625,27 +628,25 @@
                   <span class="cvv-for__ico"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span>
                   <span class="cvv-for__txt"><b>For myself</b><small>Sent to my email &amp; wallet</small></span>
                 </label>
-                <!-- radio cvv_for chỉ để chọn trên giao diện: form="cvvNoSubmit" (không có form này) nên không bị POST lên server
-                     giữ class .btn-show-form-receive như template cũ (app_voucher.js bật/tắt .div-receive-form) -->
-                <label class="cvv-for__opt btn-show-form-receive">
-                  <input type="radio" name="cvv_for" value="gift" form="cvvNoSubmit">
+                <label class="cvv-for__opt cvv-for__opt--gift">
+                  <input type="radio" name="cvv_for" value="gift" form="cvvNoSubmit" aria-controls="cvvGiftPanel">
                   <span class="cvv-for__ico"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20h14v-7.5M12 8.5V20"/><path d="M12 8.5c-1.5-3.5-5.5-3.5-5.5-1.2 0 1.2 1.6 1.2 5.5 1.2Zm0 0c1.5-3.5 5.5-3.5 5.5-1.2 0 1.2-1.6 1.2-5.5 1.2Z"/></svg></span>
-                  <span class="cvv-for__txt"><b>Send as a gift</b><small>We email it to your recipient</small></span>
+                  <span class="cvv-for__txt"><b>Send as a gift</b><small>Add a recipient &amp; personal message</small></span>
                 </label>
               </div>
 
-              <!-- Form người nhận — ẩn tới khi chọn "Send as a gift"
-                   value: @_REQUEST.name_receive · @_REQUEST.email_receive · @_REQUEST.note_receive -->
-              <div class="div-receive-form cvv-receive" hidden>
-                <div class="form-group">
-                  <input type="text" name="name_receive" class="form-control full-width input__receive__name" placeholder="Recipient's name" value="" autocomplete="off">
+              <!-- Tóm tắt quà đã lưu — HTML tĩnh, ẩn sẵn. JS bỏ hidden sau khi Save và đổ text vào #cvvPeTo / #cvvPeMsg -->
+              <div class="cvv-pe cvv-pe--done" id="cvvPeDone" hidden>
+                <span class="cvv-pe__ico"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20h14v-7.5M12 8.5V20"/><path d="M12 8.5c-1.5-3.5-5.5-3.5-5.5-1.2 0 1.2 1.6 1.2 5.5 1.2Zm0 0c1.5-3.5 5.5-3.5 5.5-1.2 0 1.2-1.6 1.2-5.5 1.2Z"/></svg></span>
+                <div class="cvv-pe__body">
+                  <b>Gift for your recipient</b>
+                  <span id="cvvPeTo">To Sarah Tan · sarah@example.com</span>
+                  <span class="cvv-pe__msg" id="cvvPeMsg">“Happy birthday — enjoy a lovely dinner on us!”</span>
+                  <span class="cvv-pe__card" id="cvvPeCard" hidden>Personalised card · Celebrate · Burnished Gold</span>
                 </div>
-                <div class="form-group">
-                  <input type="email" name="email_receive" class="form-control full-width input__receive__email" placeholder="Recipient's email" value="" autocomplete="off">
-                </div>
-                <div class="form-group mb-1">
-                  <textarea name="note_receive" class="form-control full-width input__receive__note" rows="3" maxlength="300" placeholder="Your message (optional)"></textarea>
-                  <small class="cvv-count"><span id="cvvNoteCount">0</span>/300</small>
+                <div class="cvv-pe__acts">
+                  <button class="cvv-pe__link" type="button" id="cvvPeEdit">Edit</button>
+                  <button class="cvv-pe__link" type="button" id="cvvPeRemove">Remove</button>
                 </div>
               </div>
             </div>
@@ -755,6 +756,123 @@
       </div>
     </div>
   </section>
+
+  <!-- ============ Panel "Send as a gift" (Bootstrap offcanvas, trượt từ phải) — personalise 1 người nhận ============
+       Input CŨ (backend đang đọc): name_receive, email_receive, note_receive.
+         value: @_REQUEST.name_receive · @_REQUEST.email_receive · @_REQUEST.note_receive
+       Input MỚI cho thiệp (tuỳ chọn, backend cần đọc để đính kèm thiệp vào email voucher):
+         card_add = 1 | 0 · card_banner = id mẫu hoặc "upload" · card_banner_type = image | video
+         card_banner_file = file tự tải (JPG/PNG/WebP/MP4/MOV, tối đa 20MB) · card_colour = gold | terracotta | crimson | black
+       Mẫu banner: @foreach(cardBanners as b) … @endforeach (data-banner/@b.id, data-type/@b.type, data-src/@b.src, data-poster/@b.poster)
+       JS chỉ đổi class / text / src / val — không dựng markup. -->
+  <div class="offcanvas offcanvas-end cvv-panel yq-pe" tabindex="-1" id="cvvGiftPanel" aria-labelledby="cvvGiftTitle">
+    <div class="offcanvas-header cvv-panel__head">
+      <div>
+        <span class="yq-eyebrow">Personalise</span>
+        <h3 class="cvv-panel__title" id="cvvGiftTitle">Send as a gift</h3>
+      </div>
+      <button class="cvv-panel__close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"><svg class="yq-i" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="offcanvas-body cvv-panel__body">
+
+      <div class="cvv-step">
+        <span class="cvv-step__t">1. Recipient</span>
+        <div class="div-receive-form cvv-receive">
+          <div class="form-group">
+            <label class="cvv-label" for="cvvRcpName">Recipient's name *</label>
+            <input type="text" id="cvvRcpName" name="name_receive" class="form-control full-width input__receive__name" placeholder="e.g. Sarah Tan" value="" maxlength="60" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="cvv-label" for="cvvRcpEmail">Recipient's email *</label>
+            <input type="email" id="cvvRcpEmail" name="email_receive" class="form-control full-width input__receive__email" placeholder="sarah@example.com" value="" autocomplete="off">
+            <small class="cvv-help">The e-voucher is emailed here on order confirmation.</small>
+          </div>
+          <div class="form-group mb-1">
+            <label class="cvv-label" for="cvvRcpNote">Your message</label>
+            <textarea id="cvvRcpNote" name="note_receive" class="form-control full-width input__receive__note" rows="4" maxlength="300" placeholder="Wishing you a truly special experience. Enjoy every moment — you deserve it."></textarea>
+            <small class="cvv-count"><span id="cvvNoteCount">0</span>/300</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="cvv-step">
+        <label class="cvv-switch" for="cvvCardAdd">
+          <span class="cvv-switch__txt">
+            <span class="cvv-step__t">2. Add a personalised card <span class="yq-pe-tag">Optional · Complimentary</span></span>
+            <small>Attached to the voucher email with your message.</small>
+          </span>
+          <input type="checkbox" id="cvvCardAdd" name="card_add" value="1" role="switch">
+          <span class="cvv-switch__ui" aria-hidden="true"></span>
+        </label>
+
+        <div class="cvv-card-fields" id="cvvCardFields" hidden>
+          <span class="cvv-label mt-3">Card banner <span class="yq-pe-hint">Photo or video</span></span>
+          <div class="yq-pe-banners cvv-banners" id="cvvBanners">
+          <button class="yq-pe-banner is-active" type="button" data-banner="celebrate" data-type="video" data-src="assets/video/card-celebrate.mp4" data-poster="assets/img/e-afternoon-tea.jpg">
+            <span class="yq-pe-banner__art"><img src="assets/img/e-afternoon-tea.jpg" alt="" loading="lazy"><span class="yq-pe-banner__badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5L7 4.5Z"/></svg>Video</span></span>
+            <span class="yq-pe-banner__name">Celebrate</span>
+          </button>
+          <button class="yq-pe-banner" type="button" data-banner="festive" data-type="video" data-src="assets/video/card-festive.mp4" data-poster="assets/img/hero-festive.jpg">
+            <span class="yq-pe-banner__art"><img src="assets/img/hero-festive.jpg" alt="" loading="lazy"><span class="yq-pe-banner__badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5L7 4.5Z"/></svg>Video</span></span>
+            <span class="yq-pe-banner__name">Festive Lights</span>
+          </button>
+          <button class="yq-pe-banner" type="button" data-banner="birthday" data-type="image" data-src="assets/img/o-birthdays.jpg" data-poster="">
+            <span class="yq-pe-banner__art"><img src="assets/img/o-birthdays.jpg" alt="" loading="lazy"></span>
+            <span class="yq-pe-banner__name">Birthday</span>
+          </button>
+          <button class="yq-pe-banner" type="button" data-banner="anniversary" data-type="image" data-src="assets/img/o-anniversaries.jpg" data-poster="">
+            <span class="yq-pe-banner__art"><img src="assets/img/o-anniversaries.jpg" alt="" loading="lazy"></span>
+            <span class="yq-pe-banner__name">Anniversary</span>
+          </button>
+          <button class="yq-pe-banner" type="button" data-banner="sweet" data-type="image" data-src="assets/img/editorial-cake.jpg" data-poster="">
+            <span class="yq-pe-banner__art"><img src="assets/img/editorial-cake.jpg" alt="" loading="lazy"></span>
+            <span class="yq-pe-banner__name">Sweet Moments</span>
+          </button>
+          <button class="yq-pe-banner yq-pe-banner--upload" type="button" data-banner="upload" data-type="" data-src="" data-poster="" id="cvvUploadBtn">
+            <span class="yq-pe-banner__art">
+              <img src="" alt="" hidden>
+              <span class="yq-pe-banner__up"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><polyline points="7 9 12 4 17 9"/><path d="M4 16v3a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-3"/></svg>Photo / video</span>
+            </span>
+            <span class="yq-pe-banner__name">Upload your own</span>
+          </button>
+          </div>
+          <input type="file" id="cvvBannerFile" name="card_banner_file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime" hidden>
+          <div class="cvv-err" id="cvvUploadErr" hidden>Please choose a JPG, PNG, WebP, MP4 or MOV file up to 20MB.</div>
+
+          <span class="cvv-label mt-3">Card colour</span>
+          <div class="yq-pe-swatches" id="cvvSwatches" role="radiogroup" aria-label="Card colour">
+          <button class="yq-pe-swatch is-active" type="button" role="radio" aria-checked="true" data-colour="gold" style="--sw:#8C7145"><span class="yq-pe-swatch__dot"></span>Burnished Gold</button>
+          <button class="yq-pe-swatch" type="button" role="radio" aria-checked="false" data-colour="terracotta" style="--sw:#6F2613"><span class="yq-pe-swatch__dot"></span>Deep Terracotta</button>
+          <button class="yq-pe-swatch" type="button" role="radio" aria-checked="false" data-colour="crimson" style="--sw:#B9353F"><span class="yq-pe-swatch__dot"></span>Warm Crimson</button>
+          <button class="yq-pe-swatch" type="button" role="radio" aria-checked="false" data-colour="black" style="--sw:#000000"><span class="yq-pe-swatch__dot"></span>Standard Black</button>
+          </div>
+
+          <input type="hidden" name="card_banner" id="cvvCardBanner" value="celebrate">
+          <input type="hidden" name="card_banner_type" id="cvvCardBannerType" value="video">
+          <input type="hidden" name="card_colour" id="cvvCardColour" value="gold">
+
+          <span class="cvv-label mt-3">Preview</span>
+          <div class="yq-pe-card yq-pe-card--gold" id="cvvCard">
+            <div class="yq-pe-card__media">
+              <video id="cvvCardVideo" src="assets/video/card-celebrate.mp4" poster="assets/img/e-afternoon-tea.jpg" autoplay muted loop playsinline aria-hidden="true"></video>
+              <img id="cvvCardImg" src="" alt="" hidden>
+            </div>
+            <div class="yq-pe-card__body">
+              <div class="yq-pe-card__brand"><svg class="yq-pe-logo" viewBox="0 0 100 100" aria-hidden="true"><rect x="17" y="17" width="66" height="66" transform="rotate(45 50 50)" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="50" y="40" text-anchor="middle" font-size="6" letter-spacing="1.5" fill="currentColor">THE</text><text x="50" y="55" text-anchor="middle" font-size="14" letter-spacing="2" fill="currentColor" font-weight="600">SHOP</text><text x="50" y="64" text-anchor="middle" font-size="4" letter-spacing="1.2" fill="currentColor">GRAND HYATT</text><text x="50" y="69" text-anchor="middle" font-size="4" letter-spacing="1.2" fill="currentColor">SINGAPORE</text></svg><span>A gift for you</span></div>
+              <div class="yq-pe-card__to">Dear <span id="cvvPvTo">Recipient</span>,</div>
+              <div class="yq-pe-card__msg is-empty" id="cvvPvMsg">Your message will appear here.</div>
+              <div class="yq-pe-card__from">With love, <span id="cvvPvFrom">—</span></div>
+              <div class="yq-pe-card__gift"><span>Weekday Dinner Buffet at StraitsKitchen</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cvv-panel__foot">
+      <button class="btn btn-primary btn-black cvv-panel__save" type="button" id="cvvGiftSave">Save gift details</button>
+      <button class="cvv-pe__link" type="button" data-bs-dismiss="offcanvas">Cancel</button>
+    </div>
+  </div>
 
   <!-- ============ hidden input (giống template voucher production) ============ -->
   <input type="hidden" name="action" value="payment">
@@ -970,6 +1088,7 @@
   };
 </script>
 <!-- Demo stand-in cho app_voucher.js — production: thay bằng file thật -->
+<script src="assets/js/modules/checkout-voucher-gift.js"></script>
 <script src="assets/js/modules/checkout-voucher.js"></script>
 <!-- Số điện thoại: giống inline script của template voucher cũ — hidden input register[phone]
      (KHÔNG dùng control__telinputv25.js vì file đó gửi redeem_detail[phone] / member[phone] cho checkout food) -->

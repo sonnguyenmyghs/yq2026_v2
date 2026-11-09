@@ -29,7 +29,7 @@
 .cvv-for__txt small{ font-size: 12px; color: var(--yq-muted); }
 
 /* Form người nhận */
-.cvv-receive{ margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--yq-line-soft); }
+.cvv-receive{ margin-top: 22px; }
 .cvv-receive textarea.form-control{ min-height: 92px; resize: vertical; }
 .cvv-count{ display: block; text-align: right; font-size: 11.5px; color: var(--yq-muted); margin-top: 4px; }
 
@@ -48,3 +48,78 @@
 @media (max-width: 575.98px){
   .cvv-for{ grid-template-columns: 1fr; }
 }
+
+/* Thẻ tóm tắt quà đã lưu (#cvvPeDone) */
+.cvv-pe{
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: var(--yq-radius-sm);
+  border: 1px dashed var(--yq-line); background: var(--yq-paper); color: var(--yq-ink);
+}
+.cvv-pe__ico{
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--yq-gold-soft); color: var(--yq-gold-dark);
+}
+.cvv-pe__body{ display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; line-height: 1.35; font-size: 13px; color: var(--yq-body); }
+.cvv-pe__body b{ font-size: 14px; font-weight: 600; color: var(--yq-ink); }
+.cvv-pe--done{ margin-top: 14px; border-style: solid; border-color: var(--yq-ink); background: var(--yq-cream-2); align-items: flex-start; }
+.cvv-pe__msg{ font-style: italic; overflow-wrap: anywhere; }
+.cvv-pe__acts{ flex: none; display: flex; gap: 12px; }
+.cvv-pe__link{
+  padding: 0; border: 0; background: none; font-size: 13px; font-weight: 500; color: var(--yq-ink);
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+.cvv-pe__link:hover{ color: var(--yq-gold-dark); }
+@media (max-width: 575.98px){
+      .cvv-pe--done{ flex-wrap: wrap; }
+  .cvv-pe__acts{ margin-left: 50px; }
+}
+
+/* Panel "Send as a gift" (Bootstrap offcanvas) */
+.cvv-panel.offcanvas-end{ width: 520px; max-width: 100%; border-left: 0; background: var(--yq-paper); box-shadow: -8px 0 40px rgba(23,22,19,.14); }
+.cvv-panel__head{ align-items: flex-start; padding: 22px 24px 14px; border-bottom: 1px solid var(--yq-line-soft); }
+.cvv-panel__head .yq-eyebrow{ color: var(--yq-gold-dark); }
+.cvv-panel__title{ margin: 4px 0 0; font-family: var(--yq-serif); font-size: 24px; color: var(--yq-ink); }
+.cvv-panel__close{ padding: 6px; margin: -4px -6px 0 0; border: 0; background: none; color: var(--yq-ink); border-radius: 50%; }
+.cvv-panel__close:hover{ background: var(--yq-cream-2); }
+.cvv-panel__body{ padding: 22px 24px; }
+.cvv-panel__foot{
+  display: flex; align-items: center; gap: 18px; padding: 16px 24px;
+  border-top: 1px solid var(--yq-line-soft); background: var(--yq-paper);
+}
+.cvv-panel__save{ flex: 1; min-height: 48px; border-radius: var(--yq-radius-pill); background: var(--yq-ink); border-color: var(--yq-ink); font-weight: 500; }
+.cvv-panel__save:hover{ background: var(--yq-gold); border-color: var(--yq-gold); color: var(--yq-ink); }
+.cvv-panel .form-control{ width: 100%; }
+.cvv-label{ display: block; margin-bottom: 6px; font-size: 12.5px; font-weight: 500; color: var(--yq-ink); }
+.cvv-help{ display: block; margin-top: 5px; font-size: 12px; color: var(--yq-muted); }
+.cvv-panel .form-control.error{ border-color: #C0564C; box-shadow: 0 0 0 3px rgba(192,86,76,.12); }
+
+.cvv-panel .form-group{ margin-bottom: 18px; }
+
+/* Các bước trong panel */
+.cvv-step + .cvv-step{ margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--yq-line-soft); }
+.cvv-step__t{ display: block; font-family: var(--yq-serif); font-size: 16px; font-weight: 600; color: var(--yq-ink); margin-bottom: 12px; }
+.cvv-step .cvv-receive{ margin-top: 0; }
+.cvv-switch{ display: flex; align-items: flex-start; gap: 14px; margin: 0; cursor: pointer; }
+.cvv-switch__txt{ flex: 1; min-width: 0; }
+.cvv-switch__txt .cvv-step__t{ margin-bottom: 2px; }
+.cvv-switch__txt small{ font-size: 12.5px; color: var(--yq-muted); }
+.cvv-switch input{ position: absolute; opacity: 0; width: 0; height: 0; }
+.cvv-switch__ui{
+  flex: none; position: relative; width: 42px; height: 24px; margin-top: 2px; border-radius: 999px;
+  background: var(--yq-line); transition: background .2s var(--yq-ease);
+}
+.cvv-switch__ui::after{
+  content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .2s var(--yq-ease);
+}
+.cvv-switch input:checked + .cvv-switch__ui{ background: var(--yq-ink); }
+.cvv-switch input:checked + .cvv-switch__ui::after{ transform: translateX(18px); }
+.cvv-switch input:focus-visible + .cvv-switch__ui{ outline: 2px solid var(--yq-gold); outline-offset: 2px; }
+.cvv-panel .cvv-label.mt-3{ margin-top: 18px !important; }
+.cvv-banners{ grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+.cvv-err{ margin-top: 8px; font-size: 12px; color: #C0564C; }
+.cvv-panel .yq-pe-card{ box-shadow: var(--yq-shadow-md); }
+.cvv-panel .yq-pe-card__body{ padding: 20px 22px; }
+.cvv-panel .yq-pe-card__msg{ font-size: 14px; min-height: 40px; }
+.cvv-pe__card{ font-size: 12.5px; color: var(--yq-gold-dark); }

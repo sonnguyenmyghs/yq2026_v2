@@ -13,20 +13,9 @@ jQuery(function ($) {
     };
     var subtotal = function () { return parseFloat($('.inform--money .provisional').data('subtotal')) || 0; };
 
-    /* ---------------------------------------------------------------
-       For myself / Send as a gift -> ẩn hiện .div-receive-form
-       --------------------------------------------------------------- */
-    var isGift = function () { return $('input[name="cvv_for"]:checked').val() === 'gift'; };
-    $('input[name="cvv_for"]').on('change', function () {
-        var $f = $('.div-receive-form');
-        if (isGift()) {
-            $f.prop('hidden', false).hide().slideDown(200);
-        } else {
-            $f.slideUp(200, function () { $f.prop('hidden', true); });
-            $f.find('.form-control').removeClass('error null');
-        }
-    });
-    $('.input__receive__note').on('input', function () { $('#cvvNoteCount').text(this.value.length); });
+    /* For myself / Send as a gift: xử lý trong checkout-voucher-gift.js (nạp trước file này) */
+    var gift = window.cvvGift || { isGift: function () { return false; }, saved: function () { return false; }, open: function () {} };
+    var isGift = gift.isGift;
 
     /* ---------------------------------------------------------------
        Promo code
@@ -112,8 +101,9 @@ jQuery(function ($) {
         { when: isGuest, field: '.input__guest__firstname', ok: filled },
         { when: isGuest, field: '.input__guest__lastname', ok: filled },
         { when: isGuest, field: '#phone_register', ok: phoneOk },
-        { when: isGift, field: '.input__receive__name', ok: filled, focus: true },
-        { when: isGift, field: '.input__receive__email', ok: emailOk, focus: true },
+        /* Send as a gift nhưng chưa Save người nhận -> mở lại panel */
+        { when: isGift, field: '.input__receive__name', scroll: '.cvv-gift', ok: function () { return gift.saved(); },
+          mark: function () { gift.open(); } },
         { field: '#becomeamember', ok: function ($el) { return $el.is(':checked'); }, scroll: '.agree--zone',
           mark: function () { $('.agree--zone').addClass('null'); } }
     ];
@@ -148,7 +138,6 @@ jQuery(function ($) {
         clearErrors();
         var bad = firstInvalid();
         if (bad) { showError(bad); return; }
-        if (!isGift()) $('.div-receive-form .form-control').val('');   // không gửi thông tin người nhận khi mua cho mình
         $('.inform--frm').trigger('submit');
     });
 
