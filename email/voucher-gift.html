@@ -1,0 +1,106 @@
+<!--
+  EMAIL VOUCHER + E-CARD (gửi người nhận quà / người mua)
+  Viết cho email client: chỉ <table> + style inline, không <style>/media query, không flex/grid/gradient/biến CSS/SVG/video.
+  Rộng tối đa 640px, tự co trên điện thoại (width:100% + max-width). Dán vào trình soạn email của CMS (chế độ Source).
+
+  Biến CŨ (giữ nguyên tên): %redeem_date% %product_name% %redeem_expiry% %voucher% %qr_code% %product_description%
+                           (%gift_message% cũ nay nằm trong khối thiệp — xem %gift_card%)
+  Biến MỚI:
+    %gift_card%      khối thiệp — backend chọn 1 file trong email/parts theo card_layout, thay biến rồi chèn vào đây:
+                       card-classic | card-overlay | card-split | card-minimal; không có thiệp -> card-none (hero banner + lời nhắn như cũ)
+    %gift_url%       link https tuyệt đối trang mở quà /gift/<token> (voucher/gift.html) — gõ tay trong chế độ Source (nằm trong href)
+    %preheader%      dòng xem trước trong hộp thư, vd "James sent you a gift from The Shop"
+  Bảng biến đầy đủ + cách áp dụng lên admin: email/README.md.
+-->
+<div style="margin:0;padding:0;background-color:#F6F4EF;">
+<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">%preheader%</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F6F4EF" style="background-color:#F6F4EF;">
+  <tr>
+    <td align="center" style="padding:24px 10px;">
+
+      <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="width:100%;max-width:640px;background-color:#FFFFFF;">
+
+        <!-- Logo -->
+        <tr>
+          <td align="center" style="padding:22px 24px 18px;">
+            <a href="https://ireward.superghs.com/yqhyattsgstore" target="_blank" style="text-decoration:none;">
+              <img src="https://ireward.superghs.com/resource/yqhyattsgstore/newsletter/logoGHSIN.jpg" width="200" height="64" alt="Grand Hyatt Singapore" style="display:block;width:200px;max-width:100%;height:auto;border:0;">
+            </a>
+          </td>
+        </tr>
+
+        <!-- Thiệp cá nhân / banner -->
+        <tr>
+          <td style="padding:0;">%gift_card%</td>
+        </tr>
+
+        <!-- Voucher Details -->
+        <tr>
+          <td style="padding:36px 32px 8px;font-family:Arial,Helvetica,sans-serif;">
+            <p style="margin:0 0 4px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;letter-spacing:3px;text-transform:uppercase;color:#736649;">Your eVoucher</p>
+            <h1 style="margin:0;font-family:'Josefin Sans','Helvetica Neue',Arial,Helvetica,sans-serif;font-size:28px;line-height:34px;font-weight:600;color:#171613;">Voucher Details</h1>
+            <p style="margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-style:italic;color:#56514A;">This email serves as your eVoucher</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:18px 32px 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-top:1px solid #E4DFD4;">
+              <tr>
+                <td width="40%" valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:bold;color:#171613;">Purchase date</td>
+                <td valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#171613;">%redeem_date%</td>
+              </tr>
+              <tr>
+                <td width="40%" valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:bold;color:#171613;">Voucher name</td>
+                <td valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#171613;">%product_name%</td>
+              </tr>
+              <tr>
+                <td width="40%" valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:bold;color:#171613;">Valid until</td>
+                <td valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#171613;">%redeem_expiry%</td>
+              </tr>
+              <tr>
+                <td width="40%" valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:bold;color:#171613;">Voucher code</td>
+                <td valign="top" style="padding:12px 0;border-bottom:1px solid #EFEBE3;font-family:'Courier New',Courier,monospace;font-size:16px;line-height:20px;font-weight:bold;letter-spacing:2px;color:#171613;">%voucher%</td>
+              </tr>
+              <tr>
+                <td width="40%" valign="top" style="padding:16px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:bold;color:#171613;">QR code<br><span style="font-weight:normal;font-size:12px;color:#8A837A;">Show at the outlet</span></td>
+                <td valign="top" style="padding:16px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#171613;">%qr_code%</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Nút mở trang quà (bulletproof: bảng + nền màu, không cần ảnh) -->
+        <tr>
+          <td align="left" style="padding:8px 32px 8px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="center" bgcolor="#171613" style="background-color:#171613;border-radius:24px;">
+                  <a href="%gift_url%" target="_blank" style="display:inline-block;padding:13px 28px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:18px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:24px;">View your gift online</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- About the voucher -->
+        <tr>
+          <td style="padding:28px 32px 10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:bold;color:#171613;">About the voucher:</td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px 36px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:22px;color:#56514A;">%product_description%</td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td bgcolor="#171613" style="background-color:#171613;padding:24px 32px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:#BDB6AA;" align="center">
+            <span style="letter-spacing:3px;text-transform:uppercase;color:#FFFFFF;">The Shop · Grand Hyatt Singapore</span><br>
+            Lobby Level, 10 Scotts Road, Singapore 228211<br>
+            <a href="mailto:theshop.sg@hyatt.com" style="color:#BDB6AA;text-decoration:underline;">theshop.sg@hyatt.com</a> · +65 6416 7117
+          </td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+</div>

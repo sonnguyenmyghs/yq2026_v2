@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Module JS: checkout-voucher — bản PRODUCTION (dùng cho checkout-voucher-production.html)
+   Module JS: checkout-voucher — bản PRODUCTION (dùng cho voucher/checkout-production.html)
 
    Cùng luồng với checkout-voucher.js (demo) nhưng nối API thật:
      - Promo: POST /cart?action=check_promo&code=…  (cùng API với checkout-v2-production.js)
@@ -28,12 +28,14 @@ jQuery(function ($) {
             hiddenInput: function () { return { phone: 'register[phone]' }; },
             loadUtils: function () { return import('https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.0/build/js/utils.js'); }
         });
-        phoneInput.addEventListener('keyup', function () {
-            var ok = iti.isValidNumber();
+        /* input + countrychange: bắt cả dán / autofill / đổi mã nước (không chỉ keyup) */
+        var checkPhone = function () {
+            var ok = !!iti.isValidNumber();
             phoneResult.style.color = ok ? 'green' : 'red';
             phoneResult.textContent = ok ? 'Valid phone number' : 'Invalid phone number';
             phoneInput.classList.toggle('error', !ok);
-        });
+        };
+        ['keyup', 'input', 'countrychange'].forEach(function (ev) { phoneInput.addEventListener(ev, checkPhone); });
     }
 
     /* For myself / Send as a gift: xử lý trong checkout-voucher-gift.js (nạp trước file này) */
@@ -154,8 +156,16 @@ jQuery(function ($) {
         var bad = firstInvalid();
         if (bad) { showError(bad); return; }
         if (iti && isGuest()) $('input[type="hidden"][name="register[phone]"]').val(iti.getNumber());
+        /* Banner mẫu -> không gửi phần file rỗng card_banner_file */
+        $('#cvvBannerFile').prop('disabled', $('#cvvBannerFile').prop('disabled') || $('#cvvCardBanner').val() !== 'upload');
         submitting = true;
         $(this).prop('disabled', true).val('Processing…');
         $('.inform--frm')[0].submit();
+    });
+    /* Quay lại bằng nút Back (bfcache) -> mở khoá nút Pay Now */
+    window.addEventListener('pageshow', function (e) {
+        if (!e.persisted) return;
+        submitting = false;
+        $('.confirm--order--btn').prop('disabled', false).val('Pay Now');
     });
 });

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email Preview — Voucher &amp; e-Card</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!--
+  CÔNG CỤ XEM TRƯỚC (nội bộ / show khách) — không deploy cho khách hàng cuối.
+  Ráp email/voucher-gift.html + email/parts/card-*.html với dữ liệu mẫu qua YQEmail (assets/js/modules/voucher/email-render.js),
+  giống cách backend thay %biến% khi gửi mail. Hướng dẫn backend: email/README.md.
+  Cần chạy qua http (fetch file), vd: python3 -m http.server
+-->
+<style>
+  :root{ --ink:#171613; --body:#56514A; --muted:#8A837A; --line:#E4DFD4; --cream:#F6F4EF; --gold:#8C7145; }
+  *{ box-sizing: border-box; }
+  body{ margin: 0; background: #ECE9E2; color: var(--ink); font-family: Inter, Arial, sans-serif; }
+  .ep{ display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+  .ep-side{ background: #fff; border-right: 1px solid var(--line); padding: 22px 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .ep-side h1{ font-family: 'Josefin Sans', Arial, sans-serif; font-size: 22px; margin: 0 0 4px; }
+  .ep-side p{ font-size: 12.5px; color: var(--body); margin: 0 0 18px; line-height: 1.5; }
+  .ep-g{ margin-bottom: 18px; }
+  .ep-g > span{ display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .ep-opts{ display: flex; flex-wrap: wrap; gap: 6px; }
+  .ep-opt{ border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 12px; font-size: 12.5px; cursor: pointer; color: var(--ink); display: inline-flex; align-items: center; gap: 6px; }
+  .ep-opt:hover{ border-color: var(--ink); }
+  .ep-opt.is-on{ background: var(--ink); border-color: var(--ink); color: #fff; }
+  .ep-dot{ width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
+  .ep-side label{ display: block; font-size: 12px; color: var(--body); margin: 8px 0 4px; }
+  .ep-side input, .ep-side textarea{ width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 13px; }
+  .ep-side textarea{ min-height: 70px; resize: vertical; }
+  .ep-note{ font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .ep-main{ padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+  .ep-bar{ font-size: 12px; color: var(--body); }
+  .ep-frame{ width: 700px; max-width: 100%; height: calc(100vh - 80px); border: 0; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.08); border-radius: 10px; transition: width .25s ease; }
+  .ep-frame.is-mobile{ width: 375px; }
+  @media (max-width: 900px){
+    .ep{ grid-template-columns: 1fr; }
+    .ep-side{ position: static; height: auto; }
+    .ep-frame{ height: 80vh; }
+  }
+</style>
+</head>
+<body>
+<div class="ep">
+  <aside class="ep-side">
+    <h1>Email preview</h1>
+    <p>Voucher email with the personalised e-card, built only from tables and inline styles so it renders in Gmail, Outlook and Apple Mail.</p>
+
+    <div class="ep-g"><span>Card layout</span>
+      <div class="ep-opts" data-k="layout">
+        <button class="ep-opt" data-v="classic">Classic</button>
+        <button class="ep-opt is-on" data-v="overlay">Overlay</button>
+        <button class="ep-opt" data-v="split">Split</button>
+        <button class="ep-opt" data-v="minimal">Minimal</button>
+        <button class="ep-opt" data-v="none">No card</button>
+      </div>
+    </div>
+    <div class="ep-g"><span>Banner</span>
+      <div class="ep-opts" data-k="banner">
+        <button class="ep-opt is-on" data-v="../assets/img/o-festive.jpg" data-auto="#816653">Christmas</button>
+        <button class="ep-opt" data-v="../assets/img/e-dining.jpg" data-auto="#4F342B">Dining</button>
+        <button class="ep-opt" data-v="../assets/img/o-birthdays.jpg" data-auto="#532713">Birthday</button>
+        <button class="ep-opt" data-v="../assets/img/o-anniversaries.jpg" data-auto="#10284C">Anniversary</button>
+        <button class="ep-opt" data-v="../assets/img/e-afternoon-tea.jpg" data-auto="#7A5A3A">Celebrate</button>
+      </div>
+    </div>
+    <div class="ep-g"><span>Colour</span>
+      <div class="ep-opts" data-k="colour">
+        <button class="ep-opt is-on" data-v="auto"><i class="ep-dot" style="background:#816653"></i>Auto</button>
+        <button class="ep-opt" data-v="#8C7145"><i class="ep-dot" style="background:#8C7145"></i>Gold</button>
+        <button class="ep-opt" data-v="#6F2613"><i class="ep-dot" style="background:#6F2613"></i>Terracotta</button>
+        <button class="ep-opt" data-v="#B9353F"><i class="ep-dot" style="background:#B9353F"></i>Crimson</button>
+        <button class="ep-opt" data-v="#000000"><i class="ep-dot" style="background:#000"></i>Black</button>
+      </div>
+    </div>
+    <div class="ep-g"><span>Simulate client</span>
+      <div class="ep-opts" data-k="client">
+        <button class="ep-opt is-on" data-v="normal">Apple Mail / modern</button>
+        <button class="ep-opt" data-v="gmail">Gmail web (strips style with url())</button>
+        <button class="ep-opt" data-v="nobg">Outlook Windows / Gmail non-Google (no background images)</button>
+      </div>
+    </div>
+    <div class="ep-g"><span>Screen</span>
+      <div class="ep-opts" data-k="screen">
+        <button class="ep-opt is-on" data-v="desktop">Desktop</button>
+        <button class="ep-opt" data-v="mobile">Mobile 375px</button>
+      </div>
+    </div>
+    <div class="ep-g"><span>Sample data</span>
+      <label for="epTo">Recipient</label><input id="epTo" value="Sarah Tan">
+      <label for="epFrom">Sender</label><input id="epFrom" value="James">
+      <label for="epMsg">Message</label><textarea id="epMsg">Merry Christmas! Enjoy a festive evening on us — you deserve it.</textarea>
+    </div>
+    <p class="ep-note">Templates: <code>email/voucher-gift.html</code> + <code>email/parts/card-*.html</code>. "Auto" uses the colour the checkout picked from the photo (<code>card_colour_hex</code>); here each banner has a sample value. Static filled samples: <a href="samples/index.html">email/samples/</a>.</p>
+  </aside>
+
+  <main class="ep-main">
+    <div class="ep-bar" id="epBar">Subject: A gift for you from James</div>
+    <iframe class="ep-frame" id="epFrame" title="Email preview"></iframe>
+  </main>
+</div>
+
+<script src="../assets/js/modules/voucher/email-render.js"></script>
+<script>
+(function () {
+  var state = { layout: 'overlay', banner: '../assets/img/o-festive.jpg', auto: '#816653', colour: 'auto', screen: 'desktop', client: 'normal' };
+  // URL ảnh trong email phải tuyệt đối (giống backend); <base> trong srcdoc chỉ là dự phòng
+  var abs = function (p) { return new URL(p, location.href).href; };
+  var giftUrl = abs('../voucher/gift.html');
+
+  var render = function () {
+    var to = document.getElementById('epTo').value || 'Recipient';
+    var from = document.getElementById('epFrom').value || 'a friend';
+    var banner = abs(state.banner);
+    // Ráp + escape + giả lập client: assets/js/modules/voucher/email-render.js (dùng chung với checkout)
+    var vars = {
+      preheader: from + ' sent you a gift from The Shop',
+      gift_url: giftUrl,
+      recipient_name: to, sender_name: from, gift_message: document.getElementById('epMsg').value,
+      card_bg: state.colour === 'auto' ? state.auto : state.colour,
+      card_banner: banner, card_banner_overlay: banner, card_banner_split: banner, // backend: cắt sẵn overlay 592x460, split 416x600 (emulateCrop giả lập)
+      redeem_date: '10 Nov 2026',
+      product_name: 'Christmas Eve Dinner Buffet at StraitsKitchen',
+      redeem_expiry: '24 Dec 2026',
+      voucher: 'GH-8F3K-2Q7M',
+      qr_code_html: '<img src="' + abs('../assets/img/qr-sample.svg') + '" width="120" height="120" alt="QR code" style="display:block;border:0;">',
+      product_description_html: 'Celebrate Christmas Eve with a festive dinner buffet at StraitsKitchen — roast turkey, honey-glazed ham, seafood on ice and Christmas desserts alongside local favourites. Valid for one adult on 24 December 2026, 6:00 PM – 10:00 PM. Advance reservation required.'
+    };
+    document.getElementById('epBar').textContent = 'Subject: A gift for you from ' + from;
+    YQEmail.build(vars, { layout: state.layout, client: state.client, emulateCrop: true }).then(function (html) {
+      document.getElementById('epFrame').srcdoc = html;
+    }).catch(function (e) {
+      document.getElementById('epBar').textContent = 'Cannot load templates — open this page through a web server (' + e.message + ').';
+    });
+  };
+
+  document.querySelectorAll('.ep-opts').forEach(function (group) {
+    group.addEventListener('click', function (e) {
+      var b = e.target.closest('.ep-opt'); if (!b) return;
+      group.querySelectorAll('.ep-opt').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+      var k = group.getAttribute('data-k'), v = b.getAttribute('data-v');
+      if (k === 'banner') { state.banner = v; state.auto = b.getAttribute('data-auto'); }
+      else state[k] = v;
+      if (k === 'screen') document.getElementById('epFrame').classList.toggle('is-mobile', v === 'mobile');
+      render();
+    });
+  });
+  ['epTo', 'epFrom', 'epMsg'].forEach(function (id) { document.getElementById(id).addEventListener('input', render); });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!--
+  Khối thiệp SPLIT (ảnh trái, chữ phải) — chèn vào %gift_card% của email/voucher-gift.html
+  Biến: %card_bg% (#RRGGBB — card_colour_hex) · %card_banner_split% (URL https ảnh ĐÃ CẮT SẴN dọc 208x300, nên xuất @2x 416x600)
+        %recipient_name% · %sender_name% · %gift_message% (đã escape, xuống dòng -> <br>) · %gift_url%
+  Chữ trên thiệp luôn trắng: card_colour_hex đã được làm tối đủ tương phản 4.5:1.
+
+  Bố cục "hybrid" (không cần media query, chạy trên Gmail / Apple Mail / Yahoo / Outlook.com / Outlook Mac):
+  - 2 cột là div inline-block có max-width (236px + 356px = 592px). Màn hình rộng -> nằm cạnh nhau;
+    màn hình hẹp (điện thoại) -> tự xuống dòng: ảnh giữa ở trên, chữ ở dưới.
+  - font-size:0 ở ô bọc để bỏ khoảng trắng giữa 2 div inline-block (chữ đặt lại font-size ở bên trong).
+  - Outlook Windows (Word) không hiểu inline-block / max-width: bảng "ma" trong comment điều kiện giữ 2 cột.
+    Nếu CMS xoá comment điều kiện -> Outlook xếp ảnh trên, chữ dưới (vẫn đọc được).
+  - Ảnh là <img> (không dùng ảnh nền: Gmail web xoá style có url()), có viền đệm 14px + bo 8px nên dù 2 cột
+    cao khác nhau vẫn trông như khung ảnh có chủ đích.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding:0 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="%card_bg%" style="width:100%;background-color:%card_bg%;border-radius:12px;">
+        <tr>
+          <td align="center" valign="middle" style="padding:0;font-size:0;line-height:0;text-align:center;">
+            <!--[if mso]><table role="presentation" width="592" cellpadding="0" cellspacing="0" border="0"><tr><td width="236" valign="middle"><![endif]-->
+            <div style="display:inline-block;width:100%;max-width:236px;vertical-align:middle;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="padding:14px;">
+                    <a href="%gift_url%" target="_blank" style="text-decoration:none;"><img src="%card_banner_split%" width="208" height="300" alt="" style="display:block;width:100%;max-width:208px;height:auto;border:0;border-radius:8px;"></a>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!--[if mso]></td><td width="356" valign="middle"><![endif]-->
+            <div style="display:inline-block;width:100%;max-width:356px;vertical-align:middle;text-align:left;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding:22px 24px 26px 22px;text-align:left;">
+                    <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;letter-spacing:3px;text-transform:uppercase;color:#FFFFFF;">The Shop &middot; A gift for you</p>
+                    <p style="margin:0 0 12px;font-family:'Josefin Sans','Helvetica Neue',Arial,Helvetica,sans-serif;font-size:20px;line-height:28px;font-weight:600;color:#FFFFFF;">Dear %recipient_name%,</p>
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:26px;color:#FFFFFF;text-align:left;">%gift_message%</p>
+                    <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#FFFFFF;text-align:right;">With love, <strong>%sender_name%</strong></p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!--[if mso]></td></tr></table><![endif]-->
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

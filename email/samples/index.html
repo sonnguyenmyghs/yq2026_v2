@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Email Samples</title>
+<!--
+  Email mẫu tĩnh (đã thay hết %biến%) để review — tạo lại bằng: node email/samples/build.js
+  Không deploy, không dùng để gửi mail thật.
+-->
+<style>
+  body{ margin:0; padding:32px 16px; background:#F6F4EF; color:#171613; font-family:Arial,Helvetica,sans-serif; }
+  main{ max-width:720px; margin:0 auto; }
+  h1{ font-size:24px; margin:0 0 6px; }
+  p{ font-size:14px; line-height:1.55; color:#56514A; margin:0 0 12px; }
+  ul{ list-style:none; padding:0; margin:20px 0; }
+  li{ background:#fff; border:1px solid #E4DFD4; border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  a{ color:#171613; font-weight:bold; }
+  li span{ display:block; font-size:13px; color:#56514A; margin-top:4px; }
+  .note{ font-size:12.5px; border-top:1px solid #E4DFD4; padding-top:14px; color:#736649; }
+  code{ font-size:12px; background:#EFEBE3; padding:1px 4px; border-radius:4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Voucher email — static samples</h1>
+  <p>Each file is the complete email as it would arrive in the inbox, with every <code>%variable%</code> already filled
+     (Sarah Tan ← James, Christmas Eve Dinner Buffet at StraitsKitchen, code GH-8F3K-2Q7M).</p>
+  <ul>
+    <li><a href="classic.html">classic.html</a><span>Banner on top, message below · Christmas (o-festive.jpg) · Auto colour #816653</span></li>
+    <li><a href="overlay.html">overlay.html</a><span>Photo as background, colour box over it · Christmas · Warm Crimson #B9353F</span></li>
+    <li><a href="split.html">split.html</a><span>Photo left, message right (stacks on phones) · Anniversary (o-anniversaries.jpg) · Deep Terracotta #6F2613</span></li>
+    <li><a href="minimal.html">minimal.html</a><span>No image, centred message · Burnished Gold #8C7145</span></li>
+    <li><a href="none.html">none.html</a><span>No e-card (self-purchase) · hero banner + message, like the current production email</span></li>
+  </ul>
+  <p class="note">
+    Images use relative paths (<code>../../assets/img/…</code>) for local review only. For a real test send, every image
+    (banner, logo, QR) must be an absolute <code>https://</code> URL.<br>
+    Overlay and split point at the original 1200×900 photos; in production the backend must pre-crop them
+    (overlay exactly 592×460, split 416×600) — email clients cannot crop. QR here is a sample SVG; the real
+    <code>%qr_code%</code> should be a PNG/JPG <code>&lt;img&gt;</code> (~120px), since many clients block SVG.<br>
+    Regenerate: <code>node email/samples/build.js</code>. Interactive preview (layouts, colours, Gmail/Outlook simulation):
+    <a href="../preview.html">email/preview.html</a>.
+  </p>
+</main>
+</body>
+</html>

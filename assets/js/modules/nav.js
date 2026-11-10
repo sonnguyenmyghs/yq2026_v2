@@ -154,7 +154,7 @@
   $(document).on('submit', '#yqSearchForm', function (e) {
     e.preventDefault();
     var q = $.trim($('#yqSearchInput').val());
-    window.location.href = 'shop.html' + (q ? '?q=' + encodeURIComponent(q) : '');
+    window.location.href = (YQ.url ? YQ.url('shop.html') : 'shop.html') + (q ? '?q=' + encodeURIComponent(q) : '');
   });
 
   /* Phím tắt: "/" mở tìm kiếm, Esc đóng mọi thứ */

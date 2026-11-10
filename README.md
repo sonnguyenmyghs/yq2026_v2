@@ -36,8 +36,11 @@ python3 -m http.server 8000
 ├── checkout.html         Checkout 4 bước: Information → Shipping → Payment → Review
 ├── checkout-v2.html      Checkout v2 một màn: banner ảnh, form + Self-Collection / Delivery
 │                         (chọn địa chỉ trên bản đồ, báo giá xe), Order Summary cột phải
-├── checkout-voucher-production.html  Bản deploy của checkout-voucher (partial, biến PHP thật)
-├── checkout-voucher.html Checkout cho sản phẩm loại voucher: thông tin khách, For myself / Send as a gift,
+├── email/preview.html    Xem trước email voucher + e-card (ráp email/voucher-gift.html + email/parts/card-*.html với dữ liệu mẫu)
+├── gift.html             Trang người nhận mở quà (từ nút "View your gift" trong email voucher; production /gift/<token>):
+│                         phong bì → thiệp (banner ảnh, màu, lời nhắn), e-voucher (mã, QR, hạn, cách dùng), cảm ơn
+├── voucher/checkout-production.html  Bản deploy của checkout-voucher (partial, biến PHP thật)
+├── voucher/checkout.html Checkout cho sản phẩm loại voucher: thông tin khách, For myself / Send as a gift,
 │                         điều khoản; không có Shipping; promo + Pay Now ở Order Summary
 ├── faq.html              FAQs (accordion theo nhóm: ordering, self-collection, delivery…)
 ├── returns.html          Returns Policy
@@ -56,7 +59,7 @@ python3 -m http.server 8000
     ├── css/style.css     Design tokens + toàn bộ component
     ├── css/parts/        CSS theo module: nav, banner, buynow, cart-anim, account, checkout-v2
     ├── img/favicon.svg
-    ├── video/            Banner video mẫu cho thiệp (card-celebrate.mp4, card-festive.mp4)
+    ├── video/            Banner video mẫu cho thiệp ở personalise.html (luồng voucher/email KHÔNG dùng video)
     └── js/
         ├── data.js       Nav, icon, logo, 13 sản phẩm, 6 experiences, đơn hàng, hồ sơ, config
         ├── app.js        Helper, cart + profile (localStorage), init header/footer, toast, reveal
@@ -297,7 +300,22 @@ The Shop / Drive-Through (chọn Drive-Through hiện ô biển số). Delivery:
 **My Location** (`.slide--page[data-spage=mylocation]`), sau Okay mới hiện ngày/giờ
 (`__arrayMapTimeSlotLalamove`) + bảng xe, unit number + postal code 6 số bắt buộc.
 
-### Checkout voucher (`checkout-voucher.html`)
+### Thư mục theo phần (voucher / e-gift)
+
+```
+voucher/                       Luồng mua voucher (trang dùng ../ như member/)
+  checkout.html                Checkout voucher — bản demo (dữ liệu mẫu)
+  checkout-production.html     Checkout voucher — bản deploy (partial, biến PHP thật)
+  gift.html                    Trang người nhận mở quà (production /gift/<token>)
+email/                         Email voucher + e-card (chỉ table + style inline)
+  voucher-gift.html            Khung email, chỗ trống %gift_card%
+  parts/card-*.html            Khối thiệp: classic | overlay | split | minimal | none
+  preview.html                 Công cụ xem trước nội bộ (layout, màu, giả lập Gmail/Outlook)
+assets/css/parts/voucher/      checkout-voucher.css, gift.css
+assets/js/modules/voucher/     checkout-voucher.js (demo), checkout-voucher-production.js, checkout-voucher-gift.js (dùng chung), gift.js
+```
+
+### Checkout voucher (`voucher/checkout.html`)
 
 Dùng khi giỏ **chỉ có sản phẩm loại voucher** (không giao/nhận hàng). Thay cho template cũ
 `old/select_payment.html`, dựng lại theo giao diện `checkout-v2.html` (dùng chung `checkout-v2.css`).
@@ -314,22 +332,53 @@ Giữ nguyên `name` / id của template cũ: `register[...]`, `member[...]`, `n
 
 | File | Vai trò | Lên production |
 |---|---|---|
-| `checkout-voucher.html` | Markup tĩnh + giá trị mẫu (biến PHP ghi trong comment `@...`) + inline script số điện thoại | Đổi giá trị mẫu thành `@_htmlListCartCheckOut`, `@totalCost`, `@option_list_country`, `@status`… |
-| `assets/css/parts/checkout-voucher.css` | Phần riêng (tiền tố `.cvv-`), nạp sau `checkout-v2.css` | Dùng nguyên |
-| `assets/js/modules/checkout-voucher.js` | **Demo** thay `app_voucher.js`: bật/tắt form người nhận, promo, validate, màn cảm ơn | Thay bằng `checkout-voucher-production.js` |
-| `checkout-voucher-production.html` | **Bản deploy**: partial (không header/footer), đã thay biến `{$...}`, bỏ phần demo | Copy thẳng lên server thay `select_payment.html` bản voucher |
-| `assets/js/modules/checkout-voucher-gift.js` | Panel "Send as a gift": mở/lưu/huỷ, xem trước thiệp, thẻ tóm tắt (demo + production dùng chung) | Dùng nguyên |
-| `assets/js/modules/checkout-voucher-production.js` | Promo thật `/cart?action=check_promo`, huỷ mã `/reward/?act=delete_gift`, phone `register[phone]`, validate rồi POST | Dùng nguyên |
+| `voucher/checkout.html` | Markup tĩnh + giá trị mẫu (biến PHP ghi trong comment `@...`) + inline script số điện thoại | Đổi giá trị mẫu thành `@_htmlListCartCheckOut`, `@totalCost`, `@option_list_country`, `@status`… |
+| `assets/css/parts/voucher/checkout-voucher.css` | Phần riêng (tiền tố `.cvv-`), nạp sau `checkout-v2.css` | Dùng nguyên |
+| `assets/js/modules/voucher/checkout-voucher.js` | **Demo** thay `app_voucher.js`: bật/tắt form người nhận, promo, validate, màn cảm ơn | Thay bằng `checkout-voucher-production.js` |
+| `voucher/checkout-production.html` | **Bản deploy**: partial (không header/footer), đã thay biến `{$...}`, bỏ phần demo | Copy thẳng lên server thay `select_payment.html` bản voucher |
+| `assets/js/modules/voucher/checkout-voucher-gift.js` | Panel "Send as a gift": mở/lưu/huỷ, xem trước thiệp, thẻ tóm tắt (demo + production dùng chung) | Dùng nguyên |
+| `assets/js/modules/voucher/checkout-voucher-production.js` | Promo thật `/cart?action=check_promo`, huỷ mã `/reward/?act=delete_gift`, phone `register[phone]`, validate rồi POST | Dùng nguyên |
 
 Số điện thoại: inline script trong trang khởi tạo intl-tel-input cho `#phone_register` với hidden `register[phone]`
 (giống template cũ) — **không** dùng `control__telinputv25.js` (file đó gửi `redeem_detail[phone]` cho checkout food).
 Form thành viên chỉ có `member[email|firstname|lastname]` như bản cũ. Không có `register[birthday]` (bản đang chạy không hiện).
 Radio "For myself / Send as a gift" có `form="cvvNoSubmit"` nên không POST field thừa.
-"Send as a gift" mở panel trượt `#cvvGiftPanel` trong cùng trang: người nhận (3 input cũ) + thiệp cá nhân tuỳ chọn
-(banner ảnh/video hoặc tự tải, 4 màu The Shop, xem trước). Thiệp gửi qua input mới `card_add`, `card_banner`, `card_banner_type`,
-`card_banner_file`, `card_colour` (form multipart) — backend cần đọc để đính kèm thiệp. Trang nạp thêm `personalise.css`.
-JS dùng chung: `assets/js/modules/checkout-voucher-gift.js`. Chi tiết: `.claude/production-templates.md`. Ở chế độ "For myself", JS xoá 3 ô người nhận trước khi gửi.
+"Send as a gift" mở panel rộng `#cvvGiftPanel`: người nhận (3 input cũ) + thiết kế e-card (banner ảnh mẫu hoặc tự tải ảnh JPG/PNG/WebP ≤ 10MB,
+layout Classic/Overlay/Split/Minimal, màu Auto lấy từ ảnh hoặc 4 màu The Shop) + xem trước **e-card** (vẽ giống email/parts/card-*.html)
++ link "Preview full email" mở popup iframe với email thật do `YQEmail.build()` ráp (`email-render.js`). Tự gợi ý
+banner/layout/màu theo tên voucher (`data-tags`, `data-kind="occasion"` ưu tiên). Input mới: `card_add` (luôn = 1 khi tặng — e-card luôn có), `card_banner`,
+`card_banner_file`, `card_layout`, `card_colour`, `card_colour_hex` (form multipart).
+JS dùng chung: `assets/js/modules/voucher/checkout-voucher-gift.js`. Chi tiết: `.claude/production-templates.md`. Ở chế độ "For myself", JS xoá 3 ô người nhận trước khi gửi.
 `[DEMO]`: promo tra `window.__demoPromoCodes` thay cho `/cart?action=check_promo`; submit bị chặn để hiện `#cv2Done`.
+
+### Email voucher + e-card (`email/`)
+
+Email gửi người nhận gộp **e-card** và **Voucher Details** (giữ biến của email cũ). Viết cho email client:
+chỉ `<table>` + style inline, không `<style>`/media query (trình soạn email của CMS hay xoá), không flex/grid/gradient/
+biến CSS/SVG/video. Rộng tối đa 640px, tự co trên điện thoại. Xem thử: `email/preview.html` (chạy qua http) — có chế độ giả lập Gmail web (xoá `style` có `url()`) và Outlook Windows (không ảnh nền).
+
+| File | Vai trò |
+|---|---|
+| `email/voucher-gift.html` | Khung email: logo, `%gift_card%`, Voucher Details, nút "View your gift online", About the voucher, footer |
+| `email/parts/card-classic.html` | Banner trên, chữ dưới |
+| `email/parts/card-overlay.html` | Ảnh làm nền, khung chữ màu đè dưới. `url()` chỉ nằm ở ô ảnh nền (Gmail web xoá cả `style` có `url()`), bố cục ở bảng lồng; thêm thuộc tính `background` + VML cho Outlook Windows. Không có ảnh nền → còn nền màu |
+| `email/parts/card-split.html` | Ảnh trái 40%, chữ phải 60% (giữ 2 cột cả trên điện thoại) |
+| `email/parts/card-minimal.html` | Không ảnh, chữ giữa |
+| `email/parts/card-none.html` | Không có thiệp: banner chung + `%gift_message%` như email cũ |
+
+Backend: chọn file `card-<card_layout>` (hoặc `card-none`), thay biến, chèn vào `%gift_card%`, rồi thay biến của khung.
+
+| Biến | Nguồn |
+|---|---|
+| `%redeem_date%` `%product_name%` `%redeem_expiry%` `%voucher%` `%qr_code%` `%product_description%` `%gift_message%` | Có sẵn (email cũ). `%gift_message%` = `note_receive`, escape + xuống dòng → `<br>` |
+| `%gift_card%` | HTML khối thiệp đã thay biến |
+| `%recipient_name%` · `%sender_name%` | `name_receive` · tên người mua |
+| `%card_bg%` | `card_colour_hex` (đã đủ tương phản cho chữ trắng) |
+| `%card_banner%` | URL tuyệt đối của ảnh banner (`card_banner` mẫu hoặc `card_banner_file`) — chỉ ảnh, không video |
+| `%card_banner_overlay%` | Chỉ cho layout overlay: URL ảnh banner **đã cắt sẵn đúng 592×460px** (thuộc tính `background` không co giãn ảnh, Gmail web có thể bỏ `background-size`) |
+| `%card_banner_split%` | Chỉ cho layout split: URL ảnh banner **đã cắt sẵn dọc 208×300px** (@2x 416×600) — split dạng "hybrid": rộng thì 2 cột, điện thoại tự xếp ảnh trên / chữ dưới |
+| `%gift_url%` | Link trang mở quà `/gift/<token>` (`voucher/gift.html`) |
+| `%preheader%` | Dòng xem trước hộp thư, vd "James sent you a gift from The Shop" |
 
 ### Admin rule giao nhận (`admin/delivery-rules.html`)
 

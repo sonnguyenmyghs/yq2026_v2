@@ -76,8 +76,8 @@
 }
 
 /* Panel "Send as a gift" (Bootstrap offcanvas) */
-.cvv-panel.offcanvas-end{ width: 520px; max-width: 100%; border-left: 0; background: var(--yq-paper); box-shadow: -8px 0 40px rgba(23,22,19,.14); }
-.cvv-panel__head{ align-items: flex-start; padding: 22px 24px 14px; border-bottom: 1px solid var(--yq-line-soft); }
+.cvv-panel.offcanvas-end{ width: min(1080px, 100vw); max-width: 100%; border-left: 0; background: var(--yq-paper); box-shadow: -8px 0 40px rgba(23,22,19,.14); }
+.cvv-panel__head{ align-items: flex-start; justify-content: space-between; gap: 12px; padding: 22px 24px 14px; border-bottom: 1px solid var(--yq-line-soft); }
 .cvv-panel__head .yq-eyebrow{ color: var(--yq-gold-dark); }
 .cvv-panel__title{ margin: 4px 0 0; font-family: var(--yq-serif); font-size: 24px; color: var(--yq-ink); }
 .cvv-panel__close{ padding: 6px; margin: -4px -6px 0 0; border: 0; background: none; color: var(--yq-ink); border-radius: 50%; }
@@ -100,26 +100,234 @@
 .cvv-step + .cvv-step{ margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--yq-line-soft); }
 .cvv-step__t{ display: block; font-family: var(--yq-serif); font-size: 16px; font-weight: 600; color: var(--yq-ink); margin-bottom: 12px; }
 .cvv-step .cvv-receive{ margin-top: 0; }
-.cvv-switch{ display: flex; align-items: flex-start; gap: 14px; margin: 0; cursor: pointer; }
-.cvv-switch__txt{ flex: 1; min-width: 0; }
-.cvv-switch__txt .cvv-step__t{ margin-bottom: 2px; }
-.cvv-switch__txt small{ font-size: 12.5px; color: var(--yq-muted); }
-.cvv-switch input{ position: absolute; opacity: 0; width: 0; height: 0; }
-.cvv-switch__ui{
-  flex: none; position: relative; width: 42px; height: 24px; margin-top: 2px; border-radius: 999px;
-  background: var(--yq-line); transition: background .2s var(--yq-ease);
-}
-.cvv-switch__ui::after{
-  content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
-  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .2s var(--yq-ease);
-}
-.cvv-switch input:checked + .cvv-switch__ui{ background: var(--yq-ink); }
-.cvv-switch input:checked + .cvv-switch__ui::after{ transform: translateX(18px); }
-.cvv-switch input:focus-visible + .cvv-switch__ui{ outline: 2px solid var(--yq-gold); outline-offset: 2px; }
 .cvv-panel .cvv-label.mt-3{ margin-top: 18px !important; }
-.cvv-banners{ grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+.cvv-banners{ grid-template-columns: repeat(5, minmax(0,1fr)) !important; gap: 8px !important; }
 .cvv-err{ margin-top: 8px; font-size: 12px; color: #C0564C; }
-.cvv-panel .yq-pe-card{ box-shadow: var(--yq-shadow-md); }
-.cvv-panel .yq-pe-card__body{ padding: 20px 22px; }
-.cvv-panel .yq-pe-card__msg{ font-size: 14px; min-height: 40px; }
 .cvv-pe__card{ font-size: 12.5px; color: var(--yq-gold-dark); }
+
+/* ---------- Panel rộng: trái lựa chọn / phải xem trước thiệp ---------- */
+.cvv-panel__body{ padding: 0; }
+.cvv-panel__grid{
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 430px); align-items: start; min-height: 100%;
+  background: linear-gradient(to right, var(--yq-paper) calc(100% - 430px), var(--yq-cream) 0);
+}
+.cvv-panel__controls{ padding: 22px 26px 28px; min-width: 0; }
+.cvv-panel__preview{
+  position: sticky; top: 0; align-self: start; padding: 22px 26px 28px;
+  border-left: 1px solid var(--yq-line-soft);
+}
+@media (max-width: 991.98px){
+  .cvv-panel__grid{ grid-template-columns: minmax(0, 1fr); background: var(--yq-paper); }
+  .cvv-panel__preview{ position: static; border-left: 0; border-top: 1px solid var(--yq-line-soft); background: var(--yq-cream); }
+  .cvv-banners{ grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+}
+.cvv-count{ display: block; text-align: right; }
+
+/* Gợi ý tự động */
+.cvv-suggest{
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding: 10px 14px;
+  border-radius: var(--yq-radius-sm); background: var(--yq-gold-soft); color: var(--yq-ink); font-size: 12.5px;
+}
+.cvv-suggest svg{ color: var(--yq-gold-dark); flex: none; }
+.cvv-suggest > span{ flex: 1; min-width: 0; }
+.cvv-suggest .cvv-pe__link{ font-size: 12.5px; }
+.cvv-banners .yq-pe-banner.is-suggested .yq-pe-banner__name::after{ content: " ✦"; color: var(--yq-gold-dark); }
+
+/* Chọn layout */
+.cvv-layouts{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 575.98px){ .cvv-layouts{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cvv-layout{
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 8px 10px;
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm); background: var(--yq-paper);
+  text-align: left; cursor: pointer; transition: border-color .2s var(--yq-ease), box-shadow .2s var(--yq-ease);
+}
+.cvv-layout:hover{ border-color: var(--yq-ink); }
+.cvv-layout.is-active{ border-color: var(--yq-pe-gold); box-shadow: 0 0 0 2px rgba(140,113,69,.35); }
+.cvv-layout__name{ font-size: 12.5px; font-weight: 600; color: var(--yq-ink); margin-top: 6px; }
+.cvv-layout__sub{ font-size: 11px; color: var(--yq-muted); line-height: 1.3; }
+.cvv-layout.is-suggested .cvv-layout__name::after{ content: " ✦"; color: var(--yq-gold-dark); }
+/* Sơ đồ thu nhỏ: i = ảnh, b = dòng chữ */
+.cvv-layout__art{
+  position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden;
+  background: var(--yq-pe-gold);
+}
+.cvv-layout__art i{ position: absolute; background: linear-gradient(135deg, #d9cdb4, #b9a77f); }
+.cvv-layout__art b{ position: absolute; height: 3px; border-radius: 2px; background: rgba(255,255,255,.85); }
+.cvv-layout__art--classic i{ left: 0; right: 0; top: 0; height: 48%; }
+.cvv-layout__art--classic b:nth-of-type(1){ left: 12%; right: 30%; top: 62%; }
+.cvv-layout__art--classic b:nth-of-type(2){ left: 12%; right: 45%; top: 76%; }
+/* Overlay: ảnh phủ kín + khung chữ màu đặc ở dưới (giống email, không dùng gradient) */
+.cvv-layout__art--overlay i{ inset: 0; }
+.cvv-layout__art--overlay::after{ content: ""; position: absolute; left: 9%; right: 9%; bottom: 9%; height: 40%; border-radius: 3px; background: var(--yq-pe-gold); }
+.cvv-layout__art--overlay b{ z-index: 1; }
+.cvv-layout__art--overlay b:nth-of-type(1){ left: 17%; right: 35%; top: 64%; }
+.cvv-layout__art--overlay b:nth-of-type(2){ left: 17%; right: 48%; top: 76%; }
+.cvv-layout__art--split i{ left: 0; top: 0; bottom: 0; width: 40%; }
+.cvv-layout__art--split b:nth-of-type(1){ left: 50%; right: 10%; top: 40%; }
+.cvv-layout__art--split b:nth-of-type(2){ left: 50%; right: 22%; top: 56%; }
+/* Minimal: không ảnh — i là gạch trắng 40px giữa thiệp */
+.cvv-layout__art--minimal i{ left: 42%; right: 42%; top: 32%; height: 1px; background: rgba(255,255,255,.85); }
+.cvv-layout__art--minimal b:nth-of-type(1){ left: 22%; right: 22%; top: 46%; }
+.cvv-layout__art--minimal b:nth-of-type(2){ left: 32%; right: 32%; top: 60%; }
+
+/* Swatch Auto */
+/* Chấm Auto: màu lấy từ ảnh + dấu ✦ để phân biệt với 4 màu cố định */
+.cvv-swatch-auto .yq-pe-swatch__dot{
+  position: relative; background: var(--sw);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+}
+.cvv-swatch-auto .yq-pe-swatch__dot::after{
+  content: "✦"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 10px; line-height: 1;
+}
+/* Ô upload đã có file: nhãn "Change" hiện khi rê chuột / khi đang chọn */
+.cvv-banners .yq-pe-banner--upload.has-file.is-active .yq-pe-banner__up{ opacity: 1; background: rgba(0,0,0,.42); }
+
+/* ---------- E-card: 4 layout giống email/parts/card-*.html ----------
+   Dựa trên .yq-pe-card (màu nền qua biến --c-bg: Auto = style inline, màu cố định = .yq-pe-card--<màu>).
+   Chữ luôn trắng, font + cỡ chữ lấy đúng theo style inline của email. */
+.cvv-ecard{ border-radius: 12px; box-shadow: var(--yq-shadow-md); color: #fff; }
+.cvv-ecard .yq-pe-card__media{ aspect-ratio: auto; }
+.cvv-ecard .yq-pe-card__media img{ height: auto; }
+.cvv-ecard .yq-pe-card__body{ padding: 30px 36px 34px; font-family: Arial, Helvetica, sans-serif; }
+.cvv-ecard .yq-pe-card__body::before{ display: none; }
+.cvv-ecard .yq-pe-card__body p{ margin: 0; }
+.cvv-ecard__eyebrow{ margin: 0 0 18px !important; font-size: 11px; line-height: 16px; letter-spacing: 3px; text-transform: uppercase; }
+.cvv-ecard .yq-pe-card__to{
+  margin: 0 0 12px !important; font-family: 'Josefin Sans', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  font-size: 22px; line-height: 30px; font-weight: 600;
+}
+.cvv-ecard .yq-pe-card__msg{ min-height: 0; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 26px; text-align: left; }
+.cvv-ecard .yq-pe-card__msg.is-empty{ color: rgba(255,255,255,.72); }
+.cvv-ecard .yq-pe-card__from{ margin: 18px 0 0 !important; font-size: 14px; line-height: 20px; color: #fff; text-align: right; }
+.cvv-ecard .yq-pe-card__from strong{ font-weight: 700; }
+.cvv-ecard__brand{ display: none; }
+
+/* Overlay: ảnh 592x460 làm nền, khung chữ màu đặc cách mép 22px, bo 10px; chữ dài thì thiệp cao thêm, ảnh giãn theo */
+.cvv-ecard.is-overlay{ display: grid; grid-template-columns: 100%; }   /* cột = đúng bề ngang thiệp (không giãn theo tỉ lệ ảnh) */
+.cvv-ecard.is-overlay > *{ grid-area: 1 / 1; min-width: 0; }
+.cvv-ecard.is-overlay::before{ content: ""; grid-area: 1 / 1; width: 100%; aspect-ratio: 592 / 460; align-self: start; }   /* chiều cao tối thiểu theo tỉ lệ ảnh email */
+.cvv-ecard.is-overlay .yq-pe-card__media{ aspect-ratio: auto; align-self: stretch; }
+.cvv-ecard.is-overlay .yq-pe-card__media img{ position: absolute; inset: 0; height: 100%; }
+.cvv-ecard.is-overlay .yq-pe-card__body{
+  align-self: end; margin: 33.8% 22px 22px; padding: 24px 28px 26px;   /* 33.8% = khoảng trống 200px / 592px của email */
+  background: var(--c-bg); border-radius: 10px;
+}
+/* Split: ảnh trái 40% (cao theo ảnh, canh trên) / chữ phải 60% (canh giữa) */
+.cvv-ecard.is-split{ display: grid; grid-template-columns: 40% 60%; }
+.cvv-ecard.is-split .yq-pe-card__media{   /* giống email: ảnh dọc 208x300 trong khung đệm 14px, bo 8px, canh giữa dọc */
+  align-self: center; position: relative; aspect-ratio: auto; padding: 14px; background: none;
+}
+.cvv-ecard.is-split .yq-pe-card__media img{ position: static; display: block; width: 100%; height: auto; aspect-ratio: 208 / 300; object-fit: cover; border-radius: 8px; }
+.cvv-ecard.is-split .yq-pe-card__body{ align-self: center; min-width: 0; padding: 22px 24px 26px 8px; }
+.cvv-ecard.is-split .yq-pe-card__to{ font-size: 20px; line-height: 28px; }
+/* Minimal: không ảnh, chữ giữa — THE SHOP / GRAND HYATT SINGAPORE, gạch trắng 40px, "Dear …" 28px */
+.cvv-ecard.is-minimal .yq-pe-card__media,
+.cvv-ecard.is-minimal .cvv-ecard__eyebrow{ display: none; }
+.cvv-ecard.is-minimal .yq-pe-card__body{ padding: 44px 40px 46px; text-align: center; }
+.cvv-ecard.is-minimal .cvv-ecard__brand{ display: block; }
+.cvv-ecard__brand span{
+  display: block; margin: 0 0 6px; font-family: 'Josefin Sans', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  font-size: 13px; line-height: 18px; letter-spacing: 5px; text-transform: uppercase;
+}
+.cvv-ecard__brand small{ display: block; margin: 0 0 20px; font-size: 10px; line-height: 14px; letter-spacing: 3px; text-transform: uppercase; }
+.cvv-ecard__brand i{ display: block; width: 40px; height: 1px; margin: 0 auto 18px; background: #fff; }
+.cvv-ecard.is-minimal .yq-pe-card__to{ margin-bottom: 14px !important; font-size: 28px; line-height: 36px; }
+.cvv-ecard.is-minimal .yq-pe-card__msg,
+.cvv-ecard.is-minimal .yq-pe-card__from{ text-align: center; }
+
+/* Dòng giải thích dưới thiệp + nút xem cả email */
+.cvv-preview__line{ margin: 14px 0 0; font-size: 13px; line-height: 1.5; color: var(--yq-body); }
+.cvv-preview__line b{ font-weight: 600; color: var(--yq-ink); overflow-wrap: anywhere; }
+.cvv-preview__open{ margin-top: 10px; }
+
+/* ---------- Hộp "Preview full email" (nằm trong offcanvas, phủ kín panel) ---------- */
+.cvv-emailpv{
+  position: absolute; inset: 0; z-index: 20; display: flex; padding: 24px;
+  background: rgba(23,22,19,.45);
+}
+.cvv-emailpv[hidden]{ display: none; }
+.cvv-emailpv__box{
+  flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;
+  border-radius: var(--yq-radius); background: var(--yq-paper); box-shadow: var(--yq-shadow-lg);
+}
+.cvv-emailpv__bar{ display: flex; align-items: center; gap: 14px; padding: 12px 16px 12px 20px; border-bottom: 1px solid var(--yq-line-soft); }
+.cvv-emailpv__title{ flex: 1; min-width: 0; font-family: var(--yq-serif); font-size: 18px; font-weight: 600; color: var(--yq-ink); }
+.cvv-emailpv__bar .cvv-panel__close{ margin: 0; }
+.cvv-emailpv__seg{ display: inline-flex; padding: 3px; border-radius: var(--yq-radius-pill); background: var(--yq-cream-2); }
+.cvv-emailpv__seg button{
+  padding: 6px 14px; border: 0; border-radius: var(--yq-radius-pill); background: none;
+  font-size: 12.5px; font-weight: 500; color: var(--yq-body); cursor: pointer;
+  transition: background-color .2s var(--yq-ease), color .2s var(--yq-ease);
+}
+.cvv-emailpv__seg button.is-active{ background: var(--yq-ink); color: #fff; }
+.cvv-emailpv__seg button:focus-visible{ outline: 2px solid var(--yq-gold); outline-offset: 2px; }
+.cvv-emailpv__note{ margin: 0; padding: 8px 20px; font-size: 12px; color: var(--yq-muted); background: var(--yq-paper); border-bottom: 1px solid var(--yq-line-soft); }
+.cvv-emailpv__stage{ position: relative; flex: 1; min-height: 0; display: flex; justify-content: center; padding: 16px; background: var(--yq-cream); }
+.cvv-emailpv__frame{
+  display: block; width: 100%; height: 100%; border: 0; border-radius: var(--yq-radius-sm); background: #fff;
+  box-shadow: var(--yq-shadow-md); transition: width .25s var(--yq-ease), opacity .2s var(--yq-ease);
+}
+.cvv-emailpv.is-mobile .cvv-emailpv__frame{ width: 375px; max-width: 100%; }
+.cvv-emailpv.is-loading .cvv-emailpv__frame{ opacity: .4; }
+.cvv-emailpv__frame[hidden]{ display: none; }
+.cvv-emailpv__msg{ align-self: center; max-width: 340px; margin: 0; text-align: center; font-size: 14px; line-height: 1.55; color: var(--yq-body); }
+@media (max-width: 575.98px){
+  .cvv-emailpv{ padding: 0; }
+  .cvv-emailpv__box{ border-radius: 0; }
+  .cvv-emailpv__bar{ flex-wrap: wrap; gap: 10px; padding: 10px 12px 10px 16px; }
+  .cvv-emailpv__stage{ padding: 10px; }
+}
+/* transition: all của personalise.css làm cả visibility (kế thừa từ offcanvas) chuyển chậm -> nút/ảnh hiện trễ khi mở panel */
+.cvv-panel .yq-pe-swatch,
+.cvv-panel .yq-pe-banner__art{ transition-property: border-color, box-shadow, transform, background-color; }
+
+/* ---------- Bước trong panel: số thứ tự + tiêu đề + mô tả ---------- */
+.cvv-step__head{ display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.cvv-step__head .cvv-step__t{ margin-bottom: 2px; }
+.cvv-step__head small{ display: block; font-size: 12.5px; line-height: 1.45; color: var(--yq-muted); }
+.cvv-step__num{
+  flex: none; width: 26px; height: 26px; margin-top: 1px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--yq-ink); color: #fff; font-size: 12px; font-weight: 600;
+}
+
+/* ---------- 1. Người nhận ---------- */
+.cvv-req{ color: #B9353F; }
+.cvv-field{ position: relative; }
+.cvv-field__ico{
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  display: inline-flex; color: var(--yq-muted); pointer-events: none;
+}
+.cvv-panel .cvv-field .form-control{ padding-left: 42px; }
+.cvv-field:focus-within .cvv-field__ico{ color: var(--yq-ink); }
+.cvv-fhelp{ margin-top: 6px; font-size: 12px; color: var(--yq-muted); }
+.cvv-ferr{ margin-top: 6px; font-size: 12px; color: #C0564C; }
+.cvv-ferr:not([hidden]) ~ .cvv-fhelp, .cvv-fhelp:has(~ .cvv-ferr:not([hidden])){ display: none; }
+
+.cvv-msg{
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm); background: var(--yq-paper);
+  transition: border-color .2s var(--yq-ease), box-shadow .2s var(--yq-ease);
+}
+.cvv-msg:focus-within{ border-color: var(--yq-ink); box-shadow: 0 0 0 3px rgba(23,22,19,.06); }
+.cvv-panel .cvv-msg textarea.form-control{
+  border: 0; box-shadow: none; background: transparent; resize: vertical; min-height: 104px; padding: 12px 14px 4px;
+}
+.cvv-msg__foot{
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 8px 14px 10px; border-top: 1px dashed var(--yq-line-soft); font-size: 12px; color: var(--yq-muted);
+}
+.cvv-msg__sign b{ font-weight: 600; color: var(--yq-ink); }
+.cvv-msg .cvv-count{ margin: 0; white-space: nowrap; }
+
+.cvv-ideas{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.cvv-ideas__t{ display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--yq-body); margin-right: 2px; }
+.cvv-ideas__t svg{ color: var(--yq-gold-dark); }
+.cvv-idea{
+  padding: 6px 12px; border: 1px solid var(--yq-line); border-radius: var(--yq-radius-pill); background: var(--yq-paper);
+  font-size: 12.5px; color: var(--yq-ink); cursor: pointer;
+  transition-property: border-color, background-color, color; transition-duration: .2s;
+}
+.cvv-idea:hover{ border-color: var(--yq-ink); }
+.cvv-idea.is-active{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+.cvv-idea[hidden]{ display: none; }

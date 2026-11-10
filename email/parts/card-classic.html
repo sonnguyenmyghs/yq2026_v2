@@ -1,0 +1,28 @@
+<!--
+  Khối thiệp CLASSIC (banner trên, chữ dưới) — chèn vào %gift_card% của email/voucher-gift.html
+  Biến: %card_bg% (mã màu nền #RRGGBB — card_colour_hex) · %card_banner% (URL https tuyệt đối của ảnh, rộng 592px, nên xuất @2x 1184px)
+        %recipient_name% · %sender_name% · %gift_message% (đã escape, xuống dòng -> <br>) · %gift_url%
+  Chữ trên thiệp luôn trắng: card_colour_hex đã được làm tối đủ tương phản 4.5:1 (checkout-voucher-gift.js).
+  Ảnh là <img> (không ảnh nền) -> hiện được ở mọi client, kể cả Outlook Windows / Gmail web.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding:0 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="%card_bg%" style="width:100%;background-color:%card_bg%;border-radius:12px;">
+        <tr>
+          <td style="padding:0;">
+            <a href="%gift_url%" target="_blank" style="text-decoration:none;"><img src="%card_banner%" width="592" alt="" style="display:block;width:100%;max-width:592px;height:auto;border:0;border-radius:12px 12px 0 0;"></a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:30px 36px 34px;">
+            <p style="margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;letter-spacing:3px;text-transform:uppercase;color:#FFFFFF;">The Shop &middot; A gift for you</p>
+            <p style="margin:0 0 12px;font-family:'Josefin Sans','Helvetica Neue',Arial,Helvetica,sans-serif;font-size:22px;line-height:30px;font-weight:600;color:#FFFFFF;">Dear %recipient_name%,</p>
+            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:26px;color:#FFFFFF;text-align:left;">%gift_message%</p>
+            <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#FFFFFF;text-align:right;">With love, <strong>%sender_name%</strong></p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
