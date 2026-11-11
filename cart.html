@@ -535,6 +535,7 @@
            Biến PHP:
              #cartLines              <- @foreach(cartItems as item) ... @endforeach  (mỗi item 1 .yq-line bên dưới)
                .yq-line[data-key]    <- @item.key
+               .yq-line[data-product-id] <- @item.product_id   (có dòng 30607 = Gift Wrapping -> JS ẩn mọi nút "Add gift wrap")
                .yq-line[data-price]  <- @item.unit_price   (đơn giá đã cộng phí add-on, số thô — JS dùng để tính lại thành tiền)
                img                   <- @item.image  /  alt @item.name
                .yq-line__title       <- @item.name
@@ -545,7 +546,7 @@
       <div class="col-lg-7 col-xl-8 mb-4 mb-lg-0">
         <div class="yq-panel yq-panel--flush" id="cartLines">
           <!-- @foreach(cartItems as item) -->
-          <div class="yq-line" data-key="signature-chocolate-cake::medium" data-price="88">
+          <div class="yq-line" data-product-id="signature-chocolate-cake" data-key="signature-chocolate-cake::medium" data-price="88">
             <div class="yq-line__media yq-media"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
             <div class="flex-grow-1">
               <div class="yq-line__title">Signature Chocolate Cake</div>
@@ -556,7 +557,7 @@
                 <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
               </div>
               <!-- Add gift wrap: bấm là addCart sản phẩm 30607 (không mở trang chi tiết); data-wrap-item = @item.name.
-                   Món đã có gói quà -> thêm class is-added, chữ "Gift wrap added". JS: modules/cart-giftwrap.js -->
+                   Giỏ đã có 30607 -> không in nút (JS cũng tự ẩn). JS: modules/cart-giftwrap.js -->
               <button class="yq-line__wrap" type="button" data-wrap-add data-wrap-pid="30607" data-wrap-item="Signature Chocolate Cake"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg><span>Add gift wrap</span><small>+ SGD 8.00</small></button>
             </div>
             <div class="text-end">
@@ -564,7 +565,7 @@
             </div>
             <button class="yq-line__remove" type="button" data-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
           </div>
-          <div class="yq-line" data-key="pantry-hamper::classic" data-price="68">
+          <div class="yq-line" data-product-id="pantry-hamper" data-key="pantry-hamper::classic" data-price="68">
             <div class="yq-line__media yq-media"><img src="assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
             <div class="flex-grow-1">
               <div class="yq-line__title">Pantry Hamper</div>
@@ -575,7 +576,7 @@
                 <button class="yq-qty__btn" type="button" data-step="1" aria-label="Increase"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
               </div>
               <!-- Add gift wrap: bấm là addCart sản phẩm 30607 (không mở trang chi tiết); data-wrap-item = @item.name.
-                   Món đã có gói quà -> thêm class is-added, chữ "Gift wrap added". JS: modules/cart-giftwrap.js -->
+                   Giỏ đã có 30607 -> không in nút (JS cũng tự ẩn). JS: modules/cart-giftwrap.js -->
               <button class="yq-line__wrap" type="button" data-wrap-add data-wrap-pid="30607" data-wrap-item="Pantry Hamper"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg><span>Add gift wrap</span><small>+ SGD 8.00</small></button>
             </div>
             <div class="text-end">

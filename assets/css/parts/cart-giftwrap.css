@@ -16,10 +16,7 @@
 .yq-line__wrap svg{ flex: none; }
 .yq-line__wrap small{ font-size: 12px; font-weight: 400; color: var(--yq-muted); }
 .yq-line__wrap.is-busy{ opacity: .55; pointer-events: none; }
-/* Đã có gói quà cho món này: không bấm được nữa */
-.yq-line__wrap.is-added{ color: var(--yq-muted); pointer-events: none; cursor: default; }
-.yq-line__wrap.is-added span{ text-decoration: none; }
-.yq-line__wrap.is-added svg{ color: var(--yq-gold-dark); }
+/* Giỏ đã có gói quà (30607): JS thêm .d-none cho mọi nút .yq-line__wrap */
 
 /* Dòng Gift Wrapping: thụt vào + gạch nối để thấy nó thuộc món phía trên */
 .yq-line--wrap{ padding-left: 48px; background: #FCFBF8; position: relative; }
