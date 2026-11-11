@@ -66,7 +66,7 @@ Engine xử lý cả `$` / ngoặc nhọn trong comment HTML → comment trong p
   - Không còn video: không có `card_banner_type`; từ chối mọi file video.
 - [ ] Kiểm tra `upload_max_filesize` / `post_max_size` PHP ≥ 12M (ảnh 10MB + field), và giới hạn body của web server (nginx `client_max_body_size`).
 - [ ] Lưu ảnh tải lên (đổi tên ngẫu nhiên, ngoài thư mục chạy PHP hoặc chặn thực thi), xuất **URL https tuyệt đối**. Banner mẫu → URL tuyệt đối của `assets/img/<file>` tương ứng.
-- [ ] Cắt sẵn ảnh cho email: overlay **592×460, đúng 1x** (`%card_banner_overlay%` — KHÔNG dùng @2x: Gmail web hiện ảnh nền đúng kích thước gốc, xem email/README.md), split **208×300** (@2x 416×600, `%card_banner_split%`); classic dùng ảnh gốc (khuyên ≤ 1200px rộng).
+- [ ] Cắt sẵn ảnh cho email: overlay **546×420, đúng 1x** (`%card_banner_overlay%` — KHÔNG dùng @2x: Gmail web hiện ảnh nền đúng kích thước gốc, xem email/README.md), split **208×300** (@2x 416×600, `%card_banner_split%`); classic dùng ảnh gốc (khuyên ≤ 1200px rộng).
 - [ ] Email: chọn khối `email/parts/card-<card_layout>.html`, thay biến rồi đặt vào `%gift_card%` của `email/voucher-gift.html` (bảng biến: `email/README.md`).
 - [ ] Gửi email: **tặng** → email voucher + thiệp tới `email_receive`; người mua vẫn nhận biên lai / email xác nhận (ghi rõ đã gửi cho ai). **For myself** → email voucher như cũ tới người mua (không có thiệp, layout `none`).
 - [ ] Trang mở quà `/gift/<token>` (giao diện `voucher/gift.html`): token ngẫu nhiên, khó đoán, gắn với đơn/voucher; `%gift_url%` = URL tuyệt đối trang này.

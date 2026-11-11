@@ -1,7 +1,7 @@
 # Email voucher + e-card — hướng dẫn backend / admin
 
 Email gửi người nhận quà — thiết kế **"Luxe Ticket" (v2)**, đặc tả đầy đủ: [`DESIGN-TICKET.md`](DESIGN-TICKET.md).
-Lời chúc nằm trên **giấy kem** (thay đổi theo layout), phía dưới là **vé voucher ngang** màu `%card_bg%` có khung vàng mảnh,
+Cả thiệp là **một tấm voucher liền** nền `%card_bg%` có khung vàng mảnh: lời chúc (thay đổi theo layout) ở trên, đường xé nét đứt, rồi phần voucher,
 tên voucher chữ serif lớn và **cuống kem** chứa QR (luôn trên ô trắng) + mã. Tiếp theo: nút "View your gift online",
 1 câu cách dùng (số đặt bàn), dòng nhỏ "Purchased on … · Ref … · Terms apply", footer (bản gọn v3).
 Mô tả dài `%product_description%` **không còn trong email** — hiện ở trang người nhận `voucher/gift.html`.
@@ -12,10 +12,10 @@ Template viết cho email client: chỉ `<table>` + style inline. Banner **chỉ
 | File | Vai trò |
 |---|---|
 | `voucher-gift.html` | Khung email: logo → `%gift_card%` (lời chúc + vé) → nút "View your gift online" → 1 câu "Reserve at `%outlet_phone%` and show the QR code on arrival." → dòng nhỏ "Purchased on `%redeem_date%` · Ref `%order_ref%` · Terms apply (`%terms_url%`)" → footer (bản gọn v3) |
-| `parts/card-classic.html` | Banner 592 trên giấy kem, lời chúc dưới; rồi vé |
-| `parts/card-overlay.html` | Ảnh làm nền (VML cho Outlook Windows), hộp giấy kem đè dưới; vé là hàng riêng phía dưới (không url()) |
-| `parts/card-split.html` | Ảnh trái 236 / giấy kem phải 356 (điện thoại: ảnh trên, chữ dưới — hybrid, không media query); rồi vé |
-| `parts/card-minimal.html` | Chỉ giấy kem canh giữa + hoạ tiết vàng `—— ◆ ——`; rồi vé |
+| `parts/card-classic.html` | Một khối liền: banner 546 trong khung, lời chúc dưới, đường xé, voucher |
+| `parts/card-overlay.html` | Một khối liền: ảnh nền 546×420 (VML cho Outlook Windows) + hộp màu thiệp đè dưới; đường xé; voucher (không url()) |
+| `parts/card-split.html` | Một khối liền: ảnh trái 232 / lời chúc phải 336 (điện thoại xếp chồng — hybrid, không media query); đường xé; voucher |
+| `parts/card-minimal.html` | Một khối liền: lời chúc canh giữa + hoạ tiết vàng `—— ◆ ——`; đường xé; voucher |
 | `parts/card-none.html` | Không có thiệp (mua cho mình): hero banner chung + vé (eyebrow "YOUR GIFT VOUCHER", "for" = tên người mua) |
 | `DESIGN-TICKET.md` | Đặc tả thiết kế Luxe Ticket v2 (màu, chữ, kích thước, biến, dữ liệu mẫu) — dùng chung cho email, checkout, gift.html |
 | `samples/*.html` | Email mẫu **đã thay hết biến** (classic, overlay, split, minimal, none) để review — mở `samples/index.html`. Tạo lại: `node email/samples/build.js` |
@@ -54,7 +54,7 @@ Quy tắc chung:
 
 | Biến | Cũ / mới | Loại | Dùng ở | Nguồn dữ liệu | Định dạng | Ví dụ |
 |---|---|---|---|---|---|---|
-| `%gift_message%` | **cũ** | chữ | lời chúc trên giấy kem (classic, overlay, split, minimal); **card-none không dùng** | checkout `note_receive` | `nl2br(htmlspecialchars(...))`, ≤ 300 ký tự | `Merry Christmas! Enjoy a festive evening on us — you deserve it.` |
+| `%gift_message%` | **cũ** | chữ | lời chúc trên nền thiệp (classic, overlay, split, minimal); **card-none không dùng** | checkout `note_receive` | `nl2br(htmlspecialchars(...))`, ≤ 300 ký tự | `Merry Christmas! Enjoy a festive evening on us — you deserve it.` |
 | `%redeem_date%` | **cũ** | chữ | khung (dòng nhỏ "Purchased on … · Ref …") | hệ thống (ngày mua / tạo voucher) | như email cũ, vd `j M Y` | `10 Nov 2026` |
 | `%product_name%` | **cũ** | chữ | vé, **mọi** khối thiệp (kể cả card-none) — Georgia 26px | hệ thống (tên sản phẩm voucher) | chữ thường | `Christmas Eve Dinner Buffet at StraitsKitchen` |
 | `%redeem_expiry%` | **cũ** | chữ | vé, mọi khối ("VALID UNTIL …") | hệ thống (hạn dùng) | như `%redeem_date%` | `24 Dec 2026` |
@@ -69,12 +69,12 @@ Quy tắc chung:
 | `%gift_card%` | mới | HTML | khung | backend: HTML khối thiệp đã thay biến (bước 3) | HTML | (nội dung `parts/card-*.html`) |
 | `%gift_url%` | mới | chữ (URL) | khung (nút "View your gift online"), classic + split (ảnh bấm được) | hệ thống: link trang mở quà `/gift/<token>` (`voucher/gift.html`) | URL https tuyệt đối | `https://ireward.superghs.com/yqhyattsgstore/gift/8f3k2q7m…` |
 | `%preheader%` | mới | chữ | khung (ẩn, dòng xem trước hộp thư) | hệ thống | ≤ 90 ký tự | tặng: `James sent you a gift from The Shop` · mua cho mình: `Your eVoucher from The Shop` |
-| `%recipient_name%` | mới | chữ | "Dear …," trên giấy kem (card-none không dùng) | checkout `name_receive`; **card-none: tên người mua** | ≤ 60 ký tự | `Sarah Tan` |
+| `%recipient_name%` | mới | chữ | "Dear …," trên nền thiệp (card-none không dùng) | checkout `name_receive`; **card-none: tên người mua** | ≤ 60 ký tự | `Sarah Tan` |
 | `%sender_name%` | mới | chữ | chữ ký "— With love, …" (classic, overlay, split, minimal) | người mua: `register[firstname]` / `member[firstname]` | chữ | `James` |
 | `%card_bg%` | mới | chữ | nền vé, mọi khối (overlay: thêm màu fallback của ô ảnh nền) | checkout `card_colour_hex`; **card-none (mua cho mình): luôn `#8C7145`** (Burnished Gold) | `#RRGGBB` (kiểm tra regex `^#[0-9A-Fa-f]{6}$`, sai → `#8C7145`) | `#B9353F` |
-| `%card_line%` | mới | chữ | hiện **không dùng** trong template (bản gọn v3 bỏ gạch + nét đứt); vẫn nhận để dùng lại sau | checkout `card_line_hex` (= màu nhạt của `card_colour_hex`: trộn 35% trắng). Thiếu/sai → backend tự tính `tint(card_bg, 0.35)` (công thức ở mục Màu) | `#RRGGBB` | `#D27C82` (với `#B9353F`) |
+| `%card_line%` | mới | chữ | mọi khối thiệp: đường xé nét đứt 1px giữa lời chúc và phần voucher | checkout `card_line_hex` (= màu nhạt của `card_colour_hex`: trộn 35% trắng). Thiếu/sai → backend tự tính `tint(card_bg, 0.35)` (công thức ở mục Màu) | `#RRGGBB` | `#D27C82` (với `#B9353F`) |
 | `%card_banner%` | mới | chữ (URL) | classic | `card_banner` (id mẫu → URL ảnh) hoặc ảnh tải lên `card_banner_file` | URL https, ảnh rộng 592px (xuất @2x 1184px, tỉ lệ tự do, nên 4:3) | `https://…/assets/img/o-festive.jpg` |
-| `%card_banner_overlay%` | mới | chữ (URL) | overlay | như `%card_banner%`, **đã cắt sẵn** | URL https, ảnh đúng **592×460** | `https://…/ecard/abc_592x460.jpg` |
+| `%card_banner_overlay%` | mới | chữ (URL) | overlay | như `%card_banner%`, **đã cắt sẵn** | URL https, ảnh đúng **546×420** | `https://…/ecard/abc_546x420.jpg` |
 | `%card_banner_split%` | mới | chữ (URL) | split | như `%card_banner%`, **đã cắt sẵn** dọc | URL https, ảnh 208×300 hiển thị, xuất @2x **416×600** | `https://…/ecard/abc_416x600.jpg` |
 
 Không còn trong email: `%product_description%` (chuyển sang `voucher/gift.html`), `%card_video_cta%` (đã bỏ video). Field checkout `card_banner_type` đã bị xoá.
@@ -117,10 +117,10 @@ Màu cố định (không đổi theo khách — xem `DESIGN-TICKET.md`):
 |---|---|
 | `#F6F4EF` | Nền trang (ngoài khung 640px) |
 | `#FFFFFF` | Nền khung email; tên voucher + summary trên vé; **ô trắng quanh QR**; chữ dòng đầu footer |
-| `#F7F1E6` | cream — **giấy lời nhắn** (mọi layout) và **cuống vé** |
+| `#F7F1E6` | cream — **cuống vé** (ô QR) |
 | `#C8A96A` | gold — khung viền 1px trong vé, hoạ tiết `—— ◆ ——` (minimal) |
 | `#E7D3A3` | gold-light — eyebrow vé, "VALID UNTIL …" |
-| `#8C7145` | eyebrow "A GIFT FOR YOU" trên giấy kem; link "Full terms & conditions" |
+| `#8C7145` | link "Full terms & conditions" |
 | `#171613` | ink — "Dear …,", mã voucher, số điện thoại, nút, nền footer |
 | `#3A342C` | ink-soft — lời nhắn, chữ ký, chữ các bước và điều khoản |
 | `#8A837A` | muted — "SCAN TO REDEEM", dòng "Purchased on … · Ref …" |
@@ -136,21 +136,21 @@ Không còn web font (Josefin Sans) trong email.
 |---|---|
 | Trang (ngoài khung) | `<div style="background-color">` + bảng ngoài `bgcolor="#F6F4EF"` |
 | Khung 640px, footer, nút | `bgcolor` + `background-color` (không ảnh) |
-| Giấy lời nhắn classic / split / minimal | bảng `bgcolor="#F7F1E6"` + `background-color`; ảnh là `<img>` (không ảnh nền) |
+| Lời nhắn classic / split / minimal | nằm trong bảng `bgcolor="%card_bg%"` chung; ảnh là `<img>` (không ảnh nền) |
 | Overlay — ô ảnh | `bgcolor="%card_bg%"` + thuộc tính `background="%card_banner_overlay%"` + style `background-image:url(...)` cover (url() CHỈ ở ô này) + VML `<v:rect><v:fill type="frame">` trong `<!--[if gte mso 9]>` |
-| Overlay — hộp lời nhắn | bảng lồng `bgcolor="#F7F1E6"` + `background-color` + bo góc (không url) |
+| Overlay — hộp lời nhắn | bảng lồng `bgcolor="%card_bg%"` + `background-color` + bo góc (không url) |
 | Vé voucher (mọi khối) | bảng `bgcolor="%card_bg%"` (bo 10px) → bảng `border:1px solid #C8A96A` → cuống `bgcolor="#F7F1E6"` → ô QR `bgcolor="#FFFFFF"`. Không url() |
 
 | Client | Classic / split / minimal | Overlay |
 |---|---|---|
 | Apple Mail (macOS/iOS) | Đầy đủ | Ảnh nền CSS cover + khung chữ |
-| Gmail web / app (tài khoản Google) | Đầy đủ | Có thể xoá cả `style` có `url()` → dùng thuộc tính `background` (ảnh không co giãn → **phải đúng 592×460**) + `bgcolor`; khung chữ vẫn đúng vì nằm ở bảng lồng |
+| Gmail web / app (tài khoản Google) | Đầy đủ | Có thể xoá cả `style` có `url()` → dùng thuộc tính `background` (ảnh không co giãn → **phải đúng 546×420**) + `bgcolor`; khung chữ vẫn đúng vì nằm ở bảng lồng |
 | Gmail app với tài khoản không phải Google (IMAP, Outlook.com…) | Đầy đủ (ảnh `<img>`) | Không ảnh nền → nền `%card_bg%` + hộp giấy kem (vẫn đọc được) |
-| Outlook Windows (2013–2021, 365 bản Word) | Đầy đủ; bo góc thành vuông; split giữ 2 cột nhờ bảng "ma" MSO | VML hiện ảnh (co giãn vào 592×460, tự cao thêm khi lời nhắn dài). Mất khối MSO → nền `%card_bg%` |
+| Outlook Windows (2013–2021, 365 bản Word) | Đầy đủ; bo góc thành vuông; split giữ 2 cột nhờ bảng "ma" MSO | VML hiện ảnh (co giãn vào 546×420, tự cao thêm khi lời nhắn dài). Mất khối MSO → nền `%card_bg%` |
 | Outlook mới (Windows "new") / Outlook.com | Đầy đủ | Ảnh nền CSS / thuộc tính `background` |
 | Yahoo Mail | Đầy đủ | Ảnh nền CSS / thuộc tính `background` |
 
-Giới hạn overlay: lời nhắn dài (300 ký tự) trên điện thoại làm ô cao hơn 460px; client chỉ dùng thuộc tính `background`
+Giới hạn overlay: lời nhắn dài (300 ký tự) trên điện thoại làm ô cao hơn 420px; client chỉ dùng thuộc tính `background`
 sẽ lặp ảnh ở phần dưới. Chữ vẫn đọc được. Nếu cần chắc chắn: gợi ý khách dùng classic khi lời nhắn > ~150 ký tự.
 
 ### Ảnh
@@ -183,7 +183,7 @@ Backend phải ghép thành **URL https tuyệt đối** (email không hiểu đ
 | Layout | Biến | Hiển thị | Xuất file | Ghi chú |
 |---|---|---|---|---|
 | classic | `%card_banner%` | rộng 592px, cao tự động | rộng 1184px (@2x) | không cần cắt, chỉ thu nhỏ |
-| overlay | `%card_banner_overlay%` | 592×460 | **592×460 (1x)** | thuộc tính `background` không co giãn ảnh: file @2x 1184×920 sẽ chỉ hiện 1/4 ảnh ở Gmail web. Nếu muốn nét hơn trên retina có thể thử 1184×920, nhưng phải test Gmail web |
+| overlay | `%card_banner_overlay%` | 546×420 | **546×420 (1x)** | thuộc tính `background` không co giãn ảnh: file @2x 1092×840 sẽ chỉ hiện 1/4 ảnh ở Gmail web. Nếu muốn nét hơn trên retina có thể thử 1092×840, nhưng phải test Gmail web |
 | split | `%card_banner_split%` | 208×300 | 416×600 (@2x) | `<img>` có `width/height` nên @2x an toàn |
 | minimal | — | không ảnh | — | `card_banner` bị bỏ qua |
 | none | — | hero banner chung | — | — |
@@ -320,7 +320,7 @@ Biến chữ được escape tự động. Biến đã biết mà thiếu → r�
 `opts.base` mặc định là thư mục `email/` suy từ `src` của script, nên gọi được từ trang ở bất kỳ cấp thư mục nào.
 
 ### Giả lập bước cắt ảnh trên trình duyệt
-`YQEmail.build(vars, { emulateCrop: true })` (dùng trong `email/preview.html` và popup checkout) cắt `card_banner_overlay` → 592×460
+`YQEmail.build(vars, { emulateCrop: true })` (dùng trong `email/preview.html` và popup checkout) cắt `card_banner_overlay` → 546×420
 và `card_banner_split` → 416×600 bằng canvas (cover, canh giữa) để bản xem trước giống email thật. Khi có `endpoint`, bước này bỏ qua —
 backend tự cắt.
 

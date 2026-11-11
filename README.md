@@ -377,7 +377,7 @@ Backend: chọn file `card-<card_layout>` (hoặc `card-none`), thay biến, ch�
 | `%recipient_name%` · `%sender_name%` | `name_receive` · tên người mua |
 | `%card_bg%` | `card_colour_hex` (đã đủ tương phản cho chữ trắng) |
 | `%card_banner%` | URL tuyệt đối của ảnh banner (`card_banner` mẫu hoặc `card_banner_file`) — chỉ ảnh, không video |
-| `%card_banner_overlay%` | Chỉ cho layout overlay: URL ảnh banner **đã cắt sẵn đúng 592×460px** (thuộc tính `background` không co giãn ảnh, Gmail web có thể bỏ `background-size`) |
+| `%card_banner_overlay%` | Chỉ cho layout overlay: URL ảnh banner **đã cắt sẵn đúng 546×420px** (thuộc tính `background` không co giãn ảnh, Gmail web có thể bỏ `background-size`) |
 | `%card_banner_split%` | Chỉ cho layout split: URL ảnh banner **đã cắt sẵn dọc 208×300px** (@2x 416×600) — split dạng "hybrid": rộng thì 2 cột, điện thoại tự xếp ảnh trên / chữ dưới |
 | `%gift_url%` | Link trang mở quà `/gift/<token>` (`voucher/gift.html`) |
 | `%preheader%` | Dòng xem trước hộp thư, vd "James sent you a gift from The Shop" |

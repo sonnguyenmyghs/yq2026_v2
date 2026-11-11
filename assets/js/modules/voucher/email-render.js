@@ -9,7 +9,7 @@
       opts.base     URL thư mục email/ (kết thúc bằng '/'); mặc định suy từ src của chính file này
       opts.endpoint URL tuỳ chọn: có thì POST vars (+ layout) dạng form, server trả HTML email thật
       opts.client   'normal' | 'gmail' | 'nobg'  — giả lập email client (xem simulate)
-      opts.emulateCrop true: cắt ảnh trên trình duyệt giống backend (overlay 592x460 @1x vì thuộc tính background
+      opts.emulateCrop true: cắt ảnh trên trình duyệt giống backend (overlay 546x420 @1x vì thuộc tính background
                     không co giãn; split 416x600 = @2x của 208x300) cho card_banner_overlay / card_banner_split;
                     bỏ qua khi có endpoint (backend tự cắt)
     YQEmail.crop(url, w, h) -> Promise<string>  data URL JPEG cắt kiểu cover, canh giữa; lỗi -> trả lại url gốc
@@ -132,7 +132,7 @@
       im.src = url;
     });
   };
-  var CROPS = { card_banner_overlay: [592, 460], card_banner_split: [416, 600] };   // overlay 1x (thuộc tính background không co giãn) / split @2x của 208x300
+  var CROPS = { card_banner_overlay: [546, 420], card_banner_split: [416, 600] };   // overlay 1x (thuộc tính background không co giãn) / split @2x của 208x300
 
   var build = function (vars, opts) {
     opts = opts || {};

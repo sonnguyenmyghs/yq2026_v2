@@ -1,37 +1,43 @@
 <!--
-  Khối thiệp MINIMAL — "Luxe Ticket" (v2) — chèn vào %gift_card% của email/voucher-gift.html
-  Lời chúc: chỉ giấy kem #F7F1E6, canh giữa, hoạ tiết vàng "—— ◆ ——" (#C8A96A) ở trên. Không ảnh (card_banner bị bỏ qua).
-  Sau đó 18px rồi vé voucher ngang.
-  Biến lời chúc: %recipient_name% · %sender_name% · %gift_message% (đã escape, xuống dòng -> <br>)
-  Vé voucher (giống mọi layout, xem email/DESIGN-TICKET.md mục 3): %card_bg% %outlet_name% %product_name%
-        %voucher_summary% %redeem_expiry% %qr_code% (thẻ img 120px) %voucher%
+  Khối thiệp MINIMAL — "Luxe Voucher" (v3, một khối liền) — chèn vào %gift_card% của email/voucher-gift.html
+  Cả thiệp là MỘT tấm voucher: nền %card_bg% (bo 10px, padding 10px) -> khung vàng 1px #C8A96A (bo 6px, rộng trong 570px) chứa:
+    1. Lời chúc: không ảnh: hoạ tiết vàng "—— ◆ ——" + lời chúc canh giữa trên nền thiệp
+    2. Đường xé vé: nét đứt 1px %card_line%
+    3. Voucher: chính (%outlet_name% · GIFT VOUCHER, %product_name%, %voucher_summary%, VALID UNTIL %redeem_expiry%)
+       + cuống kem #F7F1E6 chứa %qr_code% (img 120px trên ô trắng), %voucher%, SCAN TO REDEEM. Hybrid 2 cột, điện thoại xếp chồng.
+  Biến: %card_bg% %card_line% %recipient_name% %sender_name% %gift_message% (đã escape, xuống dòng -> <br>) %gift_url%
+        %outlet_name% %product_name% %voucher_summary% %redeem_expiry% %qr_code% %voucher% + ảnh theo layout.
+  Chữ trên nền thiệp: trắng #FFFFFF + vàng nhạt #E7D3A3 (màu thiệp luôn đủ tương phản với trắng — checkout tự làm tối màu Auto).
+  Chỉ <table> + style inline (email-safe), xem email/DESIGN-TICKET.md.
 -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <!-- LỜI CHÚC: giấy kem canh giữa -->
   <tr>
     <td style="padding:0 24px;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F7F1E6" style="width:100%;background-color:#F7F1E6;border-radius:10px;">
-        <tr>
-          <td align="center" style="padding:40px 36px 40px;text-align:center;">
-            <p style="margin:0 0 22px;font-family:Georgia,'Times New Roman',Times,serif;font-size:12px;line-height:14px;letter-spacing:3px;color:#C8A96A;text-align:center;">&#8212;&#8212;&nbsp;&#9670;&nbsp;&#8212;&#8212;</p>
-            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:14px;letter-spacing:3px;text-transform:uppercase;color:#8C7145;text-align:center;">A gift for you</p>
-                <p style="margin:16px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:26px;line-height:32px;font-style:italic;font-weight:normal;color:#171613;text-align:center;">Dear %recipient_name%,</p>
-                <p style="margin:14px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:17px;line-height:28px;color:#3A342C;text-align:center;">%gift_message%</p>
-                <p style="margin:22px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:16px;line-height:22px;font-style:italic;color:#3A342C;text-align:center;">&mdash; With love, %sender_name%</p>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-  <!-- VÉ VOUCHER NGANG (giống nhau mọi layout): nền %card_bg% -> khung vàng 1px #C8A96A -> chính (trái) + cuống kem có QR (phải) -->
-  <tr>
-    <td style="padding:18px 24px 0;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="%card_bg%" style="width:100%;background-color:%card_bg%;border-radius:10px;">
         <tr>
           <td style="padding:10px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px solid #C8A96A;border-radius:6px;">
               <tr>
-                <td align="center" valign="middle" style="padding:14px 20px;font-size:0;line-height:0;text-align:center;">
+                <td align="center" style="padding:34px 30px 28px;text-align:center;">
+                    <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',Times,serif;font-size:12px;line-height:14px;letter-spacing:3px;color:#C8A96A;text-align:center;">&#8212;&#8212;&nbsp;&#9670;&nbsp;&#8212;&#8212;</p>
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:14px;letter-spacing:3px;text-transform:uppercase;color:#E7D3A3;text-align:center;">A gift for you</p>
+                    <p style="margin:14px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:26px;line-height:32px;font-style:italic;font-weight:normal;color:#FFFFFF;text-align:center;">Dear %recipient_name%,</p>
+                    <p style="margin:12px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:17px;line-height:28px;color:#FFFFFF;text-align:center;">%gift_message%</p>
+                    <p style="margin:18px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:16px;line-height:22px;font-style:italic;color:#E7D3A3;text-align:center;">&mdash; With love, %sender_name%</p>
+                </td>
+              </tr>
+              <!-- Đường xé vé: nét đứt %card_line% nối lời chúc với phần voucher -->
+              <tr>
+                <td style="padding:0 20px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td height="1" style="height:1px;border-top:1px dashed %card_line%;font-size:1px;line-height:1px;mso-line-height-rule:exactly;">&nbsp;</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td align="center" valign="middle" style="padding:10px 20px 16px;font-size:0;line-height:0;text-align:center;">
                   <!--[if mso]><table role="presentation" width="530" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td width="360" valign="middle"><![endif]-->
                   <div style="display:inline-block;width:100%;max-width:360px;vertical-align:middle;text-align:left;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">

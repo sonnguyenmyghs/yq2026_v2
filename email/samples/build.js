@@ -7,7 +7,7 @@
     3. Thay biến của khung (voucher-gift.html), %gift_card% = HTML thiệp
     Thay MỘT lượt (giá trị đã chèn không bị quét lại). Biến chữ escape & < > " ; %gift_message% thêm <br>.
   Ảnh dùng đường dẫn tương đối ../../assets/img/... để xem trên máy; gửi thử thật phải là URL https tuyệt đối.
-  Overlay / split trỏ vào ảnh gốc (chưa cắt) — production phải cắt sẵn (overlay 592x460, split 416x600).
+  Overlay / split trỏ vào ảnh gốc (chưa cắt) — production phải cắt sẵn (overlay 546x420, split 416x600).
 */
 'use strict';
 var fs = require('fs');

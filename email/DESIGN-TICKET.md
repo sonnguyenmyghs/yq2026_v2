@@ -1,8 +1,12 @@
 # Thiết kế e-voucher "Luxe Ticket" (v2, bản gọn v3)
 
-> **v3 (gọn):** vé bỏ dòng `for %recipient_name%`, gạch 40×1 và hàng "Present this e-voucher…"; email bỏ khối How to redeem + Good to know,
-> thay bằng 1 câu `Reserve at %outlet_phone% and show the QR code on arrival.` + dòng nhỏ `Purchased on … · Ref … · Terms apply`.
-> `%voucher_terms_short%` không còn dùng; `%card_line%` không còn dùng trong template. Các mục dưới đây mô tả v2, phần đã bỏ coi như lịch sử.
+> **v3 — một khối liền (hiện hành):** cả thiệp là MỘT tấm voucher nền `%card_bg%` (bo 10, padding 10) + khung vàng 1px `#C8A96A`
+> (rộng trong 570px). Trong khung: lời chúc **chữ trắng / vàng nhạt `#E7D3A3` trên nền thiệp** (không còn giấy kem) → đường xé nét đứt
+> `%card_line%` → voucher (chính | cuống kem có QR). Chỉ cuống QR còn nền kem.
+> Ảnh: classic 546 rộng trong khung (@2x 1092) · overlay **546×420 @1x**, hộp chữ màu thiệp đè dưới · split ảnh 208×300 (@2x 416×600) | chữ · minimal không ảnh.
+> Vé bỏ dòng `for %recipient_name%`, gạch 40×1, hàng "Present this e-voucher…". Email bỏ How to redeem + Good to know, thay bằng
+> 1 câu `Reserve at %outlet_phone% and show the QR code on arrival.` + dòng nhỏ `Purchased on … · Ref … · Terms apply`. `%voucher_terms_short%` không dùng.
+> Các mục dưới đây mô tả v2 (giấy kem tách rời vé) — chỉ còn giá trị tham khảo màu/chữ.
 
 Nguồn cảm hứng: các mẫu gift voucher cao cấp trên Pinterest / Behance (vé ngang có cuống + QR, khung viền vàng mảnh,
 chữ serif lớn nghiêng, nền đậm + chữ vàng/kem, giấy kem cho lời nhắn, nhiều khoảng trống) và cấu trúc email eGift thật
