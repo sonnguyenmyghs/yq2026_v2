@@ -32,8 +32,17 @@ var fill = function (tpl, vars) {
   });
 };
 
-var TEXT = ['preheader', 'gift_url', 'recipient_name', 'sender_name', 'gift_message', 'card_bg', 'card_banner',
-  'card_banner_overlay', 'card_banner_split', 'redeem_date', 'product_name', 'redeem_expiry', 'voucher'];
+// Màu nhạt của card_bg (giống YQEmail.tint / checkout card_line_hex): trộn amount phần trắng
+var tint = function (hex, amount) {
+  return '#' + [1, 3, 5].map(function (i) {
+    var c = parseInt(hex.substr(i, 2), 16);
+    return ('0' + Math.round(c + (255 - c) * amount).toString(16)).slice(-2);
+  }).join('').toUpperCase();
+};
+
+var TEXT = ['preheader', 'gift_url', 'recipient_name', 'sender_name', 'gift_message', 'card_bg', 'card_line', 'card_banner',
+  'card_banner_overlay', 'card_banner_split', 'redeem_date', 'product_name', 'redeem_expiry', 'voucher',
+  'outlet_name', 'voucher_summary', 'outlet_phone', 'terms_url', 'order_ref'];
 
 var base = {
   preheader: 'James sent you a gift from The Shop',
@@ -41,15 +50,23 @@ var base = {
   recipient_name: 'Sarah Tan',
   sender_name: 'James',
   gift_message: 'Merry Christmas! Enjoy a festive evening on us — you deserve it.',
-  redeem_date: '10 Nov 2026',
+  redeem_date: '10 Nov 2026',   // dòng "Purchased on … · Ref …" của khung
   product_name: 'Christmas Eve Dinner Buffet at StraitsKitchen',
   redeem_expiry: '24 Dec 2026',
   voucher: 'GH-8F3K-2Q7M',
+  // Biến MỚI (Luxe Ticket v2 — email/DESIGN-TICKET.md)
+  outlet_name: 'StraitsKitchen',
+  voucher_summary: 'Dinner buffet for 1 adult \u00b7 24 Dec 2026, 6\u201310 PM',
+  outlet_phone: '+65 6732 1234',
+  terms_url: '../../voucher/gift.html#terms',
+  order_ref: 'GH12345678',
   // Biến HTML (chèn nguyên)
-  qr_code: '<img src="' + IMG + 'qr-sample.svg" width="120" height="120" alt="QR code" style="display:block;width:120px;height:120px;border:0;">',
-  product_description: 'Celebrate Christmas Eve with a festive dinner buffet at StraitsKitchen — roast turkey, honey-glazed ham, ' +
-    'seafood on ice and Christmas desserts alongside local favourites.<br><br>Valid for one adult on 24 December 2026, ' +
-    '6:00 PM – 10:00 PM. Advance reservation required: +65 6732 1234.'
+  qr_code: '<img src="' + IMG + 'qr-sample.png" width="120" height="120" alt="QR code" style="display:block;width:120px;height:120px;border:0;">',
+  voucher_terms_short: '<ul style="margin:0 0 0 18px;padding:0;">' +
+    '<li style="margin:0 0 6px;padding:0;">Valid for one adult on 24 Dec 2026.</li>' +
+    '<li style="margin:0 0 6px;padding:0;">Advance reservation required; subject to availability.</li>' +
+    '<li style="margin:0;padding:0;">Non-refundable, no cash value, one-time use.</li></ul>'
+  // %product_description% không còn trong email (hiện ở voucher/gift.html)
 };
 
 var SAMPLES = [
@@ -57,7 +74,7 @@ var SAMPLES = [
   { layout: 'overlay', card_bg: '#B9353F', banner: 'o-festive.jpg', note: 'Overlay · Christmas banner as background · Warm Crimson #B9353F' },
   { layout: 'split', card_bg: '#6F2613', banner: 'o-anniversaries.jpg', note: 'Split · Anniversary banner (o-anniversaries.jpg) · Deep Terracotta #6F2613' },
   { layout: 'minimal', card_bg: '#8C7145', banner: '', note: 'Minimal · no image · Burnished Gold #8C7145' },
-  { layout: 'none', card_bg: '', banner: '', note: 'No card (self-purchase) · hero banner + message, like the old email' }
+  { layout: 'none', card_bg: '#8C7145', banner: '', note: 'No card (self-purchase) · hero banner + gold ticket (backend passes #8C7145)' }
 ];
 
 var frame = strip(read('voucher-gift.html'));
@@ -67,7 +84,12 @@ SAMPLES.forEach(function (s) {
   var raw = {};
   for (var k in base) raw[k] = base[k];
   raw.card_bg = s.card_bg;
-  if (s.layout === 'none') raw.preheader = 'Your eVoucher from The Shop';
+  raw.card_line = tint(s.card_bg, 0.35);
+  if (s.layout === 'none') {
+    raw.preheader = 'Your eVoucher from The Shop';
+    raw.gift_message = '';        // card-none không có khối lời chúc
+    raw.recipient_name = 'James Lim';   // mua cho mình: dòng "for …" trên vé = tên người mua
+  }
   var url = s.banner ? IMG + s.banner : '';
   raw.card_banner = url; raw.card_banner_overlay = url; raw.card_banner_split = url;
 

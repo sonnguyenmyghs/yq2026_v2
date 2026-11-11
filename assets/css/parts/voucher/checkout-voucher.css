@@ -146,29 +146,32 @@
 .cvv-layout__name{ font-size: 12.5px; font-weight: 600; color: var(--yq-ink); margin-top: 6px; }
 .cvv-layout__sub{ font-size: 11px; color: var(--yq-muted); line-height: 1.3; }
 .cvv-layout.is-suggested .cvv-layout__name::after{ content: " ✦"; color: var(--yq-gold-dark); }
-/* Sơ đồ thu nhỏ: i = ảnh, b = dòng chữ */
+/* Sơ đồ thu nhỏ (giống thiệp v2): nền giấy kem, i = ảnh, b = dòng chữ, ::before = vé màu thiệp (--c-bg do JS đặt trên #cvvLayouts) có khung vàng ở dưới */
 .cvv-layout__art{
   position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden;
-  background: var(--yq-pe-gold);
+  background: #F7F1E6; box-shadow: inset 0 0 0 1px rgba(23,22,19,.08);
+}
+.cvv-layout__art::before{
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22%; z-index: 2;
+  background: var(--c-bg, var(--yq-pe-gold)); box-shadow: inset 0 0 0 2px var(--c-bg, var(--yq-pe-gold)), inset 0 0 0 3px #C8A96A;
 }
 .cvv-layout__art i{ position: absolute; background: linear-gradient(135deg, #d9cdb4, #b9a77f); }
-.cvv-layout__art b{ position: absolute; height: 3px; border-radius: 2px; background: rgba(255,255,255,.85); }
-.cvv-layout__art--classic i{ left: 0; right: 0; top: 0; height: 48%; }
-.cvv-layout__art--classic b:nth-of-type(1){ left: 12%; right: 30%; top: 62%; }
-.cvv-layout__art--classic b:nth-of-type(2){ left: 12%; right: 45%; top: 76%; }
-/* Overlay: ảnh phủ kín + khung chữ màu đặc ở dưới (giống email, không dùng gradient) */
-.cvv-layout__art--overlay i{ inset: 0; }
-.cvv-layout__art--overlay::after{ content: ""; position: absolute; left: 9%; right: 9%; bottom: 9%; height: 40%; border-radius: 3px; background: var(--yq-pe-gold); }
-.cvv-layout__art--overlay b{ z-index: 1; }
-.cvv-layout__art--overlay b:nth-of-type(1){ left: 17%; right: 35%; top: 64%; }
-.cvv-layout__art--overlay b:nth-of-type(2){ left: 17%; right: 48%; top: 76%; }
-.cvv-layout__art--split i{ left: 0; top: 0; bottom: 0; width: 40%; }
-.cvv-layout__art--split b:nth-of-type(1){ left: 50%; right: 10%; top: 40%; }
-.cvv-layout__art--split b:nth-of-type(2){ left: 50%; right: 22%; top: 56%; }
-/* Minimal: không ảnh — i là gạch trắng 40px giữa thiệp */
-.cvv-layout__art--minimal i{ left: 42%; right: 42%; top: 32%; height: 1px; background: rgba(255,255,255,.85); }
-.cvv-layout__art--minimal b:nth-of-type(1){ left: 22%; right: 22%; top: 46%; }
-.cvv-layout__art--minimal b:nth-of-type(2){ left: 32%; right: 32%; top: 60%; }
+.cvv-layout__art b{ position: absolute; z-index: 1; height: 3px; border-radius: 2px; background: rgba(58,52,44,.55); }
+.cvv-layout__art--classic i{ left: 0; right: 0; top: 0; height: 40%; }
+.cvv-layout__art--classic b:nth-of-type(1){ left: 12%; right: 34%; top: 52%; }
+.cvv-layout__art--classic b:nth-of-type(2){ left: 12%; right: 48%; top: 64%; }
+/* Overlay: ảnh phủ phần trên + hộp giấy kem đè dưới */
+.cvv-layout__art--overlay i{ left: 0; right: 0; top: 0; bottom: 22%; }
+.cvv-layout__art--overlay::after{ content: ""; position: absolute; left: 10%; right: 10%; bottom: 28%; height: 30%; border-radius: 2px; background: #F7F1E6; }
+.cvv-layout__art--overlay b:nth-of-type(1){ left: 18%; right: 36%; top: 52%; }
+.cvv-layout__art--overlay b:nth-of-type(2){ left: 18%; right: 50%; top: 61%; }
+.cvv-layout__art--split i{ left: 0; top: 0; bottom: 22%; width: 40%; }
+.cvv-layout__art--split b:nth-of-type(1){ left: 50%; right: 10%; top: 30%; }
+.cvv-layout__art--split b:nth-of-type(2){ left: 50%; right: 24%; top: 44%; }
+/* Minimal: không ảnh — i là hoạ tiết vàng ở trên */
+.cvv-layout__art--minimal i{ left: 38%; right: 38%; top: 18%; height: 1px; background: #C8A96A; }
+.cvv-layout__art--minimal b:nth-of-type(1){ left: 22%; right: 22%; top: 34%; }
+.cvv-layout__art--minimal b:nth-of-type(2){ left: 32%; right: 32%; top: 48%; }
 
 /* Swatch Auto */
 /* Chấm Auto: màu lấy từ ảnh + dấu ✦ để phân biệt với 4 màu cố định */
@@ -183,58 +186,131 @@
 /* Ô upload đã có file: nhãn "Change" hiện khi rê chuột / khi đang chọn */
 .cvv-banners .yq-pe-banner--upload.has-file.is-active .yq-pe-banner__up{ opacity: 1; background: rgba(0,0,0,.42); }
 
-/* ---------- E-card: 4 layout giống email/parts/card-*.html ----------
-   Dựa trên .yq-pe-card (màu nền qua biến --c-bg: Auto = style inline, màu cố định = .yq-pe-card--<màu>).
-   Chữ luôn trắng, font + cỡ chữ lấy đúng theo style inline của email. */
-.cvv-ecard{ border-radius: 12px; box-shadow: var(--yq-shadow-md); color: #fff; }
-.cvv-ecard .yq-pe-card__media{ aspect-ratio: auto; }
-.cvv-ecard .yq-pe-card__media img{ height: auto; }
-.cvv-ecard .yq-pe-card__body{ padding: 30px 36px 34px; font-family: Arial, Helvetica, sans-serif; }
-.cvv-ecard .yq-pe-card__body::before{ display: none; }
-.cvv-ecard .yq-pe-card__body p{ margin: 0; }
-.cvv-ecard__eyebrow{ margin: 0 0 18px !important; font-size: 11px; line-height: 16px; letter-spacing: 3px; text-transform: uppercase; }
-.cvv-ecard .yq-pe-card__to{
-  margin: 0 0 12px !important; font-family: 'Josefin Sans', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  font-size: 22px; line-height: 30px; font-weight: 600;
+/* ---------- E-card "Luxe Ticket" (v2) — giống email (email/DESIGN-TICKET.md) ----------
+   #cvvCard.cvv-ecard.is-<layout>: (1) .cvv-note = khối lời chúc giấy kem #F7F1E6 (đổi theo layout)
+                                   (2) .cvv-ticket = vé voucher ngang trên màu thiệp --c-bg, khung vàng 1px #C8A96A.
+   Biến màu do JS đặt inline: --c-bg (card_colour_hex) · --c-line (card_line_hex = màu thiệp pha 35% trắng).
+   Chữ: Georgia (tiêu đề, lời nhắn, "Dear …", chữ ký, "for …") · Arial (nhãn) · Courier New (mã) — đúng như email, không web font.
+   Container query theo bề ngang thiệp: < 520px vé xếp chồng (chính trên, cuống giữa dưới) như email trên điện thoại. */
+.cvv-ecard{
+  --c-bg: #8C7145; --c-line: #B4A386;
+  container-type: inline-size; display: flex; flex-direction: column; gap: 18px; min-width: 0;
+  font-family: Arial, Helvetica, sans-serif; color: #171613;
 }
-.cvv-ecard .yq-pe-card__msg{ min-height: 0; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 26px; text-align: left; }
-.cvv-ecard .yq-pe-card__msg.is-empty{ color: rgba(255,255,255,.72); }
-.cvv-ecard .yq-pe-card__from{ margin: 18px 0 0 !important; font-size: 14px; line-height: 20px; color: #fff; text-align: right; }
-.cvv-ecard .yq-pe-card__from strong{ font-weight: 700; }
-.cvv-ecard__brand{ display: none; }
+.cvv-ecard p{ margin: 0; }
 
-/* Overlay: ảnh 592x460 làm nền, khung chữ màu đặc cách mép 22px, bo 10px; chữ dài thì thiệp cao thêm, ảnh giãn theo */
-.cvv-ecard.is-overlay{ display: grid; grid-template-columns: 100%; }   /* cột = đúng bề ngang thiệp (không giãn theo tỉ lệ ảnh) */
-.cvv-ecard.is-overlay > *{ grid-area: 1 / 1; min-width: 0; }
-.cvv-ecard.is-overlay::before{ content: ""; grid-area: 1 / 1; width: 100%; aspect-ratio: 592 / 460; align-self: start; }   /* chiều cao tối thiểu theo tỉ lệ ảnh email */
-.cvv-ecard.is-overlay .yq-pe-card__media{ aspect-ratio: auto; align-self: stretch; }
-.cvv-ecard.is-overlay .yq-pe-card__media img{ position: absolute; inset: 0; height: 100%; }
-.cvv-ecard.is-overlay .yq-pe-card__body{
-  align-self: end; margin: 33.8% 22px 22px; padding: 24px 28px 26px;   /* 33.8% = khoảng trống 200px / 592px của email */
-  background: var(--c-bg); border-radius: 10px;
+/* (1) Khối lời chúc: giấy kem */
+.cvv-note{
+  position: relative; overflow: hidden; border-radius: 12px; background: #F7F1E6;
+  box-shadow: 0 1px 2px rgba(23,22,19,.06), 0 10px 28px -14px rgba(23,22,19,.28);
 }
-/* Split: ảnh trái 40% (cao theo ảnh, canh trên) / chữ phải 60% (canh giữa) */
-.cvv-ecard.is-split{ display: grid; grid-template-columns: 40% 60%; }
-.cvv-ecard.is-split .yq-pe-card__media{   /* giống email: ảnh dọc 208x300 trong khung đệm 14px, bo 8px, canh giữa dọc */
-  align-self: center; position: relative; aspect-ratio: auto; padding: 14px; background: none;
+.cvv-note__media{ position: relative; background: #E9E0CF; }
+.cvv-note__media img{ display: block; width: 100%; height: 100%; object-fit: cover; }
+.cvv-note__media img[src=""]{ visibility: hidden; }
+.cvv-note__paper{ position: relative; min-width: 0; padding: 30px 32px 30px; background: #F7F1E6; }
+.cvv-note__orn{ display: none; }
+.cvv-note__eyebrow{
+  margin: 0 0 12px !important; font-size: 10px; line-height: 14px; letter-spacing: 3px; text-transform: uppercase; color: #8C7145;
 }
-.cvv-ecard.is-split .yq-pe-card__media img{ position: static; display: block; width: 100%; height: auto; aspect-ratio: 208 / 300; object-fit: cover; border-radius: 8px; }
-.cvv-ecard.is-split .yq-pe-card__body{ align-self: center; min-width: 0; padding: 22px 24px 26px 8px; }
-.cvv-ecard.is-split .yq-pe-card__to{ font-size: 20px; line-height: 28px; }
-/* Minimal: không ảnh, chữ giữa — THE SHOP / GRAND HYATT SINGAPORE, gạch trắng 40px, "Dear …" 28px */
-.cvv-ecard.is-minimal .yq-pe-card__media,
-.cvv-ecard.is-minimal .cvv-ecard__eyebrow{ display: none; }
-.cvv-ecard.is-minimal .yq-pe-card__body{ padding: 44px 40px 46px; text-align: center; }
-.cvv-ecard.is-minimal .cvv-ecard__brand{ display: block; }
-.cvv-ecard__brand span{
-  display: block; margin: 0 0 6px; font-family: 'Josefin Sans', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  font-size: 13px; line-height: 18px; letter-spacing: 5px; text-transform: uppercase;
+.cvv-note__to{
+  margin: 0 0 12px !important; font-family: Georgia, 'Times New Roman', Times, serif; font-style: italic;
+  font-size: 26px; line-height: 32px; font-weight: 400; color: #171613; overflow-wrap: anywhere;
 }
-.cvv-ecard__brand small{ display: block; margin: 0 0 20px; font-size: 10px; line-height: 14px; letter-spacing: 3px; text-transform: uppercase; }
-.cvv-ecard__brand i{ display: block; width: 40px; height: 1px; margin: 0 auto 18px; background: #fff; }
-.cvv-ecard.is-minimal .yq-pe-card__to{ margin-bottom: 14px !important; font-size: 28px; line-height: 36px; }
-.cvv-ecard.is-minimal .yq-pe-card__msg,
-.cvv-ecard.is-minimal .yq-pe-card__from{ text-align: center; }
+.cvv-note__msg{
+  font-family: Georgia, 'Times New Roman', Times, serif; font-size: 17px; line-height: 28px; color: #3A342C;
+  white-space: pre-line; overflow-wrap: anywhere;
+}
+.cvv-note__msg.is-empty{ color: #8A837A; font-style: italic; }
+.cvv-note__from{
+  margin: 18px 0 0 !important; text-align: right; font-family: Georgia, 'Times New Roman', Times, serif; font-style: italic;
+  font-size: 16px; line-height: 22px; color: #3A342C; overflow-wrap: anywhere;
+}
+
+/* Classic: ảnh banner trên (tỉ lệ 2:1) -> giấy kem */
+.cvv-ecard.is-classic .cvv-note__media{ aspect-ratio: 2 / 1; }
+
+/* Overlay: ảnh làm nền (tối thiểu tỉ lệ 592x460), hộp giấy kem đè dưới cách mép 22px */
+.cvv-ecard.is-overlay .cvv-note{ display: grid; grid-template-columns: 100%; }
+.cvv-ecard.is-overlay .cvv-note::before{ content: ""; grid-area: 1 / 1; width: 100%; aspect-ratio: 592 / 460; }
+.cvv-ecard.is-overlay .cvv-note__media,
+.cvv-ecard.is-overlay .cvv-note__paper{ grid-area: 1 / 1; }
+.cvv-ecard.is-overlay .cvv-note__media img{ position: absolute; inset: 0; }
+.cvv-ecard.is-overlay .cvv-note__paper{
+  align-self: end; margin: 33.8% 22px 22px; padding: 24px 26px 24px; border-radius: 8px;
+  box-shadow: 0 6px 20px -8px rgba(23,22,19,.35);
+}
+
+/* Split: ảnh trái 40% | giấy kem phải 60% (email 236 | 356); thiệp quá hẹp thì xếp chồng như email */
+.cvv-ecard.is-split .cvv-note{ display: grid; grid-template-columns: 40% 60%; }
+.cvv-ecard.is-split .cvv-note__media{ min-height: 100%; }
+.cvv-ecard.is-split .cvv-note__media img{ position: absolute; inset: 0; }
+.cvv-ecard.is-split .cvv-note__paper{ align-self: center; padding: 28px 24px 26px; }
+.cvv-ecard.is-split .cvv-note__to{ font-size: 22px; line-height: 28px; }
+.cvv-ecard.is-split .cvv-note__msg{ font-size: 16px; line-height: 26px; }
+@container (max-width: 359.98px){
+  .cvv-ecard.is-split .cvv-note{ grid-template-columns: 100%; }
+  .cvv-ecard.is-split .cvv-note__media{ aspect-ratio: 4 / 3; }
+}
+
+/* Minimal: chỉ giấy kem, canh giữa, hoạ tiết vàng —— ◆ —— ở trên */
+.cvv-ecard.is-minimal .cvv-note__media{ display: none; }
+.cvv-ecard.is-minimal .cvv-note__paper{ padding: 38px 32px 36px; text-align: center; }
+.cvv-ecard.is-minimal .cvv-note__orn{
+  display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 0 16px !important;
+  font-size: 12px; line-height: 12px; color: #C8A96A;
+}
+.cvv-ecard.is-minimal .cvv-note__orn i{ display: block; width: 36px; height: 1px; background: #C8A96A; }
+.cvv-ecard.is-minimal .cvv-note__from{ text-align: center; }
+
+/* (2) Vé voucher ngang: nền màu thiệp, padding 10px, khung vàng 1px bên trong */
+.cvv-ticket{
+  padding: 10px; border-radius: 10px; background: var(--c-bg); color: #fff;
+  box-shadow: 0 12px 30px -16px rgba(23,22,19,.55); transition: background-color .35s var(--yq-ease);
+}
+.cvv-ticket__frame{ border: 1px solid #C8A96A; padding: 22px 24px; }
+.cvv-ticket__row{ display: flex; flex-direction: column; gap: 22px; }
+.cvv-ticket__main{ min-width: 0; text-align: left; }
+.cvv-ticket__eyebrow{ font-size: 10px; line-height: 14px; letter-spacing: 3px; text-transform: uppercase; color: #E7D3A3; overflow-wrap: anywhere; }
+.cvv-ticket__name{
+  margin: 10px 0 0 !important; font-family: Georgia, 'Times New Roman', Times, serif; font-size: 26px; line-height: 32px;
+  font-weight: 400; color: #fff; overflow-wrap: anywhere;
+}
+.cvv-ticket__sum{ margin: 12px 0 10px !important; font-size: 13px; line-height: 20px; color: #fff; }
+.cvv-ticket__sum[hidden]{ display: none; }
+.cvv-ticket__valid{ font-size: 11px; line-height: 16px; letter-spacing: 1.5px; text-transform: uppercase; color: #E7D3A3; }
+
+/* Cuống vé: ô kem bo 6px, QR trên nền trắng, mã + SCAN TO REDEEM */
+.cvv-ticket__stub{
+  align-self: center; width: 170px; max-width: 100%; padding: 14px; border-radius: 6px;
+  background: #F7F1E6; color: #171613; text-align: center;
+}
+.cvv-ticket__qr{ position: relative; display: inline-block; padding: 8px; background: #fff; line-height: 0; }
+.cvv-ticket__qr img{ display: block; width: 120px; height: 120px; max-width: none; opacity: .5; }   /* QR mẫu mờ: chỉ minh hoạ */
+.cvv-ticket__badge{
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-12deg);
+  padding: 4px 10px; border-radius: 3px; background: #171613; color: #fff;
+  font-size: 10px; line-height: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
+}
+.cvv-ticket__code{
+  margin: 10px 0 4px !important; font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 18px;
+  font-weight: 700; letter-spacing: 2px; color: #171613; white-space: nowrap;
+}
+.cvv-ticket__scan{ font-size: 9px; line-height: 12px; letter-spacing: 2px; text-transform: uppercase; color: #8A837A; }
+
+@container (max-width: 359.98px){
+  .cvv-ticket__frame{ padding: 20px 18px; }
+  .cvv-ticket__name{ font-size: 23px; line-height: 29px; }
+  .cvv-note__paper{ padding: 26px 24px; }
+  .cvv-ecard.is-overlay .cvv-note__paper{ margin: 33.8% 14px 14px; padding: 20px 20px; }
+}
+/* Thiệp rộng >= 520px: vé 2 cột (chính | cuống), canh giữa dọc — như email trên máy tính */
+@container (min-width: 520px){
+  .cvv-ticket__row{ flex-direction: row; align-items: center; gap: 24px; }
+  .cvv-ticket__main{ flex: 1 1 auto; max-width: 360px; }
+  .cvv-ticket__stub{ flex: none; margin-left: auto; }
+  .cvv-ecard.is-classic .cvv-note__paper,
+  .cvv-ecard.is-minimal .cvv-note__paper{ padding-left: 36px; padding-right: 36px; }
+}
 
 /* Dòng giải thích dưới thiệp + nút xem cả email */
 .cvv-preview__line{ margin: 14px 0 0; font-size: 13px; line-height: 1.5; color: var(--yq-body); }

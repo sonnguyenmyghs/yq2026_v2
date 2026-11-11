@@ -18,7 +18,7 @@ Kiểm tra lại đường dẫn skin trước khi upload.
 | `assets/js/modules/voucher/checkout-voucher-gift.js` | `assets/js/modules/voucher/checkout-voucher-gift.js` | Panel "Send as a gift" |
 | `assets/js/modules/voucher/checkout-voucher-production.js` | `assets/js/modules/voucher/checkout-voucher-production.js` | Promo, validate, POST |
 | `assets/img/e-afternoon-tea.jpg` `o-festive.jpg` `o-birthdays.jpg` `o-anniversaries.jpg` `e-dining.jpg` `e-spa.jpg` `banner-cny.jpg` `e-staycation.jpg` `editorial-cake.jpg` | `assets/img/…` | 9 banner mẫu của e-card (thumbnail + ảnh thiệp) |
-| `assets/img/qr-sample.svg` | `assets/img/qr-sample.svg` | QR mẫu trong popup "Preview full email" |
+| `assets/img/qr-sample.png` | `assets/img/qr-sample.png` | QR mẫu trong popup "Preview full email" |
 | `email/voucher-gift.html` + `email/parts/card-*.html` | `email/…` (cạnh `assets/`, tức `$_SKIN_NO_CDN/email/`) | **Chỉ cần khi KHÔNG có** `data-email-endpoint`: popup tự ráp email từ các file này. Không cần `email/preview.html`, `email/samples/`, `email/README.md` |
 
 Không upload: `voucher/checkout.html`, `assets/js/modules/voucher/checkout-voucher.js` (demo), `data.js` / `app.js` / `pages.js`.
@@ -93,7 +93,7 @@ Engine xử lý cả `$` / ngoặc nhọn trong comment HTML → comment trong p
 
 ## 6. Giới hạn đã biết
 
-- Mã voucher / QR trong popup preview luôn là mẫu (`GH-XXXX-XXXX`, `qr-sample.svg`) — mã thật chỉ có sau thanh toán.
+- Mã voucher / QR trong popup preview luôn là mẫu (`GH-XXXX-XXXX`, `qr-sample.png`) — mã thật chỉ có sau thanh toán.
 - Màu "Auto" đọc pixel ảnh bằng canvas: ảnh khác domain không có CORS → dùng `#8C7145`. Banner nằm trên cùng domain skin thì không sao.
 - Ảnh tự tải không giữ được khi server trả form lỗi (giới hạn trình duyệt).
 - Giỏ nhiều voucher: thiệp + người nhận áp cho cả đơn (1 người nhận như template cũ).

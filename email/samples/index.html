@@ -26,20 +26,24 @@
 <main>
   <h1>Voucher email — static samples</h1>
   <p>Each file is the complete email as it would arrive in the inbox, with every <code>%variable%</code> already filled
-     (Sarah Tan ← James, Christmas Eve Dinner Buffet at StraitsKitchen, code GH-8F3K-2Q7M).</p>
+     (Sarah Tan ← James, Christmas Eve Dinner Buffet at StraitsKitchen, code GH-8F3K-2Q7M, ref GH12345678).</p>
+  <p>Design “Luxe Ticket” (v2, spec <code>email/DESIGN-TICKET.md</code>): the message sits on cream paper (layout varies), then a
+     horizontal voucher ticket in the card colour with a thin gold inner frame, the voucher name in large serif type and a cream
+     stub holding the QR (always on white) and the code. Below: “View your gift online”, How to redeem (3 steps),
+     Good to know (short terms + link) and “Purchased on … · Ref …”. The long voucher description now lives on the gift page.</p>
   <ul>
-    <li><a href="classic.html">classic.html</a><span>Banner on top, message below · Christmas (o-festive.jpg) · Auto colour #816653</span></li>
-    <li><a href="overlay.html">overlay.html</a><span>Photo as background, colour box over it · Christmas · Warm Crimson #B9353F</span></li>
-    <li><a href="split.html">split.html</a><span>Photo left, message right (stacks on phones) · Anniversary (o-anniversaries.jpg) · Deep Terracotta #6F2613</span></li>
-    <li><a href="minimal.html">minimal.html</a><span>No image, centred message · Burnished Gold #8C7145</span></li>
-    <li><a href="none.html">none.html</a><span>No e-card (self-purchase) · hero banner + message, like the current production email</span></li>
+    <li><a href="classic.html">classic.html</a><span>Banner on top of cream paper, then the ticket · Christmas (o-festive.jpg) · Auto colour #816653 (line #AD9C8F)</span></li>
+    <li><a href="overlay.html">overlay.html</a><span>Photo as background with a cream message box over it, ticket below · Christmas · Warm Crimson #B9353F (line #D27C82)</span></li>
+    <li><a href="split.html">split.html</a><span>Photo left, cream message right (stacks on phones), ticket below · Anniversary (o-anniversaries.jpg) · Deep Terracotta #6F2613 (line #A17266)</span></li>
+    <li><a href="minimal.html">minimal.html</a><span>Cream paper only, centred, gold “—— ◆ ——” ornament, ticket below · Burnished Gold #8C7145 (line #B4A386)</span></li>
+    <li><a href="none.html">none.html</a><span>No e-card (self-purchase) · hero banner + gold ticket “Your gift voucher … for James Lim” (buyer’s name)</span></li>
   </ul>
   <p class="note">
     Images use relative paths (<code>../../assets/img/…</code>) for local review only. For a real test send, every image
     (banner, logo, QR) must be an absolute <code>https://</code> URL.<br>
     Overlay and split point at the original 1200×900 photos; in production the backend must pre-crop them
-    (overlay exactly 592×460, split 416×600) — email clients cannot crop. QR here is a sample SVG; the real
-    <code>%qr_code%</code> should be a PNG/JPG <code>&lt;img&gt;</code> (~120px), since many clients block SVG.<br>
+    (overlay exactly 592×460, split 416×600) — email clients cannot crop. QR here is a sample PNG (<code>assets/img/qr-sample.png</code>); the real
+    <code>%qr_code%</code> must also be a PNG/JPG <code>&lt;img&gt;</code> (~120px, never SVG — many clients block it).<br>
     Regenerate: <code>node email/samples/build.js</code>. Interactive preview (layouts, colours, Gmail/Outlook simulation):
     <a href="../preview.html">email/preview.html</a>.
   </p>

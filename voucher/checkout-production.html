@@ -195,8 +195,11 @@
 
   <!-- Xem trước email (nút "Preview full email"): backend đặt data-email-endpoint = URL trả về HTML email thật
        (nhận các biến của email qua POST, render đúng template đang gửi). Endpoint trống thì JS dựng từ
-       template tĩnh: data-email-base (trống = thư mục email/ cạnh assets/ của skin). data-voucher-expiry / data-voucher-desc: hạn dùng + mô tả voucher (tuỳ chọn). -->
-  <div class="offcanvas offcanvas-end cvv-panel yq-pe" tabindex="-1" id="cvvGiftPanel" aria-labelledby="cvvGiftTitle" data-card-theme="" data-voucher-name="" data-voucher-expiry="" data-voucher-desc="" data-gift-url="" data-email-base="" data-email-endpoint="">
+       template tĩnh: data-email-base (trống = thư mục email/ cạnh assets/ của skin). data-voucher-expiry: hạn dùng voucher (tuỳ chọn).
+       Vé trong thiệp + email (xem email/DESIGN-TICKET.md): data-outlet-name (tên outlet, trống = "The Shop") · data-voucher-summary
+       (1 dòng ≤ 80 ký tự, trống = ẩn dòng) · data-outlet-phone (trống = email bỏ bước đặt chỗ) · data-terms-short (tối đa 3 dòng chữ
+       thường, ngăn bằng dấu |) · data-terms-url (link điều khoản đầy đủ, trống = data-gift-url + #terms). -->
+  <div class="offcanvas offcanvas-end cvv-panel yq-pe" tabindex="-1" id="cvvGiftPanel" aria-labelledby="cvvGiftTitle" data-card-theme="" data-voucher-name="" data-voucher-expiry="" data-outlet-name="" data-voucher-summary="" data-outlet-phone="" data-terms-short="" data-terms-url="" data-gift-url="" data-email-base="" data-email-endpoint="">
     <div class="offcanvas-header cvv-panel__head">
       <div>
         <span class="yq-eyebrow">Personalise</span>
@@ -358,26 +361,51 @@
               <input type="hidden" name="card_layout" id="cvvCardLayout" value="classic">
               <input type="hidden" name="card_colour" id="cvvCardColour" value="auto">
               <input type="hidden" name="card_colour_hex" id="cvvCardColourHex" value="#8C7145">
+              <!-- card_line_hex: màu đường kẻ / gạch răng cưa của thiệp = màu thiệp pha 35% trắng (JS tính lại mỗi lần đổi màu) -> %card_line% trong email -->
+              <input type="hidden" name="card_line_hex" id="cvvCardLineHex" value="#B4A386">
             </div>
           </div>
         </div>
-        <!-- Xem trước thiệp: cùng bố cục với email/parts/card-classic|overlay|split|minimal.html (chữ trắng trên màu thiệp).
+        <!-- Xem trước thiệp "Luxe Ticket" (v2) — cùng bố cục với email (email/DESIGN-TICKET.md):
+             (1) khối lời chúc giấy kem #F7F1E6, đổi theo layout (class is-classic | is-overlay | is-split | is-minimal trên #cvvCard):
+                 classic = ảnh trên + giấy kem · overlay = ảnh nền + hộp kem đè dưới · split = ảnh | giấy kem · minimal = chỉ giấy kem + hoạ tiết ◆
+             (2) vé voucher ngang trên màu thiệp (--c-bg), khung vàng 1px #C8A96A: cột chính + cuống kem có QR; thiệp hẹp < 520px thì xếp chồng.
+             JS chỉ đổ text: #cvvPvTo / #cvvPvRcp (tên người nhận), #cvvPvMsg (lời nhắn), #cvvPvFrom (tên người mua),
+             #cvvPvProduct (tên voucher), #cvvPvExpiry (hạn dùng), .cvv-pv-outlet (data-outlet-name), #cvvPvSummary (data-voucher-summary, trống -> ẩn dòng);
+             src #cvvCardImg (banner), #cvvPvQr (qr-sample.png). Mã / QR luôn là MẪU (chỉ có sau thanh toán).
              "Preview full email" mở hộp #cvvEmailPv (iframe) — nội dung do YQEmail.build (email-render.js) dựng từ template email. -->
         <div class="cvv-panel__preview">
           <span class="cvv-label">Card preview</span>
-          <div class="yq-pe-card cvv-ecard is-classic" id="cvvCard">
-            <div class="yq-pe-card__media">
-              <img id="cvvCardImg" src="$_SKIN_NO_CDN/assets/img/e-dining.jpg" alt="">
+          <div class="cvv-ecard is-classic" id="cvvCard">
+            <div class="cvv-note">
+              <div class="cvv-note__media"><img id="cvvCardImg" src="$_SKIN_NO_CDN/assets/img/e-dining.jpg" alt=""></div>
+              <div class="cvv-note__paper">
+                <p class="cvv-note__orn" aria-hidden="true"><i></i>&#9670;<i></i></p>
+                <p class="cvv-note__eyebrow">A gift for you</p>
+                <p class="cvv-note__to">Dear <span id="cvvPvTo">Recipient</span>,</p>
+                <p class="cvv-note__msg is-empty" id="cvvPvMsg">Your message will appear here.</p>
+                <p class="cvv-note__from">— With love, <span id="cvvPvFrom">a friend</span></p>
+              </div>
             </div>
-            <div class="yq-pe-card__body">
-              <p class="cvv-ecard__eyebrow">The Shop &middot; A gift for you</p>
-              <div class="cvv-ecard__brand" aria-hidden="true"><span>The Shop</span><small>Grand Hyatt Singapore</small><i></i></div>
-              <p class="yq-pe-card__to">Dear <span id="cvvPvTo">Recipient</span>,</p>
-              <p class="yq-pe-card__msg is-empty" id="cvvPvMsg">Your message will appear here.</p>
-              <p class="yq-pe-card__from">With love, <strong id="cvvPvFrom">—</strong></p>
+            <div class="cvv-ticket">
+              <div class="cvv-ticket__frame">
+                <div class="cvv-ticket__row">
+                  <div class="cvv-ticket__main">
+                    <p class="cvv-ticket__eyebrow"><span class="cvv-pv-outlet">The Shop</span> &middot; Gift voucher</p>
+                    <p class="cvv-ticket__name" id="cvvPvProduct">Your e-voucher from The Shop</p>
+                    <p class="cvv-ticket__sum" id="cvvPvSummary" hidden></p>
+                    <p class="cvv-ticket__valid">Valid until <span id="cvvPvExpiry">After payment</span></p>
+                  </div>
+                  <div class="cvv-ticket__stub">
+                    <span class="cvv-ticket__qr"><img id="cvvPvQr" src="$_SKIN_NO_CDN/assets/img/qr-sample.png" width="120" height="120" alt="Sample QR code"><span class="cvv-ticket__badge">Sample</span></span>
+                    <p class="cvv-ticket__code">GH-XXXX-XXXX</p>
+                    <p class="cvv-ticket__scan">Scan to redeem</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <p class="cvv-preview__line" id="cvvPvLine"><b id="cvvPvRcp">Your recipient</b> will receive this card by email with the voucher code and QR, and can open it online.</p>
+          <p class="cvv-preview__line" id="cvvPvLine"><b id="cvvPvRcp">Your recipient</b> will receive this e-voucher by email and can open it online.</p>
           <button class="cvv-pe__link cvv-preview__open" type="button" id="cvvEmailPvOpen" aria-haspopup="dialog" aria-controls="cvvEmailPv">Preview full email</button>
         </div>
       </div>

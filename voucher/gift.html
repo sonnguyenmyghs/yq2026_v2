@@ -519,31 +519,56 @@
 
 
 <!-- =====================================================================
-     TRANG MỞ QUÀ — người nhận vào từ nút "View your gift" trong email voucher.
-     Production: route /gift/<token> (token dài, khó đoán; noindex). Server in sẵn dữ liệu của đơn quà:
-       @gift.recipient_name · @gift.sender_name · @gift.sent_date · @gift.message (nl2br, đã escape)
-       @gift.card_colour (gold | terracotta | crimson | black) -> class .gf-env--… và .yq-pe-card--…
-       @gift.banner_src (ảnh banner của thiệp — ảnh mẫu hoặc ảnh khách tự tải; e-card chỉ có ảnh)
-       @gift.has_card = 0 -> bỏ khối thiệp, vẫn giữ phong bì + voucher
-       @voucher.name · @voucher.meta · @voucher.image · @voucher.code · @voucher.qr_svg · @voucher.valid_until
-       @voucher.status (Ready to use | Redeemed | Expired) · @voucher.pdf_url · @voucher.book_url
-       @venue.name · @venue.location · @venue.hours · @venue.phone
-     JS (gift.js) chỉ thêm class .is-open để chạy hiệu ứng mở, copy mã.
-     ===================================================================== -->
-<main class="yq-pe">
+     TRANG MỞ QUÀ — người nhận vào từ nút "View your gift online" trong email voucher.
+     Thiết kế: "Luxe Ticket (v2)" — xem email/DESIGN-TICKET.md (nguồn duy nhất cho vé + thiệp).
+     Production: route /gift/<token> (token dài, khó đoán; noindex). Server in sẵn dữ liệu đơn quà
+     (markup dưới đây là GIÁ TRỊ MẪU; khi lên production thay bằng biến tương ứng):
 
-  <!-- 1. Phong bì -> thiệp -->
+     Thiệp / phong bì
+       @gift.recipient_name   -> "Sarah Tan"  (h1 dùng tên gọi @gift.recipient_first nếu có, không thì tên đầy đủ)
+       @gift.sender_name      -> "James"      (sub h1, chữ ký "With love, …", khối cảm ơn)
+       @gift.sent_date        -> "9 November 2026"
+       @gift.message          -> lời nhắn (nl2br, đã escape)
+       @gift.card_colour_hex  -> màu thiệp #RRGGBB (kể cả Auto) -> style="--gf-bg: …" trên main.gf
+       @gift.card_line_hex    -> màu thiệp pha 35% trắng       -> style="--gf-line: …" trên main.gf
+       @gift.card_layout      -> classic | overlay | split | minimal -> class gf-note--… trên #gfNote
+       @gift.banner_src       -> ảnh banner (mẫu hoặc ảnh khách tải lên); minimal: không in img
+       @gift.has_card = 0     -> (mua cho mình) bỏ phong bì + thiệp, h1 thành "Your e-voucher is ready"
+
+     Vé voucher
+       @voucher.name          -> "Christmas Eve Dinner Buffet"
+       @voucher.summary       -> 1 dòng tối đa 80 ký tự, vd "Dinner buffet for 1 adult · 24 Dec 2026, 6–10 PM"
+       @voucher.outlet_name   -> "StraitsKitchen" (eyebrow vé, dòng nét đứt, khối nhà hàng)
+       @voucher.outlet_phone  -> "+65 6732 1234" (href tel: bỏ khoảng trắng: +6567321234)
+       @voucher.outlet_location · @voucher.outlet_hours -> khối nhà hàng (HTML, mỗi dòng một div)
+       @voucher.code          -> "GH-8F3K-2Q7M" (chữ thật, nút Copy đọc text của #gfCode)
+       @voucher.qr_img        -> URL ảnh QR PNG (không dùng SVG)
+       @voucher.valid_until   -> "24 Dec 2026"
+       @voucher.status        -> ready | redeemed | expired -> class gf-status--… + chữ (Ready to use | Redeemed | Expired)
+       @voucher.description   -> HTML mô tả đầy đủ (= @product_description cũ, không còn trong email)
+       @voucher.terms_list    -> HTML các li điều khoản đầy đủ (#terms là đích của link "Full terms" trong email)
+       @voucher.pdf_url       -> link tải PDF · @voucher.wallet_url -> lưu vào ví thành viên
+
+     Đơn hàng
+       @order.ref             -> "GH12345678"
+       @order.purchased_on    -> "9 Nov 2026"
+
+     JS (gift.js) chỉ đổi class/text: .is-open để chạy hiệu ứng mở, Replay, Copy mã. Không dựng markup.
+     ===================================================================== -->
+<main class="yq-pe gf" style="--gf-bg:#B9353F;--gf-line:#D27C82">
+
+  <!-- 1. Phong bì -> thiệp (giấy kem + banner) -->
   <section class="gf-stage" id="gfStage">
     <div class="yq-container">
       <div class="gf-stage__head">
-        <span class="yq-eyebrow">The Shop · Grand Hyatt Singapore</span>
-        <h1 class="gf-stage__title">Sarah, you’ve received a gift</h1>
+        <span class="gf-eyebrow">The Shop · Grand Hyatt Singapore</span>
+        <h1 class="gf-stage__title">Sarah, you’ve received <em>a gift</em></h1>
         <p class="gf-stage__sub">From <b>James</b> · 9 November 2026</p>
       </div>
 
       <div class="gf-scene">
-        <!-- Màu phong bì = màu thiệp: gf-env--@gift.card_colour -->
-        <button class="gf-env gf-env--crimson" id="gfEnv" type="button" aria-expanded="false" aria-controls="gfCard" aria-label="Open your gift">
+        <!-- Màu phong bì = --gf-bg (@gift.card_colour_hex) -->
+        <button class="gf-env" id="gfEnv" type="button" aria-expanded="false" aria-controls="gfCard" aria-label="Open your gift">
           <span class="gf-env__back"></span>
           <span class="gf-env__peek"></span>
           <span class="gf-env__front"></span>
@@ -552,107 +577,143 @@
           <span class="gf-env__to"><small>For</small>Sarah Tan</span>
         </button>
 
-        <!-- Thiệp (dùng lại .yq-pe-card của personalise.css) — yq-pe-card--@gift.card_colour -->
+        <!-- Thiệp: giấy kem #F7F1E6, layout gf-note--@gift.card_layout (classic | overlay | split | minimal) -->
         <div class="gf-card" id="gfCard" tabindex="-1">
-          <div class="yq-pe-card yq-pe-card--crimson">
-            <div class="yq-pe-card__media">
-              <!-- src = @gift.banner_src -->
-              <img id="gfCardImg" src="../assets/img/o-festive.jpg" alt="">
+          <article class="gf-note gf-note--classic" id="gfNote">
+            <div class="gf-note__media">
+              <!-- src = @gift.banner_src (minimal: bỏ div này) -->
+              <img id="gfCardImg" src="../assets/img/o-festive.jpg" alt="" width="1200" height="900" decoding="async">
             </div>
-            <div class="yq-pe-card__body">
-              <div class="yq-pe-card__brand"><svg class="yq-pe-logo" viewBox="0 0 100 100" aria-hidden="true"><rect x="17" y="17" width="66" height="66" transform="rotate(45 50 50)" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="50" y="40" text-anchor="middle" font-size="6" letter-spacing="1.5" fill="currentColor">THE</text><text x="50" y="55" text-anchor="middle" font-size="14" letter-spacing="2" fill="currentColor" font-weight="600">SHOP</text><text x="50" y="64" text-anchor="middle" font-size="4" letter-spacing="1.2" fill="currentColor">GRAND HYATT</text><text x="50" y="69" text-anchor="middle" font-size="4" letter-spacing="1.2" fill="currentColor">SINGAPORE</text></svg><span>A gift for you</span></div>
-              <div class="yq-pe-card__to">Dear Sarah Tan,</div>
-              <div class="yq-pe-card__msg">Merry Christmas! Enjoy a festive dinner on us — you deserve a night off. Can’t wait to hear all about it.</div>
-              <div class="yq-pe-card__from">With love, James</div>
-              <div class="yq-pe-card__gift"><span>Christmas Eve Dinner Buffet at StraitsKitchen</span><span>1 voucher</span></div>
+            <div class="gf-note__paper">
+              <p class="gf-note__orn" aria-hidden="true"><span></span>◆<span></span></p>
+              <p class="gf-note__eyebrow">A gift for you</p>
+              <p class="gf-note__to">Dear Sarah Tan,</p>
+              <p class="gf-note__msg">Merry Christmas! Enjoy a festive dinner on us — you deserve a night off. Can’t wait to hear all about it.</p>
+              <p class="gf-note__from">— With love, James</p>
             </div>
-          </div>
+          </article>
         </div>
       </div>
 
-      <button class="yq-btn yq-btn--lg gf-open" id="gfOpenBtn" type="button">Open your gift</button>
+      <button class="gf-btn gf-btn--gold gf-open" id="gfOpenBtn" type="button">Open your gift</button>
       <span class="gf-hint">Tap the envelope to open</span>
       <button class="gf-replay" id="gfReplay" type="button"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><polyline points="4 4 4 9 9 9"/></svg> Replay</button>
     </div>
   </section>
 
-  <!-- 2. Voucher -->
-  <section class="gf-voucher">
-    <div class="yq-container yq-container--narrow">
-      <span class="yq-eyebrow">Your e-voucher</span>
-      <h2 class="gf-sec-title">Here’s how to enjoy it</h2>
+  <!-- 2. Vé voucher ngang (Luxe Ticket v2) + hành động -->
+  <section class="gf-voucher" aria-labelledby="gfVoucherTitle">
+    <div class="yq-container">
+      <div class="gf-sec-head">
+        <span class="gf-eyebrow gf-eyebrow--dark">Your e-voucher</span>
+        <h2 class="gf-sec-title" id="gfVoucherTitle">Here’s how to enjoy it</h2>
+        <!-- gf-status--@voucher.status: ready (Ready to use) | redeemed (Redeemed) | expired (Expired) -->
+        <span class="gf-status gf-status--ready">Ready to use</span>
+      </div>
 
-      <div class="row g-4">
-        <div class="col-lg-7">
-          <div class="gf-ticket">
-            <div class="gf-ticket__media"><img src="../assets/img/hero-festive.jpg" alt="Christmas Eve dinner buffet at StraitsKitchen" loading="lazy" decoding="async"></div>
-            <div class="gf-ticket__main">
-              <span class="gf-status">Ready to use</span>
-              <h3 class="gf-ticket__name">Christmas Eve Dinner Buffet at StraitsKitchen</h3>
-              <p class="gf-ticket__meta">Dinner buffet for 1 adult · 24 December 2026</p>
-              <dl class="gf-facts">
-                <div><dt>Voucher code</dt><dd><span class="gf-code"><span id="gfCode">GH-8F3K-2Q7M</span><button class="gf-copy" id="gfCopy" type="button">Copy</button></span></dd></div>
-                <div><dt>Valid on</dt><dd>24 Dec 2026</dd></div>
-                <div><dt>Order</dt><dd>GH12345678</dd></div>
-                <div><dt>Value</dt><dd>SGD 128.00</dd></div>
-              </dl>
+      <div class="gf-tk">
+        <div class="gf-tk__frame">
+          <div class="gf-tk__row">
+            <div class="gf-tk__main">
+              <p class="gf-tk__eyebrow">StraitsKitchen · Gift voucher</p>
+              <h3 class="gf-tk__name">Christmas Eve Dinner Buffet</h3>
+              <p class="gf-tk__for">for Sarah Tan</p>
+              <span class="gf-tk__rule" aria-hidden="true"></span>
+              <p class="gf-tk__summary">Dinner buffet for 1 adult · 24 Dec 2026, 6–10 PM</p>
+              <p class="gf-tk__valid">Valid until 24 Dec 2026</p>
             </div>
-            <div class="gf-ticket__qr">
-              <div class="gf-qr"><svg viewBox="0 0 25 25" shape-rendering="crispEdges" role="img" aria-label="Voucher QR code (sample)"><g fill="#171613"><rect x="0" y="0" width="1" height="1"/><rect x="1" y="0" width="1" height="1"/><rect x="2" y="0" width="1" height="1"/><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="8" y="0" width="1" height="1"/><rect x="9" y="0" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/><rect x="11" y="0" width="1" height="1"/><rect x="12" y="0" width="1" height="1"/><rect x="14" y="0" width="1" height="1"/><rect x="15" y="0" width="1" height="1"/><rect x="18" y="0" width="1" height="1"/><rect x="19" y="0" width="1" height="1"/><rect x="20" y="0" width="1" height="1"/><rect x="21" y="0" width="1" height="1"/><rect x="22" y="0" width="1" height="1"/><rect x="23" y="0" width="1" height="1"/><rect x="24" y="0" width="1" height="1"/><rect x="0" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="8" y="1" width="1" height="1"/><rect x="9" y="1" width="1" height="1"/><rect x="10" y="1" width="1" height="1"/><rect x="12" y="1" width="1" height="1"/><rect x="13" y="1" width="1" height="1"/><rect x="15" y="1" width="1" height="1"/><rect x="16" y="1" width="1" height="1"/><rect x="18" y="1" width="1" height="1"/><rect x="24" y="1" width="1" height="1"/><rect x="0" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="15" y="2" width="1" height="1"/><rect x="18" y="2" width="1" height="1"/><rect x="20" y="2" width="1" height="1"/><rect x="21" y="2" width="1" height="1"/><rect x="22" y="2" width="1" height="1"/><rect x="24" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="9" y="3" width="1" height="1"/><rect x="10" y="3" width="1" height="1"/><rect x="11" y="3" width="1" height="1"/><rect x="13" y="3" width="1" height="1"/><rect x="14" y="3" width="1" height="1"/><rect x="18" y="3" width="1" height="1"/><rect x="20" y="3" width="1" height="1"/><rect x="21" y="3" width="1" height="1"/><rect x="22" y="3" width="1" height="1"/><rect x="24" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="8" y="4" width="1" height="1"/><rect x="15" y="4" width="1" height="1"/><rect x="18" y="4" width="1" height="1"/><rect x="20" y="4" width="1" height="1"/><rect x="21" y="4" width="1" height="1"/><rect x="22" y="4" width="1" height="1"/><rect x="24" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="8" y="5" width="1" height="1"/><rect x="9" y="5" width="1" height="1"/><rect x="12" y="5" width="1" height="1"/><rect x="13" y="5" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/><rect x="15" y="5" width="1" height="1"/><rect x="16" y="5" width="1" height="1"/><rect x="18" y="5" width="1" height="1"/><rect x="24" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="12" y="6" width="1" height="1"/><rect x="13" y="6" width="1" height="1"/><rect x="14" y="6" width="1" height="1"/><rect x="18" y="6" width="1" height="1"/><rect x="19" y="6" width="1" height="1"/><rect x="20" y="6" width="1" height="1"/><rect x="21" y="6" width="1" height="1"/><rect x="22" y="6" width="1" height="1"/><rect x="23" y="6" width="1" height="1"/><rect x="24" y="6" width="1" height="1"/><rect x="10" y="7" width="1" height="1"/><rect x="14" y="7" width="1" height="1"/><rect x="15" y="7" width="1" height="1"/><rect x="16" y="7" width="1" height="1"/><rect x="0" y="8" width="1" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/><rect x="8" y="8" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="15" y="8" width="1" height="1"/><rect x="16" y="8" width="1" height="1"/><rect x="17" y="8" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/><rect x="24" y="8" width="1" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="2" y="9" width="1" height="1"/><rect x="7" y="9" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="12" y="9" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/><rect x="15" y="9" width="1" height="1"/><rect x="16" y="9" width="1" height="1"/><rect x="17" y="9" width="1" height="1"/><rect x="19" y="9" width="1" height="1"/><rect x="20" y="9" width="1" height="1"/><rect x="23" y="9" width="1" height="1"/><rect x="3" y="10" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="10" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/><rect x="8" y="10" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/><rect x="16" y="10" width="1" height="1"/><rect x="18" y="10" width="1" height="1"/><rect x="19" y="10" width="1" height="1"/><rect x="0" y="11" width="1" height="1"/><rect x="5" y="11" width="1" height="1"/><rect x="7" y="11" width="1" height="1"/><rect x="12" y="11" width="1" height="1"/><rect x="16" y="11" width="1" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="18" y="11" width="1" height="1"/><rect x="19" y="11" width="1" height="1"/><rect x="20" y="11" width="1" height="1"/><rect x="21" y="11" width="1" height="1"/><rect x="0" y="12" width="1" height="1"/><rect x="3" y="12" width="1" height="1"/><rect x="6" y="12" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/><rect x="13" y="12" width="1" height="1"/><rect x="15" y="12" width="1" height="1"/><rect x="16" y="12" width="1" height="1"/><rect x="17" y="12" width="1" height="1"/><rect x="19" y="12" width="1" height="1"/><rect x="21" y="12" width="1" height="1"/><rect x="22" y="12" width="1" height="1"/><rect x="23" y="12" width="1" height="1"/><rect x="1" y="13" width="1" height="1"/><rect x="5" y="13" width="1" height="1"/><rect x="6" y="13" width="1" height="1"/><rect x="7" y="13" width="1" height="1"/><rect x="9" y="13" width="1" height="1"/><rect x="10" y="13" width="1" height="1"/><rect x="11" y="13" width="1" height="1"/><rect x="14" y="13" width="1" height="1"/><rect x="15" y="13" width="1" height="1"/><rect x="19" y="13" width="1" height="1"/><rect x="20" y="13" width="1" height="1"/><rect x="22" y="13" width="1" height="1"/><rect x="23" y="13" width="1" height="1"/><rect x="2" y="14" width="1" height="1"/><rect x="4" y="14" width="1" height="1"/><rect x="6" y="14" width="1" height="1"/><rect x="7" y="14" width="1" height="1"/><rect x="10" y="14" width="1" height="1"/><rect x="11" y="14" width="1" height="1"/><rect x="13" y="14" width="1" height="1"/><rect x="14" y="14" width="1" height="1"/><rect x="15" y="14" width="1" height="1"/><rect x="16" y="14" width="1" height="1"/><rect x="17" y="14" width="1" height="1"/><rect x="18" y="14" width="1" height="1"/><rect x="19" y="14" width="1" height="1"/><rect x="21" y="14" width="1" height="1"/><rect x="23" y="14" width="1" height="1"/><rect x="24" y="14" width="1" height="1"/><rect x="0" y="15" width="1" height="1"/><rect x="1" y="15" width="1" height="1"/><rect x="2" y="15" width="1" height="1"/><rect x="5" y="15" width="1" height="1"/><rect x="6" y="15" width="1" height="1"/><rect x="8" y="15" width="1" height="1"/><rect x="10" y="15" width="1" height="1"/><rect x="13" y="15" width="1" height="1"/><rect x="17" y="15" width="1" height="1"/><rect x="21" y="15" width="1" height="1"/><rect x="22" y="15" width="1" height="1"/><rect x="23" y="15" width="1" height="1"/><rect x="24" y="15" width="1" height="1"/><rect x="0" y="16" width="1" height="1"/><rect x="2" y="16" width="1" height="1"/><rect x="3" y="16" width="1" height="1"/><rect x="4" y="16" width="1" height="1"/><rect x="8" y="16" width="1" height="1"/><rect x="9" y="16" width="1" height="1"/><rect x="10" y="16" width="1" height="1"/><rect x="11" y="16" width="1" height="1"/><rect x="12" y="16" width="1" height="1"/><rect x="13" y="16" width="1" height="1"/><rect x="14" y="16" width="1" height="1"/><rect x="18" y="16" width="1" height="1"/><rect x="20" y="16" width="1" height="1"/><rect x="21" y="16" width="1" height="1"/><rect x="22" y="16" width="1" height="1"/><rect x="23" y="16" width="1" height="1"/><rect x="24" y="16" width="1" height="1"/><rect x="8" y="17" width="1" height="1"/><rect x="9" y="17" width="1" height="1"/><rect x="10" y="17" width="1" height="1"/><rect x="17" y="17" width="1" height="1"/><rect x="18" y="17" width="1" height="1"/><rect x="20" y="17" width="1" height="1"/><rect x="23" y="17" width="1" height="1"/><rect x="0" y="18" width="1" height="1"/><rect x="1" y="18" width="1" height="1"/><rect x="2" y="18" width="1" height="1"/><rect x="3" y="18" width="1" height="1"/><rect x="4" y="18" width="1" height="1"/><rect x="5" y="18" width="1" height="1"/><rect x="6" y="18" width="1" height="1"/><rect x="14" y="18" width="1" height="1"/><rect x="15" y="18" width="1" height="1"/><rect x="16" y="18" width="1" height="1"/><rect x="17" y="18" width="1" height="1"/><rect x="18" y="18" width="1" height="1"/><rect x="0" y="19" width="1" height="1"/><rect x="6" y="19" width="1" height="1"/><rect x="8" y="19" width="1" height="1"/><rect x="9" y="19" width="1" height="1"/><rect x="10" y="19" width="1" height="1"/><rect x="12" y="19" width="1" height="1"/><rect x="16" y="19" width="1" height="1"/><rect x="17" y="19" width="1" height="1"/><rect x="22" y="19" width="1" height="1"/><rect x="23" y="19" width="1" height="1"/><rect x="24" y="19" width="1" height="1"/><rect x="0" y="20" width="1" height="1"/><rect x="2" y="20" width="1" height="1"/><rect x="3" y="20" width="1" height="1"/><rect x="4" y="20" width="1" height="1"/><rect x="6" y="20" width="1" height="1"/><rect x="9" y="20" width="1" height="1"/><rect x="11" y="20" width="1" height="1"/><rect x="12" y="20" width="1" height="1"/><rect x="13" y="20" width="1" height="1"/><rect x="15" y="20" width="1" height="1"/><rect x="18" y="20" width="1" height="1"/><rect x="19" y="20" width="1" height="1"/><rect x="22" y="20" width="1" height="1"/><rect x="23" y="20" width="1" height="1"/><rect x="24" y="20" width="1" height="1"/><rect x="0" y="21" width="1" height="1"/><rect x="2" y="21" width="1" height="1"/><rect x="3" y="21" width="1" height="1"/><rect x="4" y="21" width="1" height="1"/><rect x="6" y="21" width="1" height="1"/><rect x="11" y="21" width="1" height="1"/><rect x="14" y="21" width="1" height="1"/><rect x="15" y="21" width="1" height="1"/><rect x="17" y="21" width="1" height="1"/><rect x="18" y="21" width="1" height="1"/><rect x="19" y="21" width="1" height="1"/><rect x="20" y="21" width="1" height="1"/><rect x="21" y="21" width="1" height="1"/><rect x="23" y="21" width="1" height="1"/><rect x="0" y="22" width="1" height="1"/><rect x="2" y="22" width="1" height="1"/><rect x="3" y="22" width="1" height="1"/><rect x="4" y="22" width="1" height="1"/><rect x="6" y="22" width="1" height="1"/><rect x="10" y="22" width="1" height="1"/><rect x="11" y="22" width="1" height="1"/><rect x="12" y="22" width="1" height="1"/><rect x="13" y="22" width="1" height="1"/><rect x="14" y="22" width="1" height="1"/><rect x="16" y="22" width="1" height="1"/><rect x="18" y="22" width="1" height="1"/><rect x="19" y="22" width="1" height="1"/><rect x="21" y="22" width="1" height="1"/><rect x="22" y="22" width="1" height="1"/><rect x="0" y="23" width="1" height="1"/><rect x="6" y="23" width="1" height="1"/><rect x="8" y="23" width="1" height="1"/><rect x="11" y="23" width="1" height="1"/><rect x="12" y="23" width="1" height="1"/><rect x="14" y="23" width="1" height="1"/><rect x="15" y="23" width="1" height="1"/><rect x="16" y="23" width="1" height="1"/><rect x="17" y="23" width="1" height="1"/><rect x="20" y="23" width="1" height="1"/><rect x="22" y="23" width="1" height="1"/><rect x="24" y="23" width="1" height="1"/><rect x="0" y="24" width="1" height="1"/><rect x="1" y="24" width="1" height="1"/><rect x="2" y="24" width="1" height="1"/><rect x="3" y="24" width="1" height="1"/><rect x="4" y="24" width="1" height="1"/><rect x="5" y="24" width="1" height="1"/><rect x="6" y="24" width="1" height="1"/><rect x="8" y="24" width="1" height="1"/><rect x="9" y="24" width="1" height="1"/><rect x="10" y="24" width="1" height="1"/><rect x="11" y="24" width="1" height="1"/><rect x="12" y="24" width="1" height="1"/><rect x="13" y="24" width="1" height="1"/><rect x="14" y="24" width="1" height="1"/><rect x="15" y="24" width="1" height="1"/><rect x="19" y="24" width="1" height="1"/><rect x="20" y="24" width="1" height="1"/><rect x="22" y="24" width="1" height="1"/><rect x="23" y="24" width="1" height="1"/><rect x="24" y="24" width="1" height="1"/></g></svg></div>
-              <small>Show at the restaurant</small>
+            <div class="gf-tk__stub">
+              <!-- src = @voucher.qr_img -->
+              <span class="gf-tk__qr"><img src="../assets/img/qr-sample.png" width="120" height="120" alt="Voucher QR code"></span>
+              <span class="gf-tk__code" id="gfCode">GH-8F3K-2Q7M</span>
+              <button class="gf-copy" id="gfCopy" type="button" aria-label="Copy voucher code"><svg class="yq-i" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></svg><span class="gf-copy__txt">Copy code</span></button>
+              <span class="gf-tk__scan">Scan to redeem</span>
+            </div>
+          </div>
+          <p class="gf-tk__note">Present this e-voucher at StraitsKitchen. Screenshots are not accepted.</p>
+        </div>
+      </div>
+
+      <div class="gf-actions">
+        <!-- href = tel:@voucher.outlet_phone (bỏ khoảng trắng) -->
+        <a class="gf-btn gf-btn--ink" href="tel:+6567321234"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg> Reserve a table</a>
+        <!-- href = @voucher.pdf_url -->
+        <a class="gf-btn gf-btn--line" href="#"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><polyline points="7 10 12 15 17 10"/><path d="M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17"/></svg> Download voucher (PDF)</a>
+        <!-- href = @voucher.wallet_url (chưa đăng nhập: data-yq-account mở popup Log in) -->
+        <a class="gf-btn gf-btn--line" href="#" data-yq-account><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a1.5 1.5 0 0 1 0 3H5.5"/><rect x="3" y="7.5" width="18" height="11.5" rx="2.2"/><circle cx="16.5" cy="13.2" r="1.15" fill="currentColor" stroke="none"/></svg> Save to my wallet</a>
+      </div>
+      <p class="gf-order">Purchased on 9 Nov 2026 · Ref GH12345678</p>
+    </div>
+  </section>
+
+  <!-- 3. Thông tin: cách dùng, mô tả đầy đủ, điều khoản đầy đủ, nhà hàng -->
+  <section class="gf-info">
+    <div class="yq-container">
+      <div class="gf-info__grid">
+        <div class="gf-info__main">
+
+          <div class="gf-block">
+            <h2 class="gf-block__title">How to redeem</h2>
+            <ol class="gf-steps">
+              <li>Reserve ahead: <a href="tel:+6567321234">+65 6732 1234</a></li>
+              <li>Quote your voucher code when booking.</li>
+              <li>Show the QR code on arrival.</li>
+            </ol>
+          </div>
+
+          <div class="gf-block">
+            <h2 class="gf-block__title">About this voucher</h2>
+            <!-- @voucher.description (HTML) -->
+            <div class="gf-prose">
+              <p>Celebrate Christmas Eve with a festive dinner buffet at StraitsKitchen — roast turkey with all the trimmings, honey-glazed ham, seafood on ice and an array of Christmas desserts, served alongside StraitsKitchen’s much-loved Singaporean favourites from the Malay, Indian and Chinese show kitchens.</p>
+              <p>Valid for one adult on 24 December 2026, 6:00 PM – 10:00 PM. Includes free-flow soft drinks, coffee and tea. Children aged 6–12 dine at 50% off when accompanied by a voucher holder; children under 6 dine free.</p>
             </div>
           </div>
 
-          <div class="gf-actions">
-            <a class="yq-btn" href="#"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg> Reserve a table</a>
-            <a class="yq-btn yq-btn--yqost" href="#"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><polyline points="7 10 12 15 17 10"/><path d="M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17"/></svg> Download voucher (PDF)</a>
-            <a class="yq-btn yq-btn--yqost" href="#" data-yq-account><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a1.5 1.5 0 0 1 0 3H5.5"/><rect x="3" y="7.5" width="18" height="11.5" rx="2.2"/><circle cx="16.5" cy="13.2" r="1.15" fill="currentColor" stroke="none"/></svg> Save to my wallet</a>
+          <!-- id="terms": đích của link "Full terms & conditions" trong email (%terms_url% = %gift_url%#terms) -->
+          <div class="gf-block gf-terms" id="terms">
+            <h2 class="gf-block__title">Terms &amp; conditions</h2>
+            <!-- @voucher.terms_list (các li) -->
+            <ol class="gf-terms__list">
+              <li>Valid for one adult at the Christmas Eve dinner buffet at StraitsKitchen on 24 December 2026 only.</li>
+              <li>Advance reservation is required and subject to availability. Please quote the voucher code when booking.</li>
+              <li>The original e-voucher (QR code) must be presented on arrival. Screenshots and printed copies of screenshots are not accepted.</li>
+              <li>Not valid in conjunction with other promotions, discounts, privileges or credit card offers.</li>
+              <li>Non-refundable, non-transferable for cash and not exchangeable for other products or services.</li>
+              <li>The voucher is for one-time use only. Any unused value is forfeited.</li>
+              <li>Lost, stolen or expired vouchers will not be replaced, extended or refunded.</li>
+              <li>Prices are inclusive of service charge and prevailing government taxes.</li>
+              <li>Grand Hyatt Singapore reserves the right to amend the terms and conditions without prior notice.</li>
+            </ol>
           </div>
         </div>
 
-        <div class="col-lg-5">
-          <div class="gf-side">
-            <div class="gf-box">
-              <h3>How to redeem</h3>
-              <ol class="gf-steps">
-                <li><span><b>Reserve ahead</b>Book a table and mention your voucher code.</span></li>
-                <li><span><b>Show your voucher</b>Present the QR code or code on your phone, or the printed PDF.</span></li>
-                <li><span><b>Enjoy</b>The voucher is applied to your bill on the day.</span></li>
-              </ol>
-            </div>
-            <div class="gf-box">
-              <h3>StraitsKitchen</h3>
-              <div class="gf-venue">
-                <div><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21Z"/><circle cx="12" cy="10" r="2.3"/></svg><span>Lobby Level, Grand Hyatt Singapore · 10 Scotts Road</span></div>
-                <div><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Dinner 6:00 PM – 10:00 PM</span></div>
-                <div><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 6.5 6.5l1.5-2 4 1.5V19a1.5 1.5 0 0 1-1.6 1.5A16 16 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z"/></svg><a href="tel:+6567321234">+65 6732 1234</a></div>
-              </div>
-            </div>
-            <details class="gf-box gf-terms">
-              <summary>Terms &amp; conditions</summary>
-              <ul>
-                <li>Valid for one adult at the Christmas Eve dinner buffet, 24 December 2026.</li>
-                <li>Advance reservation required; subject to availability.</li>
-                <li>Not valid with other promotions or discounts.</li>
-                <li>Non-refundable and not exchangeable for cash.</li>
-                <li>Voucher must be presented upon payment; one-time use only.</li>
-              </ul>
-            </details>
+        <aside class="gf-info__side">
+          <div class="gf-venue">
+            <span class="gf-eyebrow gf-eyebrow--dark">Where to enjoy it</span>
+            <h2 class="gf-venue__name">StraitsKitchen</h2>
+            <ul class="gf-venue__list">
+              <li><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21Z"/><circle cx="12" cy="10" r="2.3"/></svg><span>Lobby Level, Grand Hyatt Singapore<br>10 Scotts Road, Singapore 228211</span></li>
+              <li><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Lunch 12:00 PM – 2:30 PM<br>Dinner 6:00 PM – 10:00 PM</span></li>
+              <li><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 6.5 6.5l1.5-2 4 1.5V19a1.5 1.5 0 0 1-1.6 1.5A16 16 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z"/></svg><a href="tel:+6567321234">+65 6732 1234</a></li>
+            </ul>
+            <a class="gf-btn gf-btn--ink gf-btn--block" href="tel:+6567321234">Call to reserve</a>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   </section>
 
-  <!-- 3. Cảm ơn người tặng -->
+  <!-- 4. Cảm ơn người tặng -->
   <section class="gf-thanks">
     <div class="yq-container">
-      <span class="yq-eyebrow yq-eyebrow--gold">Say thank you</span>
-      <h2 class="gf-sec-title mb-0">Let James know you loved it</h2>
+      <p class="gf-thanks__orn" aria-hidden="true"><span></span>◆<span></span></p>
+      <span class="gf-eyebrow gf-eyebrow--dark">Say thank you</span>
+      <h2 class="gf-sec-title">Let James know you loved it</h2>
       <p>Send a quick note, or pick out something special from The Shop to return the favour.</p>
       <div class="gf-actions">
-        <a class="yq-btn yq-btn--gold" href="mailto:?subject=Thank%20you%20for%20the%20gift!"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg> Send a thank-you</a>
-        <a class="yq-btn yq-btn--yqost" href="../shop.html">Explore The Shop</a>
+        <a class="gf-btn gf-btn--ink" href="mailto:?subject=Thank%20you%20for%20the%20gift!"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg> Send a thank-you</a>
+        <a class="gf-btn gf-btn--line" href="../shop.html">Explore The Shop</a>
       </div>
     </div>
   </section>

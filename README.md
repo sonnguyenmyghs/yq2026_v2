@@ -347,7 +347,9 @@ Radio "For myself / Send as a gift" có `form="cvvNoSubmit"` nên không POST fi
 layout Classic/Overlay/Split/Minimal, màu Auto lấy từ ảnh hoặc 4 màu The Shop) + xem trước **e-card** (vẽ giống email/parts/card-*.html)
 + link "Preview full email" mở popup iframe với email thật do `YQEmail.build()` ráp (`email-render.js`). Tự gợi ý
 banner/layout/màu theo tên voucher (`data-tags`, `data-kind="occasion"` ưu tiên). Input mới: `card_add` (luôn = 1 khi tặng — e-card luôn có), `card_banner`,
-`card_banner_file`, `card_layout`, `card_colour`, `card_colour_hex` (form multipart).
+`card_banner_file`, `card_layout`, `card_colour`, `card_colour_hex`, `card_line_hex` (form multipart).
+Thiệp dạng **Luxe Ticket v2** (đặc tả: `email/DESIGN-TICKET.md`): lời chúc trên giấy kem + vé voucher ngang khung vàng (tên, hạn dùng, mã, QR).
+Mô tả dài + điều khoản đầy đủ nằm ở `voucher/gift.html`; email dùng biến mới `%outlet_name%` `%voucher_summary%` `%outlet_phone%` `%terms_url%` `%order_ref%`.
 JS dùng chung: `assets/js/modules/voucher/checkout-voucher-gift.js`. Chi tiết: `.claude/production-templates.md`. Ở chế độ "For myself", JS xoá 3 ô người nhận trước khi gửi.
 `[DEMO]`: promo tra `window.__demoPromoCodes` thay cho `/cart?action=check_promo`; submit bị chặn để hiện `#cv2Done`.
 

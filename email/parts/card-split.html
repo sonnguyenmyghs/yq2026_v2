@@ -1,8 +1,11 @@
 <!--
-  Khối thiệp SPLIT (ảnh trái, chữ phải) — chèn vào %gift_card% của email/voucher-gift.html
-  Biến: %card_bg% (#RRGGBB — card_colour_hex) · %card_banner_split% (URL https ảnh ĐÃ CẮT SẴN dọc 208x300, nên xuất @2x 416x600)
-        %recipient_name% · %sender_name% · %gift_message% (đã escape, xuống dòng -> <br>) · %gift_url%
-  Chữ trên thiệp luôn trắng: card_colour_hex đã được làm tối đủ tương phản 4.5:1.
+  Khối thiệp SPLIT — "Luxe Ticket" (v2) — chèn vào %gift_card% của email/voucher-gift.html
+  Lời chúc: hybrid 2 cột trên giấy kem #F7F1E6 — ảnh trái 236 (ảnh 208x300 + viền giấy 14px) | chữ phải 356.
+  Sau đó 18px rồi vé voucher ngang.
+  Biến lời chúc: %card_banner_split% (URL https ảnh ĐÃ CẮT SẴN dọc 208x300, nên xuất @2x 416x600) · %gift_url% (ảnh bấm được)
+        %recipient_name% · %sender_name% · %gift_message% (đã escape, xuống dòng -> <br>)
+  Vé voucher (giống mọi layout, xem email/DESIGN-TICKET.md mục 3): %card_bg% %outlet_name% %product_name%
+        %voucher_summary% %redeem_expiry% %qr_code% (thẻ img 120px) %voucher%
 
   Bố cục "hybrid" (không cần media query, chạy trên Gmail / Apple Mail / Yahoo / Outlook.com / Outlook Mac):
   - 2 cột là div inline-block có max-width (236px + 356px = 592px). Màn hình rộng -> nằm cạnh nhau;
@@ -10,13 +13,14 @@
   - font-size:0 ở ô bọc để bỏ khoảng trắng giữa 2 div inline-block (chữ đặt lại font-size ở bên trong).
   - Outlook Windows (Word) không hiểu inline-block / max-width: bảng "ma" trong comment điều kiện giữ 2 cột.
     Nếu CMS xoá comment điều kiện -> Outlook xếp ảnh trên, chữ dưới (vẫn đọc được).
-  - Ảnh là <img> (không dùng ảnh nền: Gmail web xoá style có url()), có viền đệm 14px + bo 8px nên dù 2 cột
-    cao khác nhau vẫn trông như khung ảnh có chủ đích.
+  - Ảnh là <img> (không dùng ảnh nền: Gmail web xoá style có url()), có viền giấy 14px + bo 6px nên dù 2 cột
+    cao khác nhau vẫn trông như ảnh dán trên thiệp.
 -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <!-- LỜI CHÚC: ảnh trái | giấy kem phải -->
   <tr>
     <td style="padding:0 24px;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="%card_bg%" style="width:100%;background-color:%card_bg%;border-radius:12px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F7F1E6" style="width:100%;background-color:#F7F1E6;border-radius:10px;">
         <tr>
           <td align="center" valign="middle" style="padding:0;font-size:0;line-height:0;text-align:center;">
             <!--[if mso]><table role="presentation" width="592" cellpadding="0" cellspacing="0" border="0"><tr><td width="236" valign="middle"><![endif]-->
@@ -24,7 +28,7 @@
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td align="center" style="padding:14px;">
-                    <a href="%gift_url%" target="_blank" style="text-decoration:none;"><img src="%card_banner_split%" width="208" height="300" alt="" style="display:block;width:100%;max-width:208px;height:auto;border:0;border-radius:8px;"></a>
+                    <a href="%gift_url%" target="_blank" style="text-decoration:none;"><img src="%card_banner_split%" width="208" height="300" alt="" style="display:block;width:100%;max-width:208px;height:auto;border:0;border-radius:6px;"></a>
                   </td>
                 </tr>
               </table>
@@ -33,16 +37,70 @@
             <div style="display:inline-block;width:100%;max-width:356px;vertical-align:middle;text-align:left;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="padding:22px 24px 26px 22px;text-align:left;">
-                    <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;letter-spacing:3px;text-transform:uppercase;color:#FFFFFF;">The Shop &middot; A gift for you</p>
-                    <p style="margin:0 0 12px;font-family:'Josefin Sans','Helvetica Neue',Arial,Helvetica,sans-serif;font-size:20px;line-height:28px;font-weight:600;color:#FFFFFF;">Dear %recipient_name%,</p>
-                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:26px;color:#FFFFFF;text-align:left;">%gift_message%</p>
-                    <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#FFFFFF;text-align:right;">With love, <strong>%sender_name%</strong></p>
+                  <td style="padding:24px 32px 28px 22px;text-align:left;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:14px;letter-spacing:3px;text-transform:uppercase;color:#8C7145;text-align:left;">A gift for you</p>
+                <p style="margin:16px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:26px;line-height:32px;font-style:italic;font-weight:normal;color:#171613;text-align:left;">Dear %recipient_name%,</p>
+                <p style="margin:14px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:17px;line-height:28px;color:#3A342C;text-align:left;">%gift_message%</p>
+                <p style="margin:22px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:16px;line-height:22px;font-style:italic;color:#3A342C;text-align:right;">&mdash; With love, %sender_name%</p>
                   </td>
                 </tr>
               </table>
             </div>
             <!--[if mso]></td></tr></table><![endif]-->
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <!-- VÉ VOUCHER NGANG (giống nhau mọi layout): nền %card_bg% -> khung vàng 1px #C8A96A -> chính (trái) + cuống kem có QR (phải) -->
+  <tr>
+    <td style="padding:18px 24px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="%card_bg%" style="width:100%;background-color:%card_bg%;border-radius:10px;">
+        <tr>
+          <td style="padding:10px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px solid #C8A96A;border-radius:6px;">
+              <tr>
+                <td align="center" valign="middle" style="padding:14px 20px;font-size:0;line-height:0;text-align:center;">
+                  <!--[if mso]><table role="presentation" width="530" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td width="360" valign="middle"><![endif]-->
+                  <div style="display:inline-block;width:100%;max-width:360px;vertical-align:middle;text-align:left;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="padding:10px 20px 10px 0;text-align:left;">
+                          <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:14px;letter-spacing:3px;text-transform:uppercase;color:#E7D3A3;">%outlet_name%&nbsp;&middot; Gift&nbsp;voucher</p>
+                          <p style="margin:12px 0 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:26px;line-height:32px;font-weight:normal;color:#FFFFFF;">%product_name%</p>
+                          <p style="margin:12px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;color:#FFFFFF;">%voucher_summary%</p>
+                          <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;letter-spacing:1.5px;text-transform:uppercase;color:#E7D3A3;">Valid until %redeem_expiry%</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <!--[if mso]></td><td width="170" valign="middle"><![endif]-->
+                  <div style="display:inline-block;width:100%;max-width:170px;vertical-align:middle;text-align:center;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" style="padding:10px 0;text-align:center;">
+                          <!-- Cuống vé: giấy kem, QR luôn trên ô trắng (không co: 120px cố định) -->
+                          <table role="presentation" width="170" cellpadding="0" cellspacing="0" border="0" align="center" bgcolor="#F7F1E6" style="width:170px;margin:0 auto;background-color:#F7F1E6;border-radius:6px;">
+                            <tr>
+                              <td align="center" style="padding:14px;text-align:center;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;">
+                                  <tr>
+                                    <td bgcolor="#FFFFFF" style="padding:8px;background-color:#FFFFFF;">%qr_code%</td>
+                                  </tr>
+                                </table>
+                                <p style="margin:12px 0 0;font-family:'Courier New',Courier,monospace;font-size:14px;line-height:18px;font-weight:bold;letter-spacing:2px;color:#171613;text-align:center;-webkit-text-size-adjust:none;">%voucher%</p>
+                                <p style="margin:4px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:9px;line-height:14px;letter-spacing:2px;text-transform:uppercase;color:#8A837A;text-align:center;">Scan to redeem</p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <!--[if mso]></td></tr></table><![endif]-->
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>

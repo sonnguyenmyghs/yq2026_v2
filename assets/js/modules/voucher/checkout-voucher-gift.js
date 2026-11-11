@@ -4,13 +4,18 @@
    Chọn "Send as a gift" -> mở panel rộng #cvvGiftPanel (Bootstrap offcanvas):
      Trái  1. Người nhận — 3 input CŨ name_receive / email_receive / note_receive.
            2. Thiết kế e-card (tuỳ chọn): banner (chỉ ảnh: ảnh mẫu hoặc ảnh tự tải JPG/PNG/WebP ≤ 10MB), layout, màu.
-     Phải  Xem trước THIỆP (giống email/parts/card-*.html) + dòng giải thích + nút "Preview full email":
+     Phải  Xem trước THIỆP "Luxe Ticket" v2 (email/DESIGN-TICKET.md): khối lời chúc giấy kem (theo layout) + vé voucher ngang
+           (cột chính + cuống kem có QR mẫu) + dòng giải thích + nút "Preview full email":
            mở hộp #cvvEmailPv (div tĩnh trong panel, role=dialog) với iframe; nội dung = YQEmail.build(vars, opts)
            của email-render.js (nạp TRƯỚC file này). opts lấy từ data-email-base / data-email-endpoint của panel.
    Gợi ý tự động: dò tên/loại voucher (data-card-theme | data-voucher-name | .summary__list--items)
      theo data-tags của banner mẫu -> chọn banner + layout gợi ý (data-layout) + màu "Auto".
      Khách tự chọn mục nào thì mục đó không bị ghi đè; "Reset to suggestion" trả về gợi ý.
    Màu Auto: đọc pixel ảnh banner (canvas) -> màu chủ đạo, làm tối tới khi chữ trắng đạt tương phản 4.5:1.
+   Màu kẻ (card_line): màu thiệp pha 35% trắng -> biến --c-line của #cvvCard + input ẩn card_line_hex + %card_line% của email.
+   Vé voucher dưới thiệp (markup tĩnh): JS chỉ đổ tên voucher / outlet / tóm tắt / hạn dùng / tên người nhận / src QR mẫu.
+   Thông tin voucher lấy từ data-* của panel: data-voucher-name, data-voucher-expiry, data-outlet-name, data-voucher-summary,
+     data-outlet-phone, data-terms-short (các dòng ngăn bằng "|"), data-terms-url, data-gift-url.
    Save -> thẻ tóm tắt #cvvPeDone. Đóng panel khi chưa Save -> về "For myself".
    JS không dựng markup: chỉ đổi text / val / src / class / hidden / biến CSS.
 
@@ -22,6 +27,7 @@ jQuery(function ($) {
     var MAX_FILE = 10 * 1024 * 1024;
     var FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     var DEFAULT_HEX = '#8C7145';
+    var DEFAULT_OUTLET = 'The Shop';
     var LAYOUT_NAMES = { classic: 'Classic', overlay: 'Overlay', split: 'Split', minimal: 'Minimal' };
 
     var $panel = $('#cvvGiftPanel');
@@ -30,14 +36,14 @@ jQuery(function ($) {
     var $name = $('.input__receive__name'), $mail = $('.input__receive__email'), $note = $('.input__receive__note');
     var $add = $('#cvvCardAdd');
     var $banner = $('#cvvCardBanner');
-    var $layout = $('#cvvCardLayout'), $colour = $('#cvvCardColour'), $hex = $('#cvvCardColourHex');
+    var $layout = $('#cvvCardLayout'), $colour = $('#cvvCardColour'), $hex = $('#cvvCardColourHex'), $lineHex = $('#cvvCardLineHex');
     var $file = $('#cvvBannerFile'), $upBtn = $('#cvvUploadBtn');
     var $card = $('#cvvCard'), $img = $('#cvvCardImg');
     var $pv = $('#cvvEmailPv'), pvFrame = $('#cvvEmailPvFrame')[0];
 
     var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    /* Ảnh QR mẫu: …/assets/js/modules/voucher/checkout-voucher-gift.js -> …/assets/img/qr-sample.svg (demo lẫn skin production) */
-    var QR_SAMPLE = new URL('../../../img/qr-sample.svg', SCRIPT_SRC).href;
+    /* Ảnh QR mẫu: …/assets/js/modules/voucher/checkout-voucher-gift.js -> …/assets/img/qr-sample.png (demo lẫn skin production) */
+    var QR_SAMPLE = new URL('../../../img/qr-sample.png', SCRIPT_SRC).href;
 
     var lastFile = null;                                 // File hợp lệ gần nhất (khôi phục khi file mới bị từ chối)
     var upload = null;                                   // { url } ảnh khách tự tải (blob URL)
@@ -127,6 +133,12 @@ jQuery(function ($) {
         return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
     };
     var toHex = function (r, g, b) { return '#' + [r, g, b].map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join(''); };
+    /* Màu kẻ của thiệp: pha 35% trắng vào màu thiệp (r' = r + (255 - r) * 0.35 …) -> #RRGGBB in hoa, cùng kiểu card_colour_hex */
+    var lineHex = function (hex) {
+        var m = /^#?([0-9a-f]{6})$/i.exec($.trim(hex || '')) || /^#?([0-9a-f]{6})$/i.exec(DEFAULT_HEX);
+        var n = parseInt(m[1], 16), mix = function (c) { return c + (255 - c) * 0.35; };
+        return toHex(mix(n >> 16 & 255), mix(n >> 8 & 255), mix(n & 255)).toUpperCase();
+    };
     /* Màu chủ đạo: gom pixel theo ô màu, ưu tiên màu có độ bão hoà, bỏ gần trắng / gần đen */
     var dominant = function (source) {
         try {
@@ -177,15 +189,13 @@ jQuery(function ($) {
     var applyColour = function () {
         var c = $colour.val(), el = $card[0];
         var hex = c === 'auto' ? autoHex : ($('#cvvSwatches [data-colour="' + c + '"]').attr('data-hex') || DEFAULT_HEX);
-        if (c === 'auto') {
-            el.style.setProperty('--c-bg', autoHex);
-            el.style.setProperty('--c-line', 'rgba(255,255,255,.35)');
-            el.style.setProperty('--c-soft', 'rgba(255,255,255,.74)');
-        } else {
-            el.style.removeProperty('--c-bg'); el.style.removeProperty('--c-line'); el.style.removeProperty('--c-soft');
-        }
+        var line = lineHex(hex);
+        el.style.setProperty('--c-bg', hex);      // nền vé = card_bg (mọi màu, kể cả auto)
+        el.style.setProperty('--c-line', line);   // hairline + nét đứt trên vé = card_line
+        $('#cvvLayouts')[0] && $('#cvvLayouts')[0].style.setProperty('--c-bg', hex);   // sơ đồ layout: vé cùng màu thiệp
         $hex.val(hex);
-        $card.attr('class', 'yq-pe-card cvv-ecard is-' + ($layout.val() || 'classic') + (c === 'auto' ? '' : ' yq-pe-card--' + c));
+        $lineHex.val(line);
+        $card.attr('class', 'cvv-ecard is-' + ($layout.val() || 'classic') + ' is-colour-' + c);
         $('#cvvSwatches [data-colour]').each(function () {
             var on = $(this).attr('data-colour') === c;
             $(this).toggleClass('is-active', on).attr('aria-checked', on ? 'true' : 'false');
@@ -233,6 +243,11 @@ jQuery(function ($) {
         $('#cvvSignAs').text(from || 'a friend');
         $('.cvv-idea').each(function () { $(this).toggleClass('is-active', $(this).attr('data-msg') === msg); });
         $('#cvvNoteCount').text(($note.val() || '').length);
+        /* vé voucher: tên voucher, outlet, tóm tắt (trống -> ẩn dòng), hạn dùng (mã / QR là mẫu) */
+        $('#cvvPvProduct').text(productName());
+        $('.cvv-pv-outlet').text(outletName());
+        $('#cvvPvSummary').text(summary()).prop('hidden', !summary());
+        $('#cvvPvExpiry').text($.trim($panel.attr('data-voucher-expiry') || '') || 'After payment');
     };
     var toggleCard = function () {
         var on = hasCard();
@@ -259,11 +274,21 @@ jQuery(function ($) {
         return $.trim($panel.attr('data-voucher-name') || $('.summary__list--items p').first().find('span').first().contents().first().text() || '')
             || DEFAULT_PRODUCT;
     };
+    var attr = function (n) { return $.trim($panel.attr(n) || ''); };
+    var outletName = function () { return attr('data-outlet-name') || DEFAULT_OUTLET; };
+    var summary = function () { return attr('data-voucher-summary'); };
     var escHtml = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
     /* Ảnh banner cho email: ảnh mẫu (URL tuyệt đối) hoặc ảnh khách tự tải (blob URL) */
     var bannerStill = function () {
         if ($banner.val() !== 'upload') return abs($preset($banner.val()).attr('data-src'));
         return upload ? upload.url : '';
+    };
+    /* Điều khoản ngắn: data-terms-short "dòng 1|dòng 2|dòng 3" (chữ thường) -> <ul> tối đa 3 <li> đã escape (style inline cho email; template chèn thẳng vào <td>) */
+    var termsHtml = function () {
+        var lines = $.grep(attr('data-terms-short').split('|'), function (t) { return !!$.trim(t); }).slice(0, 3);
+        return lines.length ? '<ul style="margin:0;padding:0 0 0 18px;">' + lines.map(function (t) {
+            return '<li style="margin:0 0 6px;">' + escHtml($.trim(t)) + '</li>';
+        }).join('') + '</ul>' : '';
     };
     /* Biến cho YQEmail.build — mã voucher / QR / hạn dùng là MẪU (chỉ có thật sau khi thanh toán) */
     var emailVars = function () {
@@ -275,17 +300,23 @@ jQuery(function ($) {
             sender_name: from,
             gift_message: val($note),
             card_bg: $hex.val() || DEFAULT_HEX,
+            card_line: $lineHex.val() || lineHex($hex.val()),
             card_banner: still,
             card_banner_overlay: still,
             card_banner_split: still,
             gift_url: giftUrl,
+            outlet_name: outletName(),
+            voucher_summary: summary(),
+            outlet_phone: attr('data-outlet-phone'),
+            terms_url: abs(attr('data-terms-url')) || (giftUrl === '#' ? '#' : giftUrl.split('#')[0] + '#terms'),
+            order_ref: 'GH-XXXXXXXX',   // mã đơn MẪU (chỉ có sau thanh toán)
+            voucher_terms_short_html: termsHtml(),
             redeem_date: d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(),
             product_name: productName(),
             redeem_expiry: $.trim($panel.attr('data-voucher-expiry') || '') || 'Confirmed after payment',
             voucher: 'GH-XXXX-XXXX',
             qr_code_html: '<img src="' + escHtml(QR_SAMPLE) + '" width="120" height="120" alt="Sample QR code" style="display:block;border:0;">',
-            product_description_html: escHtml($.trim($panel.attr('data-voucher-desc') || '') || 'Full voucher details, terms and how to redeem are included in this email.'),
-            preheader: from + ' sent you a gift from The Shop'
+            preheader: from + ' sent you a gift from ' + outletName()
         };
     };
     var pvSeq = 0, pvReturn = null;
@@ -456,6 +487,7 @@ jQuery(function ($) {
     });
 
     /* ======================= Khởi tạo ======================= */
+    $('#cvvPvQr').attr('src', QR_SAMPLE);   // QR mẫu suy từ URL của file JS (đúng cả demo lẫn skin production)
     detectSuggestion();
     applySuggestion(true);
     toggleCard();
@@ -477,7 +509,7 @@ jQuery(function ($) {
         saved: function () { return !!saved; },
         open: open,
         /* gọi lại khi giỏ / tên voucher thay đổi: chỉ đổi những mục khách chưa tự chọn */
-        refreshSuggestion: function () { detectSuggestion(); applySuggestion(false); }
+        refreshSuggestion: function () { detectSuggestion(); applySuggestion(false); updatePreview(); }
     };
 });
 })((document.currentScript && document.currentScript.src) || location.href);

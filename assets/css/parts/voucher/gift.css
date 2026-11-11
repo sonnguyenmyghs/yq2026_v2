@@ -1,86 +1,180 @@
 /* =====================================================================
-   gift.css — trang người nhận mở quà (gift.html, production: /gift/<token>)
-   Nạp SAU personalise.css (dùng lại .yq-pe-card cho thiệp). Tiền tố .gf-
+   gift.css — trang người nhận mở quà (voucher/gift.html, production: /gift/<token>)
+   Thiết kế "Luxe Ticket (v2)" — nguồn: email/DESIGN-TICKET.md. Trang web phải TRÔNG GIỐNG email:
+   vé ngang nền màu thiệp + khung vàng mảnh 1px, cuống kem có QR, chữ serif Georgia, giấy kem cho lời nhắn.
+   Màu thiệp đến từ server: style="--gf-bg: …; --gf-line: …" trên main.gf. Tiền tố .gf-
    ===================================================================== */
-
-/* ---------- 1. Sân khấu mở quà ---------- */
-.gf-stage{
-  position: relative; overflow: hidden;
-  padding: clamp(40px, 6vw, 72px) 0 clamp(48px, 7vw, 88px);
-  background:
-    radial-gradient(1200px 500px at 50% -10%, rgba(148,131,93,.18), transparent 60%),
-    var(--yq-cream);
-  text-align: center;
+.gf{
+  --gf-bg: #B9353F;            /* card_bg — màu thiệp */
+  --gf-line: #D27C82;          /* card_line — màu thiệp pha 35% trắng */
+  --gf-gold: #C8A96A;          /* khung vàng, hoạ tiết ◆, số bước */
+  --gf-gold-light: #E7D3A3;    /* chữ phụ trên nền vé / nền tối */
+  --gf-gold-ink: #8C7145;      /* eyebrow trên nền kem */
+  --gf-cream: #F7F1E6;         /* giấy lời nhắn, cuống vé */
+  --gf-ink: #171613;
+  --gf-ink-soft: #3A342C;
+  --gf-muted: #8A837A;
+  --gf-night: #1A1815;         /* nền sân khấu mở quà */
+  --gf-serif: Georgia, "Times New Roman", Times, serif;
+  --gf-mono: "Courier New", Courier, monospace;
 }
-.gf-stage__head{ max-width: 640px; margin: 0 auto 32px; }
-.gf-stage__head .yq-eyebrow{ display: block; margin-bottom: 12px; color: var(--yq-gold-dark); }
-.gf-stage__title{ font-family: var(--yq-serif); font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1.1; margin: 0 0 10px; color: var(--yq-ink); }
-.gf-stage__sub{ font-size: 15px; color: var(--yq-body); margin: 0; }
-.gf-stage__sub b{ color: var(--yq-ink); font-weight: 600; }
+
+/* ---------- Chung ---------- */
+.gf-eyebrow{
+  display: inline-block; font-family: var(--yq-sans); font-size: 11px; font-weight: 500;
+  letter-spacing: .26em; text-transform: uppercase; color: var(--gf-gold-light);
+}
+.gf-eyebrow--dark{ color: var(--gf-gold-ink); }
+.gf-sec-title{
+  font-family: var(--gf-serif); font-weight: 400; font-size: clamp(28px, 3.4vw, 38px); line-height: 1.15;
+  letter-spacing: -.005em; color: var(--gf-ink); margin: 10px 0 0;
+}
+
+.gf-btn{
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  min-height: 48px; padding: 12px 26px; border-radius: 999px; border: 1px solid transparent;
+  font-family: var(--yq-sans); font-size: 14px; font-weight: 500; letter-spacing: .01em; line-height: 1.2;
+  text-decoration: none; cursor: pointer; white-space: nowrap;
+  transition: background-color .25s var(--yq-ease), color .25s var(--yq-ease), border-color .25s var(--yq-ease), transform .25s var(--yq-ease);
+}
+.gf-btn:hover{ transform: translateY(-1px); }
+.gf-btn:focus-visible{ outline: 2px solid var(--gf-gold); outline-offset: 3px; }
+.gf-btn svg{ flex: none; }
+.gf-btn--ink{ background: var(--gf-ink); color: #fff; }
+.gf-btn--ink:hover{ background: var(--gf-ink-soft); color: #fff; }
+.gf-btn--line{ background: transparent; color: var(--gf-ink); border-color: rgba(23,22,19,.24); }
+.gf-btn--line:hover{ border-color: var(--gf-ink); color: var(--gf-ink); background: rgba(255,255,255,.6); }
+.gf-btn--gold{ background: var(--gf-gold); color: var(--gf-ink); }
+.gf-btn--gold:hover{ background: var(--gf-gold-light); color: var(--gf-ink); }
+.gf-btn--block{ width: 100%; }
+
+.gf-actions{ display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+/* ---------- 1. Sân khấu mở quà (nền tối, chữ vàng/kem) ---------- */
+.gf-stage{
+  position: relative; overflow: hidden; text-align: center;
+  padding: clamp(44px, 6vw, 80px) 0 clamp(52px, 7vw, 92px);
+  color: var(--gf-cream);
+  background:
+    radial-gradient(900px 420px at 50% -8%, rgba(200,169,106,.20), transparent 62%),
+    radial-gradient(700px 360px at 50% 105%, rgba(200,169,106,.08), transparent 70%),
+    var(--gf-night);
+}
+/* khung vàng mảnh quanh sân khấu — nhắc lại khung vé */
+.gf-stage::before{
+  content: ""; position: absolute; inset: 14px; border: 1px solid rgba(200,169,106,.22); pointer-events: none;
+}
+.gf-stage .yq-container{ position: relative; }
+.gf-stage__head{ max-width: 660px; margin: 0 auto 34px; }
+.gf-stage__title{
+  font-family: var(--gf-serif); font-weight: 400; font-size: clamp(32px, 5vw, 52px); line-height: 1.1;
+  color: var(--gf-cream); margin: 14px 0 12px; letter-spacing: -.01em;
+}
+.gf-stage__title em{ font-style: italic; color: var(--gf-gold-light); white-space: nowrap; }
+.gf-stage__sub{ margin: 0; font-size: 14.5px; color: rgba(247,241,230,.66); letter-spacing: .02em; }
+.gf-stage__sub b{ color: var(--gf-cream); font-weight: 500; }
 
 .gf-scene{ position: relative; width: min(560px, 100%); margin: 0 auto; }
 
-/* Phong bì */
+/* Phong bì — màu thiệp */
 .gf-env{
-  --env: var(--yq-pe-crimson);
-  position: relative; width: 100%; aspect-ratio: 16 / 10.5; margin: 0 auto;
+  position: relative; display: block; width: 100%; aspect-ratio: 16 / 10.5; margin: 0 auto;
   perspective: 1400px; cursor: pointer; border: 0; padding: 0; background: none;
   transition: transform .7s var(--yq-ease) .55s, opacity .5s ease .75s;
 }
-.gf-env--gold{ --env: var(--yq-pe-gold); }
-.gf-env--terracotta{ --env: var(--yq-pe-terracotta); }
-.gf-env--crimson{ --env: var(--yq-pe-crimson); }
-.gf-env--black{ --env: #1d1c1a; }
-.gf-env:focus-visible{ outline: 2px solid var(--yq-gold); outline-offset: 6px; border-radius: 12px; }
-.gf-env__back, .gf-env__front, .gf-env__flap{ position: absolute; inset: 0; border-radius: 12px; }
-.gf-env__back{ background: var(--env); filter: brightness(.82); box-shadow: var(--yq-shadow-lg); }
+.gf-env:focus-visible{ outline: 2px solid var(--gf-gold); outline-offset: 8px; border-radius: 12px; }
+.gf-env__back, .gf-env__front, .gf-env__flap{ position: absolute; inset: 0; border-radius: 10px; }
+.gf-env__back{ background: var(--gf-bg); filter: brightness(.78); box-shadow: 0 30px 60px rgba(0,0,0,.45), 0 8px 20px rgba(0,0,0,.25); }
 .gf-env__front{
-  background: var(--env); z-index: 2;
-  clip-path: polygon(0 0, 50% 66%, 100% 0, 100% 100%, 0 100%);
-  box-shadow: inset 0 -30px 60px rgba(0,0,0,.12);
+  background: var(--gf-bg); z-index: 2;
+  clip-path: polygon(0 0, 50% 64%, 100% 0, 100% 100%, 0 100%);
+  box-shadow: inset 0 -40px 70px rgba(0,0,0,.14);
 }
 .gf-env__flap{
-  background: var(--env); filter: brightness(.94);
-  clip-path: polygon(0 0, 100% 0, 50% 66%);
+  background: var(--gf-bg); filter: brightness(.92);
+  clip-path: polygon(0 0, 100% 0, 50% 64%);
   transform-origin: 50% 0; transform: rotateX(0deg);
   transition: transform .65s var(--yq-ease); z-index: 3;
 }
 .gf-env__peek{
-  position: absolute; left: 7%; right: 7%; top: 10%; height: 70%; border-radius: 8px;
-  background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.12);
+  position: absolute; left: 7%; right: 7%; top: 10%; height: 70%; border-radius: 6px;
+  background: var(--gf-cream); box-shadow: 0 2px 10px rgba(0,0,0,.18);
   opacity: 0; transition: transform .6s var(--yq-ease) .35s, opacity .2s ease .3s;
 }
 .gf-env__to{
   position: absolute; left: 0; right: 0; bottom: 9%; z-index: 4;
-  font-family: var(--yq-serif); font-size: clamp(15px, 2.4vw, 19px); letter-spacing: .04em; color: rgba(255,255,255,.92);
+  font-family: var(--gf-serif); font-style: italic; font-size: clamp(17px, 2.6vw, 22px); color: var(--gf-cream);
 }
-.gf-env__to small{ display: block; font-family: var(--yq-sans); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.66); margin-bottom: 4px; }
+.gf-env__to small{
+  display: block; margin-bottom: 4px; font-family: var(--yq-sans); font-style: normal; font-size: 10px;
+  letter-spacing: .3em; text-transform: uppercase; color: var(--gf-gold-light);
+}
+/* Dấu niêm phong vàng */
 .gf-seal{
-  position: absolute; left: 50%; top: 66%; z-index: 5; width: 74px; height: 74px; margin: -37px 0 0 -37px;
+  position: absolute; left: 50%; top: 64%; z-index: 5; width: 76px; height: 76px; margin: -38px 0 0 -38px;
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at 35% 30%, #b49a68, var(--yq-pe-gold) 60%, #6e5834);
-  color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.28), inset 0 0 0 3px rgba(255,255,255,.15);
+  background: radial-gradient(circle at 34% 28%, #F1E2BC, var(--gf-gold) 52%, #8C7145 100%);
+  color: #6B5430; box-shadow: 0 6px 16px rgba(0,0,0,.35), inset 0 0 0 3px rgba(255,255,255,.22), inset 0 0 0 5px rgba(140,113,69,.35);
   transition: transform .45s var(--yq-ease), opacity .3s ease;
 }
 .gf-seal svg{ width: 54px; height: 54px; }
 .gf-env:hover .gf-seal{ transform: scale(1.06); }
 
-.gf-open{ margin-top: 26px; }
-.gf-hint{ display: block; margin-top: 12px; font-size: 12.5px; color: var(--yq-muted); }
+.gf-open{ margin-top: 30px; min-width: 210px; }
+.gf-hint{ display: block; margin-top: 12px; font-size: 12.5px; letter-spacing: .04em; color: rgba(247,241,230,.5); }
+.gf-replay{
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 22px; padding: 4px 2px; border: 0; background: none;
+  font-size: 13px; color: rgba(247,241,230,.7); text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
+}
+.gf-replay:hover{ color: var(--gf-cream); }
 
-/* Thiệp sau khi mở */
+/* Thiệp (giấy kem) — hiện sau khi mở */
 .gf-card{
   position: absolute; left: 0; right: 0; top: 0; margin: 0 auto; width: min(560px, 100%);
   opacity: 0; transform: translateY(40px) scale(.94); pointer-events: none;
   transition: opacity .6s ease .95s, transform .8s var(--yq-ease) .95s;
   text-align: left;
 }
-.gf-card .yq-pe-card__msg{ font-size: 16px; }
-.gf-replay{
-  display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; padding: 0; border: 0; background: none;
-  font-size: 13px; color: var(--yq-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+.gf-card:focus{ outline: none; }
+.gf-card:focus-visible .gf-note{ outline: 2px solid var(--gf-gold); outline-offset: 4px; }
+
+.gf-note{
+  position: relative; overflow: hidden; border-radius: 12px; background: var(--gf-cream);
+  box-shadow: 0 30px 70px rgba(0,0,0,.45), 0 6px 18px rgba(0,0,0,.2);
 }
-.gf-replay:hover{ color: var(--yq-ink); }
+.gf-note__media img{ display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.gf-note__paper{ position: relative; padding: 32px 36px 34px; background: var(--gf-cream); }
+.gf-note__orn{ display: none; }
+.gf-note__eyebrow{
+  margin: 0 0 12px; font-family: var(--yq-sans); font-size: 10px; font-weight: 500;
+  letter-spacing: .3em; text-transform: uppercase; color: var(--gf-gold-ink);
+}
+.gf-note__to{ margin: 0 0 14px; font-family: var(--gf-serif); font-style: italic; font-size: 26px; line-height: 32px; color: var(--gf-ink); }
+.gf-note__msg{ margin: 0; font-family: var(--gf-serif); font-size: 17px; line-height: 28px; color: var(--gf-ink-soft); }
+.gf-note__from{ margin: 20px 0 0; text-align: right; font-family: var(--gf-serif); font-style: italic; font-size: 16px; color: var(--gf-ink-soft); }
+
+/* layout overlay: ảnh làm nền, giấy kem đè dưới cách mép 22px */
+.gf-note--overlay{ background: var(--gf-bg); }
+.gf-note--overlay .gf-note__media{ position: absolute; inset: 0; }
+.gf-note--overlay .gf-note__media img{ height: 100%; aspect-ratio: auto; }
+.gf-note--overlay .gf-note__paper{ margin: clamp(150px, 34vw, 220px) 22px 22px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+/* layout split: ảnh trái | giấy kem phải (xếp chồng trên điện thoại) */
+@media (min-width: 576px){
+  .gf-note--split{ display: grid; grid-template-columns: 40% 1fr; }
+  .gf-note--split .gf-note__media img{ height: 100%; aspect-ratio: auto; min-height: 300px; }
+  .gf-note--split .gf-note__paper{ display: flex; flex-direction: column; justify-content: center; }
+}
+/* layout minimal: chỉ giấy kem, canh giữa, hoạ tiết —— ◆ —— */
+.gf-note--minimal .gf-note__media{ display: none; }
+.gf-note--minimal .gf-note__paper{ text-align: center; padding-top: 40px; }
+.gf-note--minimal .gf-note__orn{ display: flex; }
+.gf-note--minimal .gf-note__from{ text-align: center; }
+
+.gf-note__orn, .gf-thanks__orn{
+  align-items: center; justify-content: center; gap: 12px; margin: 0 0 18px;
+  font-size: 10px; line-height: 1; color: var(--gf-gold);
+}
+.gf-note__orn span, .gf-thanks__orn span{ width: 44px; height: 1px; background: var(--gf-gold); }
 
 /* Trạng thái mở */
 .gf-stage.is-open .gf-env__flap{ transform: rotateX(180deg); z-index: 1; }
@@ -93,98 +187,146 @@
 .gf-stage.is-open .gf-env{ position: absolute; left: 0; right: 0; top: 0; }
 .gf-stage:not(.is-open) .gf-replay{ display: none; }
 
-@media (prefers-reduced-motion: reduce){
-  .gf-env, .gf-env__flap, .gf-env__peek, .gf-seal, .gf-card{ transition: none !important; }
-}
-
-/* ---------- 2. Voucher ---------- */
-.gf-voucher{ padding: clamp(40px, 6vw, 72px) 0; background: var(--yq-paper); }
-.gf-voucher .yq-eyebrow{ color: var(--yq-gold-dark); }
-.gf-sec-title{ font-family: var(--yq-serif); font-size: clamp(1.5rem, 2.6vw, 2rem); margin: 6px 0 24px; color: var(--yq-ink); }
-
-.gf-ticket{
-  display: grid; grid-template-columns: 1fr auto; border-radius: var(--yq-radius);
-  background: var(--yq-cream); border: 1px solid var(--yq-line); overflow: hidden; position: relative;
-}
-.gf-ticket__media{ grid-column: 1 / -1; aspect-ratio: 21 / 8; overflow: hidden; }
-.gf-ticket__media img{ width: 100%; height: 100%; object-fit: cover; display: block; }
-.gf-ticket__main{ padding: 22px 24px; min-width: 0; }
-.gf-ticket__name{ font-family: var(--yq-serif); font-size: 1.35rem; line-height: 1.2; color: var(--yq-ink); margin: 6px 0 6px; }
-.gf-ticket__meta{ font-size: 13.5px; color: var(--yq-body); margin: 0 0 16px; }
+/* ---------- 2. Vé voucher ngang ---------- */
+.gf-voucher{ padding: clamp(52px, 7vw, 88px) 0 clamp(44px, 6vw, 72px); background: var(--yq-cream); }
+.gf-sec-head{ text-align: center; max-width: 620px; margin: 0 auto 30px; }
 .gf-status{
-  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--yq-radius-pill);
-  background: #E8F1E6; color: #3E6B3D; font-size: 11.5px; font-weight: 600; letter-spacing: .04em;
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 5px 12px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  background: #E6EFE3; color: #35603A;
 }
 .gf-status::before{ content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.gf-facts{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; margin: 0; }
-.gf-facts dt{ font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--yq-muted); font-weight: 500; }
-.gf-facts dd{ margin: 2px 0 0; font-size: 14px; color: var(--yq-ink); font-weight: 500; }
-.gf-code{
-  display: inline-flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; margin-top: 2px;
-  border: 1px dashed rgba(140,113,69,.55); border-radius: 8px; background: var(--yq-paper);
-  font-variant-numeric: tabular-nums; letter-spacing: .08em; font-weight: 600; color: var(--yq-ink); white-space: nowrap;
+.gf-status--redeemed{ background: #ECE9E3; color: #5E5850; }
+.gf-status--expired{ background: #F6E3E2; color: #8E2A2F; }
+
+.gf-tk{
+  max-width: 680px; margin: 0 auto; padding: 10px; border-radius: 10px; background: var(--gf-bg); color: #fff;
+  box-shadow: 0 24px 50px rgba(23,22,19,.18), 0 4px 12px rgba(23,22,19,.08);
 }
-.gf-facts > div:first-child{ grid-column: 1 / -1; }
+.gf-tk__frame{ border: 1px solid var(--gf-gold); padding: 26px 28px 16px; }
+.gf-tk__row{ display: flex; align-items: center; gap: 28px; }
+.gf-tk__main{ flex: 1 1 auto; min-width: 0; }
+.gf-tk__eyebrow{
+  margin: 0 0 12px; font-family: var(--yq-sans); font-size: 10px; font-weight: 500;
+  letter-spacing: .3em; text-transform: uppercase; color: var(--gf-gold-light);
+}
+.gf-tk__name{
+  margin: 0; font-family: var(--gf-serif); font-weight: 400; font-size: 30px; line-height: 36px;
+  color: #fff; text-wrap: balance;
+}
+.gf-tk__for{ margin: 6px 0 0; font-family: var(--gf-serif); font-style: italic; font-size: 16px; color: var(--gf-gold-light); }
+.gf-tk__rule{ display: block; width: 40px; height: 1px; margin: 16px 0 14px; background: var(--gf-line); }
+.gf-tk__summary{ margin: 0; text-wrap: pretty; font-family: var(--yq-sans); font-size: 14px; line-height: 21px; color: #fff; }
+.gf-tk__valid{
+  margin: 10px 0 0; font-family: var(--yq-sans); font-size: 11px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--gf-gold-light);
+}
+/* Cuống kem: QR trắng + mã + Copy */
+.gf-tk__stub{
+  flex: none; width: 184px; padding: 14px 12px 12px; border-radius: 6px; background: var(--gf-cream);
+  display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--gf-ink);
+}
+.gf-tk__qr{ display: block; padding: 8px; background: #fff; }
+.gf-tk__qr img{ display: block; width: 120px; height: 120px; max-width: none; }
+.gf-tk__code{
+  margin-top: 10px; font-family: var(--gf-mono); font-size: 14px; font-weight: 700; letter-spacing: 2px;
+  color: var(--gf-ink); white-space: nowrap; user-select: all;
+}
 .gf-copy{
-  padding: 5px 10px; border: 1px solid var(--yq-line); border-radius: 6px; background: var(--yq-cream);
-  font-size: 11.5px; font-weight: 500; letter-spacing: 0; color: var(--yq-ink); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 4px 11px; min-height: 26px;
+  border: 1px solid rgba(140,113,69,.45); border-radius: 999px; background: transparent; cursor: pointer;
+  font-family: var(--yq-sans); font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gf-gold-ink); transition: background-color .2s ease, color .2s ease, border-color .2s ease;
 }
-.gf-copy:hover{ border-color: var(--yq-ink); }
-.gf-copy.is-done{ background: #E8F1E6; border-color: #BFD8C3; color: #3E6B3D; }
-.gf-ticket__qr{
-  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  padding: 22px 24px; border-left: 2px dashed var(--yq-line);
+.gf-copy:hover{ background: var(--gf-gold-ink); border-color: var(--gf-gold-ink); color: #fff; }
+.gf-copy:focus-visible{ outline: 2px solid var(--gf-gold-ink); outline-offset: 2px; }
+.gf-copy.is-done{ background: #E6EFE3; border-color: #B9D3BC; color: #35603A; }
+.gf-tk__scan{
+  margin-top: 9px; font-family: var(--yq-sans); font-size: 9px; font-weight: 500;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--gf-muted);
 }
-.gf-ticket__qr::before, .gf-ticket__qr::after{
-  content: ""; position: absolute; left: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--yq-paper);
-  border: 1px solid var(--yq-line);
+.gf-tk__note{
+  margin: 18px 0 0; padding-top: 12px; border-top: 1px dashed var(--gf-line); text-align: center;
+  font-family: var(--yq-sans); font-size: 11.5px; line-height: 17px; color: var(--gf-gold-light);
 }
-.gf-ticket__qr::before{ top: -11px; }
-.gf-ticket__qr::after{ bottom: -11px; }
-.gf-qr{ width: 132px; height: 132px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: var(--yq-shadow-sm); }
-.gf-qr svg{ width: 100%; height: 100%; display: block; }
-.gf-ticket__qr small{ font-size: 11.5px; color: var(--yq-muted); }
 
-.gf-actions{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.gf-voucher .gf-actions{ margin-top: 28px; }
+.gf-order{ margin: 18px 0 0; text-align: center; font-size: 12.5px; color: var(--gf-muted); letter-spacing: .02em; }
 
-/* Cột phải */
-.gf-side{ display: grid; gap: 16px; }
-.gf-box{ padding: 22px 24px; border: 1px solid var(--yq-line); border-radius: var(--yq-radius); background: var(--yq-paper); }
-.gf-box h3{ font-family: var(--yq-serif); font-size: 1.1rem; margin: 0 0 14px; color: var(--yq-ink); }
+/* ---------- 3. Thông tin ---------- */
+.gf-info{ padding: clamp(48px, 6vw, 80px) 0; background: var(--yq-paper); }
+.gf-info__grid{ display: grid; gap: 40px; max-width: 1080px; margin: 0 auto; }
+@media (min-width: 992px){
+  .gf-info__grid{ grid-template-columns: minmax(0, 1fr) 340px; gap: 64px; align-items: start; }
+  .gf-info__side{ position: sticky; top: calc(var(--yq-header-h) + 24px); }
+}
+.gf-block{ padding: 30px 0; border-top: 1px solid var(--yq-line); }
+.gf-block:first-child{ padding-top: 0; border-top: 0; }
+.gf-block:last-child{ padding-bottom: 0; }
+.gf-block__title{ margin: 0 0 18px; font-family: var(--gf-serif); font-weight: 400; font-size: 24px; line-height: 1.2; color: var(--gf-ink); }
+
 .gf-steps{ list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; counter-reset: gf; }
-.gf-steps li{ display: flex; gap: 12px; font-size: 13.5px; color: var(--yq-body); line-height: 1.5; counter-increment: gf; }
+.gf-steps li{
+  position: relative; padding-left: 40px; min-height: 26px; counter-increment: gf;
+  font-size: 15px; line-height: 26px; color: var(--yq-body);
+}
 .gf-steps li::before{
-  content: counter(gf); flex: none; width: 26px; height: 26px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--yq-gold-soft); color: var(--yq-gold-dark); font-size: 12px; font-weight: 600;
+  content: counter(gf); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gf-gold); color: #fff; font-size: 12.5px; font-weight: 600; line-height: 1;
 }
-.gf-steps b{ display: block; color: var(--yq-ink); font-weight: 600; }
-.gf-venue{ display: grid; gap: 8px; font-size: 13.5px; color: var(--yq-body); }
-.gf-venue div{ display: flex; gap: 10px; align-items: flex-start; }
-.gf-venue svg{ flex: none; margin-top: 2px; color: var(--yq-gold-dark); }
-.gf-venue a{ color: var(--yq-ink); }
-.gf-terms summary{ cursor: pointer; font-family: var(--yq-serif); font-size: 1.1rem; color: var(--yq-ink); list-style: none; display: flex; justify-content: space-between; align-items: center; }
-.gf-terms summary::-webkit-details-marker{ display: none; }
-.gf-terms summary::after{ content: "+"; font-size: 20px; color: var(--yq-muted); }
-.gf-terms[open] summary::after{ content: "−"; }
-.gf-terms ul{ margin: 14px 0 0; padding-left: 18px; font-size: 13px; color: var(--yq-body); display: grid; gap: 6px; }
+.gf-steps a{ color: var(--gf-ink); font-weight: 500; text-decoration: underline; text-decoration-color: rgba(23,22,19,.3); text-underline-offset: 3px; white-space: nowrap; }
 
-/* ---------- 3. Cảm ơn ---------- */
-.gf-thanks{ padding: clamp(36px, 5vw, 56px) 0; background: var(--yq-cream); text-align: center; }
-.gf-thanks p{ max-width: 520px; margin: 6px auto 20px; color: var(--yq-body); font-size: 14.5px; }
-.gf-thanks .gf-actions{ justify-content: center; }
+.gf-prose{ text-wrap: pretty; font-size: 15px; line-height: 1.75; color: var(--yq-body); }
+.gf-prose p{ margin: 0 0 14px; }
+.gf-prose > :last-child{ margin-bottom: 0; }
 
+.gf-terms{ scroll-margin-top: calc(var(--yq-header-h) + 20px); }
+.gf-terms__list{ margin: 0; padding-left: 22px; display: grid; gap: 10px; font-size: 14px; line-height: 1.65; color: var(--yq-body); }
+.gf-terms__list li::marker{ color: var(--gf-gold-ink); font-size: 12.5px; }
+.gf-terms:target .gf-block__title{ color: var(--gf-gold-ink); }
+
+/* Thẻ nhà hàng — giấy kem + khung vàng mảnh bên trong */
+.gf-venue{ position: relative; padding: 30px 28px 28px; border-radius: 12px; background: var(--gf-cream); }
+.gf-venue::before{ content: ""; position: absolute; inset: 8px; border: 1px solid rgba(200,169,106,.55); border-radius: 6px; pointer-events: none; }
+.gf-venue > *{ position: relative; }
+.gf-venue__name{ margin: 8px 0 18px; font-family: var(--gf-serif); font-weight: 400; font-size: 26px; line-height: 1.15; color: var(--gf-ink); }
+.gf-venue__list{ list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 12px; font-size: 14px; line-height: 1.55; color: var(--yq-body); }
+.gf-venue__list li{ display: flex; gap: 12px; align-items: flex-start; }
+.gf-venue__list svg{ flex: none; margin-top: 2px; color: var(--gf-gold-ink); }
+.gf-venue__list a{ color: var(--gf-ink); font-weight: 500; text-decoration: none; }
+.gf-venue__list a:hover{ text-decoration: underline; }
+
+/* ---------- 4. Cảm ơn ---------- */
+.gf-thanks{ padding: clamp(48px, 6vw, 76px) 0; background: var(--yq-cream); text-align: center; }
+.gf-thanks__orn{ display: flex; }
+.gf-thanks p:not(.gf-thanks__orn){ max-width: 500px; margin: 12px auto 24px; color: var(--yq-body); font-size: 15px; line-height: 1.6; }
+
+/* ---------- Điện thoại ---------- */
 @media (max-width: 575.98px){
-  .gf-ticket{ grid-template-columns: 1fr; }
-  .gf-ticket__qr{ border-left: 0; border-top: 2px dashed var(--yq-line); }
-  .gf-ticket__qr::before, .gf-ticket__qr::after{ top: -11px; bottom: auto; }
-  .gf-ticket__qr::before{ left: -11px; }
-  .gf-ticket__qr::after{ left: auto; right: -11px; }
-  .gf-facts{ grid-template-columns: 1fr; }
-}
-@media (max-width: 575.98px){
-  .gf-seal{ width: 54px; height: 54px; margin: -27px 0 0 -27px; top: 60%; }
+  .gf-stage::before{ inset: 8px; }
+  .gf-stage__head{ margin-bottom: 26px; }
+  .gf-seal{ width: 56px; height: 56px; margin: -28px 0 0 -28px; top: 60%; }
   .gf-seal svg{ width: 40px; height: 40px; }
   .gf-env__to{ bottom: 6%; }
   .gf-env__to small{ display: none; }
+  .gf-note__paper{ padding: 26px 24px 28px; }
+  .gf-note__to{ font-size: 24px; line-height: 30px; }
+  .gf-note__msg{ font-size: 16px; line-height: 26px; }
+
+  .gf-tk__frame{ padding: 22px 20px 14px; }
+  .gf-tk__row{ flex-direction: column; align-items: stretch; gap: 22px; }
+  .gf-tk__name{ font-size: 26px; line-height: 32px; }
+  .gf-tk__stub{ align-self: center; width: 100%; max-width: 220px; padding: 16px 12px 14px; }
+  .gf-tk__note{ margin-top: 20px; }
+
+  .gf-actions{ flex-direction: column; align-items: stretch; }
+  .gf-actions .gf-btn{ width: 100%; }
+  .gf-block__title{ font-size: 22px; }
+  .gf-venue{ padding: 28px 24px 24px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .gf-env, .gf-env__flap, .gf-env__peek, .gf-seal, .gf-card, .gf-btn, .gf-copy{ transition: none !important; }
+  .gf-btn:hover{ transform: none; }
 }

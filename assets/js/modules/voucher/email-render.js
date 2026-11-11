@@ -15,20 +15,25 @@
     YQEmail.crop(url, w, h) -> Promise<string>  data URL JPEG cắt kiểu cover, canh giữa; lỗi -> trả lại url gốc
     YQEmail.simulate(html, client) -> string
     YQEmail.fill(template, vars) -> string        xoá comment HTML (kể cả khối MSO), thay %tên%
+    YQEmail.tint(hex, amount) -> '#RRGGBB'        trộn màu với trắng (amount 0..1); card_line = tint(card_bg, 0.35)
 
-  vars: chữ thường (module tự escape &<>"):  recipient_name sender_name gift_message card_bg card_banner
+  vars: chữ thường (module tự escape &<>"):  recipient_name sender_name gift_message card_bg card_line card_banner
         card_banner_overlay card_banner_split gift_url redeem_date product_name redeem_expiry voucher preheader
-        (gift_message: thêm xuống dòng -> <br>)
-        HTML thô (đuôi _html, chèn nguyên): qr_code_html -> %qr_code%, product_description_html -> %product_description%
+        + mới (Luxe Ticket v2, email/DESIGN-TICKET.md): outlet_name voucher_summary outlet_phone terms_url order_ref
+        (gift_message: thêm xuống dòng -> <br>; terms_url thiếu -> gift_url + '#terms')
+        card_bg sai/thiếu -> #8C7145; card_line sai/thiếu -> tint(card_bg, 0.35) (checkout POST card_line_hex)
+        HTML thô (đuôi _html, chèn nguyên): qr_code_html -> %qr_code%, voucher_terms_short_html -> %voucher_terms_short%
+        (product_description_html vẫn nhận cho tương thích nhưng email v2 KHÔNG còn %product_description% — mô tả ở gift.html)
   Email không có video (banner chỉ là ảnh) — không còn %card_video_cta% / card_video_cta_html.
   Biến đã biết mà thiếu -> chuỗi rỗng. %token% lạ (không có trong danh sách) để nguyên để dễ thấy lỗi template.
 */
 (function (w) {
   'use strict';
 
-  var TEXT = ['recipient_name', 'sender_name', 'gift_message', 'card_bg', 'card_banner', 'card_banner_overlay', 'card_banner_split', 'gift_url',
-    'redeem_date', 'product_name', 'redeem_expiry', 'voucher', 'preheader'];
-  var HTML = ['qr_code', 'product_description'];
+  var TEXT = ['recipient_name', 'sender_name', 'gift_message', 'card_bg', 'card_line', 'card_banner', 'card_banner_overlay', 'card_banner_split', 'gift_url',
+    'redeem_date', 'product_name', 'redeem_expiry', 'voucher', 'preheader',
+    'outlet_name', 'voucher_summary', 'outlet_phone', 'terms_url', 'order_ref'];
+  var HTML = ['qr_code', 'voucher_terms_short', 'product_description'];
   var LAYOUTS = ['classic', 'overlay', 'split', 'minimal', 'none'];
 
   // Thư mục email/ suy từ src của script: …/assets/js/modules/voucher/email-render.js -> …/email/
@@ -41,12 +46,26 @@
     });
   };
 
+  // Màu nhạt của card_bg (đường xé nét đứt + gạch vàng trên thiệp): trộn amount phần trắng. tint('#8C7145', .35) -> '#B4A386'
+  var HEX = /^#[0-9A-Fa-f]{6}$/;
+  var tint = function (hex, amount) {
+    if (!HEX.test(hex || '')) return '';
+    var a = amount == null ? 0.35 : amount;
+    return '#' + [1, 3, 5].map(function (i) {
+      var c = parseInt(hex.substr(i, 2), 16);
+      return ('0' + Math.round(c + (255 - c) * a).toString(16)).slice(-2);
+    }).join('').toUpperCase();
+  };
+
   // Chuẩn hoá vars người gọi -> map %tên% đã an toàn để chèn
   var prepare = function (vars) {
     vars = vars || {};
     var out = {};
     TEXT.forEach(function (k) { out[k] = esc(vars[k]); });
+    if (!HEX.test(out.card_bg)) out.card_bg = '#8C7145';
+    if (!HEX.test(out.card_line)) out.card_line = tint(out.card_bg, 0.35);
     out.gift_message = out.gift_message.replace(/\r?\n/g, '<br>');
+    if (!out.terms_url && out.gift_url) out.terms_url = out.gift_url + '#terms';
     HTML.forEach(function (k) { out[k] = vars[k + '_html'] == null ? '' : String(vars[k + '_html']); });
     return out;
   };
@@ -150,5 +169,5 @@
     });
   };
 
-  w.YQEmail = { build: build, simulate: simulate, fill: fill, crop: crop };
+  w.YQEmail = { build: build, simulate: simulate, fill: fill, crop: crop, tint: tint };
 })(window);

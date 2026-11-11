@@ -120,15 +120,28 @@
       preheader: from + ' sent you a gift from The Shop',
       gift_url: giftUrl,
       recipient_name: to, sender_name: from, gift_message: document.getElementById('epMsg').value,
-      card_bg: state.colour === 'auto' ? state.auto : state.colour,
+      // Mua cho mình (No card): backend truyền Burnished Gold; card_line = màu nhạt của card_bg (checkout POST card_line_hex)
+      card_bg: state.layout === 'none' ? '#8C7145' : (state.colour === 'auto' ? state.auto : state.colour),
       card_banner: banner, card_banner_overlay: banner, card_banner_split: banner, // backend: cắt sẵn overlay 592x460, split 416x600 (emulateCrop giả lập)
       redeem_date: '10 Nov 2026',
       product_name: 'Christmas Eve Dinner Buffet at StraitsKitchen',
       redeem_expiry: '24 Dec 2026',
       voucher: 'GH-8F3K-2Q7M',
-      qr_code_html: '<img src="' + abs('../assets/img/qr-sample.svg') + '" width="120" height="120" alt="QR code" style="display:block;border:0;">',
-      product_description_html: 'Celebrate Christmas Eve with a festive dinner buffet at StraitsKitchen — roast turkey, honey-glazed ham, seafood on ice and Christmas desserts alongside local favourites. Valid for one adult on 24 December 2026, 6:00 PM – 10:00 PM. Advance reservation required.'
+      qr_code_html: '<img src="' + abs('../assets/img/qr-sample.png') + '" width="120" height="120" alt="QR code" style="display:block;width:120px;height:120px;border:0;">',
+      // Biến mới Luxe Ticket v2 (email/DESIGN-TICKET.md) — %product_description% không còn trong email (ở trang gift.html)
+      outlet_name: 'StraitsKitchen',
+      voucher_summary: 'Dinner buffet for 1 adult \u00b7 24 Dec 2026, 6\u201310 PM',
+      outlet_phone: '+65 6732 1234',
+      terms_url: giftUrl + '#terms',
+      order_ref: 'GH12345678',
+      voucher_terms_short_html: '<ul style="margin:0 0 0 18px;padding:0;">' +
+        '<li style="margin:0 0 6px;padding:0;">Valid for one adult on 24 Dec 2026.</li>' +
+        '<li style="margin:0 0 6px;padding:0;">Advance reservation required; subject to availability.</li>' +
+        '<li style="margin:0;padding:0;">Non-refundable, no cash value, one-time use.</li></ul>'
     };
+    vars.card_line = YQEmail.tint(vars.card_bg, 0.35);
+    // Mua cho mình: không có lời chúc; dòng "for …" trên vé = tên người mua
+    if (state.layout === 'none') { vars.preheader = 'Your eVoucher from The Shop'; vars.recipient_name = from; vars.gift_message = ''; }
     document.getElementById('epBar').textContent = 'Subject: A gift for you from ' + from;
     YQEmail.build(vars, { layout: state.layout, client: state.client, emulateCrop: true }).then(function (html) {
       document.getElementById('epFrame').srcdoc = html;
@@ -149,6 +162,15 @@
     });
   });
   ['epTo', 'epFrom', 'epMsg'].forEach(function (id) { document.getElementById(id).addEventListener('input', render); });
+  // Mở sẵn theo URL, vd preview.html?layout=overlay&client=gmail&screen=mobile (để chụp màn hình / gửi link cho khách)
+  var qs = new URLSearchParams(location.search);
+  ['layout', 'colour', 'client', 'screen'].forEach(function (k) {
+    var v = qs.get(k), b = v && document.querySelector('.ep-opts[data-k="' + k + '"] .ep-opt[data-v="' + v + '"]');
+    if (!b) return;
+    b.parentNode.querySelectorAll('.ep-opt').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+    state[k] = v;
+    if (k === 'screen') document.getElementById('epFrame').classList.toggle('is-mobile', v === 'mobile');
+  });
   render();
 })();
 </script>
