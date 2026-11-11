@@ -431,11 +431,20 @@ img{ max-width: 100%; display: block; }
 }
 .product--discount--percent .percent{ font-family: var(--yq-serif); font-size: 16px; font-weight: 600; letter-spacing: 0; margin-bottom: 4px; }
 
-/* Card hẹp (4 cột ở ~992px, 2 cột trên mobile): ribbon xuống góc dưới-trái để không
-   đè lên tag % giảm; hẹp nữa thì chỉ giữ nhãn đầu (promo) và thu nhỏ chữ. */
+/* Card hẹp (4 cột ở ~992px, 2 cột trên mobile): ribbon (nhãn urgency) LUÔN ở trên —
+   không đưa xuống dưới nữa vì nút Add to cart / Buy now (.yq-quickadd) hiện ở đáy ảnh sẽ che.
+   Có tag % giảm bên phải thì giới hạn bề ngang ribbon và cho chữ dài xuống dòng;
+   hẹp nữa thì chỉ giữ nhãn đầu (promo) và thu nhỏ chữ. */
 .yq-card{ container-type: inline-size; }
 @container (max-width: 279px){
-  .yq-ribbon{ top: auto; bottom: 12px; }
+  .yq-card__mediawrap:has(.product--discount--percent) .yq-ribbon{
+    max-width: calc(100% - 60px);   /* chừa chỗ tag % (46px + lề 14px) */
+    height: auto; min-height: 26px; padding-top: 6px; padding-bottom: 6px;
+    white-space: normal; line-height: 1.3; flex-wrap: wrap; column-gap: 12px;
+  }
+  /* "promo | badge": chỉ xuống dòng giữa 2 nhãn; bỏ vạch | (khi xuống dòng nó sẽ nằm lẻ ở đầu dòng 2) */
+  .yq-card__mediawrap:has(.product--discount--percent) .yq-ribbon > span + span{ white-space: nowrap; }
+  .yq-card__mediawrap:has(.product--discount--percent) .yq-ribbon > span + span::before{ display: none; }
 }
 @container (max-width: 199px){
   .yq-ribbon{ height: 22px; font-size: 9px; padding: 0 14px 0 calc(var(--rb-over) + 9px); }
