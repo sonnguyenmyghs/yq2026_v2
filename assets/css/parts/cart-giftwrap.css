@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Cart — nút "Add gift wrap" dưới mỗi dòng sản phẩm + dòng Gift Wrapping
+   (JS: assets/js/modules/cart-giftwrap.js)
+   ========================================================================== */
+.yq-line__wrap{
+  display: inline-flex; align-items: center; gap: 7px; margin: 12px 0 0 14px; vertical-align: middle;
+  font-size: 13px; font-weight: 500; color: var(--yq-gold-dark); text-decoration: none;
+  background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit; line-height: 1.4;
+}
+.yq-line__wrap span{
+  text-decoration: underline; text-decoration-color: rgba(148,131,93,.45);
+  text-underline-offset: 4px; text-decoration-thickness: 1px;
+}
+.yq-line__wrap:hover{ color: var(--yq-ink); }
+.yq-line__wrap:hover span{ text-decoration-color: currentColor; }
+.yq-line__wrap svg{ flex: none; }
+.yq-line__wrap small{ font-size: 12px; font-weight: 400; color: var(--yq-muted); }
+.yq-line__wrap.is-busy{ opacity: .55; pointer-events: none; }
+/* Đã có gói quà cho món này: không bấm được nữa */
+.yq-line__wrap.is-added{ color: var(--yq-muted); pointer-events: none; cursor: default; }
+.yq-line__wrap.is-added span{ text-decoration: none; }
+.yq-line__wrap.is-added svg{ color: var(--yq-gold-dark); }
+
+/* Dòng Gift Wrapping: thụt vào + gạch nối để thấy nó thuộc món phía trên */
+.yq-line--wrap{ padding-left: 48px; background: #FCFBF8; position: relative; }
+.yq-line--wrap::before{
+  content: ""; position: absolute; left: 24px; top: 0; width: 14px; height: 50%;
+  border-left: 1px solid var(--yq-line); border-bottom: 1px solid var(--yq-line);
+  border-bottom-left-radius: 6px;
+}
+.yq-line--wrap .yq-line__media{ width: 64px; height: 64px; }
+.yq-line--wrap .yq-line__title{ font-size: .98rem; }
+.yq-line__for{ font-size: 12.5px; color: var(--yq-muted); margin-top: 2px; }
+.yq-line__for b{ font-weight: 500; color: var(--yq-body); }
+@media (max-width: 767.98px){
+  .yq-line__wrap{ display: flex; margin-left: 0; }   /* xuống dòng riêng dưới nút số lượng */
+  .yq-line--wrap{ padding-left: 34px; }
+  .yq-line--wrap::before{ left: 14px; width: 12px; }
+  .yq-line--wrap .yq-line__media{ width: 54px; height: 54px; }
+}
