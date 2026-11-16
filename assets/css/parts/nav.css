@@ -513,7 +513,7 @@ a.yq-mega__col-title:hover{ color: var(--yq-ink); border-bottom-color: var(--yq-
 .yq-oc__body{ padding: 20px 22px 34px; }
 
 /* Liên kết nhanh: giỏ hàng / tài khoản / tìm kiếm */
-.yq-oc__quick{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 22px; }
+.yq-oc__quick{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 22px; }
 .yq-oc__quicklink{
   position: relative; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 7px;

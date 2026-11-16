@@ -7,17 +7,17 @@
      2) Popup auth   : "Connect Via" + 5 nút social, 2 tab Log in / Register Now,
                        kèm pane quên mật khẩu. Bootstrap modal, markup là HTML tĩnh
                        (#yqAuthModal, khối AUTH POPUP sau footer mỗi trang).
-     3) Popup member : #yqAcctPop — MỘT khối HTML tĩnh (khối MEMBER POPUP ngay sau
-                       HEADER) dùng chung: desktop (>= 992px) là dropdown thả dưới
-                       avatar ở header; mobile là drawer trượt từ phải, mở từ nút
-                       Account trong menu offcanvas. Gồm lời chào + danh sách chức
-                       năng + Logout, và pane con (My wallet) thay chỗ ngay trong khối.
-                       JS chỉ điền tên, đặt vị trí, bật/tắt. Đóng khi bấm ra ngoài /
-                       Esc / nút đóng (mobile) / header thu gọn lúc cuộn (desktop).
+     3) Popup member : #yqAcctPop — dropdown thả dưới avatar, dùng chung desktop +
+                       mobile. Nằm trong MEMBER COMPONENT #yqMemberSlot ở header (server
+                       in 1 trong 2 bản ở đúng chỗ đó: khách = nút + AUTH POPUP, thành
+                       viên = nút + #yqAcctPop). Gồm lời chào + danh sách chức năng +
+                       Logout, và pane con (My wallet) thay chỗ ngay trong khối.
+                       JS chỉ điền tên, đo mũi tên, bật/tắt. Đóng khi bấm ra ngoài /
+                       Esc / header thu gọn lúc cuộn.
 
    Nguyên tắc an toàn (giống các module khác):
-     - Chỉ móc vào DOM + event có sẵn: nút [data-yq-account] trong header/offcanvas
-       do app.js dựng, và event yq:header-ready.
+     - Chỉ móc vào DOM + event có sẵn: nút account trong #yqMemberSlot ở header,
+       và event yq:header-ready.
      - Xoá file này thì mất đúng popup account, phần còn lại của site vẫn chạy.
 
    Log in: form #yqLoginForm POST thẳng lên server (email, password, remember), JS
@@ -29,11 +29,10 @@
 
   if (!window.YQ || !YQ.icon) return;               // core chưa sẵn sàng
   var BS = window.bootstrap;
-  if (!BS || !BS.Modal || !BS.Offcanvas) return;    // cần Bootstrap 5 bundle (Modal + Offcanvas menu mobile)
+  if (!BS || !BS.Modal) return;                     // cần Bootstrap 5 bundle
 
   var KEY = 'yq_user_v1';
 
-  function isDesktop() { return window.matchMedia('(min-width: 992px)').matches; }
 
   /* Nút account ở header — server in 1 trong 2 (xem index.html / index-logined.html):
        #yqAccountBtn [data-yq-account] : CHƯA đăng nhập (kèm khối AUTH POPUP)
@@ -177,16 +176,13 @@
   function closeAuth() { if (authModal) authModal.hide(); }
 
   /* ======================================================================
-     4. Popup member #yqAcctPop — MỘT khối HTML tĩnh cho cả desktop và mobile
-     (khối MEMBER POPUP ngay sau HEADER, ở cấp <body>).
-       - Desktop (>= 992px): dropdown dưới avatar — place() đo avatar, đặt
-         --yq-acct-top / --yq-acct-right / --yq-acct-caret.
-       - Mobile: CSS biến chính khối đó thành drawer trượt từ phải.
-     Mục trang đang xem đã đánh dấu sẵn trong HTML (.is-current + aria-current).
-     JS chỉ điền tên/email lúc mở, đặt vị trí, bật/tắt hidden/is-open và pane con.
+     4. Popup member #yqAcctPop — dropdown dưới avatar (desktop + mobile)
+     HTML tĩnh trong MEMBER COMPONENT #yqMemberSlot ở header, ngay sau nút avatar
+     (Tab đi đúng thứ tự). Mục trang đang xem đã đánh dấu sẵn trong HTML
+     (.is-current + aria-current). JS chỉ điền tên/email lúc mở, đo mũi tên,
+     bật/tắt hidden/is-open và pane con.
      ====================================================================== */
   var POP = '#yqAcctPop';
-  var popDesk = true;                               // lúc mở đang ở desktop hay mobile
 
   /* Pane con: div.yq-acct__pane[data-yq-acct-pane="<tên>"] trong popup.
      Pane cần đổ dữ liệu lúc mở thì khai báo hàm ở đây (chỉ .text()/.val()). */
@@ -217,24 +213,16 @@
     $('#yqAcctMail').text(u.email || '').prop('hidden', !u.email);
   }
 
-  /* Desktop: neo khối dưới avatar. Mobile: xoá biến, CSS lo vị trí drawer. */
+  /* Popup thẳng mép phải khối tools (qua cả icon giỏ), mũi tên chỉ đúng tâm avatar */
   function place() {
-    var pop = $(POP)[0];
-    if (!pop) return;
-    var st = pop.style;
-    var btn = $btn()[0];
-    if (!isDesktop() || !btn || !btn.offsetParent) {
-      st.removeProperty('--yq-acct-top');
-      st.removeProperty('--yq-acct-right');
-      st.removeProperty('--yq-acct-caret');
-      return;
-    }
-    var anchor = $(btn).closest('.yq-acct-anchor')[0] || btn;
-    var a = anchor.getBoundingClientRect();
+    var pop = $(POP)[0], btn = $btn()[0];
+    if (!pop || !btn) return;
+    var tools = $(btn).closest('.yq-header__tools')[0] || btn;
+    var t = tools.getBoundingClientRect();
     var b = btn.getBoundingClientRect();
-    st.setProperty('--yq-acct-top', Math.round(a.bottom + 12) + 'px');
-    st.setProperty('--yq-acct-right', Math.round(document.documentElement.clientWidth - a.right) + 'px');
-    st.setProperty('--yq-acct-caret', Math.round(a.right - (b.left + b.width / 2)) + 'px');
+    var shift = Math.max(0, Math.round(t.right - b.right));
+    pop.style.setProperty('--yq-acct-shift', shift + 'px');
+    pop.style.setProperty('--yq-acct-caret', Math.round(shift + b.width / 2) + 'px');
   }
 
   function popOpen() { return $(POP).hasClass('is-open'); }
@@ -246,19 +234,14 @@
     if (!YQ.auth.isIn()) { openAuth('login'); return; }
     paintPop();
     hasView(view) ? showView(view) : showMain();
-    popDesk = isDesktop();
     place();
     $pop.prop('hidden', false);
     /* force reflow để transition chạy từ trạng thái ẩn */
     void $pop[0].offsetWidth;
     $pop.addClass('is-open');
-    $('html').toggleClass('yq-acct-lock', !popDesk);
     $btn().attr('aria-expanded', 'true');
-    /* Khối không nằm ngay sau avatar trong DOM -> đưa focus vào để Tab đi tiếp trong popup */
-    var f = popDesk ? $pop[0] : $pop.find('[data-yq-acct-close]')[0];
-    if (f) f.focus({ preventScroll: true });
     $(document).off('keydown.yqAcct').on('keydown.yqAcct', function (e) {
-      if (e.key === 'Escape') { closePop(); if (popDesk) $btn().trigger('focus'); }
+      if (e.key === 'Escape') { closePop(); $btn().trigger('focus'); }
     });
   }
 
@@ -266,31 +249,24 @@
     var $pop = $(POP);
     if (!$pop.length || !popOpen()) return;
     $pop.removeClass('is-open');
-    $('html').removeClass('yq-acct-lock');
     $btn().attr('aria-expanded', 'false');
     $(document).off('keydown.yqAcct');
     var done = function () { if (!popOpen()) { $pop.prop('hidden', true); showMain(); } };
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) done();
-    else setTimeout(done, 340);
+    else setTimeout(done, 240);
   }
 
   function togglePop() { popOpen() ? closePop() : openPop(); }
 
-  /* Bấm ra ngoài (mobile: bấm vào nền mờ) -> đóng */
+  /* Bấm ra ngoài -> đóng; đổi kích thước -> đo lại; header thu gọn lúc cuộn -> đóng */
   $(document).on('pointerdown', function (e) {
     if (!popOpen()) return;
     if ($(e.target).closest(POP + ', ' + BTN).length) return;
     closePop();
   });
-  /* Đổi breakpoint -> đóng; cùng breakpoint -> neo lại theo avatar */
-  $(window).on('resize.yqAcct', function () {
-    if (!popOpen()) return;
-    if (isDesktop() !== popDesk) closePop(); else place();
-  });
-  /* Desktop: header thu gọn lúc cuộn -> đóng; chưa thu gọn -> bám theo avatar */
+  $(window).on('resize.yqAcct', function () { if (popOpen()) place(); });
   $(window).on('scroll.yqAcct', function () {
-    if (!popOpen() || !popDesk) return;
-    if ($('#yqHeader').hasClass('is-compact')) closePop(); else place();
+    if (popOpen() && $('#yqHeader').hasClass('is-compact')) closePop();
   });
   /* Tab ra khỏi popup (sang icon giỏ chẳng hạn) -> đóng để không bỏ sót popup mở lơ lửng */
   $(document).on('focusin', function (e) {
@@ -299,7 +275,7 @@
     closePop();
   });
   /* Rê chuột mở mega menu / Seasonal hoặc mở ô tìm kiếm -> nhường chỗ */
-  $(document).on('mouseenter', '.yq-nav__item--panel', function () { if (popDesk) closePop(); })
+  $(document).on('mouseenter', '.yq-nav__item--panel', function () { closePop(); })
              .on('click', '[data-search-toggle]', function () { closePop(); });
 
   /* ======================================================================
@@ -321,7 +297,6 @@
       $btn.find('[data-yq-acct-icon]').attr('hidden', on ? '' : null);   // <svg>: dùng attr, không có prop hidden
       $('#yqAcctInitial').text(on ? YQ.auth.initial() : '').prop('hidden', !on);
     }
-    $('[data-yq-account-label]').text(on ? YQ.auth.name() : 'Account');
     /* Đăng xuất / đổi tên -> đóng, lần mở sau paintPop() điền lại tên mới */
     closePop();
   }
@@ -330,19 +305,7 @@
 
   $(document).on('click', '[data-yq-account], [data-yq-member]', function (e) {
     e.preventDefault();
-    /* Trên mobile nút nằm trong offcanvas menu — đóng nó trước cho khỏi chồng lớp. */
-    var oc = document.getElementById('yqOffcanvas');
-    var inst = oc && BS.Offcanvas.getInstance(oc);
-    if (inst && $(this).closest('#yqOffcanvas').length) {
-      $(oc).one('hidden.bs.offcanvas', function () {
-        /* chờ Bootstrap trả focus về nút burger xong mới mở, kẻo focusin đóng ngay */
-        setTimeout(function () { YQ.auth.isIn() ? openPop() : openAuth('login'); }, 0);
-      });
-      inst.hide();
-      return;
-    }
     if (!YQ.auth.isIn()) { openAuth('login'); return; }
-    /* Cùng một popup: desktop thả dưới avatar, mobile thành drawer (CSS) */
     togglePop();
   });
 
@@ -429,7 +392,6 @@
       var v = $(this).attr('data-yq-view');
       v ? showView(v) : showMain();
     })
-    .on('click', '#yqAcctPop [data-yq-acct-close]', function () { closePop(); })
     .on('click', '#yqAcctPop a[href]', function () { closePop(); })
     .on('click', '#yqAcctPop [data-yq-do="logout"]', function () {
       closePop();

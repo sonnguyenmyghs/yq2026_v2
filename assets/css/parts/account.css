@@ -1,6 +1,6 @@
 /* ==========================================================================
    Module CSS: account — popup Log in / Register + popup member #yqAcctPop
-   (dropdown ở desktop, drawer ở mobile). Cặp với assets/js/modules/account.js.
+   (dropdown dưới avatar, dùng chung desktop + mobile). Cặp với assets/js/modules/account.js.
    Prefix riêng (.yq-auth*, .yq-acct*)
    để không đụng tên class nào đang có trong style.css.
    ========================================================================== */
@@ -207,20 +207,19 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 .yq-auth__back:hover{ color: var(--yq-ink); }
 
 /* ==========================================================================
-   2. Popup member #yqAcctPop — MỘT khối cho cả desktop và mobile
-   HTML tĩnh ở cấp <body> (khối MEMBER POPUP ngay sau HEADER).
-   - Desktop (>= 992px): dropdown dưới avatar. JS đo avatar lúc mở và đặt
-       --yq-acct-top / --yq-acct-right : vị trí khối (position: fixed)
-       --yq-acct-caret                 : từ mép phải khối tới tâm avatar (mũi tên)
-   - Mobile: drawer trượt từ phải, nền mờ là box-shadow trải rộng (không cần thêm phần tử).
+   2. Popup member #yqAcctPop — dropdown thả dưới avatar, dùng chung desktop + mobile
+   Nằm trong MEMBER COMPONENT #yqMemberSlot (.yq-acct-anchor) ở header, cạnh nút avatar.
+   JS đo lúc mở:
+     --yq-acct-shift : từ mép phải avatar tới mép phải khối tools (để popup thẳng mép container)
+     --yq-acct-caret : từ mép phải popup tới tâm avatar (mũi tên chỉ đúng nút)
    ========================================================================== */
-.yq-acct-anchor{ position: relative; }
+.yq-acct-anchor{ position: relative; display: inline-flex; align-items: center; }
 
 .yq-acct{
-  position: fixed; z-index: 1031;
-  top: var(--yq-acct-top, 72px); right: var(--yq-acct-right, 16px);
-  width: 296px;
-  text-align: left; outline: none;
+  position: absolute; z-index: 1031;
+  top: calc(100% + 12px); right: calc(-1 * var(--yq-acct-shift, 0px));
+  width: 296px; max-width: calc(100vw - 32px);
+  text-align: left;
   background: var(--yq-paper);
   border: 1px solid var(--yq-line);
   border-radius: var(--yq-radius);
@@ -233,7 +232,7 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 .yq-acct[hidden]{ display: none; }
 .yq-acct.is-open{ opacity: 1; visibility: visible; transform: none; }
 
-/* mũi tên nhỏ chỉ lên avatar (desktop) */
+/* mũi tên nhỏ chỉ lên avatar */
 .yq-acct::before{
   content: ""; position: absolute; top: -6.5px;
   right: calc(var(--yq-acct-caret, 21px) - 6px);
@@ -243,22 +242,6 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
   border-top-left-radius: 3px;
   transform: rotate(45deg);
 }
-
-/* --- thanh tiêu đề + nút đóng: chỉ mobile --- */
-.yq-acct__bar{ display: none; }
-.yq-acct__title{
-  font-family: var(--yq-serif); font-weight: 500;
-  font-size: clamp(1.5rem, 3vw, 1.95rem); line-height: 1.1;
-  color: var(--yq-ink); margin: 0;
-}
-.yq-acct__close{
-  flex: none; width: 40px; height: 40px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  border: 1px solid var(--yq-line); background: var(--yq-paper); color: var(--yq-ink);
-  cursor: pointer;
-  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease), color .22s var(--yq-ease);
-}
-.yq-acct__close:hover{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
 
 /* --- đầu: avatar + tên + email + Edit --- */
 .yq-acct__main[hidden]{ display: none; }
@@ -353,30 +336,9 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 }
 .yq-acct__stat span{ display: block; font-size: 12.5px; color: var(--yq-muted); margin-top: 6px; }
 
-/* --- Mobile: cùng khối thành drawer trượt từ phải --- */
-html.yq-acct-lock{ overflow: hidden; }
+/* --- Mobile: vẫn là dropdown, chỉ nới chỗ bấm cho màn cảm ứng --- */
 @media (max-width: 991.98px){
-  .yq-acct{
-    top: 0; right: 0; bottom: 0; z-index: 1050;
-    width: min(420px, 100vw);
-    overflow-y: auto; overscroll-behavior: contain;
-    border: 0; border-left: 1px solid var(--yq-line); border-radius: 0;
-    box-shadow: 0 0 0 100vmax rgba(23,22,19,0);
-    opacity: 1; transform: translateX(100%);
-    transition: transform .32s var(--yq-ease), box-shadow .32s var(--yq-ease), visibility .32s;
-  }
-  .yq-acct.is-open{ box-shadow: 0 0 0 100vmax rgba(23,22,19,.45); }
-  .yq-acct::before{ display: none; }
-  .yq-acct__bar{
-    display: flex; align-items: center; justify-content: space-between; gap: 14px;
-    padding: 24px 20px 14px;
-  }
-  .yq-acct__head{ padding: 8px 20px 18px; }
-  .yq-acct__list{ padding: 10px 12px; }
   .yq-acct__item{ padding: 12px 10px; font-size: 15px; }
-  .yq-acct__ico{ width: 36px; height: 36px; }
-  .yq-acct__foot{ padding: 14px 20px 24px; }
-  .yq-acct__pane{ padding: 4px 20px 24px; }
 }
 
 /* nút account ở header khi đã đăng nhập -> hiện chữ cái đầu, viền vàng;
