@@ -17,6 +17,7 @@
 <link href="assets/css/parts/cart-anim.css" rel="stylesheet">
 <link href="assets/css/parts/account.css" rel="stylesheet">
 <link href="assets/css/parts/cart-giftwrap.css" rel="stylesheet">
+<link href="assets/css/parts/cart-attr.css" rel="stylesheet">
 </head>
 <body>
 
@@ -541,6 +542,28 @@
             </div>
             <button class="yq-line__remove" type="button" data-remove aria-label="Remove"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
           </div>
+          <!-- Option đã chọn của món phía trên: backend in template dùng chung card_item_by_product_type_single_list_att
+               NGAY SAU .yq-line (giữ nguyên markup cũ). CSS: parts/cart-attr.css — JS: modules/cart-attr.js tách nhãn / giá trị. -->
+          <div class="viewcart--item  item--attri item--have--note">
+            <div class="image text-center">|_</div>
+            <div class="viewcart--item--content">
+              <div class="name">
+                <p class="mb-0">
+                  Wine Selection: <small>  - Domaine Chifflet Saint Joseph 2023,  </small>Dessert: <small>  - Assorted Petit Fours,  </small>
+                </p>
+              </div>
+              <div class="price"></div>
+              <div class="number"></div>
+              <div class="amount"></div>
+              <div class="action">
+                <div class="">
+                  <a href="#">
+                    <button type="button" class="btn btn-danger btn-sm"><i class="ti-trash"></i></button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="yq-line" data-product-id="pantry-hamper" data-key="pantry-hamper::classic" data-price="68">
             <div class="yq-line__media yq-media"><img src="assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
             <div class="flex-grow-1">
@@ -808,6 +831,7 @@
 <script src="assets/js/modules/add-to-cart.js"></script>
 <script src="assets/js/modules/account.js"></script>
 <script src="assets/js/modules/cart-giftwrap.js"></script>
+<script src="assets/js/modules/cart-attr.js"></script>
 <script>
   jQuery(function () {
     YQ.initHeader();

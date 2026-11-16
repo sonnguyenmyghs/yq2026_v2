@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Cart — option đã chọn ở trang sản phẩm (Wine Selection, Dessert…)
+   Markup do template DÙNG CHUNG in ra (templates/defaultv3.1.yq/card_item_by_product_type_single_list_att):
+     div.viewcart--item.item--attri
+       .image ("|_")  .viewcart--item--content > .name > p ("Nhãn: <small> - giá trị, </small>"…)
+       .price .number .amount (rỗng)  .action > a[href=…delete_attribute…] > button.btn-danger > i.ti-trash
+   Không sửa được template dùng chung -> CSS gom lại cho đẹp; JS (cart-attr.js) tách thành cặp
+   nhãn / giá trị và thay nút đỏ bằng link "Remove". Không JS vẫn hiển thị gọn (fallback bên dưới).
+   ========================================================================== */
+
+/* Dòng sản phẩm có option ngay sau: bỏ gạch ngăn để 2 khối liền thành 1 món */
+.yq-line:has(+ .item--attri){ border-bottom: 0; padding-bottom: 14px; }
+
+.yq-panel .viewcart--item.item--attri{
+  position: relative;
+  display: flex; align-items: flex-start; gap: 12px;
+  margin: 0; padding: 0 24px 20px 134px;          /* 24 padding + 92 ảnh + 18 gap: thẳng cột tên sản phẩm */
+  border-bottom: 1px solid var(--yq-line-soft);
+  background: transparent; box-shadow: none; border-radius: 0;
+}
+.yq-panel .viewcart--item.item--attri:last-child{ border-bottom: 0; }
+
+/* ---- Fallback (chưa chạy JS) ---- */
+.item--attri > .image,
+.item--attri .viewcart--item--content > .price,
+.item--attri .viewcart--item--content > .number,
+.item--attri .viewcart--item--content > .amount{ display: none; }
+.item--attri .viewcart--item--content{
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border-radius: var(--yq-radius-sm);
+  background: #FAF8F4; border: 1px solid var(--yq-line-soft);
+}
+.item--attri .viewcart--item--content > .name p{
+  margin: 0; font-size: 12.5px; line-height: 1.7; color: var(--yq-muted);
+}
+.item--attri .viewcart--item--content > .name small{ font-size: 13px; color: var(--yq-ink-soft); }
+.item--attri .action .btn{
+  background: none; border: 0; padding: 0; min-width: 0; box-shadow: none;
+  font-size: 12.5px; color: var(--yq-muted); text-decoration: underline; text-underline-offset: 3px;
+}
+.item--attri .action .btn i{ display: none; }
+.item--attri .action .btn::before{ content: "Remove"; }
+.item--attri .action .btn:hover{ color: #B4453C; }
+
+/* ---- Bản đã xử lý bằng JS ---- */
+.item--attri.is-yq > .image,
+.item--attri.is-yq > .viewcart--item--content{ display: none; }
+
+.yq-attr{
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  padding: 12px 16px; border-radius: var(--yq-radius-sm);
+  background: #FAF8F4; border: 1px solid var(--yq-line-soft);
+}
+.yq-attr__list{
+  margin: 0; padding: 0; list-style: none; min-width: 0;
+  display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 18px; row-gap: 6px;
+}
+.yq-attr__row{ display: contents; }
+.yq-attr__k{
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--yq-muted); line-height: 1.9; white-space: nowrap;
+}
+.yq-attr__v{ font-size: 13.5px; color: var(--yq-ink-soft); line-height: 1.6; overflow-wrap: anywhere; }
+.yq-attr__v + .yq-attr__v::before{ content: ", "; }
+
+.yq-attr__remove{
+  flex: none; display: inline-flex; align-items: center; gap: 5px; margin-top: 2px;
+  font-size: 12.5px; color: var(--yq-muted); text-decoration: none; white-space: nowrap;
+}
+.yq-attr__remove span{ text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(138,131,122,.45); }
+.yq-attr__remove:hover{ color: #B4453C; }
+.yq-attr__remove:hover span{ text-decoration-color: currentColor; }
+
+@media (max-width: 767.98px){
+  .yq-line:has(+ .item--attri){ padding-bottom: 10px; }
+  .yq-panel .viewcart--item.item--attri{ padding: 0 16px 16px; }
+  .yq-attr{ flex-direction: column; gap: 10px; padding: 12px 14px; }
+  .yq-attr__list{ grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .yq-attr__k{ line-height: 1.6; }
+  .yq-attr__v{ margin-bottom: 8px; }
+  .yq-attr__row:last-child .yq-attr__v{ margin-bottom: 0; }
+}
