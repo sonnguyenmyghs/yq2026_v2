@@ -190,6 +190,58 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
   .yq-auth__grid .yq-auth__duo{ grid-template-columns: 1fr; }
 }
 
+/* --- Register production (member/register-step2-production.html) ---
+   Cấu trúc cũ: mỗi field là 1 div.form-group riêng (backend gắn class ẩn/hiện),
+   nên mỗi dòng tự chia 2 cột nhãn | ô, thay cho lưới chung .yq-auth__grid */
+.yq-reg > fieldset.linelabel{ margin: 0; padding: 0; border: 0; min-width: 0; }
+.yq-reg > fieldset.linelabel legend{ display: none; }
+.yq-reg .inputDisabled{ display: none !important; }   /* JS xoá hẳn, CSS che lúc chờ */
+.yq-reg__rows{ display: grid; gap: 14px; }
+.yq-reg__row{ display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 0 16px; align-items: start; margin: 0; }
+.yq-reg__row > .yq-auth__side{
+  font-size: 13.5px; font-weight: 500; color: var(--yq-ink-soft);
+  padding-top: 13px; text-align: right;
+}
+.yq-reg__row > .yq-auth__side label{ font: inherit; color: inherit; margin: 0; }
+.yq-reg__ctl.yq-auth__stack{ display: grid; gap: 12px; }
+.yq-reg .yq-auth__duo{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.yq-reg__dob{ display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 10px; }
+.yq-reg__tel{ display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; }
+.yq-reg__note{ font-size: 12px; font-style: italic; color: var(--yq-muted); margin: 6px 0 0; }
+.yq-reg .yq-input{ width: 100%; background-color: var(--yq-paper); }
+.yq-reg .form-select.yq-input{
+  background-image: var(--bs-form-select-bg-img);
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 14px 10px;
+  padding-right: 40px; cursor: pointer;
+}
+.yq-reg .yq-input:disabled, .yq-reg .yq-input[readonly]{ opacity: .65; cursor: not-allowed; }
+/* field thêm từ backend (signup_extra_single): nằm trong bảng .re--extra,
+   hoặc là hàng tr được JS dời vào giữa các dòng field (sectionExtra) */
+.yq-reg .re--extra table{ width: 100%; margin-bottom: 8px; }
+.yq-reg__rows > tr{ display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 0 16px; }
+.yq-reg .re--extra td, .yq-reg__rows > tr > td{ padding: 6px 0; vertical-align: top; }
+.yq-reg__rows > tr > td{ padding: 0; }
+.yq-reg .re--extra td:first-child:not(:only-child),
+.yq-reg__rows > tr > td:first-child:not(:only-child){
+  padding-top: 13px; text-align: right;
+  font-size: 13.5px; font-weight: 500; color: var(--yq-ink-soft);
+}
+.yq-reg .re--extra td:first-child:not(:only-child){ width: 126px; padding-right: 16px; }
+.yq-reg .form-control:not(.yq-input), .yq-reg select:not(.yq-input){
+  width: 100%; border: 1px solid var(--yq-line); border-radius: var(--yq-radius-sm);
+  padding: 12px 15px; font-size: 14px; background-color: var(--yq-paper);
+}
+.yq-reg .re--agree{ margin-bottom: 4px; }
+.yq-reg .re--agree .form-group{ margin: 0; }
+.yq-reg .re--agree .yq-auth__check input{ opacity: 1; position: static; }
+@media (max-width: 575.98px){
+  .yq-reg__row{ grid-template-columns: 1fr; gap: 6px; }
+  .yq-reg__row > .yq-auth__side{ text-align: left; padding-top: 0; }
+  .yq-reg .yq-auth__duo{ grid-template-columns: 1fr; }
+  .yq-reg__rows > tr{ grid-template-columns: 1fr; gap: 6px; }
+  .yq-reg .re--extra td, .yq-reg__rows > tr > td{ display: block; width: auto !important; padding: 0 !important; text-align: left !important; }
+}
+
 .yq-auth__submit{ margin-top: 20px; }
 .yq-auth__note{
   text-align: center; font-size: 12.5px; color: var(--yq-muted);

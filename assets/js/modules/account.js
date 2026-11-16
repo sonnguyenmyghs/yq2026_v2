@@ -22,7 +22,9 @@
 
    Log in: form #yqLoginForm POST thẳng lên server (email, password, remember), JS
    chỉ chặn khi email thiếu @ hoặc mật khẩu trống. Nút social là link thường (không
-   có JS). Register vẫn là demo — thay hàm trong phần "6. Chỗ nối API" khi có server.
+   có JS). Register: form #yqRegForm có thuộc tính action (template production
+   member/register-step2-production.html) thì kiểm tra xong để form POST thẳng lên
+   server; không có action (popup demo) thì chạy demo qua "6. Chỗ nối API".
    ========================================================================== */
 (function ($) {
   'use strict';
@@ -128,6 +130,7 @@
       at: chỉ cần có ký tự @ (form Log in — server mới là nơi kiểm tra thật) */
   function check(id, rules) {
     var $el = $('#' + id);
+    if (!$el.length) return true;                   // ô không có trên trang (field bị backend tắt)
     var v = $.trim($el.val() || '');
     if (rules.required && !v) return fail($el, rules.label + ' is required');
     if (rules.email && v && !RE_MAIL.test(v)) return fail($el, 'Enter a valid email address');
@@ -347,24 +350,30 @@
 
     /* --- popup: Register --- */
     .on('submit', '#yqRegForm', function (e) {
-      e.preventDefault();
       var $f = $(this);
+      var server = !!$f.attr('action');             // template production: POST lên server
       clearErrors($f);
       var ok = check('yqRegEmail', { required: true, email: true, label: 'Email' });
-      ok = check('yqRegPass', { required: true, min: 6, label: 'Password' }) && ok;
+      /* độ dài tối thiểu do server quyết định -> chỉ áp ở bản demo */
+      ok = check('yqRegPass', { required: true, min: server ? 0 : 6, label: 'Password' }) && ok;
       ok = check('yqRegPass2', { required: true, same: val('yqRegPass'), label: 'Repeated password' }) && ok;
       ok = check('yqRegFirst', { required: true, label: 'First name' }) && ok;
       ok = check('yqRegLast', { required: true, label: 'Last name' }) && ok;
       ok = check('yqRegCountry', { required: true, label: 'Country' }) && ok;
       /* radio + checkbox: không có .val() để check() đọc -> kiểm tra riêng */
-      if (!$f.find('[name="gender"]:checked').length) {
+      if ($f.find('[name="gender"]').length && !$f.find('[name="gender"]:checked').length) {
         $('[data-err-for="yqRegGender"]').text('Please choose an option').addClass('is-on');
         ok = false;
       }
-      if (!$('#yqRegTerms').is(':checked')) {
+      if ($f.find('#yqRegTerms').length && !$('#yqRegTerms').is(':checked')) {
         $('[data-err-for="yqRegTerms"]').text('Please accept the Terms and Privacy Policy').addClass('is-on');
         ok = false;
       }
+      if (server) {
+        if (!ok) e.preventDefault();               // hợp lệ: để form POST (name="step2")
+        return;
+      }
+      e.preventDefault();
       if (!ok) return;
 
       apiRegister({
@@ -405,7 +414,7 @@
     })
 
     /* Gõ lại thì bỏ trạng thái lỗi cho đỡ khó chịu */
-    .on('input', '#yqAuthModal .yq-input, #yqAcctPop .yq-input', function () {
+    .on('input change', '#yqAuthModal .yq-input, #yqAcctPop .yq-input, #yqRegForm .yq-input', function () {
       $(this).removeClass('is-invalid');
       $('[data-err-for="' + this.id + '"]').removeClass('is-on').text('');
     })
@@ -423,6 +432,27 @@
       $m.find('[data-yq-peek]').removeClass('is-on').attr('aria-label', 'Show password');
       clearErrors($m);
     });
+
+  /* Template production register (cấu trúc cũ old/register_step2.html):
+     - field backend tắt có class inputDisabled -> xoá khỏi DOM để không POST
+     - field thêm (sectionExtra, in từ signup_extra_single) có data-field / data-location
+       -> dời tới trước / sau field có class trùng data-field */
+  $(function () {
+    $('.register_step_2 .inputDisabled').remove();
+    $('.register_step_2 .sectionExtra').each(function () {
+      var obj = $(this);
+      var field = obj.attr('data-field');
+      if (field) {
+        var spot = obj.closest('form').find('.' + field).first();
+        var content = obj.clone().removeClass('sectionExtra');
+        obj.remove();
+        if (!spot.length) return;
+        if (obj.attr('data-location') === 'before') spot.before(content);
+        else spot.after(content);
+      }
+      obj.removeClass('sectionExtra');
+    });
+  });
 
   /* API nhỏ cho trang khác gọi: YQ.account.login() / .register() / .member() */
   YQ.account = {

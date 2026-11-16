@@ -1,0 +1,416 @@
+<!-- =====================================================================
+     REGISTER STEP 2 — template PRODUCTION, thay cho old/register_step2.html
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, account.css, account.js.
+     Giao diện giống pane Register trong popup #yqAuthModal (khối xám, nhãn bên trái).
+     Cấu trúc giữ như template cũ để backend không phải sửa:
+       - mỗi field là một div.form-group riêng, mang class listClassSectionField + listClassMainDisabled
+         (khối phụ re--moreinfo dùng listClassSubDisabled, vẫn ẩn như bản cũ)
+       - inputDisabled bị xoá khỏi DOM, sectionExtra được dời tới cạnh field theo data-field
+         (account.js làm việc này, giống script đầu template cũ)
+       - signup_extra_single vẫn in trong table của re--extra
+       - name / value / hidden input / nút step2 y như cũ, POST về signup
+     Kiểm tra phía trình duyệt (account.js): email, mật khẩu, nhập lại mật khẩu, họ tên.
+     Hợp lệ thì form POST thẳng lên server.
+     ===================================================================== -->
+<form class="yq-auth__pane yq-reg register_step_2" data-yq-pane="register" method="post" action="{$_BASE}/signup" id="yqRegForm" novalidate>
+  <fieldset class="linelabel fill-out-more distance-per" style="{$fieldset_infomation}">
+    <legend></legend>
+  </fieldset>
+
+  <div class="yq-auth__box re--personal">
+    <p class="yq-auth__hint re--personal--sub">Please fill out the following information</p>
+    {$html_register_step2_login_mobile}
+    <div class="yq-reg__rows">
+      <div class="form-group yq-reg__row">
+        <div class="yq-auth__side"><label for="yqRegEmail">Email*</label></div>
+        <div class="yq-reg__ctl">
+          <input type="text" class="yq-input form-control" name="register[email]" value="{$_SESSION['register']['email']}" id="yqRegEmail" placeholder="Your email address" autocomplete="email">
+          <div class="yq-error" data-err-for="yqRegEmail"></div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row sectionpassword">
+        <div class="yq-auth__side"><label for="yqRegPass">Password*</label></div>
+        <div class="yq-reg__ctl yq-auth__stack">
+          <div>
+            <div class="yq-auth__pw"><input type="password" class="yq-input form-control" name="register[password1]" value="{$_SESSION['register'][password1]}" id="yqRegPass" placeholder="Your password" autocomplete="new-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i yq-auth__eye" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg><svg class="yq-i yq-auth__eyeoff" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/></svg></button></div>
+            <div class="yq-error" data-err-for="yqRegPass"></div>
+          </div>
+          <div>
+            <div class="yq-auth__pw"><input type="password" class="yq-input form-control" name="register[password2]" value="{$_SESSION['register'][password2]}" id="yqRegPass2" placeholder="Repeated password" autocomplete="new-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i yq-auth__eye" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg><svg class="yq-i yq-auth__eyeoff" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/></svg></button></div>
+            <div class="yq-error" data-err-for="yqRegPass2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['lastname']} {$listClassMainDisabled['lastname']}">
+        <div class="yq-auth__side">{$lang['your_name']}{$star_error['lastname']}</div>
+        <div class="yq-reg__ctl">
+          <div class="yq-auth__duo">
+            <div>
+              <input type="text" class="yq-input form-control" id="yqRegFirst" name="info[firstname]" value="{$info['firstname']}" placeholder="{$lang['first_name']}" autocomplete="given-name">
+              <div class="yq-error" data-err-for="yqRegFirst"></div>
+            </div>
+            <div>
+              <input type="text" class="yq-input form-control" id="yqRegLast" name="info[lastname]" value="{$info['lastname']}" placeholder="{$lang['last_name']}" autocomplete="family-name">
+              <div class="yq-error" data-err-for="yqRegLast"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['cardname']} {$listClassMainDisabled['cardname']}">
+        <div class="yq-auth__side">{$lang['card_name']}{$star_error['cardname']}</div>
+        <div class="yq-reg__ctl">
+          <input type="text" class="yq-input form-control" name="info[cardname]" value="{$info['cardname']}" placeholder="{$lang['card_name_place']}">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['gender']} {$listClassMainDisabled['gender']}">
+        <div class="yq-auth__side">{$lang['gender']}{$star_error['gender']}</div>
+        <div class="yq-reg__ctl">
+          <div class="yq-auth__opts">
+            <label class="yq-auth__check" for="info[gender]_1"><input type="radio" name="info[gender]" id="info[gender]_1" value="1" $checkmade><span>{$lang['male']}</span></label>
+            <label class="yq-auth__check" for="info[gender]_0"><input type="radio" name="info[gender]" id="info[gender]_0" value="0" $checkfemade><span>{$lang['female']}</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['birthday']} {$listClassMainDisabled['birthday']}">
+        <div class="yq-auth__side">{$lang['birth_day']}{$star_error['birthday']}</div>
+        <div class="yq-reg__ctl">
+          <div class="yq-reg__dob">
+            <select name="birthday_date" class="form-select yq-input" aria-label="Day">
+              <option value="0">{$lang['day']}</option>
+              $birthday_date
+            </select>
+            <select name="birthday_month" class="form-select yq-input" aria-label="Month">
+              $birthday_month
+            </select>
+            <input type="text" name="birthday_year" class="yq-input form-control" placeholder="{$lang['year']}" value="{$info['birthday_year']}" inputmode="numeric" maxlength="4">
+          </div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['title']} {$listClassMainDisabled['title']}">
+        <div class="yq-auth__side">{$lang['title']}{$star_error['title']}</div>
+        <div class="yq-reg__ctl">
+          <select name="info[title]" class="form-select yq-input">
+            <option value="-1">-</option>
+            $member_title
+          </select>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['idcard']} {$listClassMainDisabled['idcard']}">
+        <div class="yq-auth__side">{$lang['id_card']}{$star_error['idcard']}</div>
+        <div class="yq-reg__ctl">
+          <input type="text" class="yq-input form-control" name="info[idcard]" value="{$info['idcard']}">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['nationality']} {$listClassMainDisabled['nationality']}">
+        <div class="yq-auth__side">{$lang['nationality']}{$star_error['nationality']}</div>
+        <div class="yq-reg__ctl">
+          <select id="nationality" name="info[nationality]" class="form-select yq-input">
+            <option value="">{$lang['your_nationality']}</option>
+            $option_list_nationality
+          </select>
+          <input type="hidden" name="hd_nationality" id="hd_nationality" value="{$info['nationality']}">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['passport']} {$listClassMainDisabled['passport']}">
+        <div class="yq-auth__side">{$lang['id_passport']}{$star_error['passport']}</div>
+        <div class="yq-reg__ctl">
+          <input type="text" class="yq-input form-control" name="info[passport]" value="{$info['passport']}">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['address']} {$listClassMainDisabled['address']}">
+        <div class="yq-auth__side">{$lang['mailling_address']}{$star_error['address']}</div>
+        <div class="yq-reg__ctl">
+          <input type="text" class="yq-input form-control" name="info[address]" value="{$info['address']}">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['country']} {$listClassMainDisabled['country']}">
+        <div class="yq-auth__side">{$lang['country']}{$star_error['country']}</div>
+        <div class="yq-reg__ctl">
+          <select id="country" name="info[country]" class="form-select yq-input">
+            <option value="">{$lang['your_country']}</option>
+            $option_list_country
+          </select>
+          <input type="hidden" name="hd_country" id="hd_country" value="{$info['country']}">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['postcode']} {$listClassMainDisabled['postcode']}">
+        <div class="yq-auth__side">{$lang['post_code']}{$star_error['postcode']}</div>
+        <div class="yq-reg__ctl">
+          <input type="text" class="yq-input form-control" name="info[postcode]" value="{$info['postcode']}">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['home_number']} {$listClassMainDisabled['home_number']}">
+        <div class="yq-auth__side">{$lang['home_phone']}{$star_error['home_number']}</div>
+        <div class="yq-reg__ctl">
+          <div class="yq-reg__tel">
+            <input type="text" class="yq-input form-control" name="info[home_zip]" value="{$info['home_zip']}" aria-label="Country code">
+            <input type="text" class="yq-input form-control" name="info[home_number]" value="{$info['home_number']}">
+          </div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['office_number']} {$listClassMainDisabled['office_number']}">
+        <div class="yq-auth__side">{$lang['office_phone']}{$star_error['office_number']}</div>
+        <div class="yq-reg__ctl">
+          <div class="yq-reg__tel">
+            <input type="text" class="yq-input form-control" name="info[office_zip]" value="{$info['office_zip']}" aria-label="Country code">
+            <input type="text" class="yq-input form-control" name="info[office_number]" value="{$info['office_number']}">
+          </div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['fax_number']} {$listClassMainDisabled['fax_number']}">
+        <div class="yq-auth__side">{$lang['fax_number']}{$star_error['fax_number']}</div>
+        <div class="yq-reg__ctl">
+          <div class="yq-reg__tel">
+            <input type="text" class="yq-input form-control" name="info[fax_zip]" value="{$info['fax_zip']}" aria-label="Country code">
+            <input type="text" class="yq-input form-control" name="info[fax_number]" value="{$info['fax_number']}">
+          </div>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['property_code']} {$listClassMainDisabled['property_code']}">
+        <div class="yq-auth__side">{$lang['recommended_by']}{$star_error['property_code']}</div>
+        <div class="yq-reg__ctl">
+          <select name="info[property_code]" class="form-select yq-input" {$disabled_property}>
+            <option value="">Select a hotel</option>
+            $option_property_code
+          </select>
+          {$hidden_property}
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['referral']} {$listClassMainDisabled['referral']}">
+        <div class="yq-auth__side">{$lang['member_referral']}</div>
+        <div class="yq-reg__ctl">
+          <input type="text" class="yq-input form-control" $disabled id="member_referral" name="referral" value="$referral">
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['lang']} {$listClassMainDisabled['lang']}">
+        <div class="yq-auth__side">{$lang['use_language']}{$star_error['lang']}</div>
+        <div class="yq-reg__ctl">
+          <select name="info[lang]" class="form-select yq-input">
+            $all_language
+          </select>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row {$listClassSectionField['marital']} {$listClassMainDisabled['marital']}">
+        <div class="yq-auth__side">{$lang['marital']}{$star_error['marital']}</div>
+        <div class="yq-reg__ctl">
+          <select name="info[marital]" class="form-select yq-input">
+            <option value="-1">{$lang['select_marital']}</option>
+            <option {$marital[ '0' ]} value="0">{$lang['single']}</option>
+            <option {$marital[ '1' ]} value="1">{$lang['married']}</option>
+            <option {$marital[ '2' ]} value="2">{$lang['engaged']}</option>
+            <option {$marital[ '3' ]} value="3">{$lang['divorced']}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group yq-reg__row clear $saler_man_class {$listClassSectionField['saler']} {$listClassMainDisabled['saler']}">
+        <div class="yq-auth__side">{$lang['referred_by']}{$star_error['saler']}</div>
+        <div class="yq-reg__ctl">
+          <div class="sales-man">
+            <div class="saler select-img-saler">
+              <div class="saler-img"><span class="ti-user"></span></div>
+              {$saler_rda}
+            </div>
+            <p class="yq-reg__note">{$lang['choose_sales_manager']}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Khối phụ: ẩn như bản cũ, giữ để backend vẫn nhận đủ field khi cấu hình đặt field ở đây -->
+  <div class="re--moreinfo d-none">
+    <div class="re--moreinfo--content {$page_key}">
+      <div class="yq-reg__rows {$class_info_mation}">
+        <div class="form-group yq-reg__row {$listClassSectionField['lastname']} {$listClassSubDisabled['lastname']}">
+          <div class="yq-auth__side">{$lang['your_name']}{$star_error['lastname']}</div>
+          <div class="yq-reg__ctl">
+            <div class="yq-auth__duo">
+              <div>
+                <input type="text" class="yq-input form-control" name="info[firstname]" value="{$info['firstname']}" placeholder="{$lang['first_name']}" autocomplete="given-name">
+              </div>
+              <div>
+                <input type="text" class="yq-input form-control" name="info[lastname]" value="{$info['lastname']}" placeholder="{$lang['last_name']}" autocomplete="family-name">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['cardname']} {$listClassSubDisabled['cardname']}">
+          <div class="yq-auth__side">{$lang['card_name']}{$star_error['cardname']}</div>
+          <div class="yq-reg__ctl">
+            <input type="text" class="yq-input form-control" name="info[cardname]" value="{$info['cardname']}" placeholder="{$lang['card_name_place']}">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['gender']} {$listClassSubDisabled['gender']}">
+          <div class="yq-auth__side">{$lang['gender']}{$star_error['gender']}</div>
+          <div class="yq-reg__ctl">
+            <div class="yq-auth__opts">
+              <label class="yq-auth__check" for="info[gender]_1"><input type="radio" name="info[gender]" id="info[gender]_1" value="1" $checkmade><span>{$lang['male']}</span></label>
+              <label class="yq-auth__check" for="info[gender]_0"><input type="radio" name="info[gender]" id="info[gender]_0" value="0" $checkfemade><span>{$lang['female']}</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['birthday']} {$listClassSubDisabled['birthday']}">
+          <div class="yq-auth__side">{$lang['birth_day']}{$star_error['birthday']}</div>
+          <div class="yq-reg__ctl">
+            <div class="yq-reg__dob">
+              <select name="birthday_date" class="form-select yq-input" aria-label="Day">
+                <option value="0">{$lang['day']}</option>
+                $birthday_date
+              </select>
+              <select name="birthday_month" class="form-select yq-input" aria-label="Month">
+                $birthday_month
+              </select>
+              <input type="text" name="birthday_year" class="yq-input form-control" placeholder="{$lang['year']}" value="{$info['birthday_year']}" inputmode="numeric" maxlength="4">
+            </div>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['title']} {$listClassSubDisabled['title']}">
+          <div class="yq-auth__side">{$lang['title']}{$star_error['title']}</div>
+          <div class="yq-reg__ctl">
+            <select name="info[title]" class="form-select yq-input">
+              <option value="-1">-</option>
+              $member_title
+            </select>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['idcard']} {$listClassSubDisabled['idcard']}">
+          <div class="yq-auth__side">{$lang['id_card']}{$star_error['idcard']}</div>
+          <div class="yq-reg__ctl">
+            <input type="text" class="yq-input form-control" name="info[idcard]" value="{$info['idcard']}">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['nationality']} {$listClassSubDisabled['nationality']}">
+          <div class="yq-auth__side">{$lang['nationality']}{$star_error['nationality']}</div>
+          <div class="yq-reg__ctl">
+            <select name="info[nationality]" class="form-select yq-input">
+              <option value="">{$lang['your_nationality']}</option>
+              $option_list_nationality
+            </select>
+            <input type="hidden" name="hd_nationality" value="{$info['nationality']}">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['passport']} {$listClassSubDisabled['passport']}">
+          <div class="yq-auth__side">{$lang['id_passport']}{$star_error['passport']}</div>
+          <div class="yq-reg__ctl">
+            <input type="text" class="yq-input form-control" name="info[passport]" value="{$info['passport']}">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['address']} {$listClassSubDisabled['address']}">
+          <div class="yq-auth__side">{$lang['mailling_address']}{$star_error['address']}</div>
+          <div class="yq-reg__ctl">
+            <input type="text" class="yq-input form-control" name="info[address]" value="{$info['address']}">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['country']} {$listClassSubDisabled['country']}">
+          <div class="yq-auth__side">{$lang['country']}{$star_error['country']}</div>
+          <div class="yq-reg__ctl">
+            <select name="info[country]" class="form-select yq-input">
+              <option value="">{$lang['your_country']}</option>
+              $option_list_country
+            </select>
+            <input type="hidden" name="hd_country" value="{$info['country']}">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['postcode']} {$listClassSubDisabled['postcode']}">
+          <div class="yq-auth__side">{$lang['post_code']}{$star_error['postcode']}</div>
+          <div class="yq-reg__ctl">
+            <input type="text" class="yq-input form-control" name="info[postcode]" value="{$info['postcode']}">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['home_number']} {$listClassSubDisabled['home_number']}">
+          <div class="yq-auth__side">{$lang['home_phone']}{$star_error['home_number']}</div>
+          <div class="yq-reg__ctl">
+            <div class="yq-reg__tel">
+              <input type="text" class="yq-input form-control" name="info[home_zip]" value="{$info['home_zip']}" aria-label="Country code">
+              <input type="text" class="yq-input form-control" name="info[home_number]" value="{$info['home_number']}">
+            </div>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['office_number']} {$listClassSubDisabled['office_number']}">
+          <div class="yq-auth__side">{$lang['office_phone']}{$star_error['office_number']}</div>
+          <div class="yq-reg__ctl">
+            <div class="yq-reg__tel">
+              <input type="text" class="yq-input form-control" name="info[office_zip]" value="{$info['office_zip']}" aria-label="Country code">
+              <input type="text" class="yq-input form-control" name="info[office_number]" value="{$info['office_number']}">
+            </div>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['fax_number']} {$listClassSubDisabled['fax_number']}">
+          <div class="yq-auth__side">{$lang['fax_number']}{$star_error['fax_number']}</div>
+          <div class="yq-reg__ctl">
+            <div class="yq-reg__tel">
+              <input type="text" class="yq-input form-control" name="info[fax_zip]" value="{$info['fax_zip']}" aria-label="Country code">
+              <input type="text" class="yq-input form-control" name="info[fax_number]" value="{$info['fax_number']}">
+            </div>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['property_code']} {$listClassSubDisabled['property_code']}">
+          <div class="yq-auth__side">{$lang['recommended_by']}{$star_error['property_code']}</div>
+          <div class="yq-reg__ctl">
+            <select name="info[property_code]" class="form-select yq-input" {$disabled_property}>
+              <option value="">Select a hotel</option>
+              $option_property_code
+            </select>
+            {$hidden_property}
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['referral']} {$listClassSubDisabled['referral']}">
+          <div class="yq-auth__side">{$lang['member_referral']}</div>
+          <div class="yq-reg__ctl">
+            <input type="text" class="yq-input form-control" $disabled name="referral" value="$referral">
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['lang']} {$listClassSubDisabled['lang']}">
+          <div class="yq-auth__side">{$lang['use_language']}{$star_error['lang']}</div>
+          <div class="yq-reg__ctl">
+            <select name="info[lang]" class="form-select yq-input">
+              $all_language
+            </select>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row {$listClassSectionField['marital']} {$listClassSubDisabled['marital']}">
+          <div class="yq-auth__side">{$lang['marital']}{$star_error['marital']}</div>
+          <div class="yq-reg__ctl">
+            <select name="info[marital]" class="form-select yq-input">
+              <option value="-1">{$lang['select_marital']}</option>
+              <option {$marital[ '0' ]} value="0">{$lang['single']}</option>
+              <option {$marital[ '1' ]} value="1">{$lang['married']}</option>
+              <option {$marital[ '2' ]} value="2">{$lang['engaged']}</option>
+              <option {$marital[ '3' ]} value="3">{$lang['divorced']}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group yq-reg__row clear $saler_man_class {$listClassSectionField['saler']} {$listClassSubDisabled['saler']}">
+          <div class="yq-auth__side">{$lang['referred_by']}{$star_error['saler']}</div>
+          <div class="yq-reg__ctl">
+            <div class="sales-man">
+              <div class="saler select-img-saler">
+                <div class="saler-img"><span class="ti-user"></span></div>
+                {$saler_rda}
+              </div>
+              <p class="yq-reg__note">{$lang['choose_sales_manager']}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="re--extra">
+    <table class="full-width">$signup_extra_single</table>
+  </div>
+
+  <div class="re--agree yq-auth__agree">
+    <div class="form-group checkbox--animated agree__register__zone">
+      <label class="yq-auth__check" for="agree"><input type="checkbox" name="agree" id="agree" checked="checked"><span>I agree to receive promotion material</span></label>
+    </div>
+  </div>
+
+  <div class="re--footer">
+    <input type="hidden" name="info[joinby]" value="{$info['joinby']}">
+    <input type="hidden" name="social_info[social_id]" value="{$social_info['social_id']}">
+    <input type="hidden" name="social_info[social_name]" value="{$social_info['social_name']}">
+    <input type="hidden" name="info[subscribed]" value="on">
+    <button class="yq-btn yq-btn--block yq-auth__submit" name="step2" value="Submit" type="submit">Submit</button>
+  </div>
+</form>
