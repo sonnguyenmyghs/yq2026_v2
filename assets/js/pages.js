@@ -359,125 +359,29 @@
   };
 
   /* ======================================================================
-     11. Member profile (member/profile.html)
+     11. Member profile (member/profile.html — xem, member/changeprofile.html — sửa)
      ====================================================================== */
   YQ.initProfile = function () {
-    /* Markup nằm sẵn trong member/profile.html (backend đổ dữ liệu vào HTML).
-       Controller này KHÔNG dựng HTML — chỉ bật/tắt chế độ sửa, kiểm tra ô nhập
-       và chép giá trị vừa nhập ngược lại phần hiển thị sau khi "Save". Lưu thật
-       là việc của backend (form method="post"); demo chặn submit và chỉ cập nhật
-       trên trang. */
-    var $form = $('#profForm');
+    /* Hai trang riêng. Logic dùng chung với production nằm ở
+       assets/js/modules/member/profile.js (tính % hoàn thiện, validate, lỗi server).
+       Ở đây chỉ còn phần DEMO: không có server nhận POST nên chặn submit,
+       đồng bộ phiên đăng nhập demo (tên/email ở header) rồi quay về trang xem. */
+    var $form = $('#pfForm');
     if (!$form.length) return;
-    var RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-    function setEditing(on) {
-      $form.toggleClass('is-editing', on);
-      if (on) {
-        var el = $form.find('.yq-prof__control')[0];
-        if (el) el.focus();
+    $form.on('yqpf:valid', function (e) {
+      e.preventDefault();
+      if (YQ.auth && YQ.auth.isIn()) {
+        YQ.auth.update({
+          first: $.trim($form.find('[name="profile[firstname]"]').val() || ''),
+          last:  $.trim($form.find('[name="profile[lastname]"]').val() || ''),
+          email: $.trim($form.find('[name="profile[email]"]').val() || '')
+        });
       }
-    }
-
-    /** Ghi nhớ giá trị hiện tại làm "mặc định" để Cancel (form.reset) quay về đúng bản đã lưu. */
-    function commitDefaults() {
-      $form.find('.yq-prof__control').each(function () {
-        if (this.tagName === 'SELECT') {
-          $(this).find('option').each(function () { this.defaultSelected = this.selected; });
-        } else {
-          this.defaultValue = this.value;
-        }
-      });
-    }
-
-    function clearError(el) {
-      $(el).removeClass('is-invalid');
-      $('[data-err-for="' + el.id + '"]').removeClass('is-on').text('');
-    }
-    function showError(el, msg) {
-      $(el).addClass('is-invalid');
-      $('[data-err-for="' + el.id + '"]').text(msg).addClass('is-on');
-    }
-
-    function validate() {
-      var bad = null;
-      $form.find('.yq-prof__control').each(function () {
-        clearError(this);
-        var v = $.trim(this.value || '');
-        if (this.type === 'email' && v && !RE_MAIL.test(v)) {
-          showError(this, 'Enter a valid email address');
-          bad = bad || this;
-        }
-      });
-      return bad;
-    }
-
-    /** Chép giá trị ô nhập -> span hiển thị của từng hàng --edit. */
-    function applyToView() {
-      $form.find('.yq-prof__row--edit').each(function () {
-        var $row = $(this);
-        var el = $row.find('.yq-prof__control')[0];
-        var $val = $row.find('.yq-prof__value');
-        if (!el) return;
-        var v = $.trim(el.value || '');
-        if (!v) { $val.addClass('is-empty').text('Not provided'); return; }
-        $val.removeClass('is-empty').text(el.type === 'date' ? YQ.dateLabel(v) : v);
-      });
-    }
-
-    /** Thẻ trái: tên, chữ cái đầu, % hoàn thiện — tính lại từ DOM. */
-    function refreshCard() {
-      var first = $.trim($('#pf_firstName').val() || '');
-      var last  = $.trim($('#pf_lastName').val() || '');
-      var name  = $.trim(first + ' ' + last);
-      $('#profName').text(name || 'Your profile');
-      $('#profInitials').text(((first.charAt(0) || name.charAt(0) || '?') + last.charAt(0)).toUpperCase());
-
-      var $rows = $form.find('.yq-prof__row');
-      var filled = $rows.filter(function () { return !$(this).find('.yq-prof__value').hasClass('is-empty'); }).length;
-      var pct = $rows.length ? Math.round(filled / $rows.length * 100) : 100;
-      $('#profPct').text(pct + '%');
-      $('#profBar').css('width', pct + '%');
-
-      var missing = $form.find('.yq-prof__row--edit').filter(function () {
-        return $(this).find('.yq-prof__value').hasClass('is-empty');
-      }).map(function () { return $.trim($(this).find('.yq-prof__label').text()); }).get();
-      $('#profHint').text(missing.length
-        ? missing.length + (missing.length === 1 ? ' field left: ' : ' fields left: ') +
-          missing.slice(0, 3).join(', ') + (missing.length > 3 ? '…' : '')
-        : 'Everything is filled in — thank you.');
-    }
-
-    $form
-      .on('click', '[data-prof-edit]', function () { setEditing(true); })
-      .on('click', '[data-prof-cancel]', function () {
-        $form[0].reset();
-        $form.find('.yq-prof__control').each(function () { clearError(this); });
-        setEditing(false);
-      })
-      .on('submit', function (e) {
-        e.preventDefault();                        // demo: không có server nhận POST
-        var bad = validate();
-        if (bad) { bad.focus(); YQ.toast('Please check the highlighted field'); return; }
-
-        applyToView();
-        refreshCard();
-        commitDefaults();
-        /* Giữ phiên đăng nhập (avatar/lời chào ở header) khớp với hồ sơ vừa sửa. */
-        if (YQ.auth && YQ.auth.isIn()) {
-          YQ.auth.update({
-            first: $.trim($('#pf_firstName').val() || ''),
-            last:  $.trim($('#pf_lastName').val() || ''),
-            email: $.trim($('#pf_email').val() || '')
-          });
-        }
-        setEditing(false);
-        YQ.toast('Profile updated');
-      })
-      .on('input change', '.yq-prof__control', function () { clearError(this); });
-
-    commitDefaults();
-    if (YQ.param('edit') === '1') setEditing(true);
+      $form.find('.yq-pf__save').addClass('is-busy').text('Saving…');
+      YQ.toast('Profile updated');
+      setTimeout(function () { window.location.href = 'profile.html'; }, 900);
+    });
   };
 
   /* ======================================================================

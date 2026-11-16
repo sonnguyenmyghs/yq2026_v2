@@ -1,0 +1,246 @@
+<!-- =====================================================================
+     EDIT PROFILE (SỬA) — template PRODUCTION, thay cho old/member_changeprofile.html
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, style.css của skin.
+     Bản xem thử có dữ liệu mẫu: member/changeprofile.html (repo yq2026).
+     Trang xem là template riêng: member/profile-production.html (/member/profile).
+     Form POST về chính trang này, name/id giữ như template cũ — backend không cần sửa.
+     Biến dùng giống template cũ: sign, status, token, old_email, profile.*, lang.*, star_error.*,
+     checkmade, checkfemade, member_title, marital.*, option_list_nationality, birthday_date,
+     birthday_month, birthday_year, readonly, option_list_country, all_language,
+     checked_estatement, checked_subscribed.
+     ===================================================================== -->
+<link rel="stylesheet" href="$_SKIN_NO_CDN/assets/css/parts/status.css?v1">
+<link rel="stylesheet" href="$_SKIN_NO_CDN/assets/css/parts/member-profile.css?v1">
+
+<section class="yq-pagehead">
+  <div class="yq-container">
+    <div class="yq-eyebrow yq-eyebrow--gold">My account</div>
+    <h1 class="yq-serif">Edit Profile</h1>
+    <p class="yq-lead mb-0">Keep your details up to date so we can reach you about your orders and offers.</p>
+  </div>
+</section>
+
+<section style="padding-bottom:clamp(56px,8vw,104px)">
+  <div class="yq-container changeprofile__page__container" data-error="{$sign}">
+    <div class="yq-status-zone">{$status}</div>
+    <form class="yq-prof" id="pfForm" method="POST" novalidate>
+      <input type="hidden" name="token" value="{$token}">
+      <input type="hidden" name="old_email" value="{$old_email}">
+
+      <!-- Thẻ trái (dính): tên cập nhật theo ô First/Last name khi gõ -->
+      <aside class="yq-prof__card">
+        <div class="yq-prof__avatar" id="profInitials" aria-hidden="true"></div>
+        <h2 class="yq-prof__name" id="profName">{$profile['firstname']} {$profile['lastname']}</h2>
+        <p class="yq-pf__note">Your <b>membership number, type and dates</b> are managed by the hotel and can't be changed here.</p>
+        <div class="yq-prof__actions yq-pf__cardactions">
+          <button class="yq-btn yq-btn--block yq-pf__save" type="submit">{$lang['save_my_profile']}</button>
+          <a class="yq-btn yq-btn--yqost yq-btn--block mt-2" href="$_BASE/member/profile">Cancel</a>
+        </div>
+        <div class="yq-prof__links">
+          <a class="yq-link-arrow" href="$_BASE/member/profile">Back to profile <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+        </div>
+      </aside>
+
+      <div class="yq-prof__body">
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Personal details</h2>
+        </header>
+        <div class="yq-pf__grid">
+          <div class="yq-pf__field" data-required>
+            <label class="yq-pf__label" for="pf_firstname">{$lang['first_name']}</label>
+            <input class="yq-input form-control" id="pf_firstname" name="profile[firstname]" type="text" value="{$profile['firstname']}" autocomplete="given-name">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field" data-required>
+            <label class="yq-pf__label" for="pf_lastname">{$lang['last_name']}</label>
+            <input class="yq-input form-control" id="pf_lastname" name="profile[lastname]" type="text" value="{$profile['lastname']}" autocomplete="family-name">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_title">{$lang['title']}<span class="yq-pf__req">{$star_error['title']}</span></label>
+            <select class="yq-input form-select" id="pf_title" name="profile[title]">
+              <option value="-1">-</option>
+              $member_title
+            </select>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <span class="yq-pf__label">{$lang['gender']}<span class="yq-pf__req">{$star_error['gender']}</span></span>
+            <div class="yq-pf__seg" role="radiogroup">
+              <input name="profile[gender]" type="radio" class="radio" value="1" $checkmade id="profile[gender]_1">
+              <label for="profile[gender]_1">{$lang['male']}</label>
+              <input name="profile[gender]" type="radio" class="radio" value="0" $checkfemade id="profile[gender]_0">
+              <label for="profile[gender]_0">{$lang['female']}</label>
+            </div>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_marital">{$lang['marital']}<span class="yq-pf__req">{$star_error['marital']}</span></label>
+            <select class="yq-input form-select" id="pf_marital" name="profile[marital]">
+              <option value="-1">-</option>
+              <option {$marital[ '0' ]} value="0">{$lang['single']}</option>
+              <option {$marital[ '1' ]} value="1">{$lang['married']}</option>
+              <option {$marital[ '2' ]} value="2">{$lang['engaged']}</option>
+              <option {$marital[ '3' ]} value="3">{$lang['divorced']}</option>
+            </select>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="day">{$lang['birth_day']}<span class="yq-pf__req">{$star_error['birthday']}</span></label>
+            <div class="yq-pf__dob">
+              <select class="yq-input form-select" name="birthday_date" id="day" aria-label="Day">
+                $birthday_date
+              </select>
+              <select class="yq-input form-select" name="birthday_month" id="month" aria-label="Month">
+                $birthday_month
+              </select>
+              <input class="yq-input form-control" name="birthday_year" type="text" inputmode="numeric" placeholder="Year" aria-label="Year" value="$birthday_year" $readonly>
+            </div>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="nationality">{$lang['nationality']}<span class="yq-pf__req">{$star_error['nationality']}</span></label>
+            <select class="yq-input form-select" id="nationality" name="profile[nationality]">
+              <option value="">{$lang['your_nationality']}</option>
+              $option_list_nationality
+            </select>
+            <input name="hd_nationality" type="hidden" id="hd_nationality" value="{$profile['nationality']}">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_lang">{$lang['use_language']}</label>
+            <select class="yq-input form-select" id="pf_lang" name="profile[lang]">
+              $all_language
+            </select>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_idcard">{$lang['id_card']}<span class="yq-pf__req">{$star_error['idcard']}</span></label>
+            <input class="yq-input form-control" id="pf_idcard" name="profile[idcard]" type="text" value="{$profile['idcard']}">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_passport">{$lang['id_passport']}<span class="yq-pf__req">{$star_error['passport']}</span></label>
+            <input class="yq-input form-control" id="pf_passport" name="profile[passport]" type="text" value="{$profile['passport']}">
+            <div class="yq-error"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2Z"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Contact</h2>
+        </header>
+        <div class="yq-pf__grid">
+          <div class="yq-pf__field yq-pf__field--full">
+            <label class="yq-pf__label" for="pf_email">{$lang['email']}<span class="yq-pf__req">*</span></label>
+            <input class="yq-input form-control" id="pf_email" name="profile[email]" type="email" value="{$profile['email']}" autocomplete="email">
+            <p class="yq-pf__help">Order receipts and e-vouchers are sent to this address.</p>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="phone">{$lang['mobile_phone']}<span class="yq-pf__req">{$star_error['mobile_number']}</span></label>
+            <div class="yq-pf__tel">
+              <input class="yq-input form-control" name="profile[mobile_zip]" type="text" inputmode="tel" value="{$profile['mobile_zip']}" placeholder="+65" aria-label="Mobile Phone country code">
+              <input class="yq-input form-control" name="profile[mobile_number]" id="phone" type="tel" value="{$profile['mobile_number']}" autocomplete="tel-national">
+            </div>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_home">{$lang['home_phone']}<span class="yq-pf__req">{$star_error['home_number']}</span></label>
+            <div class="yq-pf__tel">
+              <input class="yq-input form-control" name="profile[home_zip]" type="text" inputmode="tel" value="{$profile['home_zip']}" placeholder="+65" aria-label="Home Phone country code">
+              <input class="yq-input form-control" name="profile[home_number]" id="pf_home" type="tel" value="{$profile['home_number']}">
+            </div>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_office">{$lang['office_phone']}<span class="yq-pf__req">{$star_error['office_number']}</span></label>
+            <div class="yq-pf__tel">
+              <input class="yq-input form-control" name="profile[office_zip]" type="text" inputmode="tel" value="{$profile['office_zip']}" placeholder="+65" aria-label="Office Phone country code">
+              <input class="yq-input form-control" name="profile[office_number]" id="pf_office" type="tel" value="{$profile['office_number']}">
+            </div>
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_fax">{$lang['fax_number']}<span class="yq-pf__req">{$star_error['fax_number']}</span></label>
+            <div class="yq-pf__tel">
+              <input class="yq-input form-control" name="profile[fax_zip]" type="text" inputmode="tel" value="{$profile['fax_zip']}" placeholder="+65" aria-label="Fax Number country code">
+              <input class="yq-input form-control" name="profile[fax_number]" id="pf_fax" type="tel" value="{$profile['fax_number']}">
+            </div>
+            <div class="yq-error"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Address</h2>
+        </header>
+        <div class="yq-pf__grid">
+          <div class="yq-pf__field yq-pf__field--full">
+            <label class="yq-pf__label" for="pf_address">{$lang['address']}<span class="yq-pf__req">{$star_error['address']}</span></label>
+            <input class="yq-input form-control" id="pf_address" name="profile[address]" type="text" value="{$profile['address']}" autocomplete="street-address">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_city">{$lang['city']}<span class="yq-pf__req">{$star_error['city']}</span></label>
+            <input class="yq-input form-control" id="pf_city" name="profile[city]" type="text" value="{$profile['city']}" autocomplete="address-level2">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_state">{$lang['state']}<span class="yq-pf__req">{$star_error['state']}</span></label>
+            <input class="yq-input form-control" id="pf_state" name="profile[state]" type="text" value="{$profile['state']}" autocomplete="address-level1">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="pf_postcode">{$lang['post_code']}<span class="yq-pf__req">{$star_error['postcode']}</span></label>
+            <input class="yq-input form-control" id="pf_postcode" name="profile[postcode]" type="text" value="{$profile['postcode']}" autocomplete="postal-code">
+            <div class="yq-error"></div>
+          </div>
+          <div class="yq-pf__field">
+            <label class="yq-pf__label" for="country">{$lang['country']}<span class="yq-pf__req">{$star_error['country']}</span></label>
+            <select class="yq-input form-select" id="country" name="profile[country]">
+              <option value="">{$lang['your_country']}</option>
+              $option_list_country
+            </select>
+            <input name="hd_country" type="hidden" id="hd_country" value="{$profile['country']}">
+            <div class="yq-error"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Email preferences</h2>
+        </header>
+        <div class="yq-pf__checks">
+          <label class="yq-pf__check" for="transactional">
+            <input name="profile[estatement]" type="checkbox" class="checkbox" id="transactional" $checked_estatement>
+            <span class="yq-pf__box"><svg class="yq-i" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>
+            <span>{$lang['email_receive_monthly_profile']}</span>
+          </label>
+          <label class="yq-pf__check" for="subscribe">
+            <input name="profile[subscribed]" type="checkbox" class="checkbox" id="subscribe" $checked_subscribed>
+            <span class="yq-pf__box"><svg class="yq-i" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>
+            <span>{$lang['step_2_check_2']}</span>
+          </label>
+        </div>
+      </section>
+
+      <div class="yq-pf__foot">
+        <a class="yq-btn yq-btn--yqost" href="$_BASE/member/profile">Cancel</a>
+        <button class="yq-btn yq-pf__save" type="submit">{$lang['save_my_profile']}</button>
+      </div>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+<script src="$_SKIN_NO_CDN/assets/js/modules/member/profile.js?v1"></script>

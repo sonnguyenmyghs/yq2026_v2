@@ -1,0 +1,209 @@
+<!-- =====================================================================
+     MEMBER PROFILE (XEM) — template PRODUCTION, thay cho old/member_profile.html
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, style.css của skin.
+     Bản xem thử có dữ liệu mẫu: member/profile.html (repo yq2026).
+     Nút Edit dẫn sang trang sửa riêng /member/changeprofile (member/changeprofile-production.html).
+     Biến dùng giống template cũ: status, summary_point, profile.*, lang.*, profile_extra_single, html_wallet_card.
+     Ô trống in rỗng — CSS member-profile.css tự hiện Not provided.
+     ===================================================================== -->
+<link rel="stylesheet" href="$_SKIN_NO_CDN/assets/css/parts/status.css?v1">
+<link rel="stylesheet" href="$_SKIN_NO_CDN/assets/css/parts/member-profile.css?v1">
+
+<section class="yq-pagehead">
+  <div class="yq-container">
+    <div class="yq-eyebrow yq-eyebrow--gold">My account</div>
+    <h1 class="yq-serif">Member Profile</h1>
+    <p class="yq-lead mb-0">Your membership, personal details and how we reach you.</p>
+  </div>
+</section>
+
+<section style="padding-bottom:clamp(56px,8vw,104px)">
+  <div class="yq-container">
+    <div class="yq-status-zone">{$status}</div>
+    <div class="yq-pf__extra">{$summary_point}</div>
+    <div class="yq-prof" id="profView">
+
+      <!-- Thẻ tóm tắt (dính bên trái) -->
+      <aside class="yq-prof__card">
+        <div class="yq-prof__avatar" id="profInitials" aria-hidden="true"></div>
+        <h2 class="yq-prof__name" id="profName">{$profile['firstname']} {$profile['lastname']}</h2>
+        <div class="yq-prof__badges">
+          <span class="yq-prof__chip">{$profile['type']}</span>
+          <span class="yq-prof__no">No. {$profile['cardno']}</span>
+        </div>
+
+        <div class="yq-prof__meter">
+          <div class="yq-prof__meterhead"><span>Profile complete</span><b id="profPct">0%</b></div>
+          <div class="yq-prof__bar"><i id="profBar" style="width:0%"></i></div>
+          <p class="yq-prof__hint" id="profHint"></p>
+        </div>
+
+        <dl class="yq-prof__facts">
+          <div><dt>Member since</dt><dd>{$profile['create_date']}</dd></div>
+          <div><dt>Valid until</dt><dd>{$profile['expire_date']}</dd></div>
+        </dl>
+
+        <div class="yq-prof__actions">
+          <a class="yq-btn yq-btn--block" href="$_BASE/member/changeprofile">{$lang['edit_my_infomation']}</a>
+        </div>
+      </aside>
+
+      <!-- Các nhóm thông tin (chỉ xem) -->
+      <div class="yq-prof__body" id="profBody">
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8L12 3.5Z" fill="currentColor" stroke="none"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Membership</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['membership_no']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['cardno']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['member_type']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['type']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['card_name']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['cardname']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['member_referral']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['referral']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['join_date']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['create_date']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['expiry_date']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['expire_date']}</span></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Personal details</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['member_name']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['firstname']} {$profile['lastname']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['title']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['title']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['gender']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['gender']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['marital']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['marital']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['birth_day']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['birthday']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['nationality']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['nationality']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['id_card']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['idcard']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['id_passport']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['passport']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['use_language']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['lang']}</span></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2Z"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Contact</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['email']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['email']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['mobile_phone']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['mobile_number']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['home_phone']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['home_number']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['office_phone']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['office_number']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['fax_number']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['fax_number']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['company']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['company']}</span></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <h2 class="yq-prof__grouptitle">Address</h2>
+        </header>
+        <dl class="yq-prof__rows">
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['address']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['address']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['city']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['city']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['state']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['state']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['post_code']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['postcode']}</span></dd>
+          </div>
+          <div class="yq-prof__row">
+            <dt class="yq-prof__label">{$lang['country']}</dt>
+            <dd class="yq-prof__field"><span class="yq-prof__value">{$profile['country']}</span></dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Hàng thêm do backend in (markup cũ .profile-single) — rỗng thì cả nhóm tự ẩn -->
+      <section class="yq-prof__group yq-pf__more">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".9" fill="currentColor"/><circle cx="4" cy="12" r=".9" fill="currentColor"/><circle cx="4" cy="18" r=".9" fill="currentColor"/></svg></span>
+          <h2 class="yq-prof__grouptitle">More details</h2>
+        </header>
+        <div class="yq-prof__rows yq-pf__extrarows">$profile_extra_single</div>
+      </section>
+
+      <div class="yq-pf__extra">{$html_wallet_card}</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="$_SKIN_NO_CDN/assets/js/modules/member/profile.js?v1"></script>

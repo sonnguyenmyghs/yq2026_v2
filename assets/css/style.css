@@ -1174,7 +1174,7 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
 }
 
 /* ==========================================================================
-   Trang Member Profile (member/profile.html)
+   Trang Member Profile (member/profile.html, changeprofile.html — phần riêng: parts/member-profile.css)
    Thẻ tóm tắt dính bên trái + các nhóm thông tin bên phải
    ========================================================================== */
 .yq-prof{ display: grid; grid-template-columns: 340px 1fr; gap: clamp(20px, 3vw, 40px); align-items: start; }
@@ -1272,21 +1272,6 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
   display: inline-flex; align-items: center; gap: 5px; margin-left: 10px;
   font-size: 11px; color: var(--yq-muted); vertical-align: middle;
 }
-.yq-prof__control{ width: 100%; max-width: 420px; }
-
-/* --- Xem / Sửa: cùng một markup tĩnh, đổi bằng .is-editing trên .yq-prof ---
-   Mặc định (xem): ẩn ô nhập, nhãn Locked và cụm nút Save/Cancel.
-   .is-editing    : hàng --edit đổi giá trị -> ô nhập; hàng --ro hiện "Locked";
-                    cụm nút đổi Edit -> Save/Cancel. */
-.yq-prof__control,
-.yq-prof__lock,
-.yq-prof__actions--edit{ display: none; }
-.yq-prof.is-editing .yq-prof__row--edit{ align-items: center; }
-.yq-prof.is-editing .yq-prof__row--edit .yq-prof__value{ display: none; }
-.yq-prof.is-editing .yq-prof__row--edit .yq-prof__control{ display: block; }
-.yq-prof.is-editing .yq-prof__row--ro .yq-prof__lock{ display: inline-flex; }
-.yq-prof.is-editing .yq-prof__actions--view{ display: none; }
-.yq-prof.is-editing .yq-prof__actions--edit{ display: block; }
 
 @media (max-width: 991.98px){
   .yq-prof{ grid-template-columns: 1fr; }
@@ -1297,7 +1282,6 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
   .yq-prof__rows{ padding: 4px 16px 12px; }
   .yq-prof__row{ grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
   .yq-prof__label{ font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--yq-muted); }
-  .yq-prof__control{ max-width: none; }
 }
 
 /* ==========================================================================

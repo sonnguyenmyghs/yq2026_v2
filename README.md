@@ -51,7 +51,9 @@ python3 -m http.server 8000
 ├── admin/
 │   └── delivery-rules.html  Admin setup rule giao nhận: Pickup / Hotel Van / Lalamove / Room Service
 ├── member/               Khu vực thành viên (xem mục "Trang trong thư mục con")
-│   ├── profile.html      Member Profile — HTML tĩnh: thẻ tóm tắt + 4 nhóm thông tin, sửa tại chỗ
+│   ├── profile.html      Member Profile (chỉ xem) — thẻ tóm tắt + 4 nhóm thông tin
+│   ├── changeprofile.html Edit Profile (trang sửa riêng) — form POST giữ name của template cũ
+│   ├── profile-production.html / changeprofile-production.html  bản partial deploy
 │   ├── orders.html       My Orders — 2 tab Completed orders / Pending payment, ReOrder
 │   ├── password.html     Change Password — thanh sức mạnh + 4 điều kiện tự tick
 │   └── invite.html       Invite Friends — link mời, chia sẻ Facebook / LINE / email
@@ -577,45 +579,29 @@ YQ.orders = [
 
 ### Hồ sơ thành viên
 
-`member/profile.html` là **HTML tĩnh** — toàn bộ thẻ tóm tắt và 4 nhóm thông tin nằm
-sẵn trong file, backend đổ dữ liệu thẳng vào markup. JS (`YQ.initProfile` trong
-`pages.js`) **không dựng HTML**, chỉ bật/tắt chế độ sửa, kiểm tra ô nhập và chép giá
-trị vừa nhập ngược lại phần hiển thị sau khi Save.
+Hai luồng riêng, giống production cũ (`/member/profile` và `/member/changeprofile`):
 
-Hai chế độ dùng cùng một markup, đổi bằng class `is-editing` trên `<form class="yq-prof">`:
+| Trang | Demo (dữ liệu mẫu) | Production (partial) | Template cũ |
+|---|---|---|---|
+| Xem | `member/profile.html` | `member/profile-production.html` | `old/member_profile.html` |
+| Sửa | `member/changeprofile.html` | `member/changeprofile-production.html` | `old/member_changeprofile.html` |
 
-```html
-<!-- trường sửa được: giá trị hiển thị + ô nhập cùng giá trị + chỗ báo lỗi -->
-<div class="yq-prof__row yq-prof__row--edit">
-  <dt class="yq-prof__label"><label for="pf_email">Email</label></dt>
-  <dd class="yq-prof__field">
-    <span class="yq-prof__value">sonnguyen@myghs.com</span>
-    <input class="yq-input yq-prof__control" id="pf_email" name="email" type="email" value="sonnguyen@myghs.com">
-    <div class="yq-error" data-err-for="pf_email"></div>
-  </dd>
-</div>
-
-<!-- trường chỉ đọc: chỉ có giá trị + nhãn Locked (hiện khi đang sửa) -->
-<div class="yq-prof__row yq-prof__row--ro">
-  <dt class="yq-prof__label">Membership No.</dt>
-  <dd class="yq-prof__field"><span class="yq-prof__value">000001991</span><span class="yq-prof__lock">…Locked</span></dd>
-</div>
-```
-
-- Trống thì `value=""` và span mang `class="yq-prof__value is-empty"` với chữ "Not provided".
-- Ngày: `<input type="date" value="YYYY-MM-DD">`, span hiển thị `DD-Month-YYYY`.
-- `<select>` có `<option value="">Not provided</option>` đứng đầu; option đang chọn đánh `selected`.
-- `name` của ô nhập là key gửi lên server; form là `method="post" action="#"` — demo chặn
-  submit và chỉ cập nhật trên trang (không lưu localStorage), lưu thật là việc của backend.
-- Thẻ trái (`#profName`, `#profInitials`, `#profPct`, `#profBar`, `#profHint`) được JS tính
-  lại từ DOM sau khi Save; giá trị ban đầu backend tự điền.
-- Vào thẳng chế độ sửa: `member/profile.html?edit=1` — link **Edit** trong popup member
-  dùng đúng link này. Cancel trả về bản đã lưu gần nhất (`form.reset()`).
-- Lưu xong, nếu đang đăng nhập thì `YQ.auth` được đồng bộ tên + email để avatar/lời chào
-  ở header khớp.
-- `YQ.demoProfile` trong `data.js` **không** còn dùng cho trang này; nó chỉ nạp vào
-  `YQ.profile` (localStorage `yq_profile_v1`) cho `password.html` (email, ngày đổi mật
-  khẩu) và `invite.html` (memberNo → mã giới thiệu). Giá trị nên khớp với profile.html.
+- CSS riêng: `assets/css/parts/member-profile.css` (tiền tố `.yq-pf`); khung chung `.yq-prof` vẫn ở `style.css`.
+- JS dùng chung demo + production: `assets/js/modules/member/profile.js` (viết an toàn cho engine template:
+  không ký hiệu đô la, không cặp ngoặc nhọn cùng dòng). JS không dựng HTML.
+  - Trang xem (`#profView`): tính `#profInitials`, `#profPct`, `#profBar`, `#profHint` từ DOM.
+    Ô trống backend in **rỗng** (`<span class="yq-prof__value"></span>`, không khoảng trắng) — CSS tự hiện "Not provided".
+  - Trang sửa (`#pfForm`): ô bắt buộc = nhãn có `*` (backend in qua `star_error`) hoặc `data-required`
+    (First/Last name); kiểm tra email; lỗi server qua `data-error` (= `sign`) trên `.changeprofile__page__container`
+    tô đỏ ô tương ứng; select chưa chọn thì lấy theo `hd_nationality` / `hd_country`; chống bấm Save 2 lần.
+  - Bản demo (`YQ.initProfile` trong `pages.js`) nghe sự kiện `yqpf:valid` để chặn POST, toast rồi quay về `profile.html`.
+- Form sửa giữ nguyên toàn bộ `name` cũ: `token`, `old_email`, `profile[...]`, `hd_nationality`, `hd_country`,
+  `birthday_date|month|year`. `id="phone"` chỉ còn ở ô mobile (template cũ trùng id ở 4 ô).
+- Hàng thêm `profile_extra_single` (markup cũ `.profile-single`) nằm ở nhóm "More details" — rỗng thì nhóm tự ẩn.
+  `summary_point`, `html_wallet_card` in vào `.yq-pf__extra` (rỗng thì ẩn).
+- Link **Edit** trong popup member trỏ tới `member/changeprofile.html` (production `/member/changeprofile`).
+- `YQ.demoProfile` trong `data.js` không dùng cho 2 trang này; chỉ nạp vào `YQ.profile` cho `password.html`
+  và `invite.html`.
 
 ### Đổi mật khẩu
 

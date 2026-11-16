@@ -1,0 +1,125 @@
+/* ==========================================================================
+   Member Profile (xem) + Edit Profile (sửa) — 2 luồng, 2 trang riêng
+     member/profile.html        (production: member/profile-production.html)
+     member/changeprofile.html  (production: member/changeprofile-production.html)
+   Khung chung .yq-prof / .yq-prof__card / .yq-prof__group nằm trong style.css.
+   File này chỉ thêm phần riêng của 2 trang (tiền tố .yq-pf).
+   ========================================================================== */
+
+/* Layout cũ in tiêu đề trang .page_title — 2 trang này tự có .yq-pagehead nên ẩn đi (giống template cũ). */
+.page_title{ display: none; }
+
+/* ---------- Trang xem ---------- */
+/* Ô trống: backend in rỗng (không khoảng trắng) -> CSS tự hiện "Not provided". */
+.yq-prof__value:empty::before{
+  content: "Not provided";
+  color: var(--yq-muted); font-weight: 400; font-style: italic;
+}
+
+/* Khối HTML backend in sẵn (điểm thưởng, thẻ ví): rỗng thì ẩn. */
+.yq-pf__extra:empty{ display: none; }
+
+/* Hàng thêm do backend in theo markup cũ (.profile-single) — chỉnh cho giống .yq-prof__row */
+.yq-pf__more:has(.yq-pf__extrarows:empty){ display: none; }
+.yq-pf__extrarows .profile-single{
+  display: grid; grid-template-columns: 210px 1fr; gap: 16px; align-items: baseline;
+  width: auto; max-width: none; flex: none; margin: 0; padding: 13px 0;
+  border-bottom: 1px solid var(--yq-line-soft); background: none;
+  font-size: 13.5px; color: var(--yq-body);
+}
+.yq-pf__extrarows .profile-single:last-child{ border-bottom: 0; }
+.yq-pf__extrarows .profile-single > div{ width: auto; max-width: none; padding: 0; }
+.yq-pf__extrarows .profile-single > div:last-child{
+  text-align: left !important; font-size: 14.5px; font-weight: 500; color: var(--yq-ink); word-break: break-word;
+}
+
+/* ---------- Trang sửa ---------- */
+.yq-pf__note{ font-size: 13.5px; line-height: 1.6; color: var(--yq-body); margin: 0 0 20px; }
+.yq-pf__note b{ color: var(--yq-ink); font-weight: 600; }
+
+.yq-pf__grid{
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px 22px;
+  padding: clamp(18px, 3vw, 26px);
+}
+.yq-pf__field{ min-width: 0; }
+.yq-pf__field--full{ grid-column: 1 / -1; }
+.yq-pf__label{
+  display: block; margin: 0 0 7px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: var(--yq-ink-soft);
+}
+.yq-pf__req{ color: #C0564C; margin-left: 2px; }
+.yq-pf__help{ font-size: 12px; color: var(--yq-muted); margin: 6px 0 0; }
+.yq-pf__field .yq-input{ width: 100%; height: 48px; }
+/* .yq-input đặt background -> mất mũi tên của .form-select, vẽ lại */
+.yq-pf__field select.yq-input{
+  padding-right: 38px; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2356514A' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 13px 10px;
+}
+.yq-pf__field .yq-input[readonly]{ background: var(--yq-cream); color: var(--yq-body); cursor: not-allowed; }
+
+/* lỗi: JS (hoặc data-error từ server) thêm .is-invalid vào .yq-pf__field */
+.yq-pf__field.is-invalid .yq-pf__label{ color: #C0564C; }
+.yq-pf__field.is-invalid .yq-input{ border-color: #C0564C; box-shadow: 0 0 0 3px rgba(192,86,76,.12); }
+
+/* mã vùng + số */
+.yq-pf__tel{ display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+/* ngày / tháng / năm sinh */
+.yq-pf__dob{ display: grid; grid-template-columns: 1fr 1.35fr 1fr; gap: 8px; }
+
+/* Gender: radio dạng nút gạt */
+.yq-pf__seg{
+  display: inline-flex; gap: 4px; padding: 4px; height: 48px;
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-pill); background: var(--yq-paper);
+}
+.yq-pf__seg input{ position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.yq-pf__seg label{
+  display: inline-flex; align-items: center; padding: 0 22px; margin: 0;
+  border-radius: var(--yq-radius-pill); cursor: pointer;
+  font-size: 14px; color: var(--yq-body);
+  transition: background .2s var(--yq-ease), color .2s var(--yq-ease);
+}
+.yq-pf__seg label:hover{ color: var(--yq-ink); }
+.yq-pf__seg input:checked + label{ background: var(--yq-ink); color: #fff; }
+.yq-pf__seg input:focus-visible + label{ outline: 2px solid var(--yq-gold); outline-offset: 2px; }
+
+/* Tuỳ chọn nhận email: checkbox tuỳ biến */
+.yq-pf__checks{ display: grid; gap: 16px; padding: clamp(18px, 3vw, 26px); }
+.yq-pf__check{
+  position: relative; display: flex; align-items: flex-start; gap: 12px; margin: 0;
+  font-size: 14px; line-height: 1.55; color: var(--yq-body); cursor: pointer;
+}
+.yq-pf__check input{ position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.yq-pf__box{
+  flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid #CFC8BA; background: var(--yq-paper); color: #fff;
+  transition: background .2s var(--yq-ease), border-color .2s var(--yq-ease);
+}
+.yq-pf__box svg{ opacity: 0; transform: scale(.5); transition: opacity .2s var(--yq-ease), transform .2s var(--yq-ease); }
+.yq-pf__check:hover .yq-pf__box{ border-color: var(--yq-gold); }
+.yq-pf__check input:checked + .yq-pf__box{ background: var(--yq-ink); border-color: var(--yq-ink); }
+.yq-pf__check input:checked + .yq-pf__box svg{ opacity: 1; transform: none; }
+.yq-pf__check input:focus-visible + .yq-pf__box{ outline: 2px solid var(--yq-gold); outline-offset: 2px; }
+
+/* Nút cuối form (luôn hiện) — nút trong thẻ trái chỉ hiện từ desktop */
+.yq-pf__foot{ display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+.yq-pf__foot .yq-btn{ min-width: 190px; }
+.yq-pf__save.is-busy{ opacity: .7; pointer-events: none; }
+
+@media (max-width: 991.98px){
+  .yq-pf__cardactions{ display: none; }
+}
+@media (max-width: 575.98px){
+  .yq-pf__extrarows .profile-single{ grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
+  .yq-pf__extrarows .profile-single > div:first-child{
+    font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--yq-muted);
+  }
+  .yq-pf__grid{ grid-template-columns: 1fr; gap: 18px; padding: 16px; }
+  .yq-pf__checks{ padding: 16px; }
+  .yq-pf__seg{ display: flex; }
+  .yq-pf__seg label{ flex: 1; justify-content: center; padding: 0 12px; }
+  .yq-pf__foot{ flex-direction: column-reverse; align-items: stretch; }
+  .yq-pf__foot .yq-btn{ width: 100%; min-width: 0; }
+}
