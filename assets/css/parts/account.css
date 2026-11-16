@@ -1,7 +1,7 @@
 /* ==========================================================================
-   Module CSS: account — popup Log in / Register, popup member (dropdown) + panel
-   member "My Functions". Cặp với assets/js/modules/account.js.
-   Prefix riêng (.yq-auth*, .yq-acct*, .yq-mfn*)
+   Module CSS: account — popup Log in / Register + popup member #yqAcctPop
+   (dropdown ở desktop, drawer ở mobile). Cặp với assets/js/modules/account.js.
+   Prefix riêng (.yq-auth*, .yq-acct*)
    để không đụng tên class nào đang có trong style.css.
    ========================================================================== */
 
@@ -207,16 +207,20 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 .yq-auth__back:hover{ color: var(--yq-ink); }
 
 /* ==========================================================================
-   2. Popup member — dropdown dưới avatar ở header (desktop)
-   Neo: .yq-header__tools--end.yq-acct-anchor (HTML tĩnh trong khối HEADER).
-   --yq-acct-caret: khoảng cách từ mép phải khối neo tới tâm avatar, JS đo lúc mở
-   để mũi tên luôn chỉ đúng nút dù header co giãn.
+   2. Popup member #yqAcctPop — MỘT khối cho cả desktop và mobile
+   HTML tĩnh ở cấp <body> (khối MEMBER POPUP ngay sau HEADER).
+   - Desktop (>= 992px): dropdown dưới avatar. JS đo avatar lúc mở và đặt
+       --yq-acct-top / --yq-acct-right : vị trí khối (position: fixed)
+       --yq-acct-caret                 : từ mép phải khối tới tâm avatar (mũi tên)
+   - Mobile: drawer trượt từ phải, nền mờ là box-shadow trải rộng (không cần thêm phần tử).
    ========================================================================== */
 .yq-acct-anchor{ position: relative; }
 
 .yq-acct{
-  position: absolute; top: calc(100% + 12px); right: 0; z-index: 1031;
-  width: 296px; text-align: left;
+  position: fixed; z-index: 1031;
+  top: var(--yq-acct-top, 72px); right: var(--yq-acct-right, 16px);
+  width: 296px;
+  text-align: left; outline: none;
   background: var(--yq-paper);
   border: 1px solid var(--yq-line);
   border-radius: var(--yq-radius);
@@ -229,7 +233,7 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 .yq-acct[hidden]{ display: none; }
 .yq-acct.is-open{ opacity: 1; visibility: visible; transform: none; }
 
-/* mũi tên nhỏ chỉ lên avatar */
+/* mũi tên nhỏ chỉ lên avatar (desktop) */
 .yq-acct::before{
   content: ""; position: absolute; top: -6.5px;
   right: calc(var(--yq-acct-caret, 21px) - 6px);
@@ -240,7 +244,24 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
   transform: rotate(45deg);
 }
 
+/* --- thanh tiêu đề + nút đóng: chỉ mobile --- */
+.yq-acct__bar{ display: none; }
+.yq-acct__title{
+  font-family: var(--yq-serif); font-weight: 500;
+  font-size: clamp(1.5rem, 3vw, 1.95rem); line-height: 1.1;
+  color: var(--yq-ink); margin: 0;
+}
+.yq-acct__close{
+  flex: none; width: 40px; height: 40px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--yq-line); background: var(--yq-paper); color: var(--yq-ink);
+  cursor: pointer;
+  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease), color .22s var(--yq-ease);
+}
+.yq-acct__close:hover{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+
 /* --- đầu: avatar + tên + email + Edit --- */
+.yq-acct__main[hidden]{ display: none; }
 .yq-acct__head{
   display: flex; align-items: center; gap: 12px;
   padding: 18px 18px 16px;
@@ -313,104 +334,50 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 }
 .yq-acct__logout:hover{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
 
-/* Dưới desktop nút avatar ở header đã ẩn (d-none d-lg-inline-flex) — chặn luôn cho chắc */
-@media (max-width: 991.98px){ .yq-acct{ display: none !important; } }
-
-/* ==========================================================================
-   3. Panel member "My Functions"  (Bootstrap offcanvas-end + lớp áo riêng)
-   ========================================================================== */
-.yq-mfn{
-  width: min(480px, 100vw);
-  border-left: 1px solid var(--yq-line);
-  background: var(--yq-paper);
-}
-.yq-mfn__head{
-  display: flex; align-items: center; justify-content: space-between; gap: 14px;
-  padding: clamp(22px, 3vw, 30px) clamp(20px, 3vw, 32px) 18px;
-}
-.yq-mfn__title{
-  font-family: var(--yq-serif); font-weight: 500;
-  font-size: clamp(1.5rem, 3vw, 1.95rem); line-height: 1.1;
-  color: var(--yq-ink); margin: 0;
-}
-.yq-mfn__close{
-  flex: none; width: 40px; height: 40px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  border: 1px solid var(--yq-line); background: var(--yq-paper); color: var(--yq-ink);
-  cursor: pointer;
-  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease), color .22s var(--yq-ease);
-}
-.yq-mfn__close:hover{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
-
-.yq-mfn__body{
-  flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain;
-  padding: 0 clamp(20px, 3vw, 32px) clamp(24px, 3vw, 32px);
-}
-
-/* --- lời chào + nút Edit --- */
-.yq-mfn__hello{
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding-bottom: 22px;
-}
-.yq-mfn__hi{
-  font-size: 16px; font-weight: 500; color: var(--yq-ink);
-  margin: 0; min-width: 0;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.yq-mfn__hi em{ font-style: normal; font-weight: 600; }
-.yq-mfn__mail{
-  display: block; font-size: 12.5px; font-weight: 400; color: var(--yq-muted);
-  margin-top: 3px;
-  overflow: hidden; text-overflow: ellipsis;
-}
-
-/* --- danh sách chức năng --- */
-.yq-mfn__list{ display: block; }
-.yq-mfn__item{
-  width: 100%; text-align: left;
-  display: flex; align-items: center; gap: 12px;
-  padding: 18px 4px;
-  border: 0; border-bottom: 1px solid var(--yq-line-soft);
-  background: none; cursor: pointer; color: var(--yq-ink);
-  font-size: 15px; font-weight: 600; font-family: var(--yq-sans);
-  text-decoration: none;
-  transition: color .22s var(--yq-ease), padding-left .22s var(--yq-ease);
-}
-.yq-mfn__item:hover{ color: var(--yq-gold-dark); padding-left: 10px; }
-.yq-mfn__item:focus-visible{ outline: 2px solid var(--yq-gold); outline-offset: 3px; }
-.yq-mfn__dot{
-  flex: none; width: 11px; height: 11px; border-radius: 50%;
-  border: 1.5px solid var(--yq-ink);
-  transition: background .22s var(--yq-ease), border-color .22s var(--yq-ease);
-}
-.yq-mfn__item:hover .yq-mfn__dot{ background: var(--yq-gold); border-color: var(--yq-gold); }
-.yq-mfn__txt{ flex: 1 1 auto; min-width: 0; }
-.yq-mfn__ico{ flex: none; color: var(--yq-gold); display: inline-flex; }
-.yq-mfn__item:hover .yq-mfn__ico{ color: var(--yq-gold-dark); }
-
-/* --- pane con (profile / password / …) --- */
-.yq-mfn__pane[hidden]{ display: none; }
-.yq-mfn__pane{ animation: yqAuthIn .3s var(--yq-ease) both; }
-.yq-mfn__pane .yq-input{ width: 100%; }
-.yq-mfn__sub{
+/* --- pane con (My wallet …) — thay chỗ #yqAcctMain trong cùng khối --- */
+.yq-acct__pane[hidden]{ display: none; }
+.yq-acct__pane{ padding: 16px 18px 18px; animation: yqAuthIn .3s var(--yq-ease) both; }
+.yq-acct__sub{
   font-family: var(--yq-serif); font-size: 1.25rem; color: var(--yq-ink);
   margin: 0 0 4px;
 }
-.yq-mfn__lead{ font-size: 13.5px; color: var(--yq-body); margin: 0 0 20px; }
-.yq-mfn__fields{ display: grid; gap: 14px; margin-bottom: 22px; }
-.yq-mfn__duo{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 400px){ .yq-mfn__duo{ grid-template-columns: 1fr; } }
-
-.yq-mfn__stat{
+.yq-acct__lead{ font-size: 13.5px; color: var(--yq-body); margin: 0 0 18px; }
+.yq-acct__stat{
   background: var(--yq-cream); border: 1px solid var(--yq-line-soft);
   border-radius: var(--yq-radius-sm);
-  padding: 22px; text-align: center; margin-bottom: 20px;
+  padding: 20px; text-align: center; margin-bottom: 18px;
 }
-.yq-mfn__stat b{
+.yq-acct__stat b{
   display: block; font-family: var(--yq-serif); font-size: 2rem;
   font-weight: 500; color: var(--yq-ink); line-height: 1.1;
 }
-.yq-mfn__stat span{ display: block; font-size: 12.5px; color: var(--yq-muted); margin-top: 6px; }
+.yq-acct__stat span{ display: block; font-size: 12.5px; color: var(--yq-muted); margin-top: 6px; }
+
+/* --- Mobile: cùng khối thành drawer trượt từ phải --- */
+html.yq-acct-lock{ overflow: hidden; }
+@media (max-width: 991.98px){
+  .yq-acct{
+    top: 0; right: 0; bottom: 0; z-index: 1050;
+    width: min(420px, 100vw);
+    overflow-y: auto; overscroll-behavior: contain;
+    border: 0; border-left: 1px solid var(--yq-line); border-radius: 0;
+    box-shadow: 0 0 0 100vmax rgba(23,22,19,0);
+    opacity: 1; transform: translateX(100%);
+    transition: transform .32s var(--yq-ease), box-shadow .32s var(--yq-ease), visibility .32s;
+  }
+  .yq-acct.is-open{ box-shadow: 0 0 0 100vmax rgba(23,22,19,.45); }
+  .yq-acct::before{ display: none; }
+  .yq-acct__bar{
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 24px 20px 14px;
+  }
+  .yq-acct__head{ padding: 8px 20px 18px; }
+  .yq-acct__list{ padding: 10px 12px; }
+  .yq-acct__item{ padding: 12px 10px; font-size: 15px; }
+  .yq-acct__ico{ width: 36px; height: 36px; }
+  .yq-acct__foot{ padding: 14px 20px 24px; }
+  .yq-acct__pane{ padding: 4px 20px 24px; }
+}
 
 /* nút account ở header khi đã đăng nhập -> hiện chữ cái đầu, viền vàng;
    đang mở popup (aria-expanded) -> đổ đặc màu vàng */
@@ -430,10 +397,8 @@ body:has(.yq-header .yq-auth[aria-modal="true"]) > .modal-backdrop{ display: non
 }
 
 @media (prefers-reduced-motion: reduce){
-  .yq-auth__pane, .yq-mfn__pane{ animation: none; }
+  .yq-auth__pane, .yq-acct__pane{ animation: none; }
   .yq-acct{ transition: none; }
   .yq-acct__item > .yq-i:last-child{ transition: none; }
   .yq-auth__soc:hover{ transform: none; }
-  .yq-mfn__item{ transition: none; }
-  .yq-mfn__item:hover{ padding-left: 4px; }
 }
