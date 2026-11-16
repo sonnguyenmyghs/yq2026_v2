@@ -509,7 +509,7 @@
              data-ord-id / #yqOrdBody…  <- @order.id
              .yq-ord__no               <- #@order.id
              .yq-ord__time             <- Order Time: @order.date_format   (dạng 21-August-2026)
-             .yq-ord__flag             <- chỉ có ở đơn pending
+             .yq-ord__flag             <- pending: "Awaiting payment"; completed: thêm class yq-ord__flag--ok, chữ "Ordered" (@order.status_label)
              Đơn đầu tiên (@order@first): thêm class is-open, aria-expanded="true",
                .yq-ord__briefs hidden, .yq-ord__full không hidden. Các đơn còn lại ngược lại.
              .yq-ord__briefs / .yq-ord__full   <- @foreach(order.items as item) ... @endforeach
@@ -534,6 +534,7 @@
         <article class="yq-ord__card is-open" data-ord-id="354646799">
           <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="true" aria-controls="yqOrdBody354646799">
             <span class="yq-ord__no">#354646799</span>
+            <span class="yq-ord__flag yq-ord__flag--ok">Ordered</span>
             <span class="yq-ord__time">Order Time: 21-August-2026</span>
             <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
           </button>
@@ -593,6 +594,7 @@
         <article class="yq-ord__card" data-ord-id="868514922">
           <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="false" aria-controls="yqOrdBody868514922">
             <span class="yq-ord__no">#868514922</span>
+            <span class="yq-ord__flag yq-ord__flag--ok">Ordered</span>
             <span class="yq-ord__time">Order Time: 14-June-2026</span>
             <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
           </button>
@@ -625,6 +627,7 @@
         <article class="yq-ord__card" data-ord-id="423838196">
           <button class="yq-ord__head" type="button" data-ord-toggle aria-expanded="false" aria-controls="yqOrdBody423838196">
             <span class="yq-ord__no">#423838196</span>
+            <span class="yq-ord__flag yq-ord__flag--ok">Ordered</span>
             <span class="yq-ord__time">Order Time: 06-February-2026</span>
             <span class="yq-ord__chev" aria-hidden="true"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></span>
           </button>

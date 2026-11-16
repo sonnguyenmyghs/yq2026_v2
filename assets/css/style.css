@@ -1112,6 +1112,7 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
   padding: 5px 11px; border-radius: var(--yq-radius-pill);
   background: var(--yq-gold-soft); color: var(--yq-gold-dark);
 }
+.yq-ord__flag--ok{ background: #E6F0E7; color: #2F6B3A; }
 .yq-ord__time{ margin-left: auto; font-size: 14px; color: var(--yq-body); }
 .yq-ord__chev{ display: inline-flex; color: var(--yq-muted); transition: transform .3s var(--yq-ease); }
 .yq-ord__card.is-open .yq-ord__chev{ transform: rotate(90deg); }
