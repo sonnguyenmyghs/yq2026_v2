@@ -1157,6 +1157,31 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
 .yq-ord__foot{ display: flex; justify-content: flex-end; padding-top: 14px; }
 .yq-ord__action{ min-width: 148px; }
 
+/* --- modal ReOrder khi giỏ đang có hàng (#modalCenter, id giữ theo template cũ) --- */
+.yq-ordm .modal-dialog{ max-width: 440px; }
+.yq-ordm .modal-content{
+  position: relative; padding: 36px 32px 30px; text-align: center;
+  border: 0; border-radius: var(--yq-radius); background: var(--yq-paper); box-shadow: var(--yq-shadow-lg);
+  font-family: var(--yq-sans);
+}
+.yq-ordm__close{
+  position: absolute; top: 12px; right: 12px; display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border: 0; border-radius: 50%; background: none; color: var(--yq-muted); cursor: pointer;
+}
+.yq-ordm__close:hover{ background: var(--yq-cream); color: var(--yq-ink); }
+.yq-ordm__icon{
+  display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; margin-bottom: 14px;
+  border-radius: 50%; background: var(--yq-gold-soft); color: var(--yq-gold-dark);
+}
+.yq-ordm__title{ margin: 0 0 8px; font-family: var(--yq-serif); font-size: 22px; font-weight: 600; color: var(--yq-ink); }
+.yq-ordm__text{ margin: 0 0 24px; font-size: 15px; line-height: 1.55; color: var(--yq-body); }
+.yq-ordm__actions{ display: grid; gap: 10px; }
+.yq-ordm__actions .yq-btn{ width: 100%; justify-content: center; }
+@media (max-width: 575.98px){
+  .yq-ordm .modal-dialog{ margin: 16px; }
+  .yq-ordm .modal-content{ padding: 32px 20px 22px; }
+}
+
 @media (max-width: 991.98px){
   .yq-ord{ grid-template-columns: 1fr; }
   .yq-ord__tabs{ position: static; grid-auto-flow: column; grid-auto-columns: 1fr; }

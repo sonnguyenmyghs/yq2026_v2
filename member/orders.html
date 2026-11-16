@@ -518,9 +518,9 @@
                .yq-ord__qty em / .yq-ord__x       <- @item.qty
                .yq-ord__price          <- @item.total_format
              .yq-ord__total            <- Total: @order.total_format @_OLD_CURRENCY_BY_CART
-             Nút cuối: completed -> ReOrder (data-ord-reorder); pending -> Pay now href="@_BASE/checkout/?order=@order.id"
+             Nút cuối: completed -> ReOrder button.run_reorder data-id="@order.id" data-type="@order.type" (giống template cũ); pending -> Pay now href="@_BASE/checkout/?order=@order.id"
            .yq-ord__empty (mỗi pane 1 khối) <- bỏ hidden khi danh sách tab đó rỗng (count == 0)
-         JS (YQ.initOrders) chỉ chuyển tab + mở/đóng thẻ đơn + ReOrder, không render lại khối này. -->
+         JS (assets/js/modules/member/orders.js) chỉ chuyển tab + mở/đóng thẻ đơn + ReOrder, không render lại khối này. -->
     <div class="yq-ord">
       <div class="yq-ord__tabs" id="ordTabs" role="group" aria-label="Order status">
         <button class="yq-ord__tab is-active" type="button" data-ord-tab="completed" aria-pressed="true"><span>Completed orders</span><em>3</em></button>
@@ -586,7 +586,7 @@
               <!-- @endforeach -->
               <div class="yq-ord__total">Total: 570.00 SGD</div>
               <div class="yq-ord__foot">
-                <button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>
+                <button class="yq-btn yq-btn--gold yq-ord__action run_reorder" type="button" data-id="354646799" data-type="1">ReOrder</button>
               </div>
             </div>
           </div>
@@ -619,7 +619,7 @@
               <!-- @endforeach -->
               <div class="yq-ord__total">Total: 288.00 SGD</div>
               <div class="yq-ord__foot">
-                <button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>
+                <button class="yq-btn yq-btn--gold yq-ord__action run_reorder" type="button" data-id="868514922" data-type="1">ReOrder</button>
               </div>
             </div>
           </div>
@@ -661,7 +661,7 @@
               <!-- @endforeach -->
               <div class="yq-ord__total">Total: 184.00 SGD</div>
               <div class="yq-ord__foot">
-                <button class="yq-btn yq-btn--gold yq-ord__action" type="button" data-ord-reorder data-yq-add>ReOrder</button>
+                <button class="yq-btn yq-btn--gold yq-ord__action run_reorder" type="button" data-id="423838196" data-type="1">ReOrder</button>
               </div>
             </div>
           </div>
@@ -776,6 +776,22 @@
       </div>
     </div>
     <!-- ========== /MY ORDERS ========== -->
+    <!-- ReOrder khi giỏ đang có hàng (giữ id template cũ: modalCenter, link_a1, link_a2).
+         JS gán href cho 2 link: link_a1 = thay giỏ (replace=true), link_a2 = thêm vào giỏ (replace=false). -->
+    <div class="modal fade yq-ordm" id="modalCenter" tabindex="-1" aria-labelledby="modalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <button type="button" class="yq-ordm__close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+          <div class="yq-ordm__icon" aria-hidden="true"><svg class="yq-i" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
+          <h2 class="yq-ordm__title" id="modalCenterTitle">Your cart already has items</h2>
+          <p class="yq-ordm__text">Would you like to replace them with this order, or add this order to the items already in your cart?</p>
+          <div class="yq-ordm__actions">
+            <a class="yq-btn yq-btn--gold" id="link_a1" href="#">Replace cart</a>
+            <a class="yq-btn yq-btn--yqost" id="link_a2" href="#">Add to cart</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -970,11 +986,11 @@
 <script src="../assets/js/modules/cart-anim.js"></script>
 <script src="../assets/js/modules/add-to-cart.js"></script>
 <script src="../assets/js/modules/account.js"></script>
+<script src="../assets/js/modules/member/orders.js"></script>
 <script>
   jQuery(function () {
     YQ.initHeader();
     YQ.initFooter();
-    YQ.initOrders();
   });
 </script>
 </body>

@@ -289,74 +289,7 @@
   /* ======================================================================
      10. My Orders (2 tab: Completed orders / Pending payment)
      ====================================================================== */
-  YQ.initOrders = function () {
-    // Toàn bộ markup (2 tab, các thẻ đơn ở cả 2 dạng rút gọn/đầy đủ, khối rỗng) là HTML tĩnh trong member/orders.html
-    // — JS chỉ chuyển tab, mở/đóng thẻ đơn (class + hidden) và xử lý ReOrder.
-    var TABS = ['completed', 'pending'];
-
-    /** Mở 1 tab: bật class/aria trên nút, hiện pane tương ứng, ẩn pane còn lại. */
-    function showTab(id) {
-      $('#ordTabs [data-ord-tab]').each(function () {
-        var on = $(this).attr('data-ord-tab') === id;
-        $(this).toggleClass('is-active', on).attr('aria-pressed', on ? 'true' : 'false');
-      });
-      $('#ordList [data-ord-pane]').each(function () {
-        $(this).prop('hidden', $(this).attr('data-ord-pane') !== id);
-      });
-    }
-
-    /** Mở/đóng 1 thẻ đơn: đổi class is-open + aria, ẩn/hiện khối rút gọn và khối đầy đủ. */
-    function setOpen($card, on) {
-      $card.toggleClass('is-open', on);
-      $card.find('[data-ord-toggle]').attr('aria-expanded', on ? 'true' : 'false');
-      $card.find('.yq-ord__briefs').prop('hidden', on);
-      $card.find('.yq-ord__full').prop('hidden', !on);
-    }
-
-    /** Ghép 1 dòng đơn với sản phẩm thật (chỉ dùng cho ReOrder); trả null nếu id không còn trong catalogue. */
-    function line(row) {
-      var p = YQ.product(row.id);
-      if (!p) return null;
-      var opt = (p.options || []).filter(function (o) { return o.id === row.optionId; })[0];
-      var unit = opt && opt.price != null ? opt.price : p.price;
-      var qty = row.qty || 1;
-      return {
-        product: p, option: opt || null, qty: qty,
-        unit: unit, sum: unit * qty,
-        name: p.name + (opt && opt.label ? ' (' + opt.label + ')' : '')
-      };
-    }
-    function linesOf(order) {
-      return (order.items || []).map(line).filter(Boolean);
-    }
-
-    /* --- sự kiện --- */
-    $(document).on('click', '#ordTabs [data-ord-tab]', function () {
-      showTab($(this).attr('data-ord-tab'));
-    });
-
-    $(document).on('click', '#ordList [data-ord-toggle]', function () {
-      var $card = $(this).closest('.yq-ord__card');
-      setOpen($card, !$card.hasClass('is-open'));
-    });
-
-    $(document).on('click', '#ordList [data-ord-reorder]', function () {
-      var id = $(this).closest('.yq-ord__card').attr('data-ord-id');
-      var order = (YQ.orders || []).filter(function (o) { return o.id === id; })[0];
-      if (!order) return;
-
-      var lines = linesOf(order);
-      if (!lines.length) { YQ.toast('These items are no longer available'); return; }
-
-      $.each(lines, function (_, l) { YQ.cart.add(l.product, l.option, l.qty); });
-      YQ.toast(lines.length + (lines.length === 1 ? ' item' : ' items') + ' added to your cart',
-               'View cart', 'cart.html');
-    });
-
-    /* ?tab=pending -> mở sẵn tab chờ thanh toán (production: PHP in sẵn tab theo {$currentTab}). */
-    var tab = YQ.param('tab');
-    if (TABS.indexOf(tab) > -1) showTab(tab);
-  };
+  /* Đã chuyển sang assets/js/modules/member/orders.js (dùng chung demo + production). */
 
   /* ======================================================================
      11. Member profile (member/profile.html — xem, member/changeprofile.html — sửa)

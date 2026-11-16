@@ -1,0 +1,82 @@
+<!-- =====================================================================
+     MY ORDERS — template PRODUCTION (route /member/orders)
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, style.css của skin
+     (CSS .yq-ord__ nằm sẵn trong style.css), app.js + cart-anim.js (cart sidebar, hiệu ứng bay vào giỏ).
+     Bản xem thử có dữ liệu mẫu: member/orders.html (repo yq2026).
+
+     Backend in 2 danh sách đơn đã dựng sẵn HTML (mới nhất trước), mỗi đơn dùng fragment:
+       backend-templates/member_order_completed.html  (tab Completed orders, nút ReOrder)
+       backend-templates/member_order_pending.html    (tab Pending payment, nút Pay now)
+     Bên trong mỗi đơn, mỗi món in 2 lần:
+       backend-templates/member_order_brief.html      (dòng rút gọn, khi thẻ đóng)
+       backend-templates/member_order_line.html       (dòng đầy đủ có ảnh + data-* cho ReOrder)
+     Mọi thẻ in ở trạng thái ĐÓNG — JS tự mở thẻ đầu tiên của mỗi tab.
+     Tab rỗng: JS tự hiện khối .yq-ord__empty khi tab không có thẻ đơn nào (backend không cần biến riêng).
+     Tab đang mở: mặc định Completed; URL có tab=pending thì JS mở tab Pending.
+     ReOrder giữ y luồng cũ: nút .run_reorder (data-id, data-type) -> /member/ordering?action=reordering.
+       Giỏ có hàng thì mở modal modalCenter (link_a1 thay giỏ / link_a2 thêm vào giỏ).
+       Số món trong giỏ đọc từ tmp_total_cart nếu layout còn in, không thì badge yqCartCount.
+     ===================================================================== -->
+
+<section class="yq-pagehead">
+  <div class="yq-container">
+    <div class="yq-eyebrow yq-eyebrow--gold">My account</div>
+    <h1 class="yq-serif">My Orders</h1>
+    <p class="yq-lead mb-0">Everything you have ordered from us, and anything still waiting to be paid.</p>
+  </div>
+</section>
+
+<section style="padding-bottom:clamp(56px,8vw,104px)">
+  <div class="yq-container">
+    <div class="yq-ord">
+      <div class="yq-ord__tabs" id="ordTabs" role="group" aria-label="Order status">
+        <button class="yq-ord__tab is-active" type="button" data-ord-tab="completed" aria-pressed="true"><span>Completed orders</span><em>{$totalOrdersCompleted}</em></button>
+        <button class="yq-ord__tab" type="button" data-ord-tab="pending" aria-pressed="false"><span>Pending payment</span><em>{$totalOrdersPending}</em></button>
+      </div>
+      <div id="ordList">
+
+        <!-- ---------- Tab: Completed orders ---------- -->
+        <div class="yq-ord__list" data-ord-pane="completed">
+          {$_htmlListOrdersCompleted}
+          <div class="yq-panel yq-empty yq-ord__empty" hidden>
+            <div class="yq-empty__icon"><svg class="yq-i" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20.5 7.5v9L12 21 3.5 16.5v-9L12 3Z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></div>
+            <h3 class="yq-h3 mb-2">No completed orders</h3>
+            <p class="yq-muted mb-4">Your completed orders will be listed here.</p>
+            <a class="yq-btn" href="$_BASE/shop">Browse the shop <svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+          </div>
+        </div>
+
+        <!-- ---------- Tab: Pending payment ---------- -->
+        <div class="yq-ord__list" data-ord-pane="pending" hidden>
+          {$_htmlListOrdersPending}
+          <div class="yq-panel yq-empty yq-ord__empty" hidden>
+            <div class="yq-empty__icon"><svg class="yq-i" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20.5 7.5v9L12 21 3.5 16.5v-9L12 3Z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></div>
+            <h3 class="yq-h3 mb-2">No pending payments</h3>
+            <p class="yq-muted mb-4">Everything is paid for — nothing waiting here.</p>
+            <a class="yq-btn" href="$_BASE/shop">Browse the shop <svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ReOrder khi giỏ đang có hàng (giữ id template cũ: modalCenter, link_a1, link_a2).
+     JS gán href cho 2 link: link_a1 = thay giỏ (replace=true), link_a2 = thêm vào giỏ (replace=false). -->
+<div class="modal fade yq-ordm" id="modalCenter" tabindex="-1" aria-labelledby="modalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <button type="button" class="yq-ordm__close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div class="yq-ordm__icon" aria-hidden="true"><svg class="yq-i" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
+      <h2 class="yq-ordm__title" id="modalCenterTitle">Your cart already has items</h2>
+      <p class="yq-ordm__text">Would you like to replace them with this order, or add this order to the items already in your cart?</p>
+      <div class="yq-ordm__actions">
+        <a class="yq-btn yq-btn--gold" id="link_a1" href="#">Replace cart</a>
+        <a class="yq-btn yq-btn--yqost" id="link_a2" href="#">Add to cart</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="$_SKIN_NO_CDN/assets/js/modules/member/orders-production.js?v1"></script>
