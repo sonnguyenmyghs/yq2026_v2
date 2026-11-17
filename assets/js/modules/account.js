@@ -3,7 +3,8 @@
    Nạp sau data.js / app.js / pages.js nên dùng được YQ.*, jQuery, Bootstrap 5.
 
    Gồm 3 mảng:
-     1) YQ.auth      : lưu người dùng ở localStorage (KHÔNG lưu mật khẩu).
+     1) YQ.auth      : trạng thái đăng nhập ĐỌC từ HTML server in (#yqMemberBtn có / không).
+                       Không lưu gì ở localStorage — phiên do backend PHP quản lý.
      2) Popup auth   : "Connect Via" + 5 nút social, 2 tab Log in / Register Now,
                        kèm pane quên mật khẩu. Bootstrap modal, markup là HTML tĩnh
                        (#yqAuthModal, khối AUTH POPUP sau footer mỗi trang).
@@ -33,7 +34,6 @@
   var BS = window.bootstrap;
   if (!BS || !BS.Modal) return;                     // cần Bootstrap 5 bundle
 
-  var KEY = 'yq_user_v1';
 
 
   /* Nút account ở header — server in 1 trong 2 (xem index.html / index-logined.html):
@@ -52,23 +52,20 @@
   });
 
   /* ======================================================================
-     1. Auth store
+     1. Trạng thái đăng nhập — backend quản lý phiên, JS KHÔNG dùng localStorage
+     Đã đăng nhập  = server in #yqMemberBtn (tên ở data-name, email ở #yqAcctMail).
+     Chưa đăng nhập = server in #yqAccountBtn. Đăng nhập / đăng xuất / đổi hồ sơ đều
+     qua server (form POST, link logout) rồi tải lại trang -> JS chỉ đọc, không lưu.
+     signIn / update / signOut chỉ đổi trong bộ nhớ (popup Register demo không có action);
+     tải lại trang là về đúng trạng thái server in.
      ====================================================================== */
   YQ.auth = {
-    user: null,
+    user: SERVER_IN ? {
+      email: $.trim($('#yqAcctMail').text()),
+      first: $.trim($('#yqMemberBtn [data-name]').attr('data-name') || ''),
+      last: ''
+    } : null,
 
-    load: function () {
-      try { this.user = JSON.parse(localStorage.getItem(KEY)) || null; }
-      catch (e) { this.user = null; }
-      return this.user;
-    },
-    save: function () {
-      try {
-        if (this.user) localStorage.setItem(KEY, JSON.stringify(this.user));
-        else localStorage.removeItem(KEY);
-      } catch (e) {}
-      $(document).trigger('yq:auth-changed', [this.user]);
-    },
     isIn: function () { return !!this.user; },
 
     /** Tên hiển thị: ưu tiên first name, không có thì lấy phần trước @ của email. */
@@ -79,36 +76,23 @@
     },
     initial: function () { return initialOf(this.name()); },
 
+    changed: function () { $(document).trigger('yq:auth-changed', [this.user]); },
     signIn: function (data) {
       this.user = $.extend({ email: '', first: '', last: '', promo: false }, data || {});
-      this.user.at = Date.now();
-      this.save();
+      this.changed();
       return this.user;
     },
     update: function (data) {
       if (!this.user) return null;
       this.user = $.extend(this.user, data || {});
-      this.save();
+      this.changed();
       return this.user;
     },
-    signOut: function () { this.user = null; this.save(); }
+    signOut: function () { this.user = null; this.changed(); }
   };
-  YQ.auth.load();
 
-  /* Khu member (<html data-member-area>: các trang trong member/) chỉ vào được khi
-     đã đăng nhập — production server chặn ở cổng và in sẵn trạng thái đăng nhập.
-     Trang có #yqMemberBtn (server in bản đã đăng nhập, VD index-logined.html) cũng vậy.
-     Bản demo: chưa đăng nhập thì tự đăng nhập bằng hồ sơ mẫu (YQ.profile, cùng dữ liệu
-     trang profile hiển thị) để avatar ở header mở được menu user thay vì popup Log in. */
-  if (!YQ.auth.isIn() && (SERVER_IN || document.documentElement.hasAttribute('data-member-area'))) {
-    var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
-    var P = YQ.profile;
-    YQ.auth.signIn({
-      email: P ? P.get('email') : '',
-      first: P ? cap(P.get('firstName')) : '',
-      last:  P ? cap(P.get('lastName')) : ''
-    });
-  }
+  /* Dọn dữ liệu bản cũ từng lưu ở máy khách (trước đây gây "Hi, Son" trên nút khách sau khi logout) */
+  try { localStorage.removeItem('yq_user_v1'); } catch (e) {}
 
   /* ======================================================================
      2. Tiện ích form
@@ -286,7 +270,7 @@
      ====================================================================== */
   function paintHeader() {
     /* #yqMemberBtn: server đã in đúng trạng thái đăng nhập — không đụng vào.
-       Chỉ #yqAccountBtn (demo Register ngay trên trang chưa đăng nhập) mới đổi qua lại. */
+       #yqAccountBtn: server in sẵn bản khách; chỉ đổi khi popup Register demo đăng nhập trong bộ nhớ. */
     if (SERVER_IN) { closePop(); return; }
     var on = YQ.auth.isIn();
     var $btn = $('#yqAccountBtn');
@@ -304,7 +288,9 @@
     closePop();
   }
 
-  $(document).on('yq:header-ready yq:auth-changed', paintHeader);
+  /* Chỉ vẽ lại khi trạng thái đổi trong trang; lúc tải trang giữ nguyên HTML server in */
+  $(document).on('yq:auth-changed', paintHeader);
+  $(document).on('yq:header-ready', function () { closePop(); });
 
   $(document).on('click', '[data-yq-account], [data-yq-member]', function (e) {
     e.preventDefault();
@@ -403,6 +389,9 @@
     })
     .on('click', '#yqAcctPop a[href]', function () { closePop(); })
     .on('click', '#yqAcctPop [data-yq-do="logout"]', function () {
+      /* Production: Logout là <a href=".../?action=logout"> — để trình duyệt đi theo link, server huỷ phiên */
+      var href = $(this).attr('href');
+      if (href && href !== '#') return;
       closePop();
       YQ.auth.signOut();
       YQ.toast('You have been logged out');
@@ -464,5 +453,4 @@
     logout:   function () { YQ.auth.signOut(); }
   };
 
-  paintHeader();
 })(jQuery);

@@ -1,15 +1,15 @@
 <!-- =====================================================================
      REGISTER STEP 2 — template PRODUCTION, thay cho old/register_step2.html
-     Partial: layout của site đã in header, footer, jQuery, Bootstrap, account.css, account.js.
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, account.css, account-production.js.
      Giao diện giống pane Register trong popup #yqAuthModal (khối xám, nhãn bên trái).
      Cấu trúc giữ như template cũ để backend không phải sửa:
        - mỗi field là một div.form-group riêng, mang class listClassSectionField + listClassMainDisabled
          (khối phụ re--moreinfo dùng listClassSubDisabled, vẫn ẩn như bản cũ)
        - inputDisabled bị xoá khỏi DOM, sectionExtra được dời tới cạnh field theo data-field
-         (account.js làm việc này, giống script đầu template cũ)
+         (account-production.js làm việc này, giống script đầu template cũ)
        - signup_extra_single vẫn in trong table của re--extra
        - name / value / hidden input / nút step2 y như cũ, POST về signup
-     Kiểm tra phía trình duyệt (account.js): email, mật khẩu, nhập lại mật khẩu, họ tên.
+     Kiểm tra phía trình duyệt (account-production.js): email, mật khẩu, nhập lại mật khẩu, họ tên.
      Hợp lệ thì form POST thẳng lên server.
      ===================================================================== -->
 <form class="yq-auth__pane yq-reg register_step_2" data-yq-pane="register" method="post" action="{$_BASE}/signup" id="yqRegForm" novalidate>
