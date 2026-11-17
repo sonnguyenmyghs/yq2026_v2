@@ -57,7 +57,59 @@
      ====================================================================== */
   var closeTimer = null;
 
-  function panelIdOf(kind) { return kind === 'seasonal' ? '#yqSeasonal' : '#yqMega'; }
+  /* Panel do PHP sinh (template category_group_single), mỗi nhóm danh mục in LIỀN 1 cục:
+       <li class="yq-nav__item yq-nav__item--panel" data-panel="yq_[id]">
+         <button class="yq-nav__link" aria-controls="[id]">…</button>
+       </li>
+       <div class="yq-navpanel" id="yq_[id]">…</div>
+     Quy ước: data-panel = "yq_" + id nhóm = id của panel. aria-controls có thể chỉ là [id] (không tiền tố).
+     Cục này nằm trong <ul class="yq-nav__list">, mà .yq-nav có overflow: hidden -> panel bị cắt.
+     setupGeneratedPanels(): dời panel ra ngay sau <nav> (cạnh #yqMega / #yqBlog) và sửa aria-controls cho khớp. */
+  var GEN_PREFIX = 'yq_';
+
+  function genPanelId(raw) {
+    if (!raw) return '';
+    raw = String(raw);
+    return raw.indexOf(GEN_PREFIX) === 0 ? raw : GEN_PREFIX + raw;
+  }
+
+  function setupGeneratedPanels() {
+    var $nav = $('.yq-nav').first();
+    if (!$nav.length) return;
+    var $after = $nav;
+    $nav.find('.yq-nav__item--panel[data-panel^="' + GEN_PREFIX + '"]').each(function () {
+      var $item = $(this);
+      var id = $item.attr('data-panel');
+      var $panel = $(document.getElementById(id));
+      if (!$panel.length) return;                       // nhóm không có panel -> bỏ qua
+      if ($panel.closest('.yq-nav').length) {            // còn nằm trong <nav> -> dời ra, giữ thứ tự nhóm
+        $after.after($panel);
+        $after = $panel;
+      }
+      $item.find('.yq-nav__link').attr('aria-controls', id);
+    });
+    /* Panel lạc khác (không theo quy ước yq_) còn trong <nav> cũng dời ra cho khỏi bị cắt */
+    $nav.find('.yq-navpanel').each(function () { $after.after(this); $after = $(this); });
+  }
+  setupGeneratedPanels();
+  $(setupGeneratedPanels);
+
+  /* Panel của 1 mục nav:
+       data-panel="yq_[id]" -> #yq_[id] (panel PHP sinh)
+       còn lại theo aria-controls (#yqMega, #yqBlog, #yqSeasonal…), không có thì tên cũ:
+       data-panel="seasonal" -> #yqSeasonal, khác -> #yqMega */
+  function panelOf($item) {
+    var kind = String($item.attr('data-panel') || '');
+    var ctrl = $item.find('.yq-nav__link').first().attr('aria-controls');
+    var ids = kind.indexOf(GEN_PREFIX) === 0 ? [kind, genPanelId(ctrl)] : [ctrl, kind];
+    for (var i = 0; i < ids.length; i++) {
+      if (!ids[i]) continue;
+      var $p = $(document.getElementById(ids[i]));
+      if ($p.hasClass('yq-navpanel')) return $p;
+    }
+    if (kind.indexOf(GEN_PREFIX) === 0) return $();    // nhóm PHP sinh mà thiếu panel -> không mở nhầm #yqMega
+    return $(kind === 'seasonal' ? '#yqSeasonal' : '#yqMega');
+  }
 
   function closePanels(immediate) {
     clearTimeout(closeTimer);
@@ -71,9 +123,9 @@
     else closeTimer = setTimeout(done, 160);
   }
 
-  function openPanel(kind, $item) {
+  function openPanel($item) {
     clearTimeout(closeTimer);
-    var $panel = $(panelIdOf(kind));
+    var $panel = panelOf($item);
     if (!$panel.length) return;
 
     $('.yq-navpanel').not($panel).removeClass('is-open');
@@ -90,7 +142,7 @@
   $(document)
     .on('mouseenter', '.yq-nav__item--panel', function () {
       if (!isDesktop()) return;
-      openPanel($(this).attr('data-panel'), $(this));
+      openPanel($(this));
     })
     .on('mouseleave', '.yq-nav__item--panel, .yq-navpanel', function () {
       if (!isDesktop()) return;
@@ -101,7 +153,6 @@
   // Bấm: mở/đóng (cần cho thiết bị cảm ứng và cho mục Seasonal vốn là <button>)
   $(document).on('click', '.yq-nav__item--panel > .yq-nav__link', function (e) {
     var $item = $(this).closest('.yq-nav__item');
-    var kind = $item.attr('data-panel');
     var isOpen = $item.hasClass('is-open');
 
     // Thẻ <button> (Seasonal) không có link -> luôn chặn mặc định.
@@ -109,13 +160,13 @@
     if (this.tagName === 'BUTTON') e.preventDefault();
     else if (!isOpen && !isDesktop()) e.preventDefault();
 
-    if (isOpen) closePanels(true); else openPanel(kind, $item);
+    if (isOpen) closePanels(true); else openPanel($item);
   });
 
   // Bàn phím: mở panel khi focus vào mục có panel
   $(document).on('focusin', '.yq-nav__item--panel > .yq-nav__link', function () {
     var $item = $(this).closest('.yq-nav__item');
-    openPanel($item.attr('data-panel'), $item);
+    openPanel($item);
   });
 
   /* ======================================================================
