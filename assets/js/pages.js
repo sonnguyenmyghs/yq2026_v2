@@ -326,7 +326,6 @@
        validate và đổ text "Signed in as" / "Last changed" từ phiên demo. */
     var $form = $('#pwForm');
     if (!$form.length) return;
-    if ($form.is('[data-yq-live]')) return;   // bản production (password-production.html) dùng member/password.js
 
     /* 4 điều kiện; đạt bao nhiêu thì thanh sức mạnh lên bấy nhiêu.
        id khớp với li[data-rule] trong #pwRules (nhãn chữ nằm trong HTML). */

@@ -1325,6 +1325,11 @@ input.yq-qty__val:focus{ outline: 1px solid var(--yq-gold); outline-offset: 2px;
 .yq-pw__form{ padding: clamp(18px, 3vw, 26px); }
 .yq-pw__field{ margin-bottom: 18px; }
 .yq-pw__field .yq-input{ width: 100%; }
+/* nút production giữ class cũ (button button--cta btn btn-primary) -> không để màu Bootstrap đè lên .yq-btn */
+.yq-pw__form .yq-pw__submit, .yq-pw__form .yq-pw__submit:hover, .yq-pw__form .yq-pw__submit:focus,
+.yq-pw__form .yq-pw__submit:active, .yq-pw__form .yq-pw__submit:disabled{
+  background: var(--btn-bg); border-color: var(--btn-bd); color: var(--btn-fg);
+}
 
 .yq-pw__meter{ margin: -4px 0 14px; }
 .yq-pw__bar{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
