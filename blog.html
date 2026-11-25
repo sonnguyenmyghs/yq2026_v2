@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Journal — The Shop, Grand Hyatt Singapore</title>
+<meta name="description" content="Stories, recipes and gifting ideas from The Shop at Grand Hyatt Singapore: festive takeaways, pastries, wine and hampers.">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/css/style.css" rel="stylesheet">
+<link href="assets/css/parts/nav.css" rel="stylesheet">
+<link href="assets/css/parts/banner.css" rel="stylesheet">
+<link href="assets/css/parts/buynow.css" rel="stylesheet">
+<link href="assets/css/parts/cart-anim.css" rel="stylesheet">
+<link href="assets/css/parts/account.css" rel="stylesheet">
+<link href="assets/css/parts/blog.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ========== HEADER (HTML tĩnh — giống nhau mọi trang, chỉ khác mục nav .is-active) ========== -->
+<!-- Account: MEMBER COMPONENT (#yqMemberSlot) trong khối tools bên phải — server in 1 trong 2 bản
+     (@if(isLoggedIn) … @else … @endif) ở đúng chỗ đó. Trang này (bản demo) in bản CHƯA đăng nhập;
+     bản ĐÃ đăng nhập xem index-logined.html. -->
+<header class="yq-header" id="yqHeader">
+  <div class="yq-header__shell">
+    <div class="yq-container">
+      <div class="yq-header__top">
+        <div class="yq-header__tools">
+          <button class="yq-iconbtn yq-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#yqOffcanvas" aria-controls="yqOffcanvas" aria-expanded="false" aria-label="Open menu"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+          <button class="yq-searchbtn" type="button" id="yqSearchToggle" data-search-toggle aria-expanded="false" aria-controls="yqSearch"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg><span class="yq-searchbtn__txt">Search</span><kbd class="yq-searchbtn__kbd" aria-hidden="true">/</kbd></button>
+          <button class="yq-iconbtn yq-searchbtn--icon" type="button" data-search-toggle aria-controls="yqSearch" aria-label="Search"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg></button>
+        </div>
+        <div class="yq-header__brand">
+          <a class="yq-logo" href="index.html" aria-label="Grand Hyatt Singapore"><span class="yq-logo__mark"><span class="yq-logo__word">Grand</span><span class="yq-logo__bar" aria-hidden="true"></span><span class="yq-logo__word">Hyatt</span><span class="yq-logo__tm" aria-hidden="true">™</span></span><span class="yq-logo__sub">Singapore</span></a>
+        </div>
+        <div class="yq-header__tools yq-header__tools--end">
+          <!-- ========== MEMBER COMPONENT (#yqMemberSlot) — server in 1 trong 2 bản ở ĐÚNG CHỖ NÀY ==========
+               Đổi giữa khách / thành viên chỉ cần đổi 1 biến component ở backend, không phải in thêm chỗ nào khác
+               (menu mobile không còn nút Account — mobile dùng luôn nút này ở header).
+                 - CHƯA đăng nhập: <a id="yqAccountBtn" data-yq-account> (icon người) + khối AUTH POPUP (#yqAuthModal).
+                 - ĐÃ đăng nhập : <button id="yqMemberBtn" data-yq-member class="yq-iconbtn is-signed"> + popup #yqAcctPop.
+               Popup #yqAcctPop: dropdown thả dưới avatar, dùng chung desktop + mobile. Biến PHP:
+                 #yqAcctAvatar        <- data-name="@member.first_name" (JS tự điền chữ cái đầu)
+                 #yqAcctName          <- "Hi, @member.first_name"
+                 #yqAcctMail          <- @member.email (trống thì thêm thuộc tính hidden)
+                 #yqAcctWalletBal     <- @member.wallet_balance_format (pane "wallet")
+               Nút Logout: production đổi thành <a class="yq-acct__logout" href="@logout_url"> nếu muốn đăng xuất bằng server.
+               Mục trang đang xem: class is-current + aria-current="page".
+               Pane con: div.yq-acct__pane[data-yq-acct-pane="<tên>"] (hidden) + nút [data-yq-view="<tên>"]; [data-yq-view=""] về #yqAcctMain.
+               Bản demo chưa đăng nhập vẫn in #yqAcctPop để demo Register (localStorage) chạy — production không cần. -->
+          <div class="yq-acct-anchor" id="yqMemberSlot">
+            <a class="yq-iconbtn" href="#" id="yqAccountBtn" data-yq-account aria-label="Account"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-yq-acct-icon><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg><span class="yq-acct-initial" id="yqAcctInitial" hidden></span></a>
+            <div class="yq-acct" id="yqAcctPop" role="dialog" aria-label="My account" hidden>
+              <div class="yq-acct__main" id="yqAcctMain">
+                <div class="yq-acct__head">
+                  <span class="yq-acct__avatar" id="yqAcctAvatar" aria-hidden="true"></span>
+                  <div class="yq-acct__who"><b class="yq-acct__name" id="yqAcctName"></b><span class="yq-acct__mail" id="yqAcctMail"></span></div>
+                  <a class="yq-acct__edit" href="member/changeprofile.html" aria-label="Edit profile">Edit</a>
+                </div>
+                <nav class="yq-acct__list" aria-label="Member menu">
+                  <a class="yq-acct__item" href="member/profile.html"><span class="yq-acct__ico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span><span class="yq-acct__txt">My profile</span><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                  <a class="yq-acct__item" href="member/orders.html"><span class="yq-acct__ico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span><span class="yq-acct__txt">My orders</span><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                  <button class="yq-acct__item" type="button" data-yq-view="wallet"><span class="yq-acct__ico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a1.5 1.5 0 0 1 0 3H5.5"/><rect x="3" y="7.5" width="18" height="11.5" rx="2.2"/><circle cx="16.5" cy="13.2" r="1.15" fill="currentColor" stroke="none"/></svg></span><span class="yq-acct__txt">My wallet</span><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+                  <a class="yq-acct__item" href="member/password.html"><span class="yq-acct__ico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg></span><span class="yq-acct__txt">Change password</span><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                  <a class="yq-acct__item" href="member/invite.html"><span class="yq-acct__ico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c1.1-3.6 3.6-5.2 6.5-5.2 1 0 1.9.2 2.7.5"/><path d="M17.5 14v6M14.5 17h6"/></svg></span><span class="yq-acct__txt">Invite friends</span><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                </nav>
+                <div class="yq-acct__foot">
+                  <button class="yq-acct__logout" type="button" data-yq-do="logout"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.5h3.8A2.2 2.2 0 0 1 20 6.7v10.6a2.2 2.2 0 0 1-2.2 2.2H14"/><path d="M10 8.5 6.5 12l3.5 3.5M6.5 12H16"/></svg><span>Logout</span></button>
+                </div>
+              </div>
+              <div class="yq-acct__pane" data-yq-acct-pane="wallet" hidden>
+                <button class="yq-auth__back" type="button" data-yq-view=""><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>My Functions</button>
+                <h3 class="yq-acct__sub">My wallet</h3>
+                <p class="yq-acct__lead">Store credit and gift-card balance, applied automatically at checkout.</p>
+                <div class="yq-acct__stat"><b id="yqAcctWalletBal">SGD 0.00</b><span>available credit</span></div>
+                <a class="yq-btn yq-btn--yqost yq-btn--block" href="shop.html?cat=dining">Buy a dining voucher <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+              </div>
+            </div>
+
+
+<!-- ========== AUTH POPUP (Log in / Register) ========== -->
+<div class="modal fade yq-auth" id="yqAuthModal" tabindex="-1" aria-labelledby="yqAuthTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <button class="yq-auth__close" type="button" data-bs-dismiss="modal" aria-label="Close"><svg class="yq-i" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="modal-body">
+        <h2 class="yq-auth__title" id="yqAuthTitle">Connect Via</h2>
+        <div class="yq-auth__social">
+          <a class="yq-auth__soc" href="#" aria-label="Continue with Facebook" title="Continue with Facebook"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 320 512" fill="currentColor" aria-hidden="true"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg></a>
+          <a class="yq-auth__soc" href="#" aria-label="Continue with Twitter" title="Continue with Twitter"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558A296.63 296.63 0 0 1 0 416.827a217.17 217.17 0 0 0 25.34 1.3c49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772a132.6 132.6 0 0 0 19.818 1.624 105 105 0 0 0 27.614-3.573C58.855 288.828 22.792 246.596 22.792 195.59v-1.299a105.5 105.5 0 0 0 47.432 13.319c-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807a121 121 0 0 1-2.599-24.04c0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827a209 209 0 0 0 60.426-16.243 225 225 0 0 1-52.628 54.253z"/></svg></a>
+          <a class="yq-auth__soc" href="#" aria-label="Continue with LinkedIn" title="Continue with LinkedIn"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3z"/></svg></a>
+          <a class="yq-auth__soc" href="#" aria-label="Continue with Google" title="Continue with Google"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 488 512" fill="currentColor" aria-hidden="true"><path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/></svg></a>
+          <a class="yq-auth__soc" href="#" aria-label="Continue with Microsoft" title="Continue with Microsoft"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M0 32h214.6v214.6H0zm233.4 0H448v214.6H233.4zM0 265.4h214.6V480H0zm233.4 0H448V480H233.4z"/></svg></a>
+        </div>
+        <p class="yq-auth__or">Or</p>
+        <div class="yq-auth__tabs" role="tablist">
+          <button class="yq-auth__tab is-active" type="button" role="tab" data-yq-tab="login" aria-selected="true">Log in</button>
+          <button class="yq-auth__tab" type="button" role="tab" data-yq-tab="register" aria-selected="false">Register Now</button>
+        </div>
+
+        <!-- pane Log in -->
+        <form class="yq-auth__pane" data-yq-pane="login" id="yqLoginForm" method="post" novalidate>
+          <div class="yq-auth__row">
+            <div>
+              <label class="yq-auth__label" for="yqAuthEmail">Email</label>
+              <input type="email" class="yq-input form-control" id="yqAuthEmail" name="email" placeholder="you@example.com" autocomplete="email">
+              <div class="yq-error" data-err-for="yqAuthEmail"></div>
+            </div>
+            <div>
+              <label class="yq-auth__label" for="yqAuthPass">Password</label>
+              <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqAuthPass" name="password" placeholder="" autocomplete="current-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i yq-auth__eye" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg><svg class="yq-i yq-auth__eyeoff" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/></svg></button></div>
+              <div class="yq-error" data-err-for="yqAuthPass"></div>
+            </div>
+          </div>
+          <div class="yq-auth__meta">
+            <label class="yq-auth__check"><input type="checkbox" id="yqAuthKeep" name="remember" value="1" checked><span>Keep me logged in</span></label>
+            <button class="yq-auth__forgot" type="button" data-yq-forgot>Forgot your password?</button>
+          </div>
+          <button class="yq-btn yq-btn--block" type="submit">Log in</button>
+        </form>
+
+        <!-- pane Register -->
+        <form class="yq-auth__pane" data-yq-pane="register" id="yqRegForm" novalidate hidden>
+          <div class="yq-auth__box">
+            <p class="yq-auth__hint">Please fill out the following information</p>
+            <div class="yq-auth__grid">
+              <div class="yq-auth__side">Email*</div>
+              <div>
+                <input type="email" class="yq-input form-control" id="yqRegEmail" name="email" placeholder="Your email address" autocomplete="email">
+                <div class="yq-error" data-err-for="yqRegEmail"></div>
+              </div>
+              <div class="yq-auth__side">Password*</div>
+              <div class="yq-auth__stack">
+                <div>
+                  <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqRegPass" name="password" placeholder="Your password" autocomplete="new-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i yq-auth__eye" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg><svg class="yq-i yq-auth__eyeoff" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/></svg></button></div>
+                  <div class="yq-error" data-err-for="yqRegPass"></div>
+                </div>
+                <div>
+                  <div class="yq-auth__pw"><input type="password" class="yq-input form-control" id="yqRegPass2" name="password_confirm" placeholder="Repeated password" autocomplete="new-password"><button class="yq-auth__peek" type="button" data-yq-peek aria-label="Show password"><svg class="yq-i yq-auth__eye" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.9"/></svg><svg class="yq-i yq-auth__eyeoff" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5 20 20M9.6 6.9A9.6 9.6 0 0 1 12 6.5c6 0 9.5 5.5 9.5 5.5a17 17 0 0 1-3.4 3.9"/><path d="M6.4 8.2A16.6 16.6 0 0 0 2.5 12S6 17.5 12 17.5c1 0 1.9-.15 2.7-.4"/><path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/></svg></button></div>
+                  <div class="yq-error" data-err-for="yqRegPass2"></div>
+                </div>
+              </div>
+              <div class="yq-auth__side">Your Name*</div>
+              <div class="yq-auth__duo">
+                <div>
+                  <input type="text" class="yq-input form-control" id="yqRegFirst" name="first_name" placeholder="First Name" autocomplete="given-name">
+                  <div class="yq-error" data-err-for="yqRegFirst"></div>
+                </div>
+                <div>
+                  <input type="text" class="yq-input form-control" id="yqRegLast" name="last_name" placeholder="Last Name" autocomplete="family-name">
+                  <div class="yq-error" data-err-for="yqRegLast"></div>
+                </div>
+              </div>
+
+              <!-- select option -->
+              <div class="yq-auth__side"><label for="yqRegTitle">Title</label></div>
+              <div>
+                <select class="form-select yq-input" id="yqRegTitle" name="title">
+                  <option value="">Select title</option>
+                  <option value="mr">Mr</option>
+                  <option value="ms" selected>Ms</option>
+                  <option value="mrs">Mrs</option>
+                  <option value="dr">Dr</option>
+                </select>
+              </div>
+
+              <!-- radio -->
+              <div class="yq-auth__side" id="yqRegGenderLbl">Gender*</div>
+              <div>
+                <div class="yq-auth__opts" role="radiogroup" aria-labelledby="yqRegGenderLbl" id="yqRegGender">
+                  <label class="yq-auth__check"><input type="radio" name="gender" value="female" checked><span>Female</span></label>
+                  <label class="yq-auth__check"><input type="radio" name="gender" value="male"><span>Male</span></label>
+                  <label class="yq-auth__check"><input type="radio" name="gender" value="na"><span>Prefer not to say</span></label>
+                </div>
+                <div class="yq-error" data-err-for="yqRegGender"></div>
+              </div>
+
+              <!-- date -->
+              <div class="yq-auth__side"><label for="yqRegDob">Date of birth</label></div>
+              <div>
+                <input type="date" class="yq-input form-control" id="yqRegDob" name="dob" value="1994-02-02" max="2026-12-31">
+              </div>
+
+              <!-- select bắt buộc (option đầu rỗng) -->
+              <div class="yq-auth__side"><label for="yqRegCountry">Country*</label></div>
+              <div>
+                <select class="form-select yq-input" id="yqRegCountry" name="country">
+                  <option value="">Select country</option>
+                  <option value="SG" selected>Singapore</option>
+                  <option value="MY">Malaysia</option>
+                  <option value="ID">Indonesia</option>
+                  <option value="TH">Thailand</option>
+                  <option value="VN">Vietnam</option>
+                  <option value="OTHER">Other</option>
+                </select>
+                <div class="yq-error" data-err-for="yqRegCountry"></div>
+              </div>
+
+              <!-- checkbox nhiều lựa chọn -->
+              <div class="yq-auth__side" id="yqRegInterestLbl">Interests</div>
+              <div class="yq-auth__opts" role="group" aria-labelledby="yqRegInterestLbl">
+                <label class="yq-auth__check"><input type="checkbox" name="interests[]" value="cakes" checked><span>Cakes &amp; Pastries</span></label>
+                <label class="yq-auth__check"><input type="checkbox" name="interests[]" value="hampers"><span>Hampers</span></label>
+                <label class="yq-auth__check"><input type="checkbox" name="interests[]" value="dining" checked><span>Dining</span></label>
+                <label class="yq-auth__check"><input type="checkbox" name="interests[]" value="spa"><span>Spa &amp; Wellness</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="yq-auth__agree">
+            <label class="yq-auth__check"><input type="checkbox" id="yqRegPromo" name="promo" value="1" checked><span>I agree to receive promotion material</span></label>
+            <label class="yq-auth__check"><input type="checkbox" id="yqRegTerms" name="terms" value="1"><span>I agree to the <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>*</span></label>
+            <div class="yq-error" data-err-for="yqRegTerms"></div>
+          </div>
+          <button class="yq-btn yq-btn--yqost yq-btn--block yq-auth__submit" type="submit">Submit</button>
+        </form>
+
+        <!-- pane quên mật khẩu -->
+        <form class="yq-auth__pane" data-yq-pane="forgot" id="yqForgotForm" novalidate hidden>
+          <button class="yq-auth__back" type="button" data-yq-tab="login"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>Back to log in</button>
+          <p class="yq-auth__hint">Enter your email and we will send you a link to reset your password.</p>
+          <div>
+            <label class="yq-auth__label" for="yqFgEmail">Email</label>
+            <input type="email" class="yq-input form-control" id="yqFgEmail" placeholder="you@example.com" autocomplete="email">
+            <div class="yq-error" data-err-for="yqFgEmail"></div>
+          </div>
+          <button class="yq-btn yq-btn--block yq-auth__submit" type="submit">Send reset link</button>
+        </form>
+
+        <p class="yq-auth__note">Demo store — no account data leaves this browser.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ========== /AUTH POPUP ========== -->
+          </div>
+          <!-- ========== /MEMBER COMPONENT ========== -->          <a class="yq-iconbtn d-none d-lg-inline-flex" href="cart.html" data-yq-cart aria-label="Cart"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="yq-cart-count" id="yqCartCount">0</span></a>
+          <a class="yq-iconbtn d-lg-none" href="cart.html" data-yq-cart aria-label="Cart"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="yq-cart-count" id="yqCartCountM">0</span></a>
+        </div>
+      </div>
+    </div>
+    <nav class="yq-nav" aria-label="Primary">
+      <div class="yq-container">
+        <ul class="yq-nav__list">
+          <li class="yq-nav__item">
+            <a class="yq-nav__link" href="index.html"><span class="yq-nav__label">The Online Shop</span></a>
+          </li>
+          <li class="yq-nav__item yq-nav__item--panel" data-panel="mega">
+            <a class="yq-nav__link" href="shop.html" aria-haspopup="true" aria-expanded="false" aria-controls="yqMega"><span class="yq-nav__label">Shop by Category</span><span class="yq-nav__caret" aria-hidden="true"><svg class="yq-i" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></span></a>
+          </li>
+          <li class="yq-nav__item">
+            <a class="yq-nav__link" href="experiences.html"><span class="yq-nav__label">Experiences</span></a>
+          </li>
+          <li class="yq-nav__item">
+            <a class="yq-nav__link" href="celebrations.html"><span class="yq-nav__label">Celebrations</span></a>
+          </li>
+          <li class="yq-nav__item yq-nav__item--panel" data-panel="seasonal">
+            <button class="yq-nav__link" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="yqSeasonal"><span class="yq-nav__label">Seasonal</span><span class="yq-nav__caret" aria-hidden="true"><svg class="yq-i" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></span></button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="yq-navpanel yq-mega" id="yqMega" role="region" aria-label="Shop by Category">
+      <div class="yq-container">
+        <div class="yq-mega__inner">
+          <div class="row g-4">
+            <div class="col-lg-3 col-md-4">
+              <div class="yq-mega__col">
+                <a class="yq-mega__col-title" href="shop.html">Shop</a>
+                <a class="yq-mega__link" href="shop.html?cat=cakes"><span>Cakes &amp; Pastries</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?cat=bakery"><span>Breads &amp; Pastries</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?cat=pantry"><span>Pantry &amp; Tea</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?cat=celebration"><span>Hampers &amp; Gift Sets</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?cat=beverages"><span>Wines &amp; Champagne</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?cat=wellness"><span>Wellness &amp; Spa</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?cat=brix"><span>Brix Merchandise</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?cat=dining"><span>Dining Vouchers</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html"><span>View All Products</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4">
+              <div class="yq-mega__col">
+                <a class="yq-mega__col-title" href="experiences.html">Experiences</a>
+                <a class="yq-mega__link" href="experiences.html"><span>Dining Experiences</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="experiences.html"><span>Spa &amp; Wellness</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="experiences.html"><span>Afternoon Tea</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="experiences.html"><span>Chef's Table</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="experiences.html"><span>Weekend Staycation</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="celebrations.html"><span>Corporate Gifting</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4">
+              <div class="yq-mega__col">
+                <a class="yq-mega__col-title" href="celebrations.html">Occasions</a>
+                <a class="yq-mega__link" href="celebrations.html"><span>Birthdays</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="celebrations.html"><span>Anniversaries</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?season=festive"><span>Festive Season</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="shop.html?season=cny"><span>Chinese New Year</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="celebrations.html"><span>Corporate</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+                <a class="yq-mega__link" href="personalise.html"><span>Personalise a Gift</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+              </div>
+            </div>
+            <div class="col-lg-3 d-none d-lg-block">
+              <a class="yq-mega__promo" href="personalise.html"><span class="yq-mega__promo-media"><img src="assets/img/shop/hamper-grand.jpg" alt="" loading="lazy" decoding="async"></span><span class="yq-mega__promo-body"><span class="yq-mega__promo-eyebrow">New</span><span class="yq-mega__promo-title">Personalise your gift</span><span class="yq-mega__promo-cta">Add an eCard <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yq-navpanel yq-season" id="yqSeasonal" role="region" aria-label="Seasonal collections">
+      <div class="yq-container">
+        <div class="yq-season__inner">
+          <div class="yq-season__head">
+            <div>
+              <div class="yq-season__eyebrow">Seasonal &amp; Occasions</div>
+              <p class="yq-season__intro">Limited-time menus, hampers and events — available for a short season only.</p>
+            </div>
+            <a class="yq-season__all" href="shop.html">Browse all offers <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+          </div>
+          <div class="yq-season__grid">
+            <a class="yq-season__card" href="shop.html?season=festive"><span class="yq-season__ico" aria-hidden="true"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 13.7 9l5.5 1.7-5.5 1.7L12 18l-1.7-5.6L4.8 10.7 10.3 9 12 3.5Z"/></svg></span><span class="yq-season__name">The Festive Season<em class="yq-season__tag">Now on</em></span><span class="yq-season__desc">Yule logs, festive hampers &amp; gifting</span><span class="yq-season__go" aria-hidden="true"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span></a>
+            <a class="yq-season__card" href="shop.html?season=cny"><span class="yq-season__ico" aria-hidden="true"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg></span><span class="yq-season__name">Chinese New Year</span><span class="yq-season__desc">Yusheng, pen cai &amp; prosperity hampers</span><span class="yq-season__go" aria-hidden="true"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span></a>
+            <a class="yq-season__card" href="shop.html?season=nye"><span class="yq-season__ico" aria-hidden="true"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8L12 3.5Z" fill="currentColor" stroke="none"/></svg></span><span class="yq-season__name">New Year's Eve Events</span><span class="yq-season__desc">Countdown dinners &amp; celebration packages</span><span class="yq-season__go" aria-hidden="true"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span></a>
+            <a class="yq-season__card" href="shop.html?season=fathers"><span class="yq-season__ico" aria-hidden="true"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3 19c.9-3 3.3-4.4 6-4.4S14.1 16 15 19"/><path d="M16 6.2A3.2 3.2 0 0 1 16 13"/><path d="M17.5 14.8c2 .6 3.4 2 4 4.2"/></svg></span><span class="yq-season__name">Father's Day Brunch</span><span class="yq-season__desc">Free-flow brunch and gifts for him</span><span class="yq-season__go" aria-hidden="true"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span></a>
+            <a class="yq-season__card" href="shop.html?season=retreats"><span class="yq-season__ico" aria-hidden="true"><svg class="yq-i" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4C10 4 4 9 4 16c0 2 .7 3.4.7 3.4S9 12 19 9c0 0-5.5 3.5-8 11 6.5 1 9-4 9-16Z"/></svg></span><span class="yq-season__name">Retreats</span><span class="yq-season__desc">Wellness escapes, spa journeys &amp; stays</span><span class="yq-season__go" aria-hidden="true"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yq-search" id="yqSearch" aria-hidden="true">
+      <div class="yq-container">
+        <form class="yq-search__field" id="yqSearchForm" role="search"><span class="yq-search__ico" aria-hidden="true"><svg class="yq-i" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg></span>
+          <input type="search" class="yq-search__input" id="yqSearchInput" autocomplete="off" placeholder="Search cakes, hampers, experiences…" aria-label="Search">
+          <button class="yq-search__clear" type="button" data-search-clear aria-label="Clear search"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <button class="yq-search__go" type="submit">Search<svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></button>
+        </form>
+        <!-- Live search (search.js): POST @base/search/?product_name=@keyword, HTML trả về (các a.search--zone--viewed) thay nội dung #yqSearchList. Production để trống #yqSearchList -->
+        <div class="yq-search__results" id="yqSearchResults" aria-live="polite" hidden>
+          <div class="yq-sres__head"><span class="yq-search__label">Products</span></div>
+          <div class="search--zone--vieweds" id="yqSearchList">
+            <a class="search--zone--viewed" href="product.html?id=signature-chocolate-cake">
+              <div class="viewed--img"><img src="assets/img/shop/cake-chocolate-gold.jpg" alt=""></div>
+              <div class="viewed--content">
+                <p class="v-name">Signature Chocolate Cake</p>
+                <p class="v-price">SGD 78</p>
+                <p class="v-location"><span class="fa fa-map-marker-alt"></span> Grand Hyatt Singapore</p>
+              </div>
+            </a>
+            <a class="search--zone--viewed" href="product.html?id=the-grand-hamper">
+              <div class="viewed--img"><img src="assets/img/shop/hamper-grand.jpg" alt=""></div>
+              <div class="viewed--content">
+                <p class="v-name">The Grand Hamper</p>
+                <p class="v-price">SGD 218</p>
+                <p class="v-location"><span class="fa fa-map-marker-alt"></span> Grand Hyatt Singapore</p>
+              </div>
+            </a>
+            <a class="search--zone--viewed" href="product.html?id=the-pantry-hamper">
+              <div class="viewed--img"><img src="assets/img/shop/hamper-pantry.jpg" alt=""></div>
+              <div class="viewed--content">
+                <p class="v-name">The Pantry Hamper</p>
+                <p class="v-price">SGD 168</p>
+                <p class="v-location"><span class="fa fa-map-marker-alt"></span> Grand Hyatt Singapore</p>
+              </div>
+            </a>
+            <a class="search--zone--viewed" href="product.html?id=gh-champagne-brut">
+              <div class="viewed--img"><img src="assets/img/p-champagne.jpg" alt=""></div>
+              <div class="viewed--content">
+                <p class="v-name">Grand Hyatt Champagne Brut</p>
+                <p class="v-price">SGD 128</p>
+                <p class="v-location"><span class="fa fa-map-marker-alt"></span> Grand Hyatt Singapore</p>
+              </div>
+            </a>
+            <a class="search--zone--viewed" href="product.html?id=damai-wellness-set">
+              <div class="viewed--img"><img src="assets/img/p-spa-set.jpg" alt=""></div>
+              <div class="viewed--content">
+                <p class="v-name">Damai Spa Wellness Set</p>
+                <p class="v-price">SGD 188</p>
+                <p class="v-location"><span class="fa fa-map-marker-alt"></span> Grand Hyatt Singapore</p>
+              </div>
+            </a>
+            <a class="search--zone--viewed" href="product.html?id=dark-chocolate-cherry-cake">
+              <div class="viewed--img"><img src="assets/img/shop/cake-chocolate-cherry.jpg" alt=""></div>
+              <div class="viewed--content">
+                <p class="v-name">Dark Chocolate Cherry Cake</p>
+                <p class="v-price">SGD 11</p>
+                <p class="v-location"><span class="fa fa-map-marker-alt"></span> Grand Hyatt Singapore</p>
+              </div>
+            </a>
+          </div>
+          <p class="yq-sres__empty" hidden>No products found for “<b data-sres-q>cake</b>”. Try another keyword.</p>
+        </div>
+        <div class="yq-search__meta"><span class="yq-search__label">Popular searches</span>
+          <div class="yq-search__suggest">
+            <button class="yq-chip" type="button" data-suggest="Hampers">Hampers</button>
+            <button class="yq-chip" type="button" data-suggest="Chocolate cake">Chocolate cake</button>
+            <button class="yq-chip" type="button" data-suggest="Champagne">Champagne</button>
+            <button class="yq-chip" type="button" data-suggest="Spa gift">Spa gift</button>
+            <button class="yq-chip" type="button" data-suggest="Corporate gifting">Corporate gifting</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="offcanvas offcanvas-start yq-oc" tabindex="-1" id="yqOffcanvas" aria-label="Menu">
+  <div class="offcanvas-header yq-oc__head">
+    <div class="yq-logo yq-logo--sm" role="img" aria-label="Grand Hyatt Singapore"><span class="yq-logo__mark"><span class="yq-logo__word">Grand</span><span class="yq-logo__bar" aria-hidden="true"></span><span class="yq-logo__word">Hyatt</span><span class="yq-logo__tm" aria-hidden="true">™</span></span><span class="yq-logo__sub">Singapore</span></div>
+    <button type="button" class="yq-oc__close" data-bs-dismiss="offcanvas" aria-label="Close menu"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="offcanvas-body yq-oc__body">
+    <div class="yq-oc__quick">
+      <a class="yq-oc__quicklink" href="cart.html"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span>Cart</span><em class="yq-oc__badge" data-oc-count>0</em></a>
+      <button class="yq-oc__quicklink" type="button" data-search-toggle data-bs-dismiss="offcanvas"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg><span>Search</span></button>
+    </div>
+    <nav class="yq-oc__nav" aria-label="Mobile">
+      <a class="yq-oc__link" href="index.html">The Online Shop</a>
+      <div class="yq-oc__group">
+        <div class="yq-oc__row">
+          <a class="yq-oc__link" href="shop.html">Shop by Category</a>
+          <button class="yq-oc__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#yqOcGrp1" aria-expanded="false" aria-controls="yqOcGrp1" aria-label="Show Shop by Category submenu"><span class="yq-oc__chev" aria-hidden="true"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></span></button>
+        </div>
+        <div class="collapse" id="yqOcGrp1">
+          <div class="yq-oc__sub">
+            <a class="yq-oc__sublink" href="shop.html?cat=cakes"><span>Cakes &amp; Pastries</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?cat=bakery"><span>Breads &amp; Pastries</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?cat=pantry"><span>Pantry &amp; Tea</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?cat=celebration"><span>Hampers &amp; Gift Sets</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?cat=beverages"><span>Wines &amp; Champagne</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?cat=wellness"><span>Wellness &amp; Spa</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?cat=brix"><span>Brix Merchandise</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?cat=dining"><span>Dining Vouchers</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html"><span>View All Products</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="yq-oc__group">
+        <div class="yq-oc__row">
+          <a class="yq-oc__link" href="experiences.html">Experiences</a>
+          <button class="yq-oc__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#yqOcGrp2" aria-expanded="false" aria-controls="yqOcGrp2" aria-label="Show Experiences submenu"><span class="yq-oc__chev" aria-hidden="true"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></span></button>
+        </div>
+        <div class="collapse" id="yqOcGrp2">
+          <div class="yq-oc__sub">
+            <a class="yq-oc__sublink" href="experiences.html"><span>Dining Experiences</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="experiences.html"><span>Spa &amp; Wellness</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="experiences.html"><span>Afternoon Tea</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="experiences.html"><span>Chef's Table</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="experiences.html"><span>Weekend Staycation</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="celebrations.html"><span>Corporate Gifting</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="yq-oc__group">
+        <div class="yq-oc__row">
+          <a class="yq-oc__link" href="celebrations.html">Celebrations</a>
+          <button class="yq-oc__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#yqOcGrp3" aria-expanded="false" aria-controls="yqOcGrp3" aria-label="Show Celebrations submenu"><span class="yq-oc__chev" aria-hidden="true"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></span></button>
+        </div>
+        <div class="collapse" id="yqOcGrp3">
+          <div class="yq-oc__sub">
+            <a class="yq-oc__sublink" href="celebrations.html"><span>Birthdays</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="celebrations.html"><span>Anniversaries</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?season=festive"><span>Festive Season</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?season=cny"><span>Chinese New Year</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="celebrations.html"><span>Corporate</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="personalise.html"><span>Personalise a Gift</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="yq-oc__group">
+        <button class="yq-oc__link yq-oc__link--full yq-oc__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#yqOcGrp4" aria-expanded="false" aria-controls="yqOcGrp4">Seasonal<span class="yq-oc__chev" aria-hidden="true"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></span></button>
+        <div class="collapse" id="yqOcGrp4">
+          <div class="yq-oc__sub">
+            <a class="yq-oc__sublink" href="shop.html?season=festive"><span>The Festive Season</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?season=cny"><span>Chinese New Year</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?season=nye"><span>New Year's Eve Events</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?season=fathers"><span>Father's Day Brunch</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+            <a class="yq-oc__sublink" href="shop.html?season=retreats"><span>Retreats</span><svg class="yq-i" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="yq-oc__foot">
+      <a class="yq-btn yq-btn--gold yq-btn--block" href="cart.html">View cart</a>
+      <div class="yq-oc__note"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><span>Complimentary delivery above SGD 300</span></div>
+    </div>
+  </div>
+</div>
+<!-- ========== /HEADER ========== -->
+
+<section class="yq-pagehead">
+  <div class="yq-container">
+    <div class="yq-eyebrow yq-eyebrow--gold">The Journal</div>
+    <h1 class="yq-serif">Stories from The Shop</h1>
+    <p class="yq-lead mb-0">Recipes, gifting ideas and the people behind our cakes, pralines, wines and hampers at Grand Hyatt Singapore.</p>
+  </div>
+</section>
+
+<section class="yq-blog">
+  <div class="yq-container">
+
+    <!-- Bài nổi bật — production: fragment backend-templates/blog_post_featured.html -->
+    <article class="yq-blog__feature yq-reveal">
+      <a class="yq-media yq-zoom" href="blog-post.html?slug=santa-shop-2026" aria-hidden="true" tabindex="-1">
+        <img src="assets/img/hero-festive.jpg" alt="" decoding="async">
+      </a>
+      <div class="yq-blog__feature-body">
+        <span class="yq-blog__feature-badge">Editor&rsquo;s pick</span>
+        <a class="yq-post__cat" href="blog.html?cat=festive">The Santa Shop</a>
+        <h2 class="yq-blog__feature-title yq-serif"><a href="blog-post.html?slug=santa-shop-2026">Your Christmas Table, Sorted: Inside The Santa Shop 2026</a></h2>
+        <p>Roast turkey, glazed ham, panettone and hampers for gifting — everything our chefs are cooking for the season, how pre-ordering works, and the early bird codes worth knowing about.</p>
+        <div class="yq-post__meta"><span>12 Nov 2026</span><span>6 min read</span><span>By The Shop Editors</span></div>
+        <div><a class="yq-btn" href="blog-post.html?slug=santa-shop-2026">Read the story <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a></div>
+      </div>
+    </article>
+
+    <!-- Danh mục: link thật (giống chip .product--type ở shop). Demo: blog.js lọc tại chỗ + đổi URL ?cat= -->
+    <div class="yq-filterbar yq-blog__bar">
+      <nav class="yq-filterbar__chips" id="yqBlogCats" aria-label="Journal categories">
+          <a href="blog.html" class="yq-chip is-active" data-cat="all" aria-current="page">All stories <span class="yq-chip__count">9</span></a>
+          <a href="blog.html?cat=festive" class="yq-chip" data-cat="festive">The Santa Shop <span class="yq-chip__count">2</span></a>
+          <a href="blog.html?cat=pastries" class="yq-chip" data-cat="pastries">Pastries &amp; Desserts <span class="yq-chip__count">3</span></a>
+          <a href="blog.html?cat=beverage" class="yq-chip" data-cat="beverage">Wine &amp; Beverage <span class="yq-chip__count">2</span></a>
+          <a href="blog.html?cat=dining" class="yq-chip" data-cat="dining">Dining <span class="yq-chip__count">1</span></a>
+          <a href="blog.html?cat=wellness" class="yq-chip" data-cat="wellness">Wellness &amp; Fitness <span class="yq-chip__count">1</span></a>
+          <a href="blog.html?cat=gifting" class="yq-chip" data-cat="gifting">Gifting &amp; Hampers <span class="yq-chip__count">3</span></a>
+      </nav>
+      <div class="yq-filterbar__tools">
+        <span class="yq-results-count" id="yqBlogCount">9 stories</span>
+      </div>
+    </div>
+
+    <div class="row g-4" id="yqBlogGrid" data-yq-blog-demo>
+      <div class="col-md-6 col-lg-4" data-blog-cat="festive">
+        <article class="yq-post yq-reveal" data-delay="0">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=how-to-carve-a-turkey" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/o-festive.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=festive">The Santa Shop</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=how-to-carve-a-turkey">How to Carve a Herb-Roasted Turkey Like Our Chefs</a></h3>
+            <p class="yq-post__excerpt">Rest it, find the joint, slice against the grain. A short guide to plating a 5kg bird so every guest gets crisp skin and a juicy slice.</p>
+            <div class="yq-post__meta"><span>10 Nov 2026</span><span>4 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="pastries festive">
+        <article class="yq-post yq-reveal" data-delay="70">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=panettone-or-stollen" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/shop/fruit-cake.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=pastries">Pastries &amp; Desserts</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=panettone-or-stollen">Panettone or Stollen? A Guide to Europe’s Festive Breads</a></h3>
+            <p class="yq-post__excerpt">One is a tall, airy Milanese loaf; the other a dense, marzipan-filled German classic. How they differ, how long they keep and how to serve them.</p>
+            <div class="yq-post__meta"><span>5 Nov 2026</span><span>5 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="pastries">
+        <article class="yq-post yq-reveal" data-delay="140">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=making-the-matcha-strawberry-cake" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/shop/cake-matcha-strawberry.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=pastries">Pastries &amp; Desserts</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=making-the-matcha-strawberry-cake">The Making of Our Matcha Strawberry Cake</a></h3>
+            <p class="yq-post__excerpt">Stone-ground matcha, fresh strawberries and a light chantilly. Our pastry team walks through the layers of The Shop’s most-ordered slice.</p>
+            <div class="yq-post__meta"><span>29 Oct 2026</span><span>4 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="festive pastries gifting" data-blog-promo>
+        <!-- Ô chiến dịch (chỉ có ở demo): The Santa Shop Early Bird, theo trang thật 6–22 Nov 2026 -->
+        <a class="yq-blog__promo" href="shop.html?season=festive">
+          <span class="yq-media"><img src="assets/img/shop/group-cakes.jpg" alt="" loading="lazy" decoding="async"></span>
+          <span class="yq-blog__promo-body">
+            <span class="yq-eyebrow d-block">The Santa Shop · Early Bird</span>
+            <h3 class="yq-serif">20% off festive takeaways &amp; hampers</h3>
+            <p>Pay with DBS/POSB or Citibank cards, 6 – 22 Nov 2026. Use <span class="yq-blog__promo-code">DBSFESTIVE20</span> or <span class="yq-blog__promo-code">CITIFESTIVE20</span>. 48-hour pre-order required.</p>
+            <span class="yq-btn yq-btn--gold yq-btn--sm">Shop the Santa Shop</span>
+          </span>
+        </a>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="beverage">
+        <article class="yq-post yq-reveal" data-delay="0">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=champagne-for-every-celebration" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/p-champagne.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=beverage">Wine &amp; Beverage</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=champagne-for-every-celebration">Champagne for Every Celebration: Five Bottles Worth Opening</a></h3>
+            <p class="yq-post__excerpt">From a grower Extra Brut to a house favourite for toasts, a short list of sparkling wines to match birthdays, anniversaries and year-end parties.</p>
+            <div class="yq-post__meta"><span>22 Oct 2026</span><span>5 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="beverage">
+        <article class="yq-post yq-reveal" data-delay="70">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=reading-a-bordeaux-label" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/p-cellar-trio.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=beverage">Wine &amp; Beverage</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=reading-a-bordeaux-label">Reading a Bordeaux Label, One Bottle at a Time</a></h3>
+            <p class="yq-post__excerpt">Château, appellation, vintage and second wines. A plain-English guide to choosing a red from our cellar for the holiday table.</p>
+            <div class="yq-post__meta"><span>15 Oct 2026</span><span>6 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="dining gifting">
+        <article class="yq-post yq-reveal" data-delay="140">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=gifting-a-dining-experience" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/e-dining.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=dining">Dining</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=gifting-a-dining-experience">Gifting an Experience: Dining Vouchers That Feel Personal</a></h3>
+            <p class="yq-post__excerpt">A voucher can be thoughtful. How to choose the right restaurant, add a personalised e-card and time the delivery to the day.</p>
+            <div class="yq-post__meta"><span>8 Oct 2026</span><span>3 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="wellness">
+        <article class="yq-post yq-reveal" data-delay="0">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=a-slower-sunday" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/e-spa.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=wellness">Wellness &amp; Fitness</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=a-slower-sunday">A Slower Sunday: Spa Morning, Afternoon Tea</a></h3>
+            <p class="yq-post__excerpt">Our idea of a reset: a treatment at the spa, then tea and pastries in the lobby. How to plan it, and how to gift it.</p>
+            <div class="yq-post__meta"><span>1 Oct 2026</span><span>4 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="gifting">
+        <article class="yq-post yq-reveal" data-delay="70">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=building-a-thank-you-hamper" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/shop/hamper-grand.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=gifting">Gifting &amp; Hampers</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=building-a-thank-you-hamper">Building a Hamper That Says Thank You</a></h3>
+            <p class="yq-post__excerpt">Corporate or personal, the best hampers mix something to open now with something to keep. Our team’s rules for putting one together.</p>
+            <div class="yq-post__meta"><span>24 Sep 2026</span><span>5 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="pastries gifting">
+        <article class="yq-post yq-reveal" data-delay="140">
+          <a class="yq-post__media yq-media yq-zoom" href="blog-post.html?slug=pralines-101" aria-hidden="true" tabindex="-1">
+            <img src="assets/img/shop/pralines-25.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="blog.html?cat=pastries">Pastries &amp; Desserts</a>
+            <h3 class="yq-post__title"><a href="blog-post.html?slug=pralines-101">Pralines 101: Tempering, Filling and Finishing</a></h3>
+            <p class="yq-post__excerpt">Why a good praline snaps, shines and melts slowly. Inside the chocolate room, from ganache to the final gold dust.</p>
+            <div class="yq-post__meta"><span>17 Sep 2026</span><span>5 min read</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="yq-panel yq-blog__empty d-none" id="yqBlogEmpty">
+      <h3 class="yq-h3 mb-2">No stories here yet</h3>
+      <p class="yq-muted mb-4">We&rsquo;re writing new stories for this category. In the meantime, browse everything in the Journal.</p>
+      <a class="yq-btn" href="blog.html">See all stories</a>
+    </div>
+
+    <nav class="yq-blog__pager" id="yqBlogPager" aria-label="Journal pages">
+      <span class="is-disabled" aria-hidden="true">&lsaquo;</span>
+      <a href="blog.html" class="is-active" aria-current="page">1</a>
+      <a href="blog.html?page=2">2</a>
+      <a href="blog.html?page=3">3</a>
+      <a href="blog.html?page=2" aria-label="Next page">&rsaquo;</a>
+    </nav>
+
+    <!-- Sản phẩm nhắc tới trong các bài — production: backend in card sản phẩm như shop -->
+    <div class="yq-blog__shop">
+      <div class="yq-blog__shop-head">
+        <div>
+          <div class="yq-eyebrow yq-eyebrow--gold">Shop the stories</div>
+          <h2 class="yq-h2 yq-serif">As featured in the Journal</h2>
+        </div>
+        <a class="yq-link-arrow" href="shop.html">Shop all products <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+      </div>
+      <div class="row g-4">
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="0"><div class="yq-card__mediawrap"><span class="yq-ribbon"><span>Seasonal</span></span><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=festive-yule-log" aria-label="Festive Yule Log"><img src="assets/img/p-yule-log.jpg" alt="Festive Yule Log" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="festive-yule-log" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="festive-yule-log" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Festive Yule Log"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">The Santa Shop</div><h3 class="yq-card__title"><a href="product.html?id=festive-yule-log">Festive Yule Log</a></h3><p class="yq-card__desc">Chocolate sponge rolled with chestnut cream, finished by hand for the season.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>SGD&nbsp;88</span><a class="yq-link-arrow" href="product.html?id=festive-yule-log">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a></div></div></article></div>
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="70"><div class="yq-card__mediawrap"><span class="yq-ribbon"><span>Bestseller</span></span><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=grand-pralines" aria-label="Grand Pralines Collection"><img src="assets/img/shop/pralines-25.jpg" alt="Grand Pralines Collection" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="grand-pralines" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="grand-pralines" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Grand Pralines Collection"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">Cookies &amp; Pralines</div><h3 class="yq-card__title"><a href="product.html?id=grand-pralines">Grand Pralines Collection</a></h3><p class="yq-card__desc">Handcrafted pralines in an elegant gold gift box. Dark, milk and white chocolate.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>SGD&nbsp;58</span><a class="yq-link-arrow" href="product.html?id=grand-pralines">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a></div></div></article></div>
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="140"><div class="yq-card__mediawrap"><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=the-grand-hamper" aria-label="The Grand Hamper"><img src="assets/img/shop/hamper-grand.jpg" alt="The Grand Hamper" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="the-grand-hamper" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="the-grand-hamper" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: The Grand Hamper"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">Hampers</div><h3 class="yq-card__title"><a href="product.html?id=the-grand-hamper">The Grand Hamper</a></h3><p class="yq-card__desc">Our signature selection of artisan treats, preserves and fine teas.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>SGD&nbsp;218</span><a class="yq-link-arrow" href="product.html?id=the-grand-hamper">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a></div></div></article></div>
+      <div class="col-6 col-lg-3"><article class="yq-card yq-reveal" data-delay="210"><div class="yq-card__mediawrap"><a class="yq-card__media yq-media yq-zoom d-block" href="product.html?id=gh-champagne-brut" aria-label="Grand Hyatt Champagne Brut"><img src="assets/img/p-champagne.jpg" alt="Grand Hyatt Champagne Brut" loading="lazy" decoding="async"></a><div class="yq-quickadd yq-quickadd--duo"><button class="yq-btn yq-btn--sm addToCart" type="button" data-page="1" data-productid="gh-champagne-brut" data-quantity="1" data-attribute="1" data-go="1" data-var="0"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg> Add to cart</button><button class="yq-btn yq-btn--sm yq-buynow-mini addToCart" type="button" data-buynow="1" data-page="1" data-productid="gh-champagne-brut" data-quantity="1" data-attribute="1" data-go="1" data-var="0" aria-label="Buy now: Grand Hyatt Champagne Brut"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z"/></svg><span>Buy now</span></button></div></div><div class="yq-card__body"><div class="yq-card__cat">Champagnes / Sparkling</div><h3 class="yq-card__title"><a href="product.html?id=gh-champagne-brut">Grand Hyatt Champagne Brut</a></h3><p class="yq-card__desc">Crisp and elegant, with fine bubbles and notes of white peach.</p><div class="yq-card__foot"><span class="yq-card__price"><small>From</small>SGD&nbsp;128</span><a class="yq-link-arrow" href="product.html?id=gh-champagne-brut">View <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a></div></div></article></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== FOOTER (HTML tĩnh — giống nhau mọi trang) ========== -->
+<section class="yq-newsletter">
+  <div class="yq-container">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-6">
+        <h3 class="yq-serif">Stay in the Know</h3>
+        <p>New collections, seasonal offers, and exclusive promotions — delivered to your inbox.</p>
+      </div>
+      <div class="col-lg-6">
+        <form class="yq-newsletter__form" id="yqNewsletter" novalidate>
+          <input type="email" class="form-control yq-input" placeholder="Your email address" aria-label="Email" required>
+          <button class="yq-btn" type="submit">Subscribe</button>
+        </form>
+        <div class="yq-error" id="yqNewsletterErr">Please enter a valid email address.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<footer class="yq-footer">
+  <div class="yq-container">
+    <div class="row">
+      <div class="col-lg-4 mb-5 mb-lg-0 pe-lg-5">
+        <a class="yq-logo yq-logo--light yq-logo--footer" href="index.html" aria-label="Grand Hyatt Singapore"><span class="yq-logo__mark"><span class="yq-logo__word">Grand</span><span class="yq-logo__bar" aria-hidden="true"></span><span class="yq-logo__word">Hyatt</span><span class="yq-logo__tm" aria-hidden="true">™</span></span><span class="yq-logo__sub">Singapore</span></a>
+        <p>Curated cakes, artisan hampers, and premium wines — crafted in our kitchens and delivered with care.</p>
+        <div class="yq-social">
+          <a href="#" aria-label="LinkedIn">in</a>
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+        </div>
+        <h4>Contact</h4>
+        <div class="yq-footer__contact">
+          <a href="mailto:theshop.sg@hyatt.com">theshop.sg@hyatt.com</a>
+          <a href="tel:+6564167117">+65 6416 7117</a>
+          <span>The Shop, Lobby Level &middot; 10:00 AM – 7:00 PM daily</span>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?cat=cakes">Cakes &amp; Pastries</a></li>
+          <li><a href="shop.html?cat=bakery">Breads &amp; Pastries</a></li>
+          <li><a href="shop.html?cat=pantry">Pantry &amp; Tea</a></li>
+          <li><a href="shop.html?cat=celebration">Hampers &amp; Gift Sets</a></li>
+          <li><a href="shop.html?cat=beverages">Wines &amp; Champagne</a></li>
+          <li><a href="shop.html?cat=wellness">Wellness &amp; Spa</a></li>
+          <li><a href="shop.html?cat=brix">Brix Merchandise</a></li>
+          <li><a href="shop.html?cat=dining">Dining Vouchers</a></li>
+          <li><a href="shop.html">View All Products</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+        <h4>Experiences</h4>
+        <ul>
+          <li><a href="experiences.html">Dining Experiences</a></li>
+          <li><a href="experiences.html">Spa &amp; Wellness</a></li>
+          <li><a href="experiences.html">Afternoon Tea</a></li>
+          <li><a href="experiences.html">Chef's Table</a></li>
+          <li><a href="experiences.html">Weekend Staycation</a></li>
+          <li><a href="celebrations.html">Corporate Gifting</a></li>
+          <li><a href="shop.html?season=cny">Chinese New Year</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+        <h4>Blog &amp; Gift Guides</h4>
+        <ul>
+          <li><a href="https://danamic.org/2024/12/11/indulge-this-festive-season-grand-hyatt-singapore-is-back-for-christmas/" target="_blank" rel="noopener">Indulge this Festive Season: Grand Hyatt Singapore is Back For Christmas</a></li>
+          <li><a href="https://www.aspirantsg.com/grand-hyatt-singapore-cny-2025/" target="_blank" rel="noopener">Grand Hyatt Singapore CNY 2025: Local Delights &amp; Festive Treats</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+        <h4>Help &amp; Info</h4>
+        <ul>
+          <li><a href="member/profile.html">My Profile</a></li>
+          <li><a href="member/orders.html">My Orders</a></li>
+          <li><a href="faq.html">FAQs</a></li>
+          <li><a href="faq.html#delivery">Delivery &amp; Collection</a></li>
+          <li><a href="returns.html">Returns Policy</a></li>
+          <li><a href="faq.html#help">Contact Us</a></li>
+          <li><a href="terms.html">Terms &amp; Conditions</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="yq-footer__bottom"><small>&copy; 2026 Grand Hyatt Singapore. All rights reserved.</small>
+      <div class="yq-pay"><span>VISA</span><span>MC</span><span>AMEX</span><span>PayNow</span></div>
+    </div>
+  </div>
+</footer>
+<!-- ========== /FOOTER ========== -->
+
+<!-- ========== CART SIDEBAR (HTML tĩnh — PHP đổ giỏ từ session, giống modal ShowCartIR cũ) ==========
+     Biến PHP (theo modal cũ):
+       ul#yqCdList            <- @contentCartHtml      (các dòng cart_product_single)
+       #yqCdN                 <- @totalItemsCart items
+       #yqCdTotal             <- @totalCostCart @_OLD_CURRENCY_BY_CART
+       .yq-cdrawer__gift      <- class @hidden_gift_yqreward + nội dung @arlet_buy_more_yqreward
+       a.yq-cdrawer__viewcart <- @_hiddenViewShowCart + href="@_BASE/cart/?action=view"
+       aside#yqCartDrawer     <- thêm class "is-empty" khi @totalItemsCart == 0 (JS cũng tự đồng bộ)
+     Badge ở header (#yqCartCount, #yqCartCountM) và menu mobile ([data-oc-count]) <- @totalItemsCart
+       #yqCdNote              <- note free shipping (xem comment trong khối, biến @toFreeShippingCart …)
+     JS (cart-anim.js) chỉ mở/đóng; add-to-cart.js cập nhật lại 3 chỗ trên sau mỗi lần addCart.
+     Bản demo HTML (không có #root): cart-anim.js chỉ đổi text số lượng/giá/subtotal/note trên các dòng
+     mẫu có sẵn — không dựng dòng mới. Drawer không có +/- và nút xoá (làm ở trang giỏ). -->
+<div class="yq-cdrawer-back" hidden></div>
+<aside class="yq-cdrawer" id="yqCartDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabindex="-1" hidden>
+  <header class="yq-cdrawer__head">
+    <div>
+      <span class="yq-cdrawer__eyebrow" id="yqCdEyebrow">Your shopping bag</span>
+      <h2 class="yq-cdrawer__title">Your bag <small id="yqCdN">3 items</small></h2>
+    </div>
+    <button class="yq-cdrawer__close" type="button" data-yq-cd-close aria-label="Close"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </header>
+  <div class="yq-cdrawer__body" id="yqCdBody">
+    <div class="yq-cdrawer__gift d-none"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg><div></div></div>
+    <ul class="yq-cdrawer__list" id="yqCdList">
+    <!-- PHP: in @contentCartHtml tại đây (xem README › drawer giỏ). 2 <li> dưới là MẪU, xoá khi gắn PHP -->
+    <li class="yq-cdrawer__row" data-key="signature-chocolate-cake::medium" data-price="88">
+      <div class="yq-cdrawer__media yq-media"><img src="assets/img/p-chocolate-cake.jpg" alt="Signature Chocolate Cake" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Signature Chocolate Cake</div>
+        <div class="yq-cdrawer__opt">Medium · 1 kg</div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">SGD 88.00</div>
+      </div>
+    </li>
+    <li class="yq-cdrawer__row" data-key="pantry-hamper::classic" data-price="68" data-qty="2">
+      <div class="yq-cdrawer__media yq-media"><img src="assets/img/p-pantry-hamper.jpg" alt="Pantry Hamper" loading="lazy" decoding="async"></div>
+      <div class="yq-cdrawer__info">
+        <div class="yq-cdrawer__name">Pantry Hamper</div>
+        <div class="yq-cdrawer__opt">Classic · Gift message card</div>
+      </div>
+      <div class="yq-cdrawer__right">
+        <div class="yq-cdrawer__price">SGD 136.00</div>
+      </div>
+    </li>
+    </ul>
+    <div class="yq-cdrawer__empty">
+      <div class="yq-cdrawer__empty-icon"><svg class="yq-i" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div>
+      <h3>Your bag is empty</h3>
+      <p>Explore our cakes, hampers, and experiences.</p>
+      <a class="yq-btn yq-btn--sm" href="shop.html" data-yq-cd-close>Continue shopping <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+    </div>
+  </div>
+  <footer class="yq-cdrawer__foot" id="yqCdFoot">
+    <div class="yq-cdrawer__sum"><span>Subtotal</span><strong id="yqCdTotal">SGD 224.00</strong></div>
+    <!-- Note free shipping — 2 khối loại trừ nhau (ẩn bằng class d-none):
+           #yqCdShipNote <- còn thiếu tiền: ẩn bằng @hidden_ship_note
+             #yqCdToFree <- @toFreeShippingCart      #yqCdShipBar <- style="width:@freeShippingPercent%"
+           #yqCdShipFree <- đã đủ free ship: ẩn bằng @hidden_ship_free
+         Backend không có dữ liệu này thì bỏ cả khối #yqCdNote. Demo: cart-anim.js đổi text/width/d-none. -->
+    <div id="yqCdNote">
+      <div class="yq-cdrawer__note" id="yqCdShipNote"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg><div class="w-100">Add <span id="yqCdToFree">SGD 76.00</span> more for free shipping<div class="yq-cdrawer__bar"><i id="yqCdShipBar" style="width:75%"></i></div></div></div>
+      <div class="yq-cdrawer__note d-none" id="yqCdShipFree"><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg><div>You have unlocked free shipping.</div></div>
+    </div>
+    <div class="yq-cdrawer__actions">
+      <a class="yq-btn yq-btn--gold yq-btn--block yq-cdrawer__checkout" href="checkout.html">Checkout <svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+      <a class="yq-btn yq-btn--yqost yq-btn--block yq-cdrawer__viewcart" href="cart.html">View cart</a>
+      <button class="yq-cdrawer__cont" type="button" data-yq-cd-close>Continue shopping</button>
+    </div>
+  </footer>
+</aside>
+<!-- ========== /CART SIDEBAR ========== -->
+
+<!-- ========== TOAST (HTML tĩnh — thông báo nhỏ góc phải dưới) ==========
+     <template id="yqToastTpl"> là khuôn 1 thông báo (không hiển thị). YQ.toast() trong app.js clone khuôn,
+     điền .yq-toast__msg bằng .text(), link (nếu có) bằng .text() + attr("href") rồi bỏ hidden, thêm vào
+     .yq-toast-wrap và tự gỡ bản clone sau ~4s. Không có biến PHP. -->
+<div class="yq-toast-wrap" id="yqToastWrap">
+  <template id="yqToastTpl">
+    <div class="yq-toast" role="status">
+      <span class="yq-toast__icon"><svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6.5"/></svg></span>
+      <span class="yq-toast__msg"></span>
+      <a class="yq-toast__link" href="#" hidden></a>
+    </div>
+  </template>
+</div>
+<!-- ========== /TOAST ========== -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/modules/nav.js"></script>
+<script src="assets/js/modules/search.js"></script>
+<script src="assets/js/modules/buynow.js"></script>
+<script src="assets/js/modules/cart-anim.js"></script>
+<script src="assets/js/modules/add-to-cart.js"></script>
+<script src="assets/js/modules/account.js"></script>
+<script src="assets/js/modules/blog.js"></script>
+<script>
+  jQuery(function () {
+    YQ.initHeader();
+    YQ.initFooter();
+    YQ.initReveal();
+  });
+</script>
+</body>
+</html>

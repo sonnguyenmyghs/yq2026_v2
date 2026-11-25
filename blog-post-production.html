@@ -1,0 +1,629 @@
+<!-- =====================================================================
+     THE JOURNAL — bài viết — template PRODUCTION (route /blog/santa-shop-2026)
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, style.css, app.js,
+     add-to-cart.js, cart-anim.js. Markup là HTML MẪU, giống hệt bản demo blog-post.html —
+     không có biến dữ liệu, sửa nội dung trực tiếp trong file này.
+     CSS + JS gắn trực tiếp trong file (sinh từ assets/css/parts/blog.css + assets/js/modules/blog.js).
+     Ảnh nạp từ skin (thư mục assets của repo), link trỏ route thật của site.
+     ===================================================================== -->
+<style>
+/* The Journal — CSS gắn trực tiếp (nguồn: assets/css/parts/blog.css) */
+.yq-blog {
+  padding-bottom: clamp(56px, 8vw, 104px);
+}
+.yq-post__cat {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--yq-gold-dark);
+}
+a.yq-post__cat:hover {
+  color: var(--yq-ink);
+}
+.yq-post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  font-size: 12.5px;
+  color: var(--yq-muted);
+}
+.yq-post__meta span + span::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 14px;
+  vertical-align: middle;
+  opacity: .7;
+}
+.yq-blog__feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  background: var(--yq-paper);
+  border: 1px solid var(--yq-line-soft);
+  border-radius: var(--yq-radius);
+  overflow: hidden;
+  margin-bottom: clamp(36px, 5vw, 56px);
+}
+.yq-blog__feature .yq-media {
+  aspect-ratio: 4 / 3;
+  height: 100%;
+}
+.yq-blog__feature-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: clamp(24px, 4vw, 56px);
+}
+.yq-blog__feature-title {
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  line-height: 1.15;
+  margin: 0;
+}
+.yq-blog__feature-title a {
+  color: var(--yq-ink);
+}
+.yq-blog__feature-title a:hover {
+  color: var(--yq-gold-dark);
+}
+.yq-blog__feature-body p {
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--yq-body);
+  margin: 0;
+}
+.yq-blog__feature-badge {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: var(--yq-radius-pill);
+  background: var(--yq-gold-soft);
+  color: var(--yq-gold-dark);
+}
+.yq-blog__bar {
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--yq-line);
+}
+.yq-blog__bar .yq-results-count {
+  font-size: 13px;
+  color: var(--yq-muted);
+  white-space: nowrap;
+}
+.yq-post {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--yq-paper);
+  border: 1px solid var(--yq-line-soft);
+  border-radius: var(--yq-radius);
+  overflow: hidden;
+  transition: box-shadow .35s var(--yq-ease), transform .35s var(--yq-ease);
+}
+.yq-post:hover {
+  box-shadow: var(--yq-shadow-md);
+  transform: translateY(-3px);
+}
+.yq-post__media {
+  aspect-ratio: 4 / 3;
+  display: block;
+}
+.yq-post__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 22px 24px;
+  flex: 1;
+}
+.yq-post__title {
+  font-size: 1.2rem;
+  line-height: 1.3;
+  margin: 0;
+}
+.yq-post__title a {
+  color: var(--yq-ink);
+}
+.yq-post__title a:hover {
+  color: var(--yq-gold-dark);
+}
+.yq-post__excerpt {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--yq-body);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.yq-post__body .yq-post__meta {
+  margin-top: auto;
+  padding-top: 8px;
+}
+.yq-blog__promo {
+  position: relative;
+  height: 100%;
+  min-height: 360px;
+  border-radius: var(--yq-radius);
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  align-items: flex-end;
+}
+.yq-blog__promo .yq-media {
+  position: absolute;
+  inset: 0;
+}
+.yq-blog__promo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(23,22,19,.05) 20%, rgba(23,22,19,.82) 100%);
+}
+.yq-blog__promo-body {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 28px;
+}
+.yq-blog__promo-body .yq-eyebrow {
+  color: #E7D3A3;
+  margin-bottom: 10px;
+}
+.yq-blog__promo-body p {
+  display: block;
+}
+.yq-blog__promo-body h3 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.yq-blog__promo-body p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,.86);
+  margin-bottom: 18px;
+}
+.yq-blog__promo-code {
+  display: inline-block;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: .06em;
+  border: 1px dashed rgba(231,211,163,.7);
+  border-radius: 6px;
+  padding: 2px 8px;
+  color: #E7D3A3;
+}
+.yq-blog__empty {
+  text-align: center;
+  padding: 56px 24px;
+}
+.yq-blog__pager {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 44px;
+  flex-wrap: wrap;
+}
+.yq-blog__pager a, .yq-blog__pager span {
+  min-width: 42px;
+  height: 42px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--yq-line);
+  border-radius: var(--yq-radius-pill);
+  font-size: 13.5px;
+  color: var(--yq-ink-soft);
+  background: var(--yq-paper);
+}
+.yq-blog__pager a:hover {
+  border-color: var(--yq-ink);
+  color: var(--yq-ink);
+}
+.yq-blog__pager .is-active {
+  background: var(--yq-ink);
+  border-color: var(--yq-ink);
+  color: #fff;
+}
+.yq-blog__pager .is-disabled {
+  opacity: .45;
+  pointer-events: none;
+}
+.yq-blog__shop {
+  padding-top: clamp(48px, 7vw, 88px);
+}
+.yq-blog__shop-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.yq-blog__shop-head h2 {
+  margin: 0;
+}
+.yq-article__head {
+  max-width: 860px;
+  margin: 0 auto;
+  text-align: center;
+  padding: clamp(32px, 5vw, 64px) 0 clamp(24px, 3vw, 36px);
+}
+.yq-article__head .yq-back {
+  margin-bottom: 22px;
+}
+.yq-article__title {
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  line-height: 1.1;
+  margin: 14px 0 16px;
+}
+.yq-article__dek {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--yq-body);
+  margin: 0 auto 20px;
+  max-width: 680px;
+}
+.yq-article__head .yq-post__meta {
+  justify-content: center;
+}
+.yq-article__hero {
+  border-radius: var(--yq-radius);
+  aspect-ratio: 21 / 9;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+.yq-article__main {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.yq-article__body > p, .yq-article__body li {
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--yq-ink-soft);
+}
+.yq-article__body h2 {
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+  margin: 44px 0 14px;
+  scroll-margin-top: calc(var(--yq-header-h) + 24px);
+}
+.yq-article__body h3 {
+  font-size: 1.2rem;
+  margin: 28px 0 10px;
+}
+.yq-article__body ul, .yq-article__body ol {
+  padding-left: 1.25rem;
+  margin-bottom: 1.2rem;
+}
+.yq-article__body li + li {
+  margin-top: 6px;
+}
+.yq-article__body a {
+  color: var(--yq-gold-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.yq-article__body a:hover {
+  color: var(--yq-ink);
+}
+.yq-article__body figure {
+  margin: 32px 0;
+}
+.yq-article__body figure .yq-media {
+  border-radius: var(--yq-radius);
+  aspect-ratio: 3 / 2;
+}
+.yq-article__body figcaption {
+  font-size: 13px;
+  color: var(--yq-muted);
+  margin-top: 10px;
+}
+.yq-article__note {
+  display: flex;
+  gap: 14px;
+  margin: 28px 0;
+  padding: 18px 20px;
+  background: var(--yq-gold-soft);
+  border-radius: var(--yq-radius-sm);
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--yq-ink-soft);
+}
+.yq-article__note .yq-i {
+  flex: none;
+  margin-top: 4px;
+  color: var(--yq-gold-dark);
+}
+.yq-article__note p {
+  margin: 0;
+}
+.yq-article__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 44px;
+  padding-top: 24px;
+  border-top: 1px solid var(--yq-line);
+}
+.yq-share {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.yq-share__label {
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--yq-muted);
+  margin-right: 4px;
+}
+.yq-share a, .yq-share button {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--yq-line);
+  border-radius: 50%;
+  background: var(--yq-paper);
+  color: var(--yq-ink-soft);
+  transition: all .25s var(--yq-ease);
+}
+.yq-share a:hover, .yq-share button:hover {
+  border-color: var(--yq-ink);
+  color: var(--yq-ink);
+}
+.yq-share button.is-done {
+  border-color: var(--yq-gold);
+  color: var(--yq-gold-dark);
+}
+.yq-article__related {
+  padding-top: clamp(48px, 7vw, 88px);
+}
+@media (max-width: 991.98px) {
+  .yq-blog__feature {
+    grid-template-columns: 1fr;
+  }
+  .yq-blog__feature .yq-media {
+    height: auto;
+  }
+  .yq-article__hero {
+    aspect-ratio: 16 / 10;
+  }
+}
+@media (max-width: 575.98px) {
+  .yq-blog__bar.yq-filterbar {
+    flex-wrap: wrap;
+  }
+  .yq-blog__bar .yq-filterbar__tools {
+    margin-left: 0;
+  }
+  .yq-blog__shop-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .yq-article__body > p, .yq-article__body li {
+    font-size: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yq-post, .yq-post:hover {
+    transition: none;
+    transform: none;
+  }
+}
+</style>
+
+<article class="yq-article">
+  <div class="yq-container">
+    <header class="yq-article__head">
+      <a class="yq-back" href="$_BASE/blog"><svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5"/><polyline points="11 6 5 12 11 18"/></svg> Back to the Journal</a>
+      <div><a class="yq-post__cat" href="$_BASE/blog?cat=festive">The Santa Shop</a></div>
+      <h1 class="yq-article__title yq-serif">Your Christmas Table, Sorted: Inside The Santa Shop 2026</h1>
+      <p class="yq-article__dek">Roast turkey, glazed ham, panettone and hampers for gifting — everything our chefs are cooking for the season, how pre-ordering works, and the early bird codes worth knowing about.</p>
+      <div class="yq-post__meta"><span>By The Shop Editors</span><span>12 Nov 2026</span><span>6 min read</span></div>
+    </header>
+
+    <div class="yq-article__hero yq-media"><img src="$_SKIN_NO_CDN/assets/img/hero-festive.jpg" alt="Festive cakes and hampers from The Santa Shop" decoding="async"></div>
+
+    <div class="yq-article__main">
+      <div class="yq-article__body">
+          <p>Every year the kitchen at Grand Hyatt Singapore starts planning Christmas in late summer. By November the menu is set, the hampers are packed and The Santa Shop opens online, so you can take the hotel&rsquo;s festive table home without cooking a thing. Here is what is on it this year, and how to order without the last-minute rush.</p>
+
+          <h2>The roasts</h2>
+          <p>The centrepiece is a herb-roasted Tom turkey of around 5 to 5.5kg, enough for a table of eight to ten. It is joined by a honey garlic butter glazed ham of about 1.6kg, and for beef lovers a garlic pepper crusted Shimo Wagyu MB4/5 rib. Each roast comes with its own sauces and gravies, ready to reheat.</p>
+          <figure>
+            <div class="yq-media"><img src="$_SKIN_NO_CDN/assets/img/lifestyle/table-landscape.jpg" alt="A festive table set with roasts, sides and desserts" loading="lazy" decoding="async"></div>
+            <figcaption>Roasts arrive fully cooked, with reheating notes from our chefs.</figcaption>
+          </figure>
+
+          <h2>Bundles for every table size</h2>
+          <p>If you would rather not build a menu yourself, the bundles do it for you:</p>
+          <ul>
+            <li><strong>Festive Bundle</strong> (serves 4) &mdash; SGD 388</li>
+            <li><strong>Thanksgiving Bundle</strong> (serves 6&ndash;8) &mdash; SGD 388</li>
+            <li><strong>Family Classics Bundle</strong> (serves 6&ndash;8) &mdash; SGD 488</li>
+            <li><strong>Sweet Treats Bundle</strong> &mdash; SGD 158, for a dessert-only spread</li>
+          </ul>
+
+          <h2>Cakes, breads and sweets</h2>
+          <p>The pastry team bakes a chestnut clementine log cake, a brandy fruit cake, a traditional Christmas pudding and a signature homemade panettone. There is also a gingerbread house for anyone with children at home, and a 25-piece box of festive pralines for the coffee table.</p>
+
+          <h2>Hampers for gifting</h2>
+          <p>For colleagues, clients and family you won&rsquo;t see over the holidays, the Be Merry Hamper and the Festive Shop Hamper mix wine, pralines, cookies and pantry treats. Hampers can be collected from The Shop or sent with a personalised message.</p>
+
+          <h2>How to order</h2>
+          <ol>
+            <li>Choose your items in <a href="$_BASE/shop?season=festive">The Santa Shop</a> and add them to your cart.</li>
+            <li>Pick a self-collection date at least 48 hours ahead. The Shop is open for collection 10:00 AM &ndash; 7:00 PM daily, at the Lobby Level.</li>
+            <li>Apply your bank&rsquo;s promo code at checkout if it applies, then pay online.</li>
+          </ol>
+          <div class="yq-article__note">
+            <svg class="yq-i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><path d="M12 7.6v.1"/></svg>
+            <p><strong>Early Bird, 6 &ndash; 22 Nov 2026:</strong> 20% off The Santa Shop with DBS/POSB (code <strong>DBSFESTIVE20</strong>) or Citibank cards (code <strong>CITIFESTIVE20</strong>). All festive items need 48 hours&rsquo; notice.</p>
+          </div>
+          <p>Questions about an order? Call <a href="tel:+6564167117">+65 6416 7117</a> or email <a href="mailto:theshop.sg@hyatt.com">theshop.sg@hyatt.com</a>.</p>
+      </div>
+
+      <footer class="yq-article__foot">
+        <div class="yq-share">
+          <span class="yq-share__label">Share</span>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshop.grandhyattsingapore.com%2Fblog%2Fsanta-shop-2026" target="_blank" rel="noopener" aria-label="Share on Facebook"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 8H17V4.5h-2.5A4 4 0 0 0 10.5 8.5V11H8v3.5h2.5V21H14v-6.5h2.6l.4-3.5h-3V9a1 1 0 0 1 1-1Z"/></svg></a>
+          <a href="https://wa.me/?text=https%3A%2F%2Fshop.grandhyattsingapore.com%2Fblog%2Fsanta-shop-2026" target="_blank" rel="noopener" aria-label="Share on WhatsApp"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8.4 19L4 20Z"/><path d="M9 9.5c.3 2 2.5 4.3 4.6 4.8l1.2-1.2 1.8.8-.4 1.6c-3.6.4-7.6-3.3-7.7-7l1.6-.4.8 1.8L9 9.5Z"/></svg></a>
+          <a href="mailto:?subject=Inside%20The%20Santa%20Shop%202026&amp;body=https%3A%2F%2Fshop.grandhyattsingapore.com%2Fblog%2Fsanta-shop-2026" aria-label="Share by email"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="m3.8 7 8.2 6 8.2-6"/></svg></a>
+          <button type="button" data-yq-copy aria-label="Copy link"><svg class="yq-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+        </div>
+      </footer>
+    </div>
+
+    <section class="yq-article__related yq-blog">
+      <div class="yq-blog__shop-head">
+        <div>
+          <div class="yq-eyebrow yq-eyebrow--gold">Keep reading</div>
+          <h2 class="yq-h2 yq-serif">More from the Journal</h2>
+        </div>
+        <a class="yq-link-arrow" href="$_BASE/blog">All stories <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><polyline points="13 6 19 12 13 18"/></svg></a>
+      </div>
+      <div class="row g-4">
+      <div class="col-md-6 col-lg-4" data-blog-cat="festive">
+        <article class="yq-post yq-reveal" data-delay="0">
+          <a class="yq-post__media yq-media yq-zoom" href="$_BASE/blog/how-to-carve-a-turkey" aria-hidden="true" tabindex="-1">
+            <img src="$_SKIN_NO_CDN/assets/img/o-festive.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="$_BASE/blog?cat=festive">The Santa Shop</a>
+            <h3 class="yq-post__title"><a href="$_BASE/blog/how-to-carve-a-turkey">How to Carve a Herb-Roasted Turkey Like Our Chefs</a></h3>
+            <p class="yq-post__excerpt">Rest it, find the joint, slice against the grain. A short guide to plating a 5kg bird so every guest gets crisp skin and a juicy slice.</p>
+            <div class="yq-post__meta"><span>10 Nov 2026</span><span>4 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="pastries festive">
+        <article class="yq-post yq-reveal" data-delay="70">
+          <a class="yq-post__media yq-media yq-zoom" href="$_BASE/blog/panettone-or-stollen" aria-hidden="true" tabindex="-1">
+            <img src="$_SKIN_NO_CDN/assets/img/shop/fruit-cake.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="$_BASE/blog?cat=pastries">Pastries &amp; Desserts</a>
+            <h3 class="yq-post__title"><a href="$_BASE/blog/panettone-or-stollen">Panettone or Stollen? A Guide to Europe’s Festive Breads</a></h3>
+            <p class="yq-post__excerpt">One is a tall, airy Milanese loaf; the other a dense, marzipan-filled German classic. How they differ, how long they keep and how to serve them.</p>
+            <div class="yq-post__meta"><span>5 Nov 2026</span><span>5 min read</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="col-md-6 col-lg-4" data-blog-cat="wellness">
+        <article class="yq-post yq-reveal" data-delay="140">
+          <a class="yq-post__media yq-media yq-zoom" href="$_BASE/blog/a-slower-sunday" aria-hidden="true" tabindex="-1">
+            <img src="$_SKIN_NO_CDN/assets/img/e-spa.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+          <div class="yq-post__body">
+            <a class="yq-post__cat" href="$_BASE/blog?cat=wellness">Wellness &amp; Fitness</a>
+            <h3 class="yq-post__title"><a href="$_BASE/blog/a-slower-sunday">A Slower Sunday: Spa Morning, Afternoon Tea</a></h3>
+            <p class="yq-post__excerpt">Our idea of a reset: a treatment at the spa, then tea and pastries in the lobby. How to plan it, and how to gift it.</p>
+            <div class="yq-post__meta"><span>1 Oct 2026</span><span>4 min read</span></div>
+          </div>
+        </article>
+      </div>
+      </div>
+    </section>
+  </div>
+</article>
+
+<script>
+/* ==========================================================================
+   The Journal (blog) — dùng chung demo + production (an toàn với template engine:
+   chỉ dùng jQuery, không biến đô-la, không mở + đóng ngoặc nhọn trên cùng một dòng).
+
+   1. Danh sách (blog.html / blog-production.html): lọc danh mục tại chỗ khi lưới có data-yq-blog-demo,
+      URL đổi theo href của chip (?cat=). Mở trang với ?cat= thì lọc sẵn.
+   2. Bài viết (blog-post.html): nút copy link (data-yq-copy).
+   ========================================================================== */
+(function (jq) {
+  'use strict';
+
+  /* ---------- 1. Lọc danh mục (demo) ---------- */
+  function setupDemoFilter() {
+    var grid = jq('[data-yq-blog-demo]');
+    if (!grid.length) {
+      return;
+    }
+    var chips = jq('#yqBlogCats [data-cat]');
+    var countEl = jq('#yqBlogCount');
+    var emptyEl = jq('#yqBlogEmpty');
+    var pager = jq('#yqBlogPager');
+
+    function apply(cat) {
+      var shown = 0;
+      grid.children('[data-blog-cat]').each(function () {
+        var item = jq(this);
+        var cats = String(item.attr('data-blog-cat')).split(' ');
+        var ok = cat === 'all' || cats.indexOf(cat) > -1;
+        item.toggleClass('d-none', !ok);
+        if (ok && !item.is('[data-blog-promo]')) {
+          shown += 1;
+        }
+      });
+      chips.each(function () {
+        var on = jq(this).attr('data-cat') === cat;
+        jq(this).toggleClass('is-active', on).attr('aria-current', on ? 'page' : null);
+      });
+      countEl.text(shown + (shown === 1 ? ' story' : ' stories'));
+      emptyEl.toggleClass('d-none', shown > 0);
+      pager.toggleClass('d-none', cat !== 'all');
+      grid.find('.yq-reveal').addClass('is-in');
+    }
+
+    chips.on('click', function (e) {
+      e.preventDefault();
+      apply(jq(this).attr('data-cat'));
+      if (window.history && history.replaceState) {
+        history.replaceState(null, '', jq(this).attr('href'));
+      }
+    });
+
+    var m = /[?&]cat=([^&#]+)/.exec(location.search);
+    var start = m ? decodeURIComponent(m[1]) : 'all';
+    if (!chips.filter('[data-cat="' + start + '"]').length) {
+      start = 'all';
+    }
+    apply(start);
+  }
+
+  /* ---------- 2. Copy link ---------- */
+  function setupCopy() {
+    jq(document).on('click', '[data-yq-copy]', function () {
+      var btn = jq(this);
+      var url = btn.attr('data-yq-copy') || location.href;
+      function done() {
+        btn.addClass('is-done').attr('aria-label', 'Link copied');
+        setTimeout(function () {
+          btn.removeClass('is-done').attr('aria-label', 'Copy link');
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(done, function () {
+          window.prompt('Copy this link', url);
+        });
+      } else {
+        window.prompt('Copy this link', url);
+      }
+    });
+  }
+
+  jq(function () {
+    setupDemoFilter();
+    setupCopy();
+  });
+})(jQuery);
+</script>

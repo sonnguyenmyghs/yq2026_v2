@@ -1,0 +1,182 @@
+/* ==========================================================================
+   The Journal (blog) — blog.html (danh sách) + blog-post.html (bài viết)
+   Bản production: blog-production.html + blog-post-production.html (partial).
+   Danh mục bám theo menu site thật: The Santa Shop, Pastries & Desserts,
+   Beverage, Dining, Wellness & Fitness, Gifting.
+   Dùng token của style.css (--yq-ink, --yq-gold, --yq-line…).
+   ========================================================================== */
+
+.yq-blog{ padding-bottom: clamp(56px, 8vw, 104px); }
+
+/* ---------- Nhãn danh mục + dòng meta ---------- */
+.yq-post__cat{
+  display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--yq-gold-dark);
+}
+a.yq-post__cat:hover{ color: var(--yq-ink); }
+.yq-post__meta{
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+  font-size: 12.5px; color: var(--yq-muted);
+}
+.yq-post__meta span + span::before{
+  content: ""; display: inline-block; width: 3px; height: 3px; border-radius: 50%;
+  background: currentColor; margin-right: 14px; vertical-align: middle; opacity: .7;
+}
+
+/* ---------- Bài nổi bật ---------- */
+.yq-blog__feature{
+  display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  background: var(--yq-paper); border: 1px solid var(--yq-line-soft);
+  border-radius: var(--yq-radius); overflow: hidden; margin-bottom: clamp(36px, 5vw, 56px);
+}
+.yq-blog__feature .yq-media{ aspect-ratio: 4 / 3; height: 100%; }
+.yq-blog__feature-body{
+  display: flex; flex-direction: column; justify-content: center; gap: 16px;
+  padding: clamp(24px, 4vw, 56px);
+}
+.yq-blog__feature-title{ font-size: clamp(1.6rem, 2.8vw, 2.4rem); line-height: 1.15; margin: 0; }
+.yq-blog__feature-title a{ color: var(--yq-ink); }
+.yq-blog__feature-title a:hover{ color: var(--yq-gold-dark); }
+.yq-blog__feature-body p{ font-size: 15.5px; line-height: 1.75; color: var(--yq-body); margin: 0; }
+.yq-blog__feature-badge{
+  align-self: flex-start; font-size: 11px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; padding: 6px 12px; border-radius: var(--yq-radius-pill);
+  background: var(--yq-gold-soft); color: var(--yq-gold-dark);
+}
+
+/* ---------- Thanh danh mục ---------- */
+.yq-blog__bar{ margin-bottom: 28px; border-bottom: 1px solid var(--yq-line); }
+.yq-blog__bar .yq-results-count{ font-size: 13px; color: var(--yq-muted); white-space: nowrap; }
+
+/* ---------- Thẻ bài viết ---------- */
+.yq-post{
+  height: 100%; display: flex; flex-direction: column;
+  background: var(--yq-paper); border: 1px solid var(--yq-line-soft);
+  border-radius: var(--yq-radius); overflow: hidden;
+  transition: box-shadow .35s var(--yq-ease), transform .35s var(--yq-ease);
+}
+.yq-post:hover{ box-shadow: var(--yq-shadow-md); transform: translateY(-3px); }
+.yq-post__media{ aspect-ratio: 4 / 3; display: block; }
+.yq-post__body{ display: flex; flex-direction: column; gap: 10px; padding: 22px 22px 24px; flex: 1; }
+.yq-post__title{ font-size: 1.2rem; line-height: 1.3; margin: 0; }
+.yq-post__title a{ color: var(--yq-ink); }
+.yq-post__title a:hover{ color: var(--yq-gold-dark); }
+.yq-post__excerpt{
+  font-size: 14px; line-height: 1.7; color: var(--yq-body); margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.yq-post__body .yq-post__meta{ margin-top: auto; padding-top: 8px; }
+
+/* Ô quảng bá chiến dịch xen giữa lưới (The Santa Shop) */
+.yq-blog__promo{
+  position: relative; height: 100%; min-height: 360px; border-radius: var(--yq-radius);
+  overflow: hidden; color: #fff; display: flex; align-items: flex-end;
+}
+.yq-blog__promo .yq-media{ position: absolute; inset: 0; }
+.yq-blog__promo::after{
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(23,22,19,.05) 20%, rgba(23,22,19,.82) 100%);
+}
+.yq-blog__promo-body{ position: relative; z-index: 1; display: block; padding: 28px; }
+.yq-blog__promo-body .yq-eyebrow{ color: #E7D3A3; margin-bottom: 10px; }
+.yq-blog__promo-body p{ display: block; }
+.yq-blog__promo-body h3{ font-size: 1.5rem; line-height: 1.2; color: #fff; margin-bottom: 10px; }
+.yq-blog__promo-body p{ font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.86); margin-bottom: 18px; }
+.yq-blog__promo-code{
+  display: inline-block; font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .06em;
+  border: 1px dashed rgba(231,211,163,.7); border-radius: 6px; padding: 2px 8px; color: #E7D3A3;
+}
+
+/* Rỗng (lọc không có bài) */
+.yq-blog__empty{ text-align: center; padding: 56px 24px; }
+
+/* Phân trang */
+.yq-blog__pager{ display: flex; justify-content: center; gap: 6px; margin-top: 44px; flex-wrap: wrap; }
+.yq-blog__pager a,
+.yq-blog__pager span{
+  min-width: 42px; height: 42px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--yq-line); border-radius: var(--yq-radius-pill);
+  font-size: 13.5px; color: var(--yq-ink-soft); background: var(--yq-paper);
+}
+.yq-blog__pager a:hover{ border-color: var(--yq-ink); color: var(--yq-ink); }
+.yq-blog__pager .is-active{ background: var(--yq-ink); border-color: var(--yq-ink); color: #fff; }
+.yq-blog__pager .is-disabled{ opacity: .45; pointer-events: none; }
+
+/* Khối "Shop the stories" */
+.yq-blog__shop{ padding-top: clamp(48px, 7vw, 88px); }
+.yq-blog__shop-head{ display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+.yq-blog__shop-head h2{ margin: 0; }
+
+/* ==========================================================================
+   Trang bài viết (đơn giản: tiêu đề, ảnh, nội dung, chia sẻ, bài liên quan)
+   ========================================================================== */
+.yq-article__head{ max-width: 860px; margin: 0 auto; text-align: center; padding: clamp(32px, 5vw, 64px) 0 clamp(24px, 3vw, 36px); }
+.yq-article__head .yq-back{ margin-bottom: 22px; }
+.yq-article__title{ font-size: clamp(2rem, 4.4vw, 3.2rem); line-height: 1.1; margin: 14px 0 16px; }
+.yq-article__dek{ font-size: 1.125rem; line-height: 1.7; color: var(--yq-body); margin: 0 auto 20px; max-width: 680px; }
+.yq-article__head .yq-post__meta{ justify-content: center; }
+
+.yq-article__hero{ border-radius: var(--yq-radius); aspect-ratio: 21 / 9; margin-bottom: clamp(32px, 5vw, 56px); }
+.yq-article__main{ max-width: 720px; margin: 0 auto; }
+
+.yq-article__body > p,
+.yq-article__body li{ font-size: 16.5px; line-height: 1.85; color: var(--yq-ink-soft); }
+.yq-article__body h2{
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem); margin: 44px 0 14px;
+  scroll-margin-top: calc(var(--yq-header-h) + 24px);
+}
+.yq-article__body h3{ font-size: 1.2rem; margin: 28px 0 10px; }
+.yq-article__body ul,
+.yq-article__body ol{ padding-left: 1.25rem; margin-bottom: 1.2rem; }
+.yq-article__body li + li{ margin-top: 6px; }
+.yq-article__body a{ color: var(--yq-gold-dark); text-decoration: underline; text-underline-offset: 3px; }
+.yq-article__body a:hover{ color: var(--yq-ink); }
+.yq-article__body figure{ margin: 32px 0; }
+.yq-article__body figure .yq-media{ border-radius: var(--yq-radius); aspect-ratio: 3 / 2; }
+.yq-article__body figcaption{ font-size: 13px; color: var(--yq-muted); margin-top: 10px; }
+
+/* Ô ghi chú (Early bird, lưu ý đặt trước 48h) */
+.yq-article__note{
+  display: flex; gap: 14px; margin: 28px 0; padding: 18px 20px;
+  background: var(--yq-gold-soft); border-radius: var(--yq-radius-sm);
+  font-size: 14.5px; line-height: 1.7; color: var(--yq-ink-soft);
+}
+.yq-article__note .yq-i{ flex: none; margin-top: 4px; color: var(--yq-gold-dark); }
+.yq-article__note p{ margin: 0; }
+
+/* Chia sẻ */
+.yq-article__foot{
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;
+  margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--yq-line);
+}
+.yq-share{ display: flex; align-items: center; gap: 8px; }
+.yq-share__label{ font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--yq-muted); margin-right: 4px; }
+.yq-share a,
+.yq-share button{
+  width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--yq-line); border-radius: 50%; background: var(--yq-paper); color: var(--yq-ink-soft);
+  transition: all .25s var(--yq-ease);
+}
+.yq-share a:hover,
+.yq-share button:hover{ border-color: var(--yq-ink); color: var(--yq-ink); }
+.yq-share button.is-done{ border-color: var(--yq-gold); color: var(--yq-gold-dark); }
+
+/* Bài liên quan */
+.yq-article__related{ padding-top: clamp(48px, 7vw, 88px); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px){
+  .yq-blog__feature{ grid-template-columns: 1fr; }
+  .yq-blog__feature .yq-media{ height: auto; }
+  .yq-article__hero{ aspect-ratio: 16 / 10; }
+}
+@media (max-width: 575.98px){
+  .yq-blog__bar.yq-filterbar{ flex-wrap: wrap; }
+  .yq-blog__bar .yq-filterbar__tools{ margin-left: 0; }
+  .yq-blog__shop-head{ flex-direction: column; align-items: flex-start; }
+  .yq-article__body > p,
+  .yq-article__body li{ font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .yq-post, .yq-post:hover{ transition: none; transform: none; }
+}

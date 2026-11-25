@@ -42,6 +42,9 @@ python3 -m http.server 8000
 ├── voucher/checkout-production.html  Bản deploy của checkout-voucher (partial, biến PHP thật)
 ├── voucher/checkout.html Checkout cho sản phẩm loại voucher: thông tin khách, For myself / Send as a gift,
 │                         điều khoản; không có Shipping; promo + Pay Now ở Order Summary
+├── blog.html             The Journal — bài nổi bật, chip danh mục (lọc ?cat=), lưới bài, "Shop the stories"
+├── blog-post.html        Bài viết — tiêu đề, ảnh, nội dung, chia sẻ, bài liên quan
+│                         Production: blog-production.html / blog-post-production.html (CSS parts/blog.css, JS modules/blog.js)
 ├── faq.html              FAQs (accordion theo nhóm: ordering, self-collection, delivery…)
 ├── returns.html          Returns Policy
 ├── terms.html            Terms & Conditions (+ Self-Collection, Delivery)
