@@ -1,0 +1,82 @@
+<!-- =====================================================================
+     FORGET PASSWORD — template PRODUCTION, thay cho template forget password cũ
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, style.css, account-production.js.
+     Bản xem thử có dữ liệu mẫu: member/forget.html (repo yq2026).
+     Form POST về chính trang này, giữ như template cũ:
+       token, ô nhập in bằng id_name_forget_password (id inputForget),
+       JS thêm hidden forget[input_type] / forget[dialing_code] / forget[country_code],
+       intl-tel-input v12 tạo hidden forget[email].
+     Giá trị cũ của forget.input_type / dialing_code / country_code in vào data-* của form,
+     JS assets/js/modules/member/forget.js đọc lại (không in biến trong JS).
+     Biến: status_forget, token, id_name_forget_password, forget.*, lang.forget_password,
+     lang.account, lang.recovery_password, lang.tip_recovery.
+     ===================================================================== -->
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.0/css/intlTelInput.css">
+<link rel="stylesheet" href="$_SKIN_NO_CDN/assets/css/parts/status.css?v1">
+<link rel="stylesheet" href="$_SKIN_NO_CDN/assets/css/parts/forget.css?v1">
+<style type="text/css">
+    .iti-flag
+    {
+        background-image: url("//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.0/img/flags.png");
+    }
+    @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx)
+    {
+        .iti-flag
+        {
+            background-image: url("//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.0/img/flags@2x.png");
+        }
+    }
+</style>
+
+<section class="yq-pagehead">
+  <div class="yq-container">
+    <div class="yq-eyebrow yq-eyebrow--gold">My account</div>
+    <h1 class="yq-serif">{$lang['forget_password']}</h1>
+    <p class="yq-lead mb-0">Enter the email or mobile number on your account and we will help you get back in.</p>
+  </div>
+</section>
+
+<section style="padding-bottom:clamp(56px,8vw,104px)">
+  <div class="yq-container">
+    <div class="yq-status-zone">$status_forget</div>
+    <div class="yq-prof">
+
+      <!-- Thẻ trợ giúp (dính bên trái) -->
+      <aside>
+        <div class="yq-prof__card">
+          <div class="yq-pw__shield" aria-hidden="true"><svg class="yq-i" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3"/><path d="m17 6 3 3"/><path d="m14.5 8.5 2.5 2.5"/></svg></div>
+          <h2 class="yq-prof__name">Account recovery</h2>
+          <p class="yq-fg__tip">(*) {$lang['tip_recovery']}</p>
+          <div class="yq-prof__links">
+            <button class="yq-link-arrow yq-fg__back" type="button" data-yq-account>Back to log in <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Form quên mật khẩu -->
+      <div class="yq-prof__body">
+      <section class="yq-prof__group">
+        <header class="yq-prof__grouphead">
+          <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></span>
+          <h2 class="yq-prof__grouptitle">{$lang['recovery_password']}</h2>
+        </header>
+        <form class="yq-pw__form yq-fg__form" id="yqForgetForm" method="post" data-input-type="{$forget['input_type']}" data-dialing-code="{$forget['dialing_code']}" data-country-code="{$forget['country_code']}">
+          <input type="hidden" name="token" value="{$token}" />
+          <div class="form-group yq-pw__field">
+            <label class="label yq-auth__label" for="inputForget">{$lang['account']}</label>
+            <input {$id_name_forget_password} type="text" class="form-control yq-input" autocomplete="username">
+            <p class="yq-fg__hint">Mobile number: pick your country code from the flag, then type the number.</p>
+          </div>
+          <div class="form-group text--center mt-2">
+            <button type="submit" class="button button--cta button btn btn-primary btn-black yq-btn yq-btn--block yq-pw__submit">{$lang['recovery_password']}</button>
+          </div>
+        </form>
+      </section>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.0/js/intlTelInput.min.js"></script>
+<script src="$_SKIN_NO_CDN/assets/js/modules/member/forget.js?v1"></script>

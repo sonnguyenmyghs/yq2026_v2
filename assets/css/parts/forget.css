@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Trang Forget password (member/forget.html, member/forget-production.html)
+   Khung .yq-prof + .yq-pw__* nằm trong style.css; file này chỉ chỉnh intl-tel-input v12
+   cho ô "Email | số điện thoại" (#inputForget) và phần chữ của trang.
+   ========================================================================== */
+.yq-fg__form .intl-tel-input{
+  display: block;
+  width: 100%;
+}
+.yq-fg__form .intl-tel-input .selected-flag{
+  border-radius: var(--yq-radius-sm) 0 0 var(--yq-radius-sm);
+}
+.yq-fg__form .intl-tel-input .selected-flag.disabled{
+  pointer-events: none;
+  opacity: .5;
+}
+.yq-fg__form .intl-tel-input .country-list{
+  z-index: 30;
+  max-width: min(360px, 86vw);
+  white-space: normal;
+  border-radius: var(--yq-radius-sm);
+  box-shadow: 0 12px 32px rgba(23, 22, 19, .14);
+}
+.yq-fg__hint{
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--yq-muted);
+}
+.yq-fg__tip{
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border-radius: var(--yq-radius-sm);
+  background: var(--yq-cream, #F7F1E6);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--yq-body);
+  text-align: left;
+}
+.yq-fg__tip:empty{
+  display: none;
+}
+.yq-fg__back{
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
