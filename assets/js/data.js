@@ -712,32 +712,10 @@ YQ.experiences = [
     desc:'Luxurious overnight stay with breakfast, spa credit, and late checkout.' }
 ];
 
-/* ---------- Giới thiệu bạn bè (trang member/invite.html) ----------
-   `channels` quyết định có những nút chia sẻ nào, theo đúng thứ tự khai báo:
-     kind 'share' -> mở cửa sổ chia sẻ ({u} = link mời, {t} = lời nhắn)
-     kind 'mail'  -> mở ứng dụng email
-   Thêm WhatsApp/X chỉ cần thêm một dòng, không phải sửa controller.
-   id phải có trong YQ.brandIcon thì mới có logo (email/copy dùng YQ.icon).
-*/
-YQ.referral = {
-  reward: 20,                 // ưu đãi cho cả người mời lẫn người được mời
-  landing: 'index.html',      // trang link mời trỏ tới
-  codePrefix: 'GH-',
-  message: 'I shop for gifts at Grand Hyatt Singapore — here is SGD 20 off your first order.',
-  channels: [
-    { id: 'facebook', label: 'Facebook', kind: 'share',
-      url: 'https://www.facebook.com/sharer/sharer.php?u={u}' },
-    { id: 'line', label: 'LINE', kind: 'share',
-      url: 'https://social-plugins.line.me/lineit/share?url={u}&text={t}' },
-    { id: 'email', label: 'Email', kind: 'mail', icon: 'mail' }
-  ]
-};
-
 /* ---------- Hồ sơ thành viên (mẫu) ----------
    member/profile.html là HTML TĨNH (backend đổ dữ liệu thẳng vào markup), không
    render từ đây. Bản mẫu này chỉ còn nạp vào YQ.profile (app.js) cho lần truy cập
-   đầu, phục vụ password.html (email, ngày đổi mật khẩu) và invite.html (memberNo
-   -> mã giới thiệu). Giá trị nên khớp với những gì đang ghi trong profile.html.
+   đầu, phục vụ password.html (email, ngày đổi mật khẩu). Giá trị nên khớp với những gì đang ghi trong profile.html.
 */
 YQ.demoProfile = {
   memberNo: '000001991', memberType: 'Member', idCard: '', cardName: 'son nguyen',

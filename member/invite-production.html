@@ -1,0 +1,105 @@
+<!-- =====================================================================
+     INVITE FRIENDS — template PRODUCTION, thay cho template invite cũ
+     Partial: layout của site đã in header, footer, jQuery, Bootstrap, style.css, account-production.js.
+     Bản xem thử có dữ liệu mẫu: member/invite.html (repo yq2026).
+     Giữ như template cũ:
+       status, referral_link (link Facebook / WhatsApp / Telegram + ô copy), fb-root data-appid,
+       form POST về chính trang này: token, invite[mail_to], invite[mail_content] (Template),
+       hidden invite[mail_subject] (Subject).
+     Biến lang: or, crowding_title_or, mail_to_tip, mail_content_tip, crowding_button.
+     JS assets/js/modules/member/invite.js chỉ copy link, mở cửa sổ chia sẻ, kiểm tra email trước khi gửi.
+     ===================================================================== -->
+<div id="fb-root" data-appid="$config_facebookapp[$hotel_id]" style="display: none"></div>
+
+<section class="yq-pagehead">
+  <div class="yq-container">
+    <div class="yq-eyebrow yq-eyebrow--gold">My account</div>
+    <h1 class="yq-serif">Invite Friends</h1>
+    <p class="yq-lead mb-0">Extend the invitation — because luxury is best when shared.</p>
+  </div>
+</section>
+
+<section style="padding-bottom:clamp(56px,8vw,104px)">
+  <div class="yq-container">
+    <div class="yq-status-zone">{$status}</div>
+    <div class="yq-prof">
+
+      <!-- Thẻ giới thiệu (dính bên trái) -->
+      <aside>
+        <div class="yq-prof__card">
+          <div class="yq-inv__gift" aria-hidden="true"><svg class="yq-i" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="2"/><path d="M3.5 13h17M12 9v11.5"/><path d="M12 9S10.8 4.5 8.5 4.5a2.2 2.2 0 0 0 0 4.5H12Zm0 0s1.2-4.5 3.5-4.5a2.2 2.2 0 0 1 0 4.5H12Z"/></svg></div>
+          <h2 class="yq-prof__name">Share the Art of Thoughtful Gifting &amp; Gourmet Shopping</h2>
+          <p class="yq-pw__lead">Invite your friends to discover The Shop at Grand Hyatt Singapore, a curated collection of gourmet delights, artisanal treats and elegant gifts.</p>
+          <p class="yq-pw__lead">Whether they browse our online boutique or visit us at the Lobby Level, they will find something exquisite for every occasion.</p>
+          <div class="yq-prof__links">
+            <a class="yq-link-arrow" href="$_BASE/member/profile">Back to profile <svg class="yq-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
+          </div>
+        </div>
+      </aside>
+
+      <div class="yq-prof__body">
+
+        <!-- Chia sẻ link mời -->
+        <section class="yq-prof__group">
+          <header class="yq-prof__grouphead">
+            <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 13.7 9l5.5 1.7-5.5 1.7L12 18l-1.7-5.6L4.8 10.7 10.3 9 12 3.5Z"/></svg></span>
+            <h2 class="yq-prof__grouptitle">Share your invitation</h2>
+          </header>
+          <div class="yq-inv__pad">
+            <label class="yq-auth__label" for="invLink">Your invitation link</label>
+            <div class="yq-inv__linkbox">
+              <input class="yq-input form-control" id="invLink" type="text" readonly value="{$referral_link}">
+              <button class="yq-btn yq-btn--sm yq-inv__copy" type="button" data-inv-copy><svg class="yq-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11.5" height="11.5" rx="2.2"/><path d="M15 5.5A2.2 2.2 0 0 0 12.8 3.5H5.7A2.2 2.2 0 0 0 3.5 5.7v7.1A2.2 2.2 0 0 0 5.5 15"/></svg><span data-inv-copy-label>Copy</span></button>
+            </div>
+            <div class="yq-inv__channels invite_fb">
+              <a class="yq-inv__ch yq-inv__ch--facebook" data-inv-share target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u={$referral_link}&amp;quote=Hi%20there!%0A%0ACheck%20out%20Grand%20Hyatt%20Singapore%20Official%20E-Store.%20They%20have%20great%20selections%20at%20very%20affordable%20prices.%0A%0ACheck%20it%20out%3A%20{$referral_link}">
+                <span class="yq-inv__chico"><svg class="yq-brandi" width="20" height="20" viewBox="0 0 320 512" fill="currentColor" aria-hidden="true"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg></span>
+                <span>Facebook</span>
+              </a>
+              <a class="yq-inv__ch yq-inv__ch--whatsapp" data-inv-share target="_blank" rel="noopener" href="https://wa.me/?text=Hi%20there!%0A%0ACheck%20out%20Grand%20Hyatt%20Singapore%20Official%20E-Store.%20They%20have%20great%20selections%20at%20very%20affordable%20prices.%0A%0ACheck%20it%20out:%20{$referral_link}">
+                <span class="yq-inv__chico"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 20.5 4.8 16A8.5 8.5 0 1 1 8 19.2l-4.5 1.3Z"/><path d="M9 8.6c0 3.5 2.9 6.4 6.4 6.4l1.1-1.6-2-1-.9.8a4.6 4.6 0 0 1-2.8-2.8l.8-.9-1-2L9 8.6Z"/></svg></span>
+                <span>WhatsApp</span>
+              </a>
+              <a class="yq-inv__ch yq-inv__ch--telegram" data-inv-share target="_blank" rel="noopener" href="https://t.me/share/url?url={$referral_link}&amp;text=Hi%20there!%0A%0ACheck%20out%20Grand%20Hyatt%20Singapore%20Official%20E-Store.%20They%20have%20great%20selections%20at%20very%20affordable%20prices.%0A%0ACheck%20it%20out:%20{$referral_link}">
+                <span class="yq-inv__chico"><svg class="yq-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4 3 11l6.5 2.4L12 20l3.2-4.4L19.5 19 21 4Z"/><path d="m9.5 13.4 8-6.4"/></svg></span>
+                <span>Telegram</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <div class="yq-inv__or"><span>{$lang['or']}</span></div>
+
+        <!-- Mời qua email -->
+        <section class="yq-prof__group invite_email">
+          <header class="yq-prof__grouphead">
+            <span class="yq-prof__groupico"><svg class="yq-i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="m3.8 7 8.2 6 8.2-6"/></svg></span>
+            <h2 class="yq-prof__grouptitle">{$lang['crowding_title_or']}</h2>
+          </header>
+          <form class="yq-inv__pad yq-inv__form" id="invForm" method="post" novalidate>
+            <input type="hidden" name="token" value="{$token}" />
+            <div class="form-group yq-inv__field">
+              <label class="form-label yq-auth__label" for="invMailTo">Mail To</label>
+              <input type="text" class="form-control yq-input" id="invMailTo" name="invite[mail_to]" placeholder="john@email.com, smith@hotmail.com" autocomplete="off">
+              <div class="yq-error" data-err-for="invMailTo"></div>
+              <p class="yq-inv__tip">{$lang['mail_to_tip']}</p>
+            </div>
+            <div class="form-group yq-inv__field">
+              <label class="form-label yq-auth__label" for="invContent">Content</label>
+              <textarea class="full-width form-control yq-input" id="invContent" rows="8" name="invite[mail_content]">$Template</textarea>
+              <input type="hidden" name="invite[mail_subject]" value="$Subject" />
+              <div class="yq-error" data-err-for="invContent"></div>
+              <p class="yq-inv__tip">{$lang['mail_content_tip']}</p>
+            </div>
+            <div class="form-group text-center mb-0">
+              <button type="submit" class="btn btn-primary btn-black yq-btn yq-btn--block yq-inv__submit">{$lang['crowding_button']}</button>
+            </div>
+          </form>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="$_SKIN_NO_CDN/assets/js/modules/member/invite.js?v1"></script>

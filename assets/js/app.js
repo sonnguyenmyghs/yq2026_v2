@@ -205,7 +205,7 @@
   /* ======================================================================
      2b. Profile store (localStorage) — hồ sơ thành viên
      Trang profile.html giờ là HTML tĩnh, KHÔNG đọc store này. Store chỉ còn
-     phục vụ password.html (email, ngày đổi mật khẩu) và invite.html (memberNo).
+     phục vụ password.html (email, ngày đổi mật khẩu).
      ====================================================================== */
   var PKEY = 'yq_profile_v1';
 
